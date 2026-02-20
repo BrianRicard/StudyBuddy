@@ -1,0 +1,86 @@
+package com.studybuddy.core.data.repository
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.domain.repository.SettingsRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+import javax.inject.Singleton
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+@Singleton
+class DataStoreSettingsRepository @Inject constructor(
+    @ApplicationContext private val context: Context,
+) : SettingsRepository {
+
+    private object Keys {
+        val APP_LOCALE = stringPreferencesKey("app_locale")
+        val ACCENT_STRICT = booleanPreferencesKey("accent_strict")
+        val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
+        val HAPTIC_ENABLED = booleanPreferencesKey("haptic_enabled")
+        val DAILY_GOAL = intPreferencesKey("daily_goal")
+        val SELECTED_THEME = stringPreferencesKey("selected_theme")
+        val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
+    }
+
+    override fun getAppLocale(): Flow<String> =
+        context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
+
+    override suspend fun setAppLocale(locale: String) {
+        context.dataStore.edit { it[Keys.APP_LOCALE] = locale }
+    }
+
+    override fun isAccentStrict(): Flow<Boolean> =
+        context.dataStore.data.map { it[Keys.ACCENT_STRICT] ?: false }
+
+    override suspend fun setAccentStrict(strict: Boolean) {
+        context.dataStore.edit { it[Keys.ACCENT_STRICT] = strict }
+    }
+
+    override fun isSoundEnabled(): Flow<Boolean> =
+        context.dataStore.data.map { it[Keys.SOUND_ENABLED] ?: true }
+
+    override suspend fun setSoundEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[Keys.SOUND_ENABLED] = enabled }
+    }
+
+    override fun isHapticEnabled(): Flow<Boolean> =
+        context.dataStore.data.map { it[Keys.HAPTIC_ENABLED] ?: true }
+
+    override suspend fun setHapticEnabled(enabled: Boolean) {
+        context.dataStore.edit { it[Keys.HAPTIC_ENABLED] = enabled }
+    }
+
+    override fun getDailyGoal(): Flow<Int> =
+        context.dataStore.data.map { it[Keys.DAILY_GOAL] ?: AppConstants.DEFAULT_DAILY_GOAL }
+
+    override suspend fun setDailyGoal(goal: Int) {
+        context.dataStore.edit { it[Keys.DAILY_GOAL] = goal }
+    }
+
+    override fun getSelectedTheme(): Flow<String> =
+        context.dataStore.data.map { it[Keys.SELECTED_THEME] ?: "sunset" }
+
+    override suspend fun setSelectedTheme(themeId: String) {
+        context.dataStore.edit { it[Keys.SELECTED_THEME] = themeId }
+    }
+
+    override fun isOnboardingComplete(): Flow<Boolean> =
+        context.dataStore.data.map { it[Keys.ONBOARDING_COMPLETE] ?: false }
+
+    override suspend fun setOnboardingComplete(complete: Boolean) {
+        context.dataStore.edit { it[Keys.ONBOARDING_COMPLETE] = complete }
+    }
+
+    override suspend fun sync() { /* no-op: cloud migration hook */ }
+}
