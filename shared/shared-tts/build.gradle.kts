@@ -12,4 +12,7 @@ dependencies {
     implementation(project(":core:core-common"))
     implementation(project(":core:core-domain"))
     implementation(libs.coroutines.android)
+    implementation(libs.work.runtime.ktx)
+    implementation(libs.hilt.work)
+    ksp(libs.hilt.work.compiler)
 }
