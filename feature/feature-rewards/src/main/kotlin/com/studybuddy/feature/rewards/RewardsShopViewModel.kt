@@ -2,6 +2,7 @@ package com.studybuddy.feature.rewards
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.domain.repository.RewardsRepository
@@ -78,7 +79,7 @@ class RewardsShopViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<RewardsShopEffect>()
     val effects: SharedFlow<RewardsShopEffect> = _effects.asSharedFlow()
 
-    private val profileId = "default"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     init {
         observeOwnedRewards()

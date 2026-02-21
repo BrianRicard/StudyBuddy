@@ -2,6 +2,7 @@ package com.studybuddy.core.data.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import com.studybuddy.core.data.db.StudyBuddyDatabase
 import dagger.Module
 import dagger.Provides
@@ -45,4 +46,9 @@ object DatabaseModule {
 
     @Provides
     fun provideVoicePackDao(db: StudyBuddyDatabase) = db.voicePackDao()
+
+    @Provides
+    @Singleton
+    fun provideWorkManager(@ApplicationContext context: Context): WorkManager =
+        WorkManager.getInstance(context)
 }

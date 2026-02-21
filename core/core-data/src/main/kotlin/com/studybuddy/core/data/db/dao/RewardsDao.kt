@@ -17,4 +17,7 @@ interface RewardsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reward: OwnedRewardEntity)
+
+    @Query("SELECT * FROM owned_rewards")
+    suspend fun getAllOwnedRewards(): List<OwnedRewardEntity>
 }

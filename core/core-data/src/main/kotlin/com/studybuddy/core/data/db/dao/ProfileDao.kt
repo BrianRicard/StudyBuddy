@@ -24,4 +24,7 @@ interface ProfileDao {
 
     @Query("DELETE FROM profiles WHERE id = :id")
     suspend fun delete(id: String)
+
+    @Query("SELECT * FROM profiles")
+    suspend fun getAllProfiles(): List<ProfileEntity>
 }

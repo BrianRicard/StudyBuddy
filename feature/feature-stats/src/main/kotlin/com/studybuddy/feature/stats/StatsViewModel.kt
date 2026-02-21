@@ -2,6 +2,7 @@ package com.studybuddy.feature.stats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
@@ -64,10 +65,10 @@ class StatsViewModel @Inject constructor(
     private fun observeStats() {
         viewModelScope.launch {
             combine(
-                pointsRepository.getTotalPoints(DEFAULT_PROFILE_ID),
-                pointsRepository.getPointsForProfile(DEFAULT_PROFILE_ID),
-                mathRepository.getSessionsForProfile(DEFAULT_PROFILE_ID),
-                dicteeRepository.getListsForProfile(DEFAULT_PROFILE_ID),
+                pointsRepository.getTotalPoints(AppConstants.DEFAULT_PROFILE_ID),
+                pointsRepository.getPointsForProfile(AppConstants.DEFAULT_PROFILE_ID),
+                mathRepository.getSessionsForProfile(AppConstants.DEFAULT_PROFILE_ID),
+                dicteeRepository.getListsForProfile(AppConstants.DEFAULT_PROFILE_ID),
             ) { totalPoints, pointEvents, mathSessions, dicteeLists ->
                 val dayStreak = calculateDayStreak(pointEvents)
                 val totalSessions = countTotalSessions(pointEvents)
@@ -238,7 +239,6 @@ class StatsViewModel @Inject constructor(
     }
 
     companion object {
-        internal const val DEFAULT_PROFILE_ID = "default"
         private const val TREND_SESSION_COUNT = 10
         private const val MIN_SESSIONS_FOR_TREND = 4
         private const val MIN_LISTS_FOR_TREND = 2

@@ -20,6 +20,7 @@ object StudyBuddyRoutes {
     const val STATS = "stats"
     const val SETTINGS = "settings"
     const val BACKUP = "backup"
+    const val POEMS = "poems"
     const val ONBOARDING = "onboarding"
 
     fun dicteeWords(listId: String) = "dictee/words/$listId"

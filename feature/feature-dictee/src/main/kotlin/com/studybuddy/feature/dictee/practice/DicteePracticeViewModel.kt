@@ -3,6 +3,7 @@ package com.studybuddy.feature.dictee.practice
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeWord
@@ -48,7 +49,7 @@ class DicteePracticeViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<DicteePracticeEffect>()
     val effects: SharedFlow<DicteePracticeEffect> = _effects.asSharedFlow()
 
-    private val profileId = "default-profile"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
     private var correctInSession = 0
     private var listLanguage = "fr"
 

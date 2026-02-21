@@ -2,6 +2,10 @@ package com.studybuddy.feature.backup
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
@@ -16,6 +20,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 /**
@@ -84,6 +89,7 @@ class BackupExportViewModel @Inject constructor(
     private val createBackupUseCase: CreateBackupUseCase,
     private val restoreBackupUseCase: RestoreBackupUseCase,
     private val exportProgressReportUseCase: ExportProgressReportUseCase,
+    private val workManager: WorkManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(BackupExportState())
@@ -92,7 +98,7 @@ class BackupExportViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<BackupExportEffect>()
     val effects: SharedFlow<BackupExportEffect> = _effects.asSharedFlow()
 
-    private val profileId = "default"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a")
 
@@ -315,11 +321,41 @@ class BackupExportViewModel @Inject constructor(
 
     private fun handleSetAutoBackupEnabled(enabled: Boolean) {
         _state.update { it.copy(autoBackupEnabled = enabled) }
-        // TODO: Schedule/cancel WorkManager periodic backup task
+        if (enabled) {
+            scheduleAutoBackup(_state.value.autoBackupFrequency)
+        } else {
+            workManager.cancelUniqueWork(AUTO_BACKUP_WORK_NAME)
+        }
     }
 
     private fun handleSetAutoBackupFrequency(frequency: AutoBackupFrequency) {
         _state.update { it.copy(autoBackupFrequency = frequency) }
-        // TODO: Reschedule WorkManager periodic backup with new frequency
+        if (_state.value.autoBackupEnabled) {
+            scheduleAutoBackup(frequency)
+        }
+    }
+
+    private fun scheduleAutoBackup(frequency: AutoBackupFrequency) {
+        val intervalHours = when (frequency) {
+            AutoBackupFrequency.DAILY -> DAILY_BACKUP_INTERVAL_HOURS
+            AutoBackupFrequency.WEEKLY -> WEEKLY_BACKUP_INTERVAL_HOURS
+        }
+
+        val workRequest = PeriodicWorkRequestBuilder<AutoBackupWorker>(
+            intervalHours,
+            TimeUnit.HOURS,
+        ).build()
+
+        workManager.enqueueUniquePeriodicWork(
+            AUTO_BACKUP_WORK_NAME,
+            ExistingPeriodicWorkPolicy.UPDATE,
+            workRequest,
+        )
+    }
+
+    companion object {
+        private const val AUTO_BACKUP_WORK_NAME = "studybuddy_auto_backup"
+        private const val DAILY_BACKUP_INTERVAL_HOURS = 24L
+        private const val WEEKLY_BACKUP_INTERVAL_HOURS = 168L
     }
 }

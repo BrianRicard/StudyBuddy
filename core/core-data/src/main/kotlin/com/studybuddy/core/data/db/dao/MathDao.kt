@@ -20,4 +20,7 @@ interface MathDao {
 
     @Query("DELETE FROM math_sessions WHERE id = :sessionId")
     suspend fun delete(sessionId: String)
+
+    @Query("SELECT * FROM math_sessions")
+    suspend fun getAllSessions(): List<MathSessionEntity>
 }

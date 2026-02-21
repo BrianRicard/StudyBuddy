@@ -14,4 +14,7 @@ interface AvatarDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(config: AvatarConfigEntity)
+
+    @Query("SELECT * FROM avatar_configs")
+    suspend fun getAllConfigs(): List<AvatarConfigEntity>
 }

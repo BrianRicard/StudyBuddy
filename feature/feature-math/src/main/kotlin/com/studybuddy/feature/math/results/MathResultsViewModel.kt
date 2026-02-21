@@ -3,6 +3,7 @@ package com.studybuddy.feature.math.results
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.Operator
@@ -132,7 +133,7 @@ class MathResultsViewModel @Inject constructor(
 
             val session = MathSession(
                 id = UUID.randomUUID().toString(),
-                profileId = DEFAULT_PROFILE_ID,
+                profileId = AppConstants.DEFAULT_PROFILE_ID,
                 operators = parsedOperators,
                 numberRange = rangeMin..rangeMax,
                 totalProblems = totalProblems,
@@ -146,7 +147,7 @@ class MathResultsViewModel @Inject constructor(
             saveMathSession(session)
 
             awardPoints(
-                profileId = DEFAULT_PROFILE_ID,
+                profileId = AppConstants.DEFAULT_PROFILE_ID,
                 basePoints = totalPoints,
                 streak = bestStreak,
                 source = PointSource.MATH,
@@ -160,7 +161,6 @@ class MathResultsViewModel @Inject constructor(
     companion object {
         private const val SPEED_DEMON_THRESHOLD_MS = 3000L
         private const val STREAK_MASTER_THRESHOLD = 10
-        private const val DEFAULT_PROFILE_ID = "default"
 
         const val BADGE_SPEED_DEMON = "Speed Demon"
         const val BADGE_STREAK_MASTER = "Streak Master"

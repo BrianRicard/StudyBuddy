@@ -23,4 +23,7 @@ interface PointsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(event: PointEventEntity)
+
+    @Query("SELECT * FROM point_events")
+    suspend fun getAllPoints(): List<PointEventEntity>
 }

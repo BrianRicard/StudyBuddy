@@ -2,6 +2,7 @@ package com.studybuddy.feature.dictee.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
@@ -30,8 +31,7 @@ class DicteeListViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<DicteeListEffect>()
     val effects: SharedFlow<DicteeListEffect> = _effects.asSharedFlow()
 
-    // TODO: Replace with actual profile ID from session
-    private val profileId = "default-profile"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     init {
         onIntent(DicteeListIntent.LoadLists)

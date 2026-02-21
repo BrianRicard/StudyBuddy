@@ -2,6 +2,7 @@ package com.studybuddy.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.BackupRepository
@@ -84,8 +85,7 @@ class SettingsViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<SettingsEffect>()
     val effects: SharedFlow<SettingsEffect> = _effects.asSharedFlow()
 
-    // TODO: Replace with actual profile ID from session/navigation args
-    private val profileId = "default"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     /**
      * Stored parent PIN hash. Null means no PIN has been set yet.

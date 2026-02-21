@@ -2,6 +2,7 @@ package com.studybuddy.feature.avatar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
@@ -83,8 +84,7 @@ class AvatarClosetViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<AvatarClosetEffect>()
     val effects: SharedFlow<AvatarClosetEffect> = _effects.asSharedFlow()
 
-    // TODO: Replace with actual profile ID from session/navigation args
-    private val profileId = "default"
+    private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     init {
         observeData()

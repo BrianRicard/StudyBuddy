@@ -33,12 +33,15 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -56,18 +59,37 @@ fun BackupExportScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri ->
+        uri?.let {
+            val json = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
+            if (json != null) {
+                viewModel.onIntent(BackupExportIntent.StartRestore(json))
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is BackupExportEffect.ShareFile -> {
-                    // TODO: Open Android share intent with uri and mimeType
+                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                        type = effect.mimeType
+                        putExtra(android.content.Intent.EXTRA_TEXT, effect.uri)
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(
+                        android.content.Intent.createChooser(shareIntent, "Share export"),
+                    )
                 }
                 is BackupExportEffect.ShowToast -> {
                     snackbarHostState.showSnackbar(effect.message)
                 }
                 is BackupExportEffect.FileCreated -> {
-                    // TODO: Notify user about created file at path
+                    snackbarHostState.showSnackbar("Backup saved successfully")
                 }
             }
         }
@@ -91,6 +113,7 @@ fun BackupExportScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
+        onOpenFilePicker = { filePickerLauncher.launch("application/json") },
         snackbarHostState = snackbarHostState,
     )
 }
@@ -101,6 +124,7 @@ private fun BackupExportContent(
     state: BackupExportState,
     onIntent: (BackupExportIntent) -> Unit,
     onNavigateBack: () -> Unit,
+    onOpenFilePicker: () -> Unit = {},
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
@@ -177,11 +201,7 @@ private fun BackupExportContent(
                         } else {
                             "Restore from Backup"
                         },
-                        onClick = {
-                            // TODO: Open file picker to select backup JSON
-                            // For now, pass empty JSON to trigger the confirm dialog
-                            onIntent(BackupExportIntent.StartRestore(""))
-                        },
+                        onClick = onOpenFilePicker,
                         enabled = !state.isBackingUp && !state.isRestoring,
                         modifier = Modifier.fillMaxWidth(),
                     )

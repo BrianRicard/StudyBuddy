@@ -3,6 +3,7 @@ package com.studybuddy.feature.math.play
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.Feedback
@@ -79,7 +80,7 @@ class MathPlayViewModel @Inject constructor(
     private val numberRange: IntRange
     private val difficulty: Difficulty
     private val timerMs: Long
-    private val profileId: String = "default-profile"
+    private val profileId: String = AppConstants.DEFAULT_PROFILE_ID
 
     private val _state = MutableStateFlow(MathPlayState())
     val state: StateFlow<MathPlayState> = _state.asStateFlow()

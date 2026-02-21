@@ -1,6 +1,12 @@
 package com.studybuddy.core.common.constants
 
 object AppConstants {
+    /**
+     * Default profile ID used across the app. When multi-profile support is added,
+     * replace usages with the active profile ID from [ProfileRepository.getActiveProfile].
+     */
+    const val DEFAULT_PROFILE_ID = "default"
+
     const val MAX_STREAK_DISPLAY = 999
     const val DEFAULT_DAILY_GOAL = 5
     const val MAX_DAILY_GOAL = 20
