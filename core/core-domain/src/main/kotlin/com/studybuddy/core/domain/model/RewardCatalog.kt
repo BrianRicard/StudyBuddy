@@ -92,8 +92,14 @@ object RewardCatalog {
         RewardItem("title_word_wizard", RewardCategory.TITLE, "Word Wizard", "\uD83D\uDCDD", 0, "Master 25 words"),
         RewardItem("title_speed_demon", RewardCategory.TITLE, "Speed Demon", "\u26A1", 0, "Avg response < 3s"),
         RewardItem("title_streak_champion", RewardCategory.TITLE, "Streak Champion", "\uD83D\uDD25", 0, "7-day streak"),
-        RewardItem("title_perfect_scholar", RewardCategory.TITLE, "Perfect Scholar", "\uD83C\uDFC6", 0, "100% on 10 sessions"),
-        RewardItem("title_star_collector", RewardCategory.TITLE, "Star Collector", "\uD83D\uDC8E", 0, "Earn 5,000 stars"),
+        RewardItem(
+            "title_perfect_scholar", RewardCategory.TITLE,
+            "Perfect Scholar", "\uD83C\uDFC6", 0, "100% on 10 sessions",
+        ),
+        RewardItem(
+            "title_star_collector", RewardCategory.TITLE,
+            "Star Collector", "\uD83D\uDC8E", 0, "Earn 5,000 stars",
+        ),
         RewardItem("title_polyglot", RewardCategory.TITLE, "Polyglot", "\uD83C\uDF0D", 0, "Practice in 3 languages"),
         RewardItem("title_grand_master", RewardCategory.TITLE, "Grand Master", "\uD83C\uDF93", 0, "Unlock all titles"),
     )

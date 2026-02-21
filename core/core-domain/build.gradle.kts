@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:core-common"))
-    implementation(libs.coroutines.core)
-    implementation(libs.kotlinx.datetime)
+    api(project(":core:core-common"))
+    api(libs.coroutines.core)
+    api(libs.kotlinx.datetime)
     implementation(libs.kotlinx.serialization.json)
 }

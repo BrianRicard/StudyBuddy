@@ -9,6 +9,6 @@ android {
 }
 
 dependencies {
-    implementation(libs.coroutines.core)
-    implementation(libs.kotlinx.datetime)
+    api(libs.coroutines.core)
+    api(libs.kotlinx.datetime)
 }

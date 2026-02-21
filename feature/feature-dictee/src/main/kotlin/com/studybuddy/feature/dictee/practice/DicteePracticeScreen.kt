@@ -148,8 +148,11 @@ private fun DicteePracticeContent(
                     AnimatedVisibility(visible = state.hintVisible) {
                         val word = state.currentWord
                         if (word != null) {
+                            val hint = "${word.word.first()}" +
+                                "${"_".repeat(word.word.length - 1)}" +
+                                " (${word.word.length} letters)"
                             Text(
-                                text = "${word.word.first()}${"_".repeat(word.word.length - 1)} (${word.word.length} letters)",
+                                text = hint,
                                 style = MaterialTheme.typography.bodyMedium,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
