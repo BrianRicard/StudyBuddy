@@ -90,9 +90,9 @@ fun MathPlayScreen(
                 state.bestStreak,
                 avgMs,
                 state.sessionScore,
-                state.currentProblem?.operator?.name ?: "",
-                0,
-                0,
+                state.operatorNames,
+                state.rangeMin,
+                state.rangeMax,
             )
         }
     }

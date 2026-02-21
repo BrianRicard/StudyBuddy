@@ -89,7 +89,7 @@ private fun DicteePracticeContent(
                     }
                 },
                 actions = {
-                    PointsBadge(points = state.sessionScore)
+                    PointsBadge(points = state.sessionScore.toLong())
                     Spacer(modifier = Modifier.width(8.dp))
                     if (state.streak > 0) {
                         StreakIndicator(streak = state.streak)

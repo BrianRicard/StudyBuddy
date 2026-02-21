@@ -47,6 +47,9 @@ data class MathPlayState(
     val responseTimesMs: List<Long> = emptyList(),
     val showCelebration: Boolean = false,
     val pointsAwarded: Int = 0,
+    val operatorNames: String = "",
+    val rangeMin: Int = 0,
+    val rangeMax: Int = 0,
 )
 
 sealed interface MathPlayIntent {
@@ -112,6 +115,9 @@ class MathPlayViewModel @Inject constructor(
                 totalProblems = problemCount,
                 timerTotal = timerMs,
                 timeRemainingMs = timerMs,
+                operatorNames = operatorsArg,
+                rangeMin = rangeMin,
+                rangeMax = rangeMax,
             )
         }
 
