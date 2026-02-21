@@ -47,14 +47,15 @@ class InkRecognitionManager @Inject constructor() {
         }
     }
 
-    fun isModelDownloaded(languageTag: String): Boolean {
+    suspend fun isModelDownloaded(languageTag: String): Boolean {
         val modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag(languageTag)
             ?: return false
         val model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
-        var downloaded = false
-        modelManager.isModelDownloaded(model)
-            .addOnSuccessListener { downloaded = it }
-        return downloaded
+        return suspendCancellableCoroutine { continuation ->
+            modelManager.isModelDownloaded(model)
+                .addOnSuccessListener { continuation.resume(it) }
+                .addOnFailureListener { continuation.resume(false) }
+        }
     }
 
     fun downloadModel(languageTag: String): Flow<DownloadProgress> = flow {
