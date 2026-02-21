@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">StudyBuddy</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Accueil</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_rewards">Récompenses</string>
+    <string name="nav_avatar">Avatar</string>
+    <string name="nav_settings">Paramètres</string>
+
+    <!-- Home Screen -->
+    <string name="greeting_morning">Bonjour</string>
+    <string name="greeting_afternoon">Bon après-midi</string>
+    <string name="greeting_evening">Bonsoir</string>
+    <string name="streak_label">%d jours de suite !</string>
+    <string name="streak_start">Commence ta série !</string>
+    <string name="daily_challenge">Défi du jour</string>
+    <string name="daily_goal_complete">Objectif atteint !</string>
+    <string name="daily_progress">%1$d / %2$d séances</string>
+    <string name="recent_activity">Activité récente</string>
+    <string name="mode_dictee">Dictée</string>
+    <string name="mode_math">Calcul mental</string>
+    <string name="mode_poems">Poèmes</string>
+    <string name="mode_more">Plus</string>
+    <string name="label_spelling_practice">Pratique d\'orthographe</string>
+    <string name="label_mental_math">Exercices de calcul</string>
+    <string name="label_coming_soon">Bientôt disponible</string>
+    <string name="time_just_now">À l\'instant</string>
+    <string name="time_minutes_ago">Il y a %d min</string>
+    <string name="time_hours_ago">Il y a %d h</string>
+    <string name="time_yesterday">Hier</string>
+    <string name="time_days_ago">Il y a %d j</string>
+
+    <!-- Dictée -->
+    <string name="dictee_title">Mes listes de mots</string>
+    <string name="dictee_add_list">Ajouter une liste</string>
+    <string name="dictee_add_word">Ajouter un mot</string>
+    <string name="dictee_practice">Pratiquer</string>
+    <string name="dictee_word_correct">Correct !</string>
+    <string name="dictee_word_incorrect">Réessaie !</string>
+    <string name="dictee_listen_again">Réécouter</string>
+    <string name="dictee_type_word">Écris le mot que tu entends</string>
+    <string name="dictee_draw_word">Dessine le mot que tu entends</string>
+    <string name="dictee_perfect_score">Score parfait !</string>
+    <string name="dictee_words_mastered">%1$d / %2$d mots maîtrisés</string>
+
+    <!-- Speed Math -->
+    <string name="math_setup_title">Configuration du calcul</string>
+    <string name="math_operators">Opérateurs</string>
+    <string name="math_number_range">Plage de nombres</string>
+    <string name="math_timer">Chronomètre</string>
+    <string name="math_problem_count">Nombre de problèmes</string>
+    <string name="math_start_game">Commencer</string>
+    <string name="math_paused">Pause</string>
+    <string name="math_resume">Reprendre</string>
+    <string name="math_quit">Quitter</string>
+    <string name="math_streak">Série : %d</string>
+    <string name="math_results_title">Résultats</string>
+    <string name="math_score">Score : %d</string>
+    <string name="math_accuracy">Précision : %d%%</string>
+    <string name="math_best_streak">Meilleure série : %d</string>
+    <string name="math_avg_speed">Vitesse moy. : %d ms</string>
+    <string name="math_play_again">Rejouer</string>
+    <string name="math_go_home">Retour à l\'accueil</string>
+
+    <!-- Avatar & Rewards -->
+    <string name="avatar_title">Dressing Avatar</string>
+    <string name="avatar_characters">Personnages</string>
+    <string name="avatar_hats">Chapeaux</string>
+    <string name="avatar_face">Visage</string>
+    <string name="avatar_outfit">Tenue</string>
+    <string name="avatar_pets">Animaux</string>
+    <string name="rewards_title">Boutique de récompenses</string>
+    <string name="rewards_tab_avatar">Avatar</string>
+    <string name="rewards_tab_themes">Thèmes</string>
+    <string name="rewards_tab_effects">Effets</string>
+    <string name="rewards_tab_titles">Titres</string>
+    <string name="rewards_purchase">Acheter</string>
+    <string name="rewards_purchase_confirm">Acheter %1$s pour %2$d étoiles ?</string>
+    <string name="rewards_owned">Possédé</string>
+    <string name="rewards_equip">Équiper</string>
+    <string name="rewards_equipped">Équipé</string>
+    <string name="rewards_insufficient_stars">Il te manque %d étoiles !</string>
+
+    <!-- Stats -->
+    <string name="stats_title">Progression</string>
+    <string name="stats_total_stars">Étoiles totales</string>
+    <string name="stats_day_streak">Jours de suite</string>
+    <string name="stats_total_sessions">Séances</string>
+    <string name="stats_weekly_chart">Cette semaine</string>
+    <string name="stats_dictee_accuracy">Précision en dictée</string>
+    <string name="stats_math_speed">Vitesse moy. calcul</string>
+    <string name="stats_improving">En progrès</string>
+    <string name="stats_declining">À pratiquer</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Paramètres</string>
+    <string name="settings_language">Langue</string>
+    <string name="settings_sound">Effets sonores</string>
+    <string name="settings_haptic">Retour haptique</string>
+    <string name="settings_daily_goal">Objectif quotidien</string>
+    <string name="settings_accent_strict">Accents stricts</string>
+    <string name="settings_accent_strict_desc">Exiger les accents exacts en dictée</string>
+    <string name="settings_theme">Thème</string>
+    <string name="settings_parent_zone">Zone parent</string>
+    <string name="settings_enter_pin">Entrer le code PIN</string>
+    <string name="settings_set_pin">Définir le code PIN</string>
+    <string name="settings_reset_app">Réinitialiser l\'app</string>
+    <string name="settings_reset_confirm">Tape RESET pour confirmer</string>
+    <string name="settings_avatar_closet">Dressing Avatar</string>
+    <string name="settings_stats">Voir la progression</string>
+    <string name="settings_backup">Sauvegarde &amp; Export</string>
+
+    <!-- Backup -->
+    <string name="backup_title">Sauvegarde &amp; Export</string>
+    <string name="backup_create">Créer une sauvegarde</string>
+    <string name="backup_restore">Restaurer une sauvegarde</string>
+    <string name="backup_export_pdf">Exporter en PDF</string>
+    <string name="backup_export_json">Exporter en JSON</string>
+    <string name="backup_export_csv">Exporter les listes en CSV</string>
+    <string name="backup_last_backup">Dernière sauvegarde : %s</string>
+    <string name="backup_auto_backup">Sauvegarde auto</string>
+    <string name="backup_success">Sauvegarde créée avec succès</string>
+    <string name="backup_restore_success">Données restaurées avec succès</string>
+    <string name="backup_restore_confirm">Cela remplacera toutes les données actuelles. Continuer ?</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_welcome">Bienvenue !</string>
+    <string name="onboarding_enter_name">Comment t\'appelles-tu ?</string>
+    <string name="onboarding_name_error">Entre ton prénom s\'il te plaît</string>
+    <string name="onboarding_choose_language">Choisis ta langue</string>
+    <string name="onboarding_choose_avatar">Crée ton avatar</string>
+    <string name="onboarding_choose_voice">Choisis une voix</string>
+    <string name="onboarding_next">Suivant</string>
+    <string name="onboarding_back">Retour</string>
+    <string name="onboarding_complete">C\'est parti !</string>
+
+    <!-- General -->
+    <string name="loading">Chargement…</string>
+    <string name="error_generic">Quelque chose s\'est mal passé. Réessaie.</string>
+    <string name="cancel">Annuler</string>
+    <string name="confirm">Confirmer</string>
+    <string name="ok">OK</string>
+    <string name="locked">Verrouillé</string>
+    <string name="stars">Étoiles</string>
+    <string name="points_earned">+%d</string>
+
+    <!-- Encouragement messages -->
+    <string name="encourage_1">Bravo !</string>
+    <string name="encourage_2">Tu es génial !</string>
+    <string name="encourage_3">Continue comme ça !</string>
+    <string name="encourage_4">Travail fantastique !</string>
+    <string name="encourage_5">Tu es une star !</string>
+    <string name="encourage_6">Super effort !</string>
+    <string name="encourage_7">Bien joué !</string>
+    <string name="encourage_8">Brillant !</string>
+    <string name="encourage_9">Formidable !</string>
+    <string name="encourage_10">Tu assures !</string>
+    <string name="encourage_wrong_1">Presque !</string>
+    <string name="encourage_wrong_2">Bel essai, réessaie !</string>
+    <string name="encourage_wrong_3">Continue d\'essayer !</string>
+    <string name="encourage_wrong_4">Si proche !</string>
+    <string name="encourage_wrong_5">N\'abandonne pas !</string>
+</resources>
