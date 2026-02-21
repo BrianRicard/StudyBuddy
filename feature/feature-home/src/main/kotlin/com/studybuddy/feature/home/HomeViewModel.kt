@@ -143,7 +143,7 @@ class HomeViewModel @Inject constructor(
 
                         _state.value.copy(
                             profileName = profile.name,
-                            avatarConfig = avatarConfig,
+                            avatarConfig = avatarConfig ?: AvatarConfig.default(),
                             totalStars = totalPoints,
                             dayStreak = streak,
                             weekDots = weekDots,
