@@ -16,7 +16,7 @@ interface PointsDao {
     fun getTotalPoints(profileId: String): Flow<Long>
 
     @Query(
-        "SELECT COUNT(*) FROM point_events WHERE profileId = :profileId " +
+        "SELECT COALESCE(SUM(points), 0) FROM point_events WHERE profileId = :profileId " +
             "AND timestamp >= :startOfDayMs"
     )
     fun getPointsToday(profileId: String, startOfDayMs: Long): Flow<Int>

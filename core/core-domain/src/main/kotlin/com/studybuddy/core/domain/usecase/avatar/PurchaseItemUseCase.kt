@@ -14,7 +14,7 @@ class PurchaseItemUseCase @Inject constructor(
         val totalPoints = pointsRepository.getTotalPoints(profileId).first()
         if (totalPoints < item.cost) {
             return PurchaseResult.InsufficientPoints(
-                needed = item.cost - totalPoints.toInt()
+                needed = item.cost.toLong() - totalPoints
             )
         }
         pointsRepository.deductPoints(profileId, item.cost, "Purchased: ${item.name}")
@@ -25,5 +25,5 @@ class PurchaseItemUseCase @Inject constructor(
 
 sealed interface PurchaseResult {
     data object Success : PurchaseResult
-    data class InsufficientPoints(val needed: Int) : PurchaseResult
+    data class InsufficientPoints(val needed: Long) : PurchaseResult
 }

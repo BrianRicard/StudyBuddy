@@ -78,7 +78,7 @@ class PurchaseItemUseCaseTest {
         val result = useCase(profileId = "profile1", item = testItem)
 
         assertTrue(result is PurchaseResult.InsufficientPoints)
-        assertEquals(20, (result as PurchaseResult.InsufficientPoints).needed)
+        assertEquals(20L, (result as PurchaseResult.InsufficientPoints).needed)
     }
 
     @Test
