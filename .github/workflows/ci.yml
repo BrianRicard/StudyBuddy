@@ -57,6 +57,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    permissions:
+      checks: write
     steps:
       - uses: actions/checkout@v4
 

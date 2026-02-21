@@ -27,6 +27,8 @@ pluginManagement {
                     useModule("io.gitlab.arturbosch.detekt:detekt-gradle-plugin:${requested.version}")
                 "org.jlleitschuh.gradle.ktlint" ->
                     useModule("org.jlleitschuh.gradle:ktlint-gradle:${requested.version}")
+                "com.github.ben-manes.versions" ->
+                    useModule("com.github.ben-manes:gradle-versions-plugin:${requested.version}")
             }
         }
     }

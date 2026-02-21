@@ -17,6 +17,7 @@ mockk = "1.13.14"
 kover = "0.9.0"
 detekt = "1.23.7"
 ktlint = "12.1.2"
+versions-plugin = "0.51.0"
 leakcanary = "2.14"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
@@ -119,3 +120,4 @@ room = { id = "androidx.room", version.ref = "room" }
 kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
