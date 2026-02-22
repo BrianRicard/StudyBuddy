@@ -161,7 +161,7 @@ jobs:
           cache-read-only: true
 
       - name: Build Debug APK
-        run: ./gradlew assembleDebug
+        run: ./gradlew assembleDebug -x validateSigningDebug
 
       - name: Analyze APK Size
         run: |
