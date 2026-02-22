@@ -5,15 +5,13 @@ import com.studybuddy.core.data.mapper.toDomain
 import com.studybuddy.core.data.mapper.toEntity
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.repository.MathRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
-class LocalMathRepository @Inject constructor(
-    private val dao: MathDao,
-) : MathRepository {
+class LocalMathRepository @Inject constructor(private val dao: MathDao) : MathRepository {
 
     override fun getSessionsForProfile(profileId: String): Flow<List<MathSession>> =
         dao.getSessionsForProfile(profileId).map { sessions -> sessions.map { it.toDomain() } }

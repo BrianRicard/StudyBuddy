@@ -4,16 +4,14 @@ import com.studybuddy.core.data.db.dao.AvatarDao
 import com.studybuddy.core.data.db.entity.AvatarConfigEntity
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.repository.AvatarRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class LocalAvatarRepository @Inject constructor(
-    private val dao: AvatarDao,
-) : AvatarRepository {
+class LocalAvatarRepository @Inject constructor(private val dao: AvatarDao) : AvatarRepository {
 
     override fun getAvatarConfig(profileId: String): Flow<AvatarConfig?> =
         dao.getAvatarConfig(profileId).map { entity ->
@@ -29,7 +27,10 @@ class LocalAvatarRepository @Inject constructor(
             }
         }
 
-    override suspend fun saveAvatarConfig(profileId: String, config: AvatarConfig) {
+    override suspend fun saveAvatarConfig(
+        profileId: String,
+        config: AvatarConfig,
+    ) {
         dao.insert(
             AvatarConfigEntity(
                 id = java.util.UUID.randomUUID().toString(),
@@ -41,7 +42,7 @@ class LocalAvatarRepository @Inject constructor(
                 petId = config.petId,
                 equippedTitle = config.equippedTitle,
                 updatedAt = Clock.System.now().toEpochMilliseconds(),
-            )
+            ),
         )
     }
 

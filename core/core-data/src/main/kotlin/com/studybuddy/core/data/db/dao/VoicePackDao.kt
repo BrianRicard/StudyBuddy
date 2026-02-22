@@ -19,5 +19,8 @@ interface VoicePackDao {
     suspend fun insert(voicePack: VoicePackEntity)
 
     @Query("UPDATE voice_packs SET status = :status WHERE id = :id")
-    suspend fun updateStatus(id: String, status: String)
+    suspend fun updateStatus(
+        id: String,
+        status: String,
+    )
 }

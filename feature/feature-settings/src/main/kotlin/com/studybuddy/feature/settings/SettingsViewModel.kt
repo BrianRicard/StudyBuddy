@@ -10,6 +10,7 @@ import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * UI state for the Settings screen.
@@ -297,7 +297,7 @@ class SettingsViewModel @Inject constructor(
         if (confirmText != RESET_CONFIRMATION_TEXT) {
             viewModelScope.launch {
                 _effects.emit(
-                    SettingsEffect.ShowToast("Type RESET to confirm")
+                    SettingsEffect.ShowToast("Type RESET to confirm"),
                 )
             }
             return
@@ -313,7 +313,7 @@ class SettingsViewModel @Inject constructor(
                 _effects.emit(SettingsEffect.AppReset)
             } catch (e: Exception) {
                 _effects.emit(
-                    SettingsEffect.ShowToast("Reset failed: ${e.message}")
+                    SettingsEffect.ShowToast("Reset failed: ${e.message}"),
                 )
             }
         }

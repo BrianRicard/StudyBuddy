@@ -10,11 +10,13 @@ import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.format.TextStyle
+import java.util.Locale
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
@@ -24,18 +26,11 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import java.time.format.TextStyle
-import java.util.Locale
-import javax.inject.Inject
 
 /**
  * Represents a single day's data in the weekly chart.
  */
-data class DayData(
-    val dayOfWeek: String,
-    val points: Int,
-    val isToday: Boolean,
-)
+data class DayData(val dayOfWeek: String, val points: Int, val isToday: Boolean)
 
 /**
  * UI state for the Stats / Progress screen.
@@ -177,9 +172,7 @@ class StatsViewModel @Inject constructor(
      * Calculates overall dictee accuracy from mastered vs total word counts across all lists.
      * Returns null if there are no words to measure.
      */
-    private fun calculateDicteeAccuracy(
-        lists: List<com.studybuddy.core.domain.model.DicteeList>,
-    ): Float? {
+    private fun calculateDicteeAccuracy(lists: List<com.studybuddy.core.domain.model.DicteeList>): Float? {
         val totalWords = lists.sumOf { it.wordCount }
         if (totalWords == 0) return null
         val totalMastered = lists.sumOf { it.masteredCount }
@@ -191,9 +184,7 @@ class StatsViewModel @Inject constructor(
      * against the older half. A positive value indicates improvement.
      * Returns null if there is insufficient data.
      */
-    private fun calculateDicteeAccuracyTrend(
-        lists: List<com.studybuddy.core.domain.model.DicteeList>,
-    ): Float? {
+    private fun calculateDicteeAccuracyTrend(lists: List<com.studybuddy.core.domain.model.DicteeList>): Float? {
         if (lists.size < MIN_LISTS_FOR_TREND) return null
 
         val sortedLists = lists.sortedBy { it.updatedAt }

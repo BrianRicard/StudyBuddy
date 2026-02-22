@@ -1,15 +1,12 @@
 package com.studybuddy.shared.points
 
-import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.PointsRepository
-import kotlinx.datetime.Clock
 import javax.inject.Inject
+import kotlinx.datetime.Clock
 
-class AwardPointsUseCase @Inject constructor(
-    private val repository: PointsRepository,
-) {
+class AwardPointsUseCase @Inject constructor(private val repository: PointsRepository) {
     suspend operator fun invoke(
         profileId: String,
         basePoints: Int,

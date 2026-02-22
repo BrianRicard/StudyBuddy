@@ -29,7 +29,12 @@ class StringExtensionsTest {
         "café, cafe, false, true",
         "café, cafe, true, false",
     )
-    fun `spelling comparison`(input: String, target: String, strict: Boolean, expected: Boolean) {
+    fun `spelling comparison`(
+        input: String,
+        target: String,
+        strict: Boolean,
+        expected: Boolean,
+    ) {
         assertEquals(expected, input.matchesWord(target, strict))
     }
 }

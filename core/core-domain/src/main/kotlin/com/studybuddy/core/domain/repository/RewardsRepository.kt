@@ -5,7 +5,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface RewardsRepository {
     fun getOwnedRewards(profileId: String): Flow<List<RewardItem>>
-    fun isRewardOwned(profileId: String, rewardId: String): Flow<Boolean>
-    suspend fun purchaseReward(profileId: String, reward: RewardItem)
+    fun isRewardOwned(
+        profileId: String,
+        rewardId: String,
+    ): Flow<Boolean>
+    suspend fun purchaseReward(
+        profileId: String,
+        reward: RewardItem,
+    )
     suspend fun sync()
 }

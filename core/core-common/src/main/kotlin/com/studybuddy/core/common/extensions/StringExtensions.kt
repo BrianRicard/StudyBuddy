@@ -9,7 +9,10 @@ import java.text.Normalizer
  * @param strict If true, accents must match exactly. If false, base characters are compared.
  * @return true if the strings match under the given strictness
  */
-fun String.matchesWord(target: String, strict: Boolean = false): Boolean {
+fun String.matchesWord(
+    target: String,
+    strict: Boolean = false,
+): Boolean {
     if (strict) return this.trim().equals(target.trim(), ignoreCase = true)
     return normalize(this) == normalize(target)
 }
@@ -17,7 +20,8 @@ fun String.matchesWord(target: String, strict: Boolean = false): Boolean {
 /**
  * Strips diacritical marks from a string using Unicode NFD normalization.
  */
-fun String.stripAccents(): String = normalize(this)
+fun String.stripAccents(): String =
+    normalize(this)
 
 private fun normalize(s: String): String =
     Normalizer.normalize(s, Normalizer.Form.NFD)

@@ -11,7 +11,7 @@ class AndroidComposeConventionPlugin : Plugin<Project> {
             }
 
             val libs = extensions.getByType(
-                org.gradle.api.artifacts.VersionCatalogsExtension::class.java
+                org.gradle.api.artifacts.VersionCatalogsExtension::class.java,
             ).named("libs")
 
             extensions.findByType(CommonExtension::class.java)?.apply {

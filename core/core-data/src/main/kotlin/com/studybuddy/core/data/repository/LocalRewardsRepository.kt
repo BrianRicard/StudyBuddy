@@ -5,16 +5,14 @@ import com.studybuddy.core.data.db.entity.OwnedRewardEntity
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.domain.repository.RewardsRepository
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.datetime.Clock
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class LocalRewardsRepository @Inject constructor(
-    private val dao: RewardsDao,
-) : RewardsRepository {
+class LocalRewardsRepository @Inject constructor(private val dao: RewardsDao) : RewardsRepository {
 
     override fun getOwnedRewards(profileId: String): Flow<List<RewardItem>> =
         dao.getOwnedRewards(profileId).map { entities ->
@@ -31,10 +29,16 @@ class LocalRewardsRepository @Inject constructor(
             }
         }
 
-    override fun isRewardOwned(profileId: String, rewardId: String): Flow<Boolean> =
+    override fun isRewardOwned(
+        profileId: String,
+        rewardId: String,
+    ): Flow<Boolean> =
         dao.isRewardOwned(profileId, rewardId)
 
-    override suspend fun purchaseReward(profileId: String, reward: RewardItem) {
+    override suspend fun purchaseReward(
+        profileId: String,
+        reward: RewardItem,
+    ) {
         dao.insert(
             OwnedRewardEntity(
                 id = java.util.UUID.randomUUID().toString(),
@@ -42,7 +46,7 @@ class LocalRewardsRepository @Inject constructor(
                 rewardId = reward.id,
                 category = reward.category.name,
                 purchasedAt = Clock.System.now().toEpochMilliseconds(),
-            )
+            ),
         )
     }
 

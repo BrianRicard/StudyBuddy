@@ -1,6 +1,5 @@
 package com.studybuddy.shared.points
 
-import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.InputMode
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test

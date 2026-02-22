@@ -10,6 +10,10 @@ import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,10 +22,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.concurrent.TimeUnit
-import javax.inject.Inject
 
 /**
  * Available export formats for user data.
@@ -70,9 +70,7 @@ sealed interface BackupExportIntent {
     data object ExportCsv : BackupExportIntent
     data object DismissStatus : BackupExportIntent
     data class SetAutoBackupEnabled(val enabled: Boolean) : BackupExportIntent
-    data class SetAutoBackupFrequency(
-        val frequency: AutoBackupFrequency,
-    ) : BackupExportIntent
+    data class SetAutoBackupFrequency(val frequency: AutoBackupFrequency) : BackupExportIntent
 }
 
 /**

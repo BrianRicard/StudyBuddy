@@ -4,9 +4,7 @@ import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
 import javax.inject.Inject
 
-class AddWordUseCase @Inject constructor(
-    private val repository: DicteeRepository,
-) {
+class AddWordUseCase @Inject constructor(private val repository: DicteeRepository) {
     suspend operator fun invoke(word: DicteeWord) {
         repository.addWord(word)
     }

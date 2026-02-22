@@ -23,29 +23,36 @@ object DatabaseModule {
             StudyBuddyDatabase::class.java,
             "studybuddy.db",
         )
-        .fallbackToDestructiveMigration()
-        .build()
+            .fallbackToDestructiveMigration()
+            .build()
 
     @Provides
-    fun provideProfileDao(db: StudyBuddyDatabase) = db.profileDao()
+    fun provideProfileDao(db: StudyBuddyDatabase) =
+        db.profileDao()
 
     @Provides
-    fun provideDicteeDao(db: StudyBuddyDatabase) = db.dicteeDao()
+    fun provideDicteeDao(db: StudyBuddyDatabase) =
+        db.dicteeDao()
 
     @Provides
-    fun provideMathDao(db: StudyBuddyDatabase) = db.mathDao()
+    fun provideMathDao(db: StudyBuddyDatabase) =
+        db.mathDao()
 
     @Provides
-    fun providePointsDao(db: StudyBuddyDatabase) = db.pointsDao()
+    fun providePointsDao(db: StudyBuddyDatabase) =
+        db.pointsDao()
 
     @Provides
-    fun provideAvatarDao(db: StudyBuddyDatabase) = db.avatarDao()
+    fun provideAvatarDao(db: StudyBuddyDatabase) =
+        db.avatarDao()
 
     @Provides
-    fun provideRewardsDao(db: StudyBuddyDatabase) = db.rewardsDao()
+    fun provideRewardsDao(db: StudyBuddyDatabase) =
+        db.rewardsDao()
 
     @Provides
-    fun provideVoicePackDao(db: StudyBuddyDatabase) = db.voicePackDao()
+    fun provideVoicePackDao(db: StudyBuddyDatabase) =
+        db.voicePackDao()
 
     @Provides
     @Singleton

@@ -17,6 +17,8 @@ import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.PointsCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,8 +30,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import java.util.UUID
-import javax.inject.Inject
 
 data class MathPlayState(
     val currentProblem: MathProblem? = null,
@@ -181,7 +181,10 @@ class MathPlayViewModel @Inject constructor(
         processAnswer(feedback, responseTime)
     }
 
-    private fun processAnswer(feedback: Feedback, responseTimeMs: Long) {
+    private fun processAnswer(
+        feedback: Feedback,
+        responseTimeMs: Long,
+    ) {
         viewModelScope.launch {
             val currentState = _state.value
             val isCorrect = feedback is Feedback.Correct

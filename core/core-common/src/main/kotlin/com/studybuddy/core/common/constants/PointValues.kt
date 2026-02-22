@@ -30,10 +30,11 @@ object PointValues {
      * Streak 10–19: ×2.0
      * Streak 20+:   ×3.0
      */
-    fun streakMultiplier(streak: Int): Double = when {
-        streak < 5 -> 1.0
-        streak < 10 -> 1.5
-        streak < 20 -> 2.0
-        else -> 3.0
-    }
+    fun streakMultiplier(streak: Int): Double =
+        when {
+            streak < 5 -> 1.0
+            streak < 10 -> 1.5
+            streak < 20 -> 2.0
+            else -> 3.0
+        }
 }

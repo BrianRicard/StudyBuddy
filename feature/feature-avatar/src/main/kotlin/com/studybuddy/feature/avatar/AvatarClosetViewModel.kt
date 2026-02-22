@@ -14,6 +14,7 @@ import com.studybuddy.core.domain.usecase.avatar.PurchaseResult
 import com.studybuddy.core.domain.usecase.avatar.UpdateAvatarUseCase
 import com.studybuddy.core.domain.usecase.points.GetTotalPointsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,7 +25,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * UI state for the Avatar Closet screen.
@@ -199,11 +199,12 @@ class AvatarClosetViewModel @Inject constructor(
     private fun applyItemToConfig(
         config: AvatarConfig,
         item: RewardItem,
-    ): AvatarConfig = when (item.category) {
-        RewardCategory.HAT -> config.copy(hatId = item.id)
-        RewardCategory.FACE -> config.copy(faceId = item.id)
-        RewardCategory.OUTFIT -> config.copy(outfitId = item.id)
-        RewardCategory.PET -> config.copy(petId = item.id)
-        else -> config
-    }
+    ): AvatarConfig =
+        when (item.category) {
+            RewardCategory.HAT -> config.copy(hatId = item.id)
+            RewardCategory.FACE -> config.copy(faceId = item.id)
+            RewardCategory.OUTFIT -> config.copy(outfitId = item.id)
+            RewardCategory.PET -> config.copy(petId = item.id)
+            else -> config
+        }
 }

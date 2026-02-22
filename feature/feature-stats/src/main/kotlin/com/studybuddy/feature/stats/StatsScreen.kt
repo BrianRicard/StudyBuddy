@@ -31,7 +31,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -49,9 +48,7 @@ import com.studybuddy.core.ui.theme.StreakOrange
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 @Composable
-fun StatsScreen(
-    viewModel: StatsViewModel = hiltViewModel(),
-) {
+fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     StatsContent(state = state)
@@ -195,10 +192,11 @@ private fun SummaryStatCard(
     }
 }
 
-private fun formatStarCount(stars: Long): String = when {
-    stars >= THOUSAND -> "%.1fk".format(stars / THOUSAND.toDouble())
-    else -> stars.toString()
-}
+private fun formatStarCount(stars: Long): String =
+    when {
+        stars >= THOUSAND -> "%.1fk".format(stars / THOUSAND.toDouble())
+        else -> stars.toString()
+    }
 
 // endregion
 

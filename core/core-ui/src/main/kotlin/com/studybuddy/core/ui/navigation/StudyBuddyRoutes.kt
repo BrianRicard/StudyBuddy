@@ -23,8 +23,10 @@ object StudyBuddyRoutes {
     const val POEMS = "poems"
     const val ONBOARDING = "onboarding"
 
-    fun dicteeWords(listId: String) = "dictee/words/$listId"
-    fun dicteePractice(listId: String) = "dictee/practice/$listId"
+    fun dicteeWords(listId: String) =
+        "dictee/words/$listId"
+    fun dicteePractice(listId: String) =
+        "dictee/practice/$listId"
 
     fun mathPlay(
         operators: String,
@@ -32,7 +34,8 @@ object StudyBuddyRoutes {
         rangeMax: Int,
         timerSeconds: Int,
         problemCount: Int,
-    ) = "math/play/$operators/$rangeMin/$rangeMax/$timerSeconds/$problemCount"
+    ) =
+        "math/play/$operators/$rangeMin/$rangeMax/$timerSeconds/$problemCount"
 
     fun mathResults(
         totalProblems: Int,
@@ -43,6 +46,7 @@ object StudyBuddyRoutes {
         operators: String,
         rangeMin: Int,
         rangeMax: Int,
-    ) = "math/results/$totalProblems/$correctCount/$bestStreak/$avgResponseMs" +
-        "/$sessionScore/$operators/$rangeMin/$rangeMax"
+    ) =
+        "math/results/$totalProblems/$correctCount/$bestStreak/$avgResponseMs" +
+            "/$sessionScore/$operators/$rangeMin/$rangeMax"
 }

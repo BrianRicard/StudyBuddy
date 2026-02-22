@@ -383,8 +383,9 @@ private fun ItemCard(
             containerColor = when {
                 isEquipped -> CorrectGreen.copy(alpha = 0.1f)
                 isOwned -> MaterialTheme.colorScheme.surface
-                else -> MaterialTheme.colorScheme.surfaceVariant
-                    .copy(alpha = 0.5f)
+                else ->
+                    MaterialTheme.colorScheme.surfaceVariant
+                        .copy(alpha = 0.5f)
             },
         ),
         elevation = CardDefaults.cardElevation(

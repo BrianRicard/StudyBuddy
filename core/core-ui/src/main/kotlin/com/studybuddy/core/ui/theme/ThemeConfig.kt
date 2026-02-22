@@ -6,7 +6,8 @@ enum class ThemeConfig(val displayName: String) {
     Forest("Forest"),
     Galaxy("Galaxy"),
     Candy("Candy"),
-    Arctic("Arctic");
+    Arctic("Arctic"),
+    ;
 
     companion object {
         fun fromId(id: String): ThemeConfig =

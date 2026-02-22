@@ -13,7 +13,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             }
 
             val libs = extensions.getByType(
-                org.gradle.api.artifacts.VersionCatalogsExtension::class.java
+                org.gradle.api.artifacts.VersionCatalogsExtension::class.java,
             ).named("libs")
 
             dependencies {

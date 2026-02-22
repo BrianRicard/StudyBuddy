@@ -8,7 +8,7 @@ class JvmTestConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             val libs = extensions.getByType(
-                org.gradle.api.artifacts.VersionCatalogsExtension::class.java
+                org.gradle.api.artifacts.VersionCatalogsExtension::class.java,
             ).named("libs")
 
             tasks.withType<Test> {

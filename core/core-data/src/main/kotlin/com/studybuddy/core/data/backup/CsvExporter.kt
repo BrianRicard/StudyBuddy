@@ -5,9 +5,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class CsvExporter @Inject constructor(
-    private val database: StudyBuddyDatabase,
-) {
+class CsvExporter @Inject constructor(private val database: StudyBuddyDatabase) {
     suspend fun exportWordLists(profileId: String): String {
         val lists = database.dicteeDao().getAllLists().filter { it.profileId == profileId }
         val allWords = database.dicteeDao().getAllWords()
@@ -28,11 +26,10 @@ class CsvExporter @Inject constructor(
         return sb.toString()
     }
 
-    private fun escapeCsv(value: String): String {
-        return if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
+    private fun escapeCsv(value: String): String =
+        if (value.contains(",") || value.contains("\"") || value.contains("\n")) {
             "\"${value.replace("\"", "\"\"")}\""
         } else {
             value
         }
-    }
 }

@@ -15,8 +15,8 @@ class AutoBackupWorker @AssistedInject constructor(
     private val createBackupUseCase: CreateBackupUseCase,
 ) : CoroutineWorker(appContext, workerParams) {
 
-    override suspend fun doWork(): Result {
-        return try {
+    override suspend fun doWork(): Result =
+        try {
             createBackupUseCase()
             Result.success()
         } catch (e: Exception) {
@@ -26,7 +26,6 @@ class AutoBackupWorker @AssistedInject constructor(
                 Result.failure()
             }
         }
-    }
 
     companion object {
         private const val MAX_RETRIES = 3

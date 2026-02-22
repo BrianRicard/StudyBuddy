@@ -75,9 +75,7 @@ import com.studybuddy.core.ui.theme.SunsetColorScheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun RewardsShopScreen(
-    viewModel: RewardsShopViewModel = hiltViewModel(),
-) {
+fun RewardsShopScreen(viewModel: RewardsShopViewModel = hiltViewModel()) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -291,10 +289,7 @@ private fun AvatarTabContent(
     }
 }
 
-private data class AvatarSection(
-    val title: String,
-    val items: List<RewardItem>,
-)
+private data class AvatarSection(val title: String, val items: List<RewardItem>)
 
 @Composable
 private fun AvatarItemCard(

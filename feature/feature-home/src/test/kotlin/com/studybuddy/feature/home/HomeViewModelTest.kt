@@ -75,12 +75,13 @@ class HomeViewModelTest {
         every { settingsRepository.getDailyGoal() } returns flowOf(dailyGoal)
     }
 
-    private fun createViewModel() = HomeViewModel(
-        profileRepository = profileRepository,
-        avatarRepository = avatarRepository,
-        pointsRepository = pointsRepository,
-        settingsRepository = settingsRepository,
-    )
+    private fun createViewModel() =
+        HomeViewModel(
+            profileRepository = profileRepository,
+            avatarRepository = avatarRepository,
+            pointsRepository = pointsRepository,
+            settingsRepository = settingsRepository,
+        )
 
     @Test
     fun `initial state is loading`() {
@@ -90,159 +91,172 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `loads profile data from repositories`() = runTest {
-        setupDefaultMocks(totalPoints = 250L)
-        val viewModel = createViewModel()
-        advanceUntilIdle()
+    fun `loads profile data from repositories`() =
+        runTest {
+            setupDefaultMocks(totalPoints = 250L)
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        val state = viewModel.state.value
-        assertEquals("Test Kid", state.profileName)
-        assertEquals(250L, state.totalStars)
-        assertFalse(state.isLoading)
-    }
-
-    @Test
-    fun `loads settings from repository`() = runTest {
-        setupDefaultMocks(locale = "fr", dailyGoal = 10)
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertEquals("fr", state.locale)
-        assertEquals(10, state.dailyGoal)
-    }
-
-    @Test
-    fun `daily progress is calculated correctly`() = runTest {
-        setupDefaultMocks(sessionsToday = 3, dailyGoal = 5)
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        val state = viewModel.state.value
-        assertEquals(3, state.sessionsToday)
-        assertEquals(0.6f, state.dailyProgress, 0.01f)
-        assertFalse(state.isDailyGoalReached)
-    }
-
-    @Test
-    fun `daily goal reached when sessions meet target`() = runTest {
-        setupDefaultMocks(sessionsToday = 5, dailyGoal = 5)
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        assertTrue(viewModel.state.value.isDailyGoalReached)
-    }
-
-    @Test
-    fun `navigate intent emits correct effect`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.effects.test {
-            viewModel.onIntent(HomeIntent.NavigateToDictee)
-            assertEquals(HomeEffect.OpenDictee, awaitItem())
+            val state = viewModel.state.value
+            assertEquals("Test Kid", state.profileName)
+            assertEquals(250L, state.totalStars)
+            assertFalse(state.isLoading)
         }
-    }
 
     @Test
-    fun `navigate to math emits OpenMath effect`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-        advanceUntilIdle()
+    fun `loads settings from repository`() =
+        runTest {
+            setupDefaultMocks(locale = "fr", dailyGoal = 10)
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        viewModel.effects.test {
-            viewModel.onIntent(HomeIntent.NavigateToMath)
-            assertEquals(HomeEffect.OpenMath, awaitItem())
+            val state = viewModel.state.value
+            assertEquals("fr", state.locale)
+            assertEquals(10, state.dailyGoal)
         }
-    }
 
     @Test
-    fun `navigate to avatar emits OpenAvatar effect`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-        advanceUntilIdle()
+    fun `daily progress is calculated correctly`() =
+        runTest {
+            setupDefaultMocks(sessionsToday = 3, dailyGoal = 5)
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        viewModel.effects.test {
-            viewModel.onIntent(HomeIntent.NavigateToAvatar)
-            assertEquals(HomeEffect.OpenAvatar, awaitItem())
+            val state = viewModel.state.value
+            assertEquals(3, state.sessionsToday)
+            assertEquals(0.6f, state.dailyProgress, 0.01f)
+            assertFalse(state.isDailyGoalReached)
         }
-    }
 
     @Test
-    fun `buildGreeting returns French greetings for fr locale`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
+    fun `daily goal reached when sessions meet target`() =
+        runTest {
+            setupDefaultMocks(sessionsToday = 5, dailyGoal = 5)
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        val greeting = viewModel.buildGreeting("fr")
-        assertTrue(
-            greeting in listOf("Bonjour", "Bon après-midi", "Bonsoir"),
-            "French greeting should be one of the expected values, got: $greeting",
-        )
-    }
+            assertTrue(viewModel.state.value.isDailyGoalReached)
+        }
 
     @Test
-    fun `buildGreeting returns English greetings for en locale`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
+    fun `navigate intent emits correct effect`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        val greeting = viewModel.buildGreeting("en")
-        assertTrue(
-            greeting in listOf("Good morning", "Good afternoon", "Good evening"),
-            "English greeting should be one of the expected values, got: $greeting",
-        )
-    }
-
-    @Test
-    fun `buildGreeting returns German greetings for de locale`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-
-        val greeting = viewModel.buildGreeting("de")
-        assertTrue(
-            greeting in listOf("Guten Morgen", "Guten Tag", "Guten Abend"),
-            "German greeting should be one of the expected values, got: $greeting",
-        )
-    }
+            viewModel.effects.test {
+                viewModel.onIntent(HomeIntent.NavigateToDictee)
+                assertEquals(HomeEffect.OpenDictee, awaitItem())
+            }
+        }
 
     @Test
-    fun `calculateDayStreak returns 0 for empty events`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
+    fun `navigate to math emits OpenMath effect`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+            advanceUntilIdle()
 
-        val streak = viewModel.calculateDayStreak(
-            emptyList(),
-            kotlinx.datetime.TimeZone.currentSystemDefault(),
-        )
-        assertEquals(0, streak)
-    }
+            viewModel.effects.test {
+                viewModel.onIntent(HomeIntent.NavigateToMath)
+                assertEquals(HomeEffect.OpenMath, awaitItem())
+            }
+        }
 
     @Test
-    fun `recent activities limited to 5 items`() = runTest {
-        val now = Clock.System.now()
-        val events = (1..10).map { i ->
-            PointEvent(
-                id = "event_$i",
-                profileId = "test-id",
-                source = PointSource.MATH,
-                points = 10,
-                reason = "Problem $i",
-                timestamp = now - kotlin.time.Duration.parse("${i}m"),
+    fun `navigate to avatar emits OpenAvatar effect`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+
+            viewModel.effects.test {
+                viewModel.onIntent(HomeIntent.NavigateToAvatar)
+                assertEquals(HomeEffect.OpenAvatar, awaitItem())
+            }
+        }
+
+    @Test
+    fun `buildGreeting returns French greetings for fr locale`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+
+            val greeting = viewModel.buildGreeting("fr")
+            assertTrue(
+                greeting in listOf("Bonjour", "Bon après-midi", "Bonsoir"),
+                "French greeting should be one of the expected values, got: $greeting",
             )
         }
-        setupDefaultMocks(pointEvents = events)
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        assertTrue(viewModel.state.value.recentActivities.size <= 5)
-    }
 
     @Test
-    fun `week dots has 7 entries`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-        advanceUntilIdle()
+    fun `buildGreeting returns English greetings for en locale`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
 
-        assertEquals(7, viewModel.state.value.weekDots.size)
-    }
+            val greeting = viewModel.buildGreeting("en")
+            assertTrue(
+                greeting in listOf("Good morning", "Good afternoon", "Good evening"),
+                "English greeting should be one of the expected values, got: $greeting",
+            )
+        }
+
+    @Test
+    fun `buildGreeting returns German greetings for de locale`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+
+            val greeting = viewModel.buildGreeting("de")
+            assertTrue(
+                greeting in listOf("Guten Morgen", "Guten Tag", "Guten Abend"),
+                "German greeting should be one of the expected values, got: $greeting",
+            )
+        }
+
+    @Test
+    fun `calculateDayStreak returns 0 for empty events`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+
+            val streak = viewModel.calculateDayStreak(
+                emptyList(),
+                kotlinx.datetime.TimeZone.currentSystemDefault(),
+            )
+            assertEquals(0, streak)
+        }
+
+    @Test
+    fun `recent activities limited to 5 items`() =
+        runTest {
+            val now = Clock.System.now()
+            val events = (1..10).map { i ->
+                PointEvent(
+                    id = "event_$i",
+                    profileId = "test-id",
+                    source = PointSource.MATH,
+                    points = 10,
+                    reason = "Problem $i",
+                    timestamp = now - kotlin.time.Duration.parse("${i}m"),
+                )
+            }
+            setupDefaultMocks(pointEvents = events)
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value.recentActivities.size <= 5)
+        }
+
+    @Test
+    fun `week dots has 7 entries`() =
+        runTest {
+            setupDefaultMocks()
+            val viewModel = createViewModel()
+            advanceUntilIdle()
+
+            assertEquals(7, viewModel.state.value.weekDots.size)
+        }
 }

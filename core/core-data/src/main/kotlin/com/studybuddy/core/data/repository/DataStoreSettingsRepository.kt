@@ -11,17 +11,16 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.repository.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 
 @Singleton
-class DataStoreSettingsRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
-) : SettingsRepository {
+class DataStoreSettingsRepository @Inject constructor(@ApplicationContext private val context: Context) :
+    SettingsRepository {
 
     private object Keys {
         val APP_LOCALE = stringPreferencesKey("app_locale")

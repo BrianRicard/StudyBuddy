@@ -2,7 +2,6 @@ package com.studybuddy.core.ui.modifier
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -23,10 +22,11 @@ fun Modifier.accessibleClickable(
     label: String,
     role: Role = Role.Button,
     onClick: () -> Unit,
-): Modifier = this
-    .defaultMinSize(minWidth = MinTouchTarget, minHeight = MinTouchTarget)
-    .semantics {
-        contentDescription = label
-        this.role = role
-    }
-    .clickable(onClick = onClick)
+): Modifier =
+    this
+        .defaultMinSize(minWidth = MinTouchTarget, minHeight = MinTouchTarget)
+        .semantics {
+            contentDescription = label
+            this.role = role
+        }
+        .clickable(onClick = onClick)

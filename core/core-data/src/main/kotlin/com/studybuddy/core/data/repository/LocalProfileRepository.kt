@@ -5,15 +5,13 @@ import com.studybuddy.core.data.mapper.toDomain
 import com.studybuddy.core.data.mapper.toEntity
 import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.repository.ProfileRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
-class LocalProfileRepository @Inject constructor(
-    private val dao: ProfileDao,
-) : ProfileRepository {
+class LocalProfileRepository @Inject constructor(private val dao: ProfileDao) : ProfileRepository {
 
     override fun getProfile(id: String): Flow<Profile?> =
         dao.getProfile(id).map { it?.toDomain() }

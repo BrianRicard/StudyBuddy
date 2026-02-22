@@ -9,11 +9,11 @@ import com.studybuddy.core.data.db.entity.MathSessionEntity
 import com.studybuddy.core.data.db.entity.OwnedRewardEntity
 import com.studybuddy.core.data.db.entity.PointEventEntity
 import com.studybuddy.core.data.db.entity.ProfileEntity
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Serializable
 data class BackupData(
@@ -112,9 +112,7 @@ data class OwnedRewardBackup(
 )
 
 @Singleton
-class BackupManager @Inject constructor(
-    private val database: StudyBuddyDatabase,
-) {
+class BackupManager @Inject constructor(private val database: StudyBuddyDatabase) {
     private val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true

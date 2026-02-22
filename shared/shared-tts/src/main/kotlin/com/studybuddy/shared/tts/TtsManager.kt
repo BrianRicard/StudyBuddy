@@ -7,20 +7,18 @@ import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.VoicePack
 import com.studybuddy.core.domain.model.VoicePackStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Locale
+import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flow
-import java.util.Locale
-import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 
 @Singleton
-class TtsManager @Inject constructor(
-    @ApplicationContext private val context: Context,
-) {
+class TtsManager @Inject constructor(@ApplicationContext private val context: Context) {
     private var tts: TextToSpeech? = null
     private val _state = MutableStateFlow<TtsState>(TtsState.Initializing)
     val state: StateFlow<TtsState> = _state.asStateFlow()
@@ -47,13 +45,20 @@ class TtsManager @Inject constructor(
                 _state.value = TtsState.Error("TTS playback error")
             }
 
-            override fun onError(utteranceId: String?, errorCode: Int) {
+            override fun onError(
+                utteranceId: String?,
+                errorCode: Int,
+            ) {
                 _state.value = TtsState.Error("TTS playback error: $errorCode")
             }
         })
     }
 
-    fun speak(text: String, locale: Locale, speed: Float = SPEED_NORMAL) {
+    fun speak(
+        text: String,
+        locale: Locale,
+        speed: Float = SPEED_NORMAL,
+    ) {
         val engine = tts ?: return
         engine.language = locale
         engine.setSpeechRate(speed)
@@ -100,28 +105,29 @@ class TtsManager @Inject constructor(
         }
     }
 
-    fun downloadVoice(locale: Locale): Flow<DownloadProgress> = flow {
-        // Voice download is handled by the system TTS engine.
-        // We emit progress updates based on the locale availability check.
-        emit(DownloadProgress(locale = locale.language))
-        val engine = tts
-        if (engine == null) {
-            emit(DownloadProgress(locale = locale.language, error = "TTS not initialized"))
-            return@flow
+    fun downloadVoice(locale: Locale): Flow<DownloadProgress> =
+        flow {
+            // Voice download is handled by the system TTS engine.
+            // We emit progress updates based on the locale availability check.
+            emit(DownloadProgress(locale = locale.language))
+            val engine = tts
+            if (engine == null) {
+                emit(DownloadProgress(locale = locale.language, error = "TTS not initialized"))
+                return@flow
+            }
+            // Trigger system voice data install intent
+            val available = engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE
+            if (available) {
+                emit(DownloadProgress(locale = locale.language, isComplete = true))
+            } else {
+                emit(
+                    DownloadProgress(
+                        locale = locale.language,
+                        error = "Voice not available. Please install via system settings.",
+                    ),
+                )
+            }
         }
-        // Trigger system voice data install intent
-        val available = engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE
-        if (available) {
-            emit(DownloadProgress(locale = locale.language, isComplete = true))
-        } else {
-            emit(
-                DownloadProgress(
-                    locale = locale.language,
-                    error = "Voice not available. Please install via system settings.",
-                ),
-            )
-        }
-    }
 
     companion object {
         const val SPEED_NORMAL = 1.0f

@@ -40,7 +40,10 @@ object PointsCalculator {
         return bonus
     }
 
-    fun applyMultiplier(basePoints: Int, streak: Int): Int {
+    fun applyMultiplier(
+        basePoints: Int,
+        streak: Int,
+    ): Int {
         val multiplier = PointValues.streakMultiplier(streak)
         return (basePoints * multiplier).toInt()
     }

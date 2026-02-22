@@ -13,7 +13,10 @@ interface RewardsDao {
     fun getOwnedRewards(profileId: String): Flow<List<OwnedRewardEntity>>
 
     @Query("SELECT EXISTS(SELECT 1 FROM owned_rewards WHERE profileId = :profileId AND rewardId = :rewardId)")
-    fun isRewardOwned(profileId: String, rewardId: String): Flow<Boolean>
+    fun isRewardOwned(
+        profileId: String,
+        rewardId: String,
+    ): Flow<Boolean>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(reward: OwnedRewardEntity)

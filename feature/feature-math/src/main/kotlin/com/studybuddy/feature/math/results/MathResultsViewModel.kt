@@ -12,14 +12,14 @@ import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.PointsCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.UUID
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import java.util.UUID
-import javax.inject.Inject
 
 data class MathResultsState(
     val totalProblems: Int = 0,

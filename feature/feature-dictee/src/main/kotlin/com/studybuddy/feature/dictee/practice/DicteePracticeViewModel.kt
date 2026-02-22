@@ -18,6 +18,7 @@ import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,8 +28,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.util.UUID
-import javax.inject.Inject
 
 @HiltViewModel
 class DicteePracticeViewModel @Inject constructor(

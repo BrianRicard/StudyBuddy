@@ -11,6 +11,7 @@ import com.studybuddy.core.domain.usecase.avatar.PurchaseItemUseCase
 import com.studybuddy.core.domain.usecase.avatar.PurchaseResult
 import com.studybuddy.core.domain.usecase.points.GetTotalPointsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -19,7 +20,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Represents the currently selected tab in the Rewards Shop.

@@ -104,9 +104,9 @@ private fun MathSetupContent(
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor =
-                                MaterialTheme.colorScheme.primaryContainer,
+                            MaterialTheme.colorScheme.primaryContainer,
                             selectedLabelColor =
-                                MaterialTheme.colorScheme.onPrimaryContainer,
+                            MaterialTheme.colorScheme.onPrimaryContainer,
                         ),
                     )
                 }

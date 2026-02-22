@@ -26,8 +26,11 @@ fun CorrectAnswerAnimation(
     )
 
     val bgColor by animateColorAsState(
-        targetValue = if (isCorrect) CorrectGreen.copy(alpha = 0.1f)
-        else androidx.compose.ui.graphics.Color.Transparent,
+        targetValue = if (isCorrect) {
+            CorrectGreen.copy(alpha = 0.1f)
+        } else {
+            androidx.compose.ui.graphics.Color.Transparent
+        },
         label = "correctBg",
     )
 

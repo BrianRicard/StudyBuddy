@@ -6,15 +6,13 @@ import com.studybuddy.core.data.mapper.toEntity
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
-class LocalDicteeRepository @Inject constructor(
-    private val dao: DicteeDao,
-) : DicteeRepository {
+class LocalDicteeRepository @Inject constructor(private val dao: DicteeDao) : DicteeRepository {
 
     override fun getListsForProfile(profileId: String): Flow<List<DicteeList>> =
         dao.getListsForProfile(profileId).map { lists -> lists.map { it.toDomain() } }

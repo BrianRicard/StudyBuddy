@@ -5,6 +5,9 @@ import kotlinx.coroutines.flow.Flow
 
 interface AvatarRepository {
     fun getAvatarConfig(profileId: String): Flow<AvatarConfig?>
-    suspend fun saveAvatarConfig(profileId: String, config: AvatarConfig)
+    suspend fun saveAvatarConfig(
+        profileId: String,
+        config: AvatarConfig,
+    )
     suspend fun sync()
 }

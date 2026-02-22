@@ -5,12 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
-import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,22 +24,15 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
-import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import javax.inject.Inject
 
 /**
  * Represents a recent activity entry on the home screen.
  */
-data class RecentActivity(
-    val mode: String,
-    val points: Int,
-    val reason: String,
-    val timeAgo: String,
-)
+data class RecentActivity(val mode: String, val points: Int, val reason: String, val timeAgo: String)
 
 /**
  * UI state for the Home screen.

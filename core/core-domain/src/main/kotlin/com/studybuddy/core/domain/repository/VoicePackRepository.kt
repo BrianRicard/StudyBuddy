@@ -7,6 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface VoicePackRepository {
     fun getVoicePacks(): Flow<List<VoicePack>>
     fun getVoicePack(id: String): Flow<VoicePack?>
-    suspend fun updateVoicePackStatus(id: String, status: VoicePackStatus)
+    suspend fun updateVoicePackStatus(
+        id: String,
+        status: VoicePackStatus,
+    )
     suspend fun sync()
 }

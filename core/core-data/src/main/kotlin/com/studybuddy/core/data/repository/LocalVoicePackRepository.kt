@@ -4,15 +4,13 @@ import com.studybuddy.core.data.db.dao.VoicePackDao
 import com.studybuddy.core.domain.model.VoicePack
 import com.studybuddy.core.domain.model.VoicePackStatus
 import com.studybuddy.core.domain.repository.VoicePackRepository
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 @Singleton
-class LocalVoicePackRepository @Inject constructor(
-    private val dao: VoicePackDao,
-) : VoicePackRepository {
+class LocalVoicePackRepository @Inject constructor(private val dao: VoicePackDao) : VoicePackRepository {
 
     override fun getVoicePacks(): Flow<List<VoicePack>> =
         dao.getAll().map { packs ->
@@ -44,7 +42,10 @@ class LocalVoicePackRepository @Inject constructor(
             }
         }
 
-    override suspend fun updateVoicePackStatus(id: String, status: VoicePackStatus) {
+    override suspend fun updateVoicePackStatus(
+        id: String,
+        status: VoicePackStatus,
+    ) {
         dao.updateStatus(id, status.name)
     }
 
