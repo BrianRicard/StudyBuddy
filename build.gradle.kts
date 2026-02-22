@@ -11,6 +11,10 @@ plugins {
     alias(libs.plugins.detekt)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.versions)
+    alias(libs.plugins.dependency.check)
+    alias(libs.plugins.licensee) apply false
+    alias(libs.plugins.google.services) apply false
+    alias(libs.plugins.firebase.crashlytics) apply false
 }
 
 kover {
@@ -23,6 +27,16 @@ detekt {
     config.setFrom("$rootDir/detekt.yml")
     buildUponDefaultConfig = true
     parallel = true
+}
+
+dependencyCheck {
+    formats = listOf("HTML", "JSON", "SARIF")
+    failBuildOnCVSS = 7.0f
+    suppressionFile = "$rootDir/owasp-suppressions.xml"
+    analyzers.assemblyEnabled = false
+    analyzers.nuspecEnabled = false
+    analyzers.nugetconfEnabled = false
+    nvd.apiKey = System.getenv("NVD_API_KEY") ?: ""
 }
 
 subprojects {

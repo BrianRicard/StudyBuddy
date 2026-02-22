@@ -296,46 +296,57 @@ class MathPlayViewModel @Inject constructor(
         stopTimer()
 
         viewModelScope.launch {
-            val finalScore = PointsCalculator.calculateMathPoints(
-                correctCount = correctCount,
-                streak = bestStreak,
-            )
-
-            val awarded = awardPoints(
-                profileId = profileId,
-                basePoints = finalScore,
-                streak = bestStreak,
-                source = PointSource.MATH,
-                reason = "Math session: $correctCount/$totalProblems correct",
-            )
-
-            val avgResponseMs = if (responseTimes.isNotEmpty()) {
-                responseTimes.average().toLong()
-            } else {
-                0L
-            }
-
-            val session = MathSession(
-                id = UUID.randomUUID().toString(),
-                profileId = profileId,
-                operators = operators,
-                numberRange = numberRange,
-                totalProblems = totalProblems,
-                correctCount = correctCount,
-                bestStreak = bestStreak,
-                avgResponseMs = avgResponseMs,
-                difficulty = difficulty,
-                completedAt = Clock.System.now(),
-            )
-            saveMathSession(session)
-
-            _state.update {
-                it.copy(
-                    isComplete = true,
-                    problemsCompleted = totalProblems,
-                    pointsAwarded = awarded,
-                    feedback = null,
+            try {
+                val finalScore = PointsCalculator.calculateMathPoints(
+                    correctCount = correctCount,
+                    streak = bestStreak,
                 )
+
+                val avgResponseMs = if (responseTimes.isNotEmpty()) {
+                    responseTimes.average().toLong()
+                } else {
+                    0L
+                }
+
+                val session = MathSession(
+                    id = UUID.randomUUID().toString(),
+                    profileId = profileId,
+                    operators = operators,
+                    numberRange = numberRange,
+                    totalProblems = totalProblems,
+                    correctCount = correctCount,
+                    bestStreak = bestStreak,
+                    avgResponseMs = avgResponseMs,
+                    difficulty = difficulty,
+                    completedAt = Clock.System.now(),
+                )
+                saveMathSession(session)
+
+                val awarded = awardPoints(
+                    profileId = profileId,
+                    basePoints = finalScore,
+                    streak = bestStreak,
+                    source = PointSource.MATH,
+                    reason = "Math session: $correctCount/$totalProblems correct",
+                )
+
+                _state.update {
+                    it.copy(
+                        isComplete = true,
+                        problemsCompleted = totalProblems,
+                        pointsAwarded = awarded,
+                        feedback = null,
+                    )
+                }
+            } catch (_: Exception) {
+                _state.update {
+                    it.copy(
+                        isComplete = true,
+                        problemsCompleted = totalProblems,
+                        pointsAwarded = 0,
+                        feedback = null,
+                    )
+                }
             }
 
             _effects.emit(MathPlayEffect.GameComplete)

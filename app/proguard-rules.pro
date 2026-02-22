@@ -14,3 +14,7 @@
 -keepclassmembers class kotlinx.serialization.json.** {
     *** Companion;
 }
+
+# Firebase Crashlytics
+-keepattributes SourceFile,LineNumberTable
+-keep public class * extends java.lang.Exception

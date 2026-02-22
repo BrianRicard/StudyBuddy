@@ -26,6 +26,14 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
                 }
 
+                lint {
+                    lintConfig = rootProject.file("lint.xml")
+                    xmlReport = true
+                    htmlReport = true
+                    sarifReport = true
+                    checkDependencies = true
+                }
+
                 compileOptions {
                     sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
                     targetCompatibility = org.gradle.api.JavaVersion.VERSION_17

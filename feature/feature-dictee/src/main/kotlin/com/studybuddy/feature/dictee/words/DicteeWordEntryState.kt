@@ -9,6 +9,7 @@ data class DicteeWordEntryState(
     val isLoading: Boolean = true,
     val newWordText: String = "",
     val isEditMode: Boolean = false,
+    val errorMessage: String? = null,
 )
 
 sealed interface DicteeWordEntryIntent {
@@ -20,9 +21,11 @@ sealed interface DicteeWordEntryIntent {
     data class PlayWord(val word: String) : DicteeWordEntryIntent
     data object ToggleEditMode : DicteeWordEntryIntent
     data object StartPractice : DicteeWordEntryIntent
+    data object DismissError : DicteeWordEntryIntent
 }
 
 sealed interface DicteeWordEntryEffect {
     data class NavigateToPractice(val listId: String) : DicteeWordEntryEffect
     data class ShowUndoSnackbar(val word: DicteeWord) : DicteeWordEntryEffect
+    data class ShowError(val message: String) : DicteeWordEntryEffect
 }

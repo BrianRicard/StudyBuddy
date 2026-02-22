@@ -7,6 +7,7 @@ import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.AddWordUseCase
 import com.studybuddy.shared.tts.TtsManager
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -181,5 +182,46 @@ class DicteeWordEntryViewModelTest {
 
             expectNoEvents()
         }
+    }
+
+    @Test
+    fun `add word failure sets error state`() = runTest {
+        coEvery { addWordUseCase(any()) } throws RuntimeException("DB error")
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("oiseau"))
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeWordEntryIntent.AddWord)
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeWordEntryEffect.ShowError)
+
+            val state = viewModel.state.value
+            assertEquals("Could not add word. Please try again.", state.errorMessage)
+        }
+    }
+
+    @Test
+    fun `dismiss error clears error message`() = runTest {
+        coEvery { addWordUseCase(any()) } throws RuntimeException("DB error")
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("test"))
+        viewModel.onIntent(DicteeWordEntryIntent.AddWord)
+        advanceUntilIdle()
+
+        assertEquals("Could not add word. Please try again.", viewModel.state.value.errorMessage)
+
+        viewModel.onIntent(DicteeWordEntryIntent.DismissError)
+        advanceUntilIdle()
+
+        assertEquals(null, viewModel.state.value.errorMessage)
     }
 }

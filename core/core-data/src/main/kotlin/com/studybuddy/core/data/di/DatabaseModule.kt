@@ -2,7 +2,10 @@ package com.studybuddy.core.data.di
 
 import android.content.Context
 import androidx.room.Room
+import androidx.room.RoomDatabase
+import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.WorkManager
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.data.db.StudyBuddyDatabase
 import dagger.Module
 import dagger.Provides
@@ -22,6 +25,24 @@ object DatabaseModule {
         StudyBuddyDatabase::class.java,
         "studybuddy.db",
     )
+        .addCallback(
+            object : RoomDatabase.Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    val now = System.currentTimeMillis()
+                    db.execSQL(
+                        """
+                        INSERT OR IGNORE INTO profiles (id, name, locale, totalPoints,
+                            bodyId, hatId, faceId, outfitId, petId, equippedTitle,
+                            createdAt, updatedAt)
+                        VALUES ('${AppConstants.DEFAULT_PROFILE_ID}', 'StudyBuddy',
+                            'en', 0, 'fox', 'none', 'none', 'default', 'none',
+                            NULL, $now, $now)
+                        """.trimIndent(),
+                    )
+                }
+            },
+        )
         .fallbackToDestructiveMigration()
         .build()
 

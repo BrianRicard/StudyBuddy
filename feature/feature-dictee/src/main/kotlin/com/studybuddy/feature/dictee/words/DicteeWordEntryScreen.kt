@@ -69,6 +69,12 @@ fun DicteeWordEntryScreen(
                         viewModel.onIntent(DicteeWordEntryIntent.UndoDeleteWord(effect.word))
                     }
                 }
+                is DicteeWordEntryEffect.ShowError -> {
+                    snackbarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
         }
     }

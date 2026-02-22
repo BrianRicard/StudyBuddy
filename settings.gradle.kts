@@ -30,6 +30,14 @@ pluginManagement {
                     useModule("org.jlleitschuh.gradle:ktlint-gradle:${requested.version}")
                 "com.github.ben-manes.versions" ->
                     useModule("com.github.ben-manes:gradle-versions-plugin:${requested.version}")
+                "org.owasp.dependencycheck" ->
+                    useModule("org.owasp:dependency-check-gradle:${requested.version}")
+                "app.cash.licensee" ->
+                    useModule("app.cash.licensee:licensee-gradle-plugin:${requested.version}")
+                "com.google.gms.google-services" ->
+                    useModule("com.google.gms:google-services:${requested.version}")
+                "com.google.firebase.crashlytics" ->
+                    useModule("com.google.firebase:firebase-crashlytics-gradle:${requested.version}")
             }
         }
     }

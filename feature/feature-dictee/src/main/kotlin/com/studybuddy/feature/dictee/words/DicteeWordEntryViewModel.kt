@@ -60,6 +60,9 @@ class DicteeWordEntryViewModel @Inject constructor(
                     }
                 }
             }
+            is DicteeWordEntryIntent.DismissError -> {
+                _state.update { it.copy(errorMessage = null) }
+            }
         }
     }
 
@@ -83,27 +86,42 @@ class DicteeWordEntryViewModel @Inject constructor(
         if (text.isBlank()) return
 
         viewModelScope.launch {
-            val word = DicteeWord(
-                id = UUID.randomUUID().toString(),
-                listId = listId,
-                word = text,
-            )
-            addWordUseCase(word)
-            _state.update { it.copy(newWordText = "") }
+            try {
+                val word = DicteeWord(
+                    id = UUID.randomUUID().toString(),
+                    listId = listId,
+                    word = text,
+                )
+                addWordUseCase(word)
+                _state.update { it.copy(newWordText = "") }
+            } catch (e: Exception) {
+                _state.update { it.copy(errorMessage = "Could not add word. Please try again.") }
+                _effects.emit(DicteeWordEntryEffect.ShowError("Could not add word. Please try again."))
+            }
         }
     }
 
     private fun deleteWord(wordId: String) {
         val word = _state.value.words.find { it.id == wordId } ?: return
         viewModelScope.launch {
-            dicteeRepository.deleteWord(wordId)
-            _effects.emit(DicteeWordEntryEffect.ShowUndoSnackbar(word))
+            try {
+                dicteeRepository.deleteWord(wordId)
+                _effects.emit(DicteeWordEntryEffect.ShowUndoSnackbar(word))
+            } catch (e: Exception) {
+                _state.update { it.copy(errorMessage = "Could not delete word.") }
+                _effects.emit(DicteeWordEntryEffect.ShowError("Could not delete word."))
+            }
         }
     }
 
     private fun undoDeleteWord(word: DicteeWord) {
         viewModelScope.launch {
-            dicteeRepository.addWord(word)
+            try {
+                dicteeRepository.addWord(word)
+            } catch (e: Exception) {
+                _state.update { it.copy(errorMessage = "Could not restore word.") }
+                _effects.emit(DicteeWordEntryEffect.ShowError("Could not restore word."))
+            }
         }
     }
 

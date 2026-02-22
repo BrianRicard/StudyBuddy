@@ -1,12 +1,6 @@
 package com.studybuddy.feature.math.results
 
 import androidx.lifecycle.SavedStateHandle
-import com.studybuddy.core.domain.model.PointSource
-import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
-import com.studybuddy.shared.points.AwardPointsUseCase
-import io.mockk.coEvery
-import io.mockk.coVerify
-import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -25,13 +19,9 @@ class MathResultsViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    private val saveMathSession: SaveMathSessionUseCase = mockk(relaxed = true)
-    private val awardPoints: AwardPointsUseCase = mockk(relaxed = true)
-
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        coEvery { awardPoints(any(), any(), any(), any(), any()) } returns 100
     }
 
     @AfterEach
@@ -45,9 +35,6 @@ class MathResultsViewModelTest {
         bestStreak: Int = 8,
         avgResponseMs: Long = 4500L,
         sessionScore: Int = 75,
-        operators: String = "PLUS,MINUS",
-        rangeMin: Int = 1,
-        rangeMax: Int = 12,
     ): MathResultsViewModel {
         val savedStateHandle = SavedStateHandle(
             mapOf(
@@ -56,14 +43,9 @@ class MathResultsViewModelTest {
                 "bestStreak" to bestStreak,
                 "avgResponseMs" to avgResponseMs,
                 "sessionScore" to sessionScore,
-                "operators" to operators,
-                "rangeMin" to rangeMin,
-                "rangeMax" to rangeMax,
             ),
         )
         return MathResultsViewModel(
-            saveMathSession = saveMathSession,
-            awardPoints = awardPoints,
             savedStateHandle = savedStateHandle,
         )
     }
@@ -167,30 +149,6 @@ class MathResultsViewModelTest {
         advanceUntilIdle()
 
         assertEquals(null, viewModel.effect.value)
-    }
-
-    @Test
-    fun `session is saved on initialization`() = runTest {
-        createViewModel()
-        advanceUntilIdle()
-
-        coVerify { saveMathSession(any()) }
-    }
-
-    @Test
-    fun `points are awarded on initialization`() = runTest {
-        createViewModel()
-        advanceUntilIdle()
-
-        coVerify {
-            awardPoints(
-                profileId = any(),
-                basePoints = any(),
-                streak = any(),
-                source = PointSource.MATH,
-                reason = any(),
-            )
-        }
     }
 
     @Test

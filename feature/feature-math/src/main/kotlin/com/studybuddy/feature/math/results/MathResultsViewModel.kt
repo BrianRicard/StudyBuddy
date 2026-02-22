@@ -2,24 +2,13 @@ package com.studybuddy.feature.math.results
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.studybuddy.core.common.constants.AppConstants
-import com.studybuddy.core.domain.model.Difficulty
-import com.studybuddy.core.domain.model.MathSession
-import com.studybuddy.core.domain.model.Operator
-import com.studybuddy.core.domain.model.PointSource
-import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
-import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.PointsCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 data class MathResultsState(
     val totalProblems: Int = 0,
@@ -31,7 +20,6 @@ data class MathResultsState(
     val totalPoints: Int = 0,
     val accuracy: Float = 0f,
     val badges: List<String> = emptyList(),
-    val isSaved: Boolean = false,
 )
 
 sealed interface MathResultsIntent {
@@ -46,8 +34,6 @@ sealed interface MathResultsEffect {
 
 @HiltViewModel
 class MathResultsViewModel @Inject constructor(
-    private val saveMathSession: SaveMathSessionUseCase,
-    private val awardPoints: AwardPointsUseCase,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -56,9 +42,6 @@ class MathResultsViewModel @Inject constructor(
     private val bestStreak: Int = savedStateHandle["bestStreak"] ?: 0
     private val avgResponseMs: Long = savedStateHandle["avgResponseMs"] ?: 0L
     private val sessionScore: Int = savedStateHandle["sessionScore"] ?: 0
-    private val operators: String = savedStateHandle["operators"] ?: ""
-    private val rangeMin: Int = savedStateHandle["rangeMin"] ?: 0
-    private val rangeMax: Int = savedStateHandle["rangeMax"] ?: 12
 
     private val _state = MutableStateFlow(MathResultsState())
     val state: StateFlow<MathResultsState> = _state.asStateFlow()
@@ -116,45 +99,6 @@ class MathResultsViewModel @Inject constructor(
                 accuracy = accuracy,
                 badges = badges,
             )
-        }
-
-        saveSessionAndAwardPoints(totalPoints = totalPoints)
-    }
-
-    private fun saveSessionAndAwardPoints(totalPoints: Int) {
-        viewModelScope.launch {
-            val parsedOperators = operators
-                .split(",")
-                .filter { it.isNotBlank() }
-                .mapNotNull { name ->
-                    runCatching { Operator.valueOf(name.trim()) }.getOrNull()
-                }
-                .toSet()
-
-            val session = MathSession(
-                id = UUID.randomUUID().toString(),
-                profileId = AppConstants.DEFAULT_PROFILE_ID,
-                operators = parsedOperators,
-                numberRange = rangeMin..rangeMax,
-                totalProblems = totalProblems,
-                correctCount = correctCount,
-                bestStreak = bestStreak,
-                avgResponseMs = avgResponseMs,
-                difficulty = Difficulty.ADAPTIVE,
-                completedAt = Clock.System.now(),
-            )
-
-            saveMathSession(session)
-
-            awardPoints(
-                profileId = AppConstants.DEFAULT_PROFILE_ID,
-                basePoints = totalPoints,
-                streak = bestStreak,
-                source = PointSource.MATH,
-                reason = "Speed Math: $correctCount/$totalProblems correct",
-            )
-
-            _state.update { it.copy(isSaved = true) }
         }
     }
 

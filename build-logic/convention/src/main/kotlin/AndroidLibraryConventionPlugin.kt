@@ -24,6 +24,12 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     consumerProguardFiles("consumer-rules.pro")
                 }
 
+                lint {
+                    lintConfig = rootProject.file("lint.xml")
+                    xmlReport = true
+                    htmlReport = true
+                }
+
                 compileOptions {
                     sourceCompatibility = org.gradle.api.JavaVersion.VERSION_17
                     targetCompatibility = org.gradle.api.JavaVersion.VERSION_17

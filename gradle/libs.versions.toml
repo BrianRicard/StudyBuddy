@@ -17,7 +17,12 @@ kover = "0.9.0"
 detekt = "1.23.7"
 ktlint = "12.1.2"
 versions-plugin = "0.51.0"
+dependency-check = "12.1.0"
+licensee = "1.11.0"
 leakcanary = "2.14"
+firebase-bom = "33.7.0"
+google-services = "4.4.2"
+firebase-crashlytics-plugin = "3.0.2"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 datastore = "1.1.1"
@@ -93,6 +98,11 @@ compose-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-mani
 android-test-runner = { group = "androidx.test", name = "runner", version = "1.6.2" }
 android-test-ext-junit = { group = "androidx.test.ext", name = "junit", version = "1.2.1" }
 
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebase-bom" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
+
 # Debug
 leakcanary = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 
@@ -125,3 +135,7 @@ kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
 detekt = { id = "io.gitlab.arturbosch.detekt", version.ref = "detekt" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 versions = { id = "com.github.ben-manes.versions", version.ref = "versions-plugin" }
+dependency-check = { id = "org.owasp.dependencycheck", version.ref = "dependency-check" }
+licensee = { id = "app.cash.licensee", version.ref = "licensee" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics-plugin" }

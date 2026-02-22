@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+    <!--
+        OWASP Dependency-Check Suppression File for StudyBuddy
+        Add false-positive CVE suppressions here with justification.
+
+        Example:
+        <suppress>
+            <notes>False positive: this CVE applies to the server component, not the client library</notes>
+            <cve>CVE-YYYY-NNNNN</cve>
+        </suppress>
+    -->
+</suppressions>

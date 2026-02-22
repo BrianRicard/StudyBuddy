@@ -23,6 +23,57 @@ naming:
   TopLevelPropertyNaming:
     constantPattern: '[A-Z][A-Z_0-9]*'
 
+potential-bugs:
+  CastToNullableType:
+    active: true
+  DoubleMutabilityForCollection:
+    active: true
+  EqualsAlwaysReturnsTrueOrFalse:
+    active: true
+  EqualsWithHashCodeExist:
+    active: true
+  ExplicitGarbageCollectionCall:
+    active: true
+  InvalidRange:
+    active: true
+  IteratorHasNextCallsNextMethod:
+    active: true
+  IteratorNotThrowingNoSuchElementException:
+    active: true
+  MapGetWithNotNullAssertionOperator:
+    active: true
+  NullableToStringCall:
+    active: true
+  UnconditionalJumpStatementInLoop:
+    active: true
+  UnnecessaryNotNullOperator:
+    active: true
+  UnnecessarySafeCall:
+    active: true
+  UnreachableCatchBlock:
+    active: true
+  UnreachableCode:
+    active: true
+  UnsafeCallOnNullableType:
+    active: true
+  UnsafeCast:
+    active: true
+
+performance:
+  ArrayPrimitive:
+    active: true
+  CouldBeSequence:
+    active: true
+    threshold: 3
+  ForEachOnRange:
+    active: true
+  SpreadOperator:
+    active: true
+  UnnecessaryPartOfBinaryExpression:
+    active: true
+  UnnecessaryTemporaryInstantiation:
+    active: true
+
 style:
   MagicNumber:
     ignoreNumbers:
