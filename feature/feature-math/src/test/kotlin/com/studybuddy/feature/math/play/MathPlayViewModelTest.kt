@@ -1,6 +1,7 @@
 package com.studybuddy.feature.math.play
 
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import app.cash.turbine.test
 import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.MathProblem
@@ -16,6 +17,7 @@ import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.resetMain
@@ -40,6 +42,8 @@ class MathPlayViewModelTest {
     private val checkAnswer: CheckAnswerUseCase = mockk()
     private val saveMathSession: SaveMathSessionUseCase = mockk(relaxed = true)
     private val awardPoints: AwardPointsUseCase = mockk(relaxed = true)
+
+    private var lastViewModel: MathPlayViewModel? = null
 
     private val testProblem = MathProblem(
         operandA = 7,
@@ -66,6 +70,8 @@ class MathPlayViewModelTest {
 
     @AfterEach
     fun tearDown() {
+        lastViewModel?.viewModelScope?.cancel()
+        lastViewModel = null
         Dispatchers.resetMain()
     }
 
@@ -91,7 +97,7 @@ class MathPlayViewModelTest {
             saveMathSession = saveMathSession,
             awardPoints = awardPoints,
             savedStateHandle = savedStateHandle,
-        )
+        ).also { lastViewModel = it }
     }
 
     @Test
