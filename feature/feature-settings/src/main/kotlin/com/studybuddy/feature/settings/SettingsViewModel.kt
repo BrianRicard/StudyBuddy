@@ -124,13 +124,17 @@ class SettingsViewModel @Inject constructor(
     private fun observeSettings() {
         viewModelScope.launch {
             combine(
-                settingsRepository.getAppLocale(),
-                settingsRepository.isSoundEnabled(),
-                settingsRepository.isHapticEnabled(),
-                settingsRepository.getDailyGoal(),
-                settingsRepository.isAccentStrict(),
-                settingsRepository.getSelectedTheme(),
-            ) { locale, sound, haptic, goal, accent, theme ->
+                combine(
+                    settingsRepository.getAppLocale(),
+                    settingsRepository.isSoundEnabled(),
+                    settingsRepository.isHapticEnabled(),
+                ) { locale, sound, haptic -> Triple(locale, sound, haptic) },
+                combine(
+                    settingsRepository.getDailyGoal(),
+                    settingsRepository.isAccentStrict(),
+                    settingsRepository.getSelectedTheme(),
+                ) { goal, accent, theme -> Triple(goal, accent, theme) },
+            ) { (locale, sound, haptic), (goal, accent, theme) ->
                 SettingsData(
                     locale = locale,
                     isSoundEnabled = sound,

@@ -240,7 +240,7 @@ private fun DicteePracticeContent(
                     // Feedback area
                     when (val feedback = state.feedback) {
                         is Feedback.Correct -> {
-                            CorrectAnswerAnimation(visible = true) {
+                            CorrectAnswerAnimation(isCorrect = true) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
                                         text = "Correct!",
@@ -262,7 +262,7 @@ private fun DicteePracticeContent(
                             )
                         }
                         is Feedback.Incorrect -> {
-                            IncorrectAnimation(visible = true) {
+                            IncorrectAnimation(trigger = true) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
                                         text = "Almost there!",
@@ -338,7 +338,6 @@ private fun DicteePracticeContent(
                             InputMode.KEYBOARD -> 10
                             InputMode.HANDWRITING -> 15
                         },
-                        visible = true,
                     )
                 }
             }

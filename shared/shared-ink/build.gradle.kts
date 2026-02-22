@@ -12,6 +12,6 @@ android {
 dependencies {
     implementation(project(":core:core-common"))
     implementation(project(":core:core-ui"))
-    implementation(libs.mlkit.ink.recognition)
+    api(libs.mlkit.ink.recognition)
     implementation(libs.coroutines.android)
 }

@@ -17,9 +17,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.isoDayNumber
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
-import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.Locale
 import javax.inject.Inject
@@ -117,14 +121,14 @@ class StatsViewModel @Inject constructor(
 
         // If today has no events, start checking from yesterday
         if (checkDate !in daysWithEvents) {
-            val yesterday = today.minus(kotlinx.datetime.DatePeriod(days = 1))
+            val yesterday = today.minus(DatePeriod(days = 1))
             if (yesterday !in daysWithEvents) return 0
             checkDate = yesterday
         }
 
         while (checkDate in daysWithEvents) {
             streak++
-            checkDate = checkDate.minus(kotlinx.datetime.DatePeriod(days = 1))
+            checkDate = checkDate.minus(DatePeriod(days = 1))
         }
 
         return streak
@@ -145,9 +149,9 @@ class StatsViewModel @Inject constructor(
         val today = Clock.System.now().toLocalDateTime(timeZone).date
         val todayDayOfWeek = today.dayOfWeek
 
-        // Calculate the Monday of the current week
-        val daysFromMonday = todayDayOfWeek.ordinal
-        val mondayOfWeek = today.minus(kotlinx.datetime.DatePeriod(days = daysFromMonday))
+        // Calculate the Monday of the current week (Monday = isoDayNumber 1)
+        val daysFromMonday = todayDayOfWeek.isoDayNumber - 1
+        val mondayOfWeek = today.minus(DatePeriod(days = daysFromMonday))
 
         val pointsByDate = events.groupBy { event ->
             event.timestamp.toLocalDateTime(timeZone).date
@@ -156,11 +160,13 @@ class StatsViewModel @Inject constructor(
         }
 
         return DayOfWeek.entries.map { dayOfWeek ->
+            val daysOffset = dayOfWeek.isoDayNumber - 1
             val date = mondayOfWeek.plus(
-                kotlinx.datetime.DatePeriod(days = dayOfWeek.ordinal),
+                DatePeriod(days = daysOffset),
             )
+            val javaDow = java.time.DayOfWeek.of(dayOfWeek.isoDayNumber)
             DayData(
-                dayOfWeek = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                dayOfWeek = javaDow.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
                 points = pointsByDate[date] ?: 0,
                 isToday = date == today,
             )

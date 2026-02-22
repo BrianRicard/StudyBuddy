@@ -31,7 +31,10 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
+import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -257,7 +260,7 @@ internal fun WeeklyChart(
     val primaryColor = MaterialTheme.colorScheme.primary
     val fadedPrimaryColor = primaryColor.copy(alpha = BAR_INACTIVE_ALPHA)
     val labelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = LABEL_ALPHA)
-    val textMeasurer = androidx.compose.ui.text.rememberTextMeasurer()
+    val textMeasurer = rememberTextMeasurer()
     val labelStyle = MaterialTheme.typography.labelSmall.copy(
         color = labelColor,
         textAlign = TextAlign.Center,

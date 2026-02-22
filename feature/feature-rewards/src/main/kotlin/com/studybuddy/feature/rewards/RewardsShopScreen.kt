@@ -438,9 +438,9 @@ private fun ThemeCard(
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
-                    if (theme.description != null) {
+                    theme.description?.let { desc ->
                         Text(
-                            text = theme.description,
+                            text = desc,
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -636,9 +636,9 @@ private fun EffectCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            if (item.description != null) {
+            item.description?.let { desc ->
                 Text(
-                    text = item.description,
+                    text = desc,
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = TextAlign.Center,
@@ -693,9 +693,9 @@ private fun SoundCard(
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                 )
-                if (item.description != null) {
+                item.description?.let { desc ->
                     Text(
-                        text = item.description,
+                        text = desc,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -785,9 +785,9 @@ private fun TitleCard(
                         MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
                     },
                 )
-                if (title.description != null) {
+                title.description?.let { desc ->
                     Text(
-                        text = title.description,
+                        text = desc,
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
