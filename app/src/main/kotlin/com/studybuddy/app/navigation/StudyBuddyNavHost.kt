@@ -110,6 +110,9 @@ fun StudyBuddyNavHost(
                 onNavigateToWords = { listId ->
                     navController.navigate(StudyBuddyRoutes.dicteeWords(listId))
                 },
+                onNavigateToChallenge = { listIds ->
+                    navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
+                },
             )
         }
 
@@ -128,6 +131,15 @@ fun StudyBuddyNavHost(
         composable(
             route = StudyBuddyRoutes.DICTEE_PRACTICE,
             arguments = listOf(navArgument("listId") { type = NavType.StringType }),
+        ) {
+            com.studybuddy.feature.dictee.practice.DicteePracticeScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.DICTEE_CHALLENGE,
+            arguments = listOf(navArgument("listIds") { type = NavType.StringType }),
         ) {
             com.studybuddy.feature.dictee.practice.DicteePracticeScreen(
                 onNavigateBack = { navController.popBackStack() },
