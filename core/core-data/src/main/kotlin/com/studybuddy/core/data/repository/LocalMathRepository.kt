@@ -16,8 +16,7 @@ class LocalMathRepository @Inject constructor(private val dao: MathDao) : MathRe
     override fun getSessionsForProfile(profileId: String): Flow<List<MathSession>> =
         dao.getSessionsForProfile(profileId).map { sessions -> sessions.map { it.toDomain() } }
 
-    override fun getSession(sessionId: String): Flow<MathSession?> =
-        dao.getSession(sessionId).map { it?.toDomain() }
+    override fun getSession(sessionId: String): Flow<MathSession?> = dao.getSession(sessionId).map { it?.toDomain() }
 
     override suspend fun saveSession(session: MathSession) {
         dao.insert(session.toEntity())

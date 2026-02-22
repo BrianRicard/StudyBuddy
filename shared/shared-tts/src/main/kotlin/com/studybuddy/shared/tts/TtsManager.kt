@@ -105,29 +105,28 @@ class TtsManager @Inject constructor(@ApplicationContext private val context: Co
         }
     }
 
-    fun downloadVoice(locale: Locale): Flow<DownloadProgress> =
-        flow {
-            // Voice download is handled by the system TTS engine.
-            // We emit progress updates based on the locale availability check.
-            emit(DownloadProgress(locale = locale.language))
-            val engine = tts
-            if (engine == null) {
-                emit(DownloadProgress(locale = locale.language, error = "TTS not initialized"))
-                return@flow
-            }
-            // Trigger system voice data install intent
-            val available = engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE
-            if (available) {
-                emit(DownloadProgress(locale = locale.language, isComplete = true))
-            } else {
-                emit(
-                    DownloadProgress(
-                        locale = locale.language,
-                        error = "Voice not available. Please install via system settings.",
-                    ),
-                )
-            }
+    fun downloadVoice(locale: Locale): Flow<DownloadProgress> = flow {
+        // Voice download is handled by the system TTS engine.
+        // We emit progress updates based on the locale availability check.
+        emit(DownloadProgress(locale = locale.language))
+        val engine = tts
+        if (engine == null) {
+            emit(DownloadProgress(locale = locale.language, error = "TTS not initialized"))
+            return@flow
         }
+        // Trigger system voice data install intent
+        val available = engine.isLanguageAvailable(locale) >= TextToSpeech.LANG_AVAILABLE
+        if (available) {
+            emit(DownloadProgress(locale = locale.language, isComplete = true))
+        } else {
+            emit(
+                DownloadProgress(
+                    locale = locale.language,
+                    error = "Voice not available. Please install via system settings.",
+                ),
+            )
+        }
+    }
 
     companion object {
         const val SPEED_NORMAL = 1.0f

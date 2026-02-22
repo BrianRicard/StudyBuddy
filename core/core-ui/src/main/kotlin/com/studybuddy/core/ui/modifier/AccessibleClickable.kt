@@ -22,11 +22,10 @@ fun Modifier.accessibleClickable(
     label: String,
     role: Role = Role.Button,
     onClick: () -> Unit,
-): Modifier =
-    this
-        .defaultMinSize(minWidth = MinTouchTarget, minHeight = MinTouchTarget)
-        .semantics {
-            contentDescription = label
-            this.role = role
-        }
-        .clickable(onClick = onClick)
+): Modifier = this
+    .defaultMinSize(minWidth = MinTouchTarget, minHeight = MinTouchTarget)
+    .semantics {
+        contentDescription = label
+        this.role = role
+    }
+    .clickable(onClick = onClick)

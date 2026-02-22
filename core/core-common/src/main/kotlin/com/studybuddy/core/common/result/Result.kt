@@ -12,20 +12,17 @@ sealed interface Result<out T> {
 /**
  * Returns the data if this is a Success, or null otherwise.
  */
-fun <T> Result<T>.getOrNull(): T? =
-    when (this) {
-        is Result.Success -> data
-        else -> null
-    }
+fun <T> Result<T>.getOrNull(): T? = when (this) {
+    is Result.Success -> data
+    else -> null
+}
 
 /**
  * Returns true if this is a Success.
  */
-fun <T> Result<T>.isSuccess(): Boolean =
-    this is Result.Success
+fun <T> Result<T>.isSuccess(): Boolean = this is Result.Success
 
 /**
  * Returns true if this is Loading.
  */
-fun <T> Result<T>.isLoading(): Boolean =
-    this is Result.Loading
+fun <T> Result<T>.isLoading(): Boolean = this is Result.Loading

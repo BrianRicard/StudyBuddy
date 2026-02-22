@@ -65,137 +65,127 @@ class DicteeListViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(): DicteeListViewModel =
-        DicteeListViewModel(
-            getDicteeListsUseCase = getDicteeListsUseCase,
-            dicteeRepository = dicteeRepository,
-        )
+    private fun createViewModel(): DicteeListViewModel = DicteeListViewModel(
+        getDicteeListsUseCase = getDicteeListsUseCase,
+        dicteeRepository = dicteeRepository,
+    )
 
     @Test
-    fun `initial state is loading`() =
-        runTest {
-            val viewModel = createViewModel()
-            // Before idle, state should have isLoading true by default
-            assertTrue(viewModel.state.value.isLoading)
-        }
+    fun `initial state is loading`() = runTest {
+        val viewModel = createViewModel()
+        // Before idle, state should have isLoading true by default
+        assertTrue(viewModel.state.value.isLoading)
+    }
 
     @Test
-    fun `load lists populates state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `load lists populates state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertFalse(state.isLoading)
-            assertEquals(2, state.lists.size)
-            assertEquals("Animals", state.lists[0].title)
-        }
-
-    @Test
-    fun `show create dialog updates state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-            advanceUntilIdle()
-
-            assertTrue(viewModel.state.value.showCreateDialog)
-        }
+        val state = viewModel.state.value
+        assertFalse(state.isLoading)
+        assertEquals(2, state.lists.size)
+        assertEquals("Animals", state.lists[0].title)
+    }
 
     @Test
-    fun `dismiss create dialog updates state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `show create dialog updates state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-            advanceUntilIdle()
-            viewModel.onIntent(DicteeListIntent.DismissCreateDialog)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
+        advanceUntilIdle()
 
-            assertFalse(viewModel.state.value.showCreateDialog)
-        }
+        assertTrue(viewModel.state.value.showCreateDialog)
+    }
 
     @Test
-    fun `create list calls repository and closes dialog`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `dismiss create dialog updates state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-            viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("My New List"))
-            viewModel.onIntent(DicteeListIntent.UpdateNewListLanguage("de"))
-            viewModel.onIntent(DicteeListIntent.CreateList)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
+        advanceUntilIdle()
+        viewModel.onIntent(DicteeListIntent.DismissCreateDialog)
+        advanceUntilIdle()
 
-            coVerify {
-                dicteeRepository.createList(
-                    match {
-                        it.title == "My New List" && it.language == "de"
-                    },
-                )
-            }
-            assertFalse(viewModel.state.value.showCreateDialog)
-        }
+        assertFalse(viewModel.state.value.showCreateDialog)
+    }
 
     @Test
-    fun `create list with blank title does nothing`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `create list calls repository and closes dialog`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-            viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("  "))
-            viewModel.onIntent(DicteeListIntent.CreateList)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
+        viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("My New List"))
+        viewModel.onIntent(DicteeListIntent.UpdateNewListLanguage("de"))
+        viewModel.onIntent(DicteeListIntent.CreateList)
+        advanceUntilIdle()
 
-            coVerify(exactly = 0) { dicteeRepository.createList(any()) }
+        coVerify {
+            dicteeRepository.createList(
+                match {
+                    it.title == "My New List" && it.language == "de"
+                },
+            )
         }
+        assertFalse(viewModel.state.value.showCreateDialog)
+    }
 
     @Test
-    fun `delete list calls repository and emits undo snackbar`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `create list with blank title does nothing`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.effects.test {
-                viewModel.onIntent(DicteeListIntent.DeleteList("list1"))
-                advanceUntilIdle()
+        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
+        viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("  "))
+        viewModel.onIntent(DicteeListIntent.CreateList)
+        advanceUntilIdle()
 
-                coVerify { dicteeRepository.deleteList("list1") }
-
-                val effect = awaitItem()
-                assertTrue(effect is DicteeListEffect.ShowUndoSnackbar)
-                assertEquals("Animals", (effect as DicteeListEffect.ShowUndoSnackbar).list.title)
-            }
-        }
+        coVerify(exactly = 0) { dicteeRepository.createList(any()) }
+    }
 
     @Test
-    fun `undo delete calls createList`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `delete list calls repository and emits undo snackbar`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.DeleteList("list1"))
             advanceUntilIdle()
 
-            viewModel.onIntent(DicteeListIntent.UndoDelete(testLists[0]))
-            advanceUntilIdle()
+            coVerify { dicteeRepository.deleteList("list1") }
 
-            coVerify { dicteeRepository.createList(testLists[0]) }
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.ShowUndoSnackbar)
+            assertEquals("Animals", (effect as DicteeListEffect.ShowUndoSnackbar).list.title)
         }
+    }
 
     @Test
-    fun `open list emits navigate effect`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `undo delete calls createList`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.UndoDelete(testLists[0]))
+        advanceUntilIdle()
+
+        coVerify { dicteeRepository.createList(testLists[0]) }
+    }
+
+    @Test
+    fun `open list emits navigate effect`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.OpenList("list1"))
             advanceUntilIdle()
 
-            viewModel.effects.test {
-                viewModel.onIntent(DicteeListIntent.OpenList("list1"))
-                advanceUntilIdle()
-
-                val effect = awaitItem()
-                assertTrue(effect is DicteeListEffect.NavigateToWords)
-                assertEquals("list1", (effect as DicteeListEffect.NavigateToWords).listId)
-            }
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.NavigateToWords)
+            assertEquals("list1", (effect as DicteeListEffect.NavigateToWords).listId)
         }
+    }
 }

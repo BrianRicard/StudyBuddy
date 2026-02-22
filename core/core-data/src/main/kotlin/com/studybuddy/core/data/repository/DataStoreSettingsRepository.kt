@@ -32,29 +32,25 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
     }
 
-    override fun getAppLocale(): Flow<String> =
-        context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
+    override fun getAppLocale(): Flow<String> = context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
 
     override suspend fun setAppLocale(locale: String) {
         context.dataStore.edit { it[Keys.APP_LOCALE] = locale }
     }
 
-    override fun isAccentStrict(): Flow<Boolean> =
-        context.dataStore.data.map { it[Keys.ACCENT_STRICT] ?: false }
+    override fun isAccentStrict(): Flow<Boolean> = context.dataStore.data.map { it[Keys.ACCENT_STRICT] ?: false }
 
     override suspend fun setAccentStrict(strict: Boolean) {
         context.dataStore.edit { it[Keys.ACCENT_STRICT] = strict }
     }
 
-    override fun isSoundEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[Keys.SOUND_ENABLED] ?: true }
+    override fun isSoundEnabled(): Flow<Boolean> = context.dataStore.data.map { it[Keys.SOUND_ENABLED] ?: true }
 
     override suspend fun setSoundEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.SOUND_ENABLED] = enabled }
     }
 
-    override fun isHapticEnabled(): Flow<Boolean> =
-        context.dataStore.data.map { it[Keys.HAPTIC_ENABLED] ?: true }
+    override fun isHapticEnabled(): Flow<Boolean> = context.dataStore.data.map { it[Keys.HAPTIC_ENABLED] ?: true }
 
     override suspend fun setHapticEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.HAPTIC_ENABLED] = enabled }
@@ -67,8 +63,7 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         context.dataStore.edit { it[Keys.DAILY_GOAL] = goal }
     }
 
-    override fun getSelectedTheme(): Flow<String> =
-        context.dataStore.data.map { it[Keys.SELECTED_THEME] ?: "sunset" }
+    override fun getSelectedTheme(): Flow<String> = context.dataStore.data.map { it[Keys.SELECTED_THEME] ?: "sunset" }
 
     override suspend fun setSelectedTheme(themeId: String) {
         context.dataStore.edit { it[Keys.SELECTED_THEME] = themeId }

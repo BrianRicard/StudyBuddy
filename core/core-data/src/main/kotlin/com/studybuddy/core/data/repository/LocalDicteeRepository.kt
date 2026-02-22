@@ -17,8 +17,7 @@ class LocalDicteeRepository @Inject constructor(private val dao: DicteeDao) : Di
     override fun getListsForProfile(profileId: String): Flow<List<DicteeList>> =
         dao.getListsForProfile(profileId).map { lists -> lists.map { it.toDomain() } }
 
-    override fun getList(listId: String): Flow<DicteeList?> =
-        dao.getList(listId).map { it?.toDomain() }
+    override fun getList(listId: String): Flow<DicteeList?> = dao.getList(listId).map { it?.toDomain() }
 
     override fun getWordsForList(listId: String): Flow<List<DicteeWord>> =
         dao.getWordsForList(listId).map { words -> words.map { it.toDomain() } }

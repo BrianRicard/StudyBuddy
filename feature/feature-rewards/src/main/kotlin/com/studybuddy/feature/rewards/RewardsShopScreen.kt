@@ -487,44 +487,43 @@ private fun ActiveBadge(modifier: Modifier = Modifier) {
     }
 }
 
-private fun getThemePreviewColors(themeId: String): List<Color> =
-    when (themeId.lowercase()) {
-        "sunset" -> listOf(
-            SunsetColorScheme.primary,
-            SunsetColorScheme.secondary,
-            SunsetColorScheme.tertiary,
-        )
-        "ocean" -> listOf(
-            OceanColorScheme.primary,
-            OceanColorScheme.secondary,
-            OceanColorScheme.tertiary,
-        )
-        "forest" -> listOf(
-            ForestColorScheme.primary,
-            ForestColorScheme.secondary,
-            ForestColorScheme.tertiary,
-        )
-        "galaxy" -> listOf(
-            GalaxyColorScheme.primary,
-            GalaxyColorScheme.secondary,
-            GalaxyColorScheme.tertiary,
-        )
-        "candy" -> listOf(
-            CandyColorScheme.primary,
-            CandyColorScheme.secondary,
-            CandyColorScheme.tertiary,
-        )
-        "arctic" -> listOf(
-            ArcticColorScheme.primary,
-            ArcticColorScheme.secondary,
-            ArcticColorScheme.tertiary,
-        )
-        else -> listOf(
-            SunsetColorScheme.primary,
-            SunsetColorScheme.secondary,
-            SunsetColorScheme.tertiary,
-        )
-    }
+private fun getThemePreviewColors(themeId: String): List<Color> = when (themeId.lowercase()) {
+    "sunset" -> listOf(
+        SunsetColorScheme.primary,
+        SunsetColorScheme.secondary,
+        SunsetColorScheme.tertiary,
+    )
+    "ocean" -> listOf(
+        OceanColorScheme.primary,
+        OceanColorScheme.secondary,
+        OceanColorScheme.tertiary,
+    )
+    "forest" -> listOf(
+        ForestColorScheme.primary,
+        ForestColorScheme.secondary,
+        ForestColorScheme.tertiary,
+    )
+    "galaxy" -> listOf(
+        GalaxyColorScheme.primary,
+        GalaxyColorScheme.secondary,
+        GalaxyColorScheme.tertiary,
+    )
+    "candy" -> listOf(
+        CandyColorScheme.primary,
+        CandyColorScheme.secondary,
+        CandyColorScheme.tertiary,
+    )
+    "arctic" -> listOf(
+        ArcticColorScheme.primary,
+        ArcticColorScheme.secondary,
+        ArcticColorScheme.tertiary,
+    )
+    else -> listOf(
+        SunsetColorScheme.primary,
+        SunsetColorScheme.secondary,
+        SunsetColorScheme.tertiary,
+    )
+}
 
 // endregion
 

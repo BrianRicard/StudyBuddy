@@ -23,10 +23,8 @@ object StudyBuddyRoutes {
     const val POEMS = "poems"
     const val ONBOARDING = "onboarding"
 
-    fun dicteeWords(listId: String) =
-        "dictee/words/$listId"
-    fun dicteePractice(listId: String) =
-        "dictee/practice/$listId"
+    fun dicteeWords(listId: String) = "dictee/words/$listId"
+    fun dicteePractice(listId: String) = "dictee/practice/$listId"
 
     fun mathPlay(
         operators: String,

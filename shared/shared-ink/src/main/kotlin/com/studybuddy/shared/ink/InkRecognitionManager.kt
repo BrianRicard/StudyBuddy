@@ -58,26 +58,25 @@ class InkRecognitionManager @Inject constructor() {
         }
     }
 
-    fun downloadModel(languageTag: String): Flow<DownloadProgress> =
-        flow {
-            emit(DownloadProgress(languageTag = languageTag))
-            val modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag(languageTag)
-            if (modelIdentifier == null) {
-                emit(DownloadProgress(languageTag = languageTag, error = "Unsupported language: $languageTag"))
-                return@flow
-            }
-            val model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
-            val result = suspendCancellableCoroutine { continuation ->
-                modelManager.download(model, DownloadConditions.Builder().build())
-                    .addOnSuccessListener { continuation.resume(true) }
-                    .addOnFailureListener { continuation.resume(false) }
-            }
-            if (result) {
-                emit(DownloadProgress(languageTag = languageTag, isComplete = true))
-            } else {
-                emit(DownloadProgress(languageTag = languageTag, error = "Download failed"))
-            }
+    fun downloadModel(languageTag: String): Flow<DownloadProgress> = flow {
+        emit(DownloadProgress(languageTag = languageTag))
+        val modelIdentifier = DigitalInkRecognitionModelIdentifier.fromLanguageTag(languageTag)
+        if (modelIdentifier == null) {
+            emit(DownloadProgress(languageTag = languageTag, error = "Unsupported language: $languageTag"))
+            return@flow
         }
+        val model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
+        val result = suspendCancellableCoroutine { continuation ->
+            modelManager.download(model, DownloadConditions.Builder().build())
+                .addOnSuccessListener { continuation.resume(true) }
+                .addOnFailureListener { continuation.resume(false) }
+        }
+        if (result) {
+            emit(DownloadProgress(languageTag = languageTag, isComplete = true))
+        } else {
+            emit(DownloadProgress(languageTag = languageTag, error = "Download failed"))
+        }
+    }
 
     fun release() {
         recognizer?.close()

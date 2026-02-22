@@ -387,12 +387,11 @@ private fun ActionButtons(
     }
 }
 
-private fun badgeIcon(badge: String): String =
-    when (badge) {
-        MathResultsViewModel.BADGE_SPEED_DEMON -> "\u26A1"
-        MathResultsViewModel.BADGE_STREAK_MASTER -> "\uD83D\uDD25"
-        else -> "\uD83C\uDFC6"
-    }
+private fun badgeIcon(badge: String): String = when (badge) {
+    MathResultsViewModel.BADGE_SPEED_DEMON -> "\u26A1"
+    MathResultsViewModel.BADGE_STREAK_MASTER -> "\uD83D\uDD25"
+    else -> "\uD83C\uDFC6"
+}
 
 private fun formatResponseTime(ms: Long): String {
     val seconds = ms / MS_PER_SECOND.toDouble()

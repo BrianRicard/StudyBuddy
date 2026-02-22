@@ -8,19 +8,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 
-fun Modifier.shake(trigger: Boolean): Modifier =
-    composed {
-        val translationX = remember { Animatable(0f) }
+fun Modifier.shake(trigger: Boolean): Modifier = composed {
+    val translationX = remember { Animatable(0f) }
 
-        LaunchedEffect(trigger) {
-            if (trigger) {
-                repeat(3) {
-                    translationX.animateTo(8f, animationSpec = spring(stiffness = 5000f))
-                    translationX.animateTo(-8f, animationSpec = spring(stiffness = 5000f))
-                }
-                translationX.animateTo(0f, animationSpec = spring())
+    LaunchedEffect(trigger) {
+        if (trigger) {
+            repeat(3) {
+                translationX.animateTo(8f, animationSpec = spring(stiffness = 5000f))
+                translationX.animateTo(-8f, animationSpec = spring(stiffness = 5000f))
             }
+            translationX.animateTo(0f, animationSpec = spring())
         }
-
-        graphicsLayer { this.translationX = translationX.value }
     }
+
+    graphicsLayer { this.translationX = translationX.value }
+}

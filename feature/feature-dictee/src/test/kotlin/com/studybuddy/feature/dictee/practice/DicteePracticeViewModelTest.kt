@@ -92,222 +92,210 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
-    fun `load words populates state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `load words populates state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertEquals(3, state.words.size)
-            assertEquals("Test List", state.listTitle)
-            assertEquals(0, state.currentIndex)
-        }
-
-    @Test
-    fun `submit correct answer sets feedback to Correct and increments streak`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
-
-            val state = viewModel.state.value
-            assertTrue(state.feedback is Feedback.Correct)
-            assertEquals(1, state.streak)
-            assertTrue(state.sessionScore > 0)
-        }
+        val state = viewModel.state.value
+        assertEquals(3, state.words.size)
+        assertEquals("Test List", state.listTitle)
+        assertEquals(0, state.currentIndex)
+    }
 
     @Test
-    fun `submit incorrect answer sets feedback to Incorrect and resets streak`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `submit correct answer sets feedback to Correct and increments streak`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            // First get a correct answer to build streak
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
-            assertEquals(1, viewModel.state.value.streak)
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
 
-            // Move to next word
-            viewModel.onIntent(DicteePracticeIntent.NextWord)
-            advanceUntilIdle()
-
-            // Submit wrong answer
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("wrong"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
-
-            val state = viewModel.state.value
-            assertTrue(state.feedback is Feedback.Incorrect)
-            assertEquals(0, state.streak)
-        }
+        val state = viewModel.state.value
+        assertTrue(state.feedback is Feedback.Correct)
+        assertEquals(1, state.streak)
+        assertTrue(state.sessionScore > 0)
+    }
 
     @Test
-    fun `toggle input mode switches between keyboard and handwriting`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `submit incorrect answer sets feedback to Incorrect and resets streak`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
+        // First get a correct answer to build streak
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.streak)
 
-            viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
-            advanceUntilIdle()
-            assertEquals(InputMode.HANDWRITING, viewModel.state.value.inputMode)
+        // Move to next word
+        viewModel.onIntent(DicteePracticeIntent.NextWord)
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
-            advanceUntilIdle()
-            assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
-        }
+        // Submit wrong answer
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("wrong"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
 
-    @Test
-    fun `next word advances index and clears state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.NextWord)
-            advanceUntilIdle()
-
-            val state = viewModel.state.value
-            assertEquals(1, state.currentIndex)
-            assertEquals("", state.userInput)
-            assertNull(state.feedback)
-        }
+        val state = viewModel.state.value
+        assertTrue(state.feedback is Feedback.Incorrect)
+        assertEquals(0, state.streak)
+    }
 
     @Test
-    fun `complete all words emits NavigateToResults`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `toggle input mode switches between keyboard and handwriting`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.effects.test {
-                // Answer all 3 words
-                repeat(3) {
-                    viewModel.onIntent(DicteePracticeIntent.UpdateInput(testWords[it].word))
-                    advanceUntilIdle()
-                    viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-                    advanceUntilIdle()
-                    viewModel.onIntent(DicteePracticeIntent.NextWord)
-                    advanceUntilIdle()
-                }
+        assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
 
-                // Collect effects - should include ShowPoints and NavigateToResults
-                val effects = cancelAndConsumeRemainingEvents()
-                assertTrue(
-                    effects.filterIsInstance<app.cash.turbine.Event.Item<DicteePracticeEffect>>().any {
-                        it.value is DicteePracticeEffect.NavigateToResults
-                    },
-                )
+        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        advanceUntilIdle()
+        assertEquals(InputMode.HANDWRITING, viewModel.state.value.inputMode)
+
+        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        advanceUntilIdle()
+        assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
+    }
+
+    @Test
+    fun `next word advances index and clears state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.NextWord)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.currentIndex)
+        assertEquals("", state.userInput)
+        assertNull(state.feedback)
+    }
+
+    @Test
+    fun `complete all words emits NavigateToResults`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            // Answer all 3 words
+            repeat(3) {
+                viewModel.onIntent(DicteePracticeIntent.UpdateInput(testWords[it].word))
+                advanceUntilIdle()
+                viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+                advanceUntilIdle()
+                viewModel.onIntent(DicteePracticeIntent.NextWord)
+                advanceUntilIdle()
             }
+
+            // Collect effects - should include ShowPoints and NavigateToResults
+            val effects = cancelAndConsumeRemainingEvents()
+            assertTrue(
+                effects.filterIsInstance<app.cash.turbine.Event.Item<DicteePracticeEffect>>().any {
+                    it.value is DicteePracticeEffect.NavigateToResults
+                },
+            )
         }
+    }
 
     @Test
-    fun `show hint makes hint visible`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `show hint makes hint visible`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertEquals(false, viewModel.state.value.hintVisible)
+        assertEquals(false, viewModel.state.value.hintVisible)
 
-            viewModel.onIntent(DicteePracticeIntent.ShowHint)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.ShowHint)
+        advanceUntilIdle()
 
-            assertEquals(true, viewModel.state.value.hintVisible)
-        }
-
-    @Test
-    fun `retry word clears input and feedback`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("wrong"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteePracticeIntent.RetryWord)
-            advanceUntilIdle()
-
-            val state = viewModel.state.value
-            assertEquals("", state.userInput)
-            assertNull(state.feedback)
-        }
+        assertEquals(true, viewModel.state.value.hintVisible)
+    }
 
     @Test
-    fun `correct answer awards points via use case`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `retry word clears input and feedback`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("wrong"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
 
-            coVerify {
-                awardPointsUseCase(
-                    profileId = any(),
-                    // DICTEE_CORRECT_TYPED
-                    basePoints = 10,
-                    streak = 1,
-                    source = PointSource.DICTEE,
-                    reason = any(),
-                )
-            }
-        }
+        viewModel.onIntent(DicteePracticeIntent.RetryWord)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals("", state.userInput)
+        assertNull(state.feedback)
+    }
 
     @Test
-    fun `correct answer updates word mastery in repository`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `correct answer awards points via use case`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
 
-            coVerify {
-                dicteeRepository.updateWord(
-                    match { it.id == "w1" && it.attempts == 1 && it.correctCount == 1 },
-                )
-            }
+        coVerify {
+            awardPointsUseCase(
+                profileId = any(),
+                // DICTEE_CORRECT_TYPED
+                basePoints = 10,
+                streak = 1,
+                source = PointSource.DICTEE,
+                reason = any(),
+            )
         }
+    }
 
     @Test
-    fun `handwriting recognized updates user input`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `correct answer updates word mastery in repository`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteePracticeIntent.HandwritingRecognized("maison"))
-            advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertEquals("maison", state.recognizedText)
-            assertEquals("maison", state.userInput)
+        coVerify {
+            dicteeRepository.updateWord(
+                match { it.id == "w1" && it.attempts == 1 && it.correctCount == 1 },
+            )
         }
+    }
 
     @Test
-    fun `play word calls TTS manager`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `handwriting recognized updates user input`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteePracticeIntent.PlayWord)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.HandwritingRecognized("maison"))
+        advanceUntilIdle()
 
-            verify { ttsManager.speak("maison", any(), any()) }
-        }
+        val state = viewModel.state.value
+        assertEquals("maison", state.recognizedText)
+        assertEquals("maison", state.userInput)
+    }
+
+    @Test
+    fun `play word calls TTS manager`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.PlayWord)
+        advanceUntilIdle()
+
+        verify { ttsManager.speak("maison", any(), any()) }
+    }
 }

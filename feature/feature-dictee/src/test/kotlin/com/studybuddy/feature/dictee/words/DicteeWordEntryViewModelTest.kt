@@ -73,121 +73,113 @@ class DicteeWordEntryViewModelTest {
     }
 
     @Test
-    fun `load words populates state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `load words populates state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            val state = viewModel.state.value
-            assertFalse(state.isLoading)
-            assertEquals(2, state.words.size)
-            assertEquals("Animals", state.list?.title)
-        }
-
-    @Test
-    fun `add word calls use case and clears input`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("oiseau"))
-            advanceUntilIdle()
-            viewModel.onIntent(DicteeWordEntryIntent.AddWord)
-            advanceUntilIdle()
-
-            coVerify { addWordUseCase(match { it.word == "oiseau" && it.listId == "list1" }) }
-            assertEquals("", viewModel.state.value.newWordText)
-        }
+        val state = viewModel.state.value
+        assertFalse(state.isLoading)
+        assertEquals(2, state.words.size)
+        assertEquals("Animals", state.list?.title)
+    }
 
     @Test
-    fun `add blank word does nothing`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `add word calls use case and clears input`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("  "))
-            viewModel.onIntent(DicteeWordEntryIntent.AddWord)
-            advanceUntilIdle()
+        viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("oiseau"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteeWordEntryIntent.AddWord)
+        advanceUntilIdle()
 
-            coVerify(exactly = 0) { addWordUseCase(any()) }
-        }
-
-    @Test
-    fun `delete word calls repository and emits undo snackbar`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            viewModel.effects.test {
-                viewModel.onIntent(DicteeWordEntryIntent.DeleteWord("w1"))
-                advanceUntilIdle()
-
-                coVerify { dicteeRepository.deleteWord("w1") }
-
-                val effect = awaitItem()
-                assertTrue(effect is DicteeWordEntryEffect.ShowUndoSnackbar)
-                assertEquals("chat", (effect as DicteeWordEntryEffect.ShowUndoSnackbar).word.word)
-            }
-        }
+        coVerify { addWordUseCase(match { it.word == "oiseau" && it.listId == "list1" }) }
+        assertEquals("", viewModel.state.value.newWordText)
+    }
 
     @Test
-    fun `toggle edit mode flips state`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `add blank word does nothing`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertFalse(viewModel.state.value.isEditMode)
+        viewModel.onIntent(DicteeWordEntryIntent.UpdateNewWordText("  "))
+        viewModel.onIntent(DicteeWordEntryIntent.AddWord)
+        advanceUntilIdle()
 
-            viewModel.onIntent(DicteeWordEntryIntent.ToggleEditMode)
-            advanceUntilIdle()
-            assertTrue(viewModel.state.value.isEditMode)
-
-            viewModel.onIntent(DicteeWordEntryIntent.ToggleEditMode)
-            advanceUntilIdle()
-            assertFalse(viewModel.state.value.isEditMode)
-        }
+        coVerify(exactly = 0) { addWordUseCase(any()) }
+    }
 
     @Test
-    fun `play word calls TTS with correct locale`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `delete word calls repository and emits undo snackbar`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeWordEntryIntent.DeleteWord("w1"))
             advanceUntilIdle()
 
-            viewModel.onIntent(DicteeWordEntryIntent.PlayWord("chat"))
-            advanceUntilIdle()
+            coVerify { dicteeRepository.deleteWord("w1") }
 
-            verify { ttsManager.speak("chat", java.util.Locale.FRENCH) }
+            val effect = awaitItem()
+            assertTrue(effect is DicteeWordEntryEffect.ShowUndoSnackbar)
+            assertEquals("chat", (effect as DicteeWordEntryEffect.ShowUndoSnackbar).word.word)
         }
+    }
 
     @Test
-    fun `start practice emits navigate effect when words exist`() =
-        runTest {
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `toggle edit mode flips state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            viewModel.effects.test {
-                viewModel.onIntent(DicteeWordEntryIntent.StartPractice)
-                advanceUntilIdle()
+        assertFalse(viewModel.state.value.isEditMode)
 
-                val effect = awaitItem()
-                assertTrue(effect is DicteeWordEntryEffect.NavigateToPractice)
-                assertEquals("list1", (effect as DicteeWordEntryEffect.NavigateToPractice).listId)
-            }
-        }
+        viewModel.onIntent(DicteeWordEntryIntent.ToggleEditMode)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.isEditMode)
+
+        viewModel.onIntent(DicteeWordEntryIntent.ToggleEditMode)
+        advanceUntilIdle()
+        assertFalse(viewModel.state.value.isEditMode)
+    }
 
     @Test
-    fun `start practice with no words does not emit effect`() =
-        runTest {
-            every { dicteeRepository.getWordsForList("list1") } returns flowOf(emptyList())
+    fun `play word calls TTS with correct locale`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            val viewModel = createViewModel()
+        viewModel.onIntent(DicteeWordEntryIntent.PlayWord("chat"))
+        advanceUntilIdle()
+
+        verify { ttsManager.speak("chat", java.util.Locale.FRENCH) }
+    }
+
+    @Test
+    fun `start practice emits navigate effect when words exist`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeWordEntryIntent.StartPractice)
             advanceUntilIdle()
 
-            viewModel.effects.test {
-                viewModel.onIntent(DicteeWordEntryIntent.StartPractice)
-                advanceUntilIdle()
-
-                expectNoEvents()
-            }
+            val effect = awaitItem()
+            assertTrue(effect is DicteeWordEntryEffect.NavigateToPractice)
+            assertEquals("list1", (effect as DicteeWordEntryEffect.NavigateToPractice).listId)
         }
+    }
+
+    @Test
+    fun `start practice with no words does not emit effect`() = runTest {
+        every { dicteeRepository.getWordsForList("list1") } returns flowOf(emptyList())
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeWordEntryIntent.StartPractice)
+            advanceUntilIdle()
+
+            expectNoEvents()
+        }
+    }
 }

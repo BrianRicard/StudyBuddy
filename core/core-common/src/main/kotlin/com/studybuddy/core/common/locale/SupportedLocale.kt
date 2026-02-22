@@ -13,7 +13,6 @@ enum class SupportedLocale(val code: String, val displayName: String, val javaLo
     ;
 
     companion object {
-        fun fromCode(code: String): SupportedLocale =
-            entries.firstOrNull { it.code == code } ?: ENGLISH
+        fun fromCode(code: String): SupportedLocale = entries.firstOrNull { it.code == code } ?: ENGLISH
     }
 }

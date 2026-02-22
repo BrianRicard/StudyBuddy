@@ -20,11 +20,9 @@ fun String.matchesWord(
 /**
  * Strips diacritical marks from a string using Unicode NFD normalization.
  */
-fun String.stripAccents(): String =
-    normalize(this)
+fun String.stripAccents(): String = normalize(this)
 
-private fun normalize(s: String): String =
-    Normalizer.normalize(s, Normalizer.Form.NFD)
-        .replace(Regex("[\\p{InCombiningDiacriticalMarks}]"), "")
-        .lowercase()
-        .trim()
+private fun normalize(s: String): String = Normalizer.normalize(s, Normalizer.Form.NFD)
+    .replace(Regex("[\\p{InCombiningDiacriticalMarks}]"), "")
+    .lowercase()
+    .trim()

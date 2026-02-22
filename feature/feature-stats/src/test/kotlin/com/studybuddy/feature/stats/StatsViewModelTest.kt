@@ -61,56 +61,55 @@ class StatsViewModelTest {
         every { dicteeRepository.getListsForProfile("default") } returns flowOf(dicteeLists)
     }
 
-    private fun createViewModel() =
-        StatsViewModel(
-            pointsRepository = pointsRepository,
-            mathRepository = mathRepository,
-            dicteeRepository = dicteeRepository,
-        )
+    private fun createViewModel() = StatsViewModel(
+        pointsRepository = pointsRepository,
+        mathRepository = mathRepository,
+        dicteeRepository = dicteeRepository,
+    )
 
     private fun createPointEvent(
         source: PointSource = PointSource.MATH,
         points: Int = 10,
         timestamp: Instant = Clock.System.now(),
     ) = PointEvent(
-            id = "event_${System.nanoTime()}",
-            profileId = "default",
-            source = source,
-            points = points,
-            reason = "test",
-            timestamp = timestamp,
-        )
+        id = "event_${System.nanoTime()}",
+        profileId = "default",
+        source = source,
+        points = points,
+        reason = "test",
+        timestamp = timestamp,
+    )
 
     private fun createMathSession(
         avgResponseMs: Long = 3000L,
         completedAt: Instant = Clock.System.now(),
     ) = MathSession(
-            id = "session_${System.nanoTime()}",
-            profileId = "default",
-            operators = setOf(Operator.PLUS),
-            numberRange = 1..10,
-            totalProblems = 10,
-            correctCount = 8,
-            bestStreak = 5,
-            avgResponseMs = avgResponseMs,
-            difficulty = Difficulty.EASY,
-            completedAt = completedAt,
-        )
+        id = "session_${System.nanoTime()}",
+        profileId = "default",
+        operators = setOf(Operator.PLUS),
+        numberRange = 1..10,
+        totalProblems = 10,
+        correctCount = 8,
+        bestStreak = 5,
+        avgResponseMs = avgResponseMs,
+        difficulty = Difficulty.EASY,
+        completedAt = completedAt,
+    )
 
     private fun createDicteeList(
         wordCount: Int = 10,
         masteredCount: Int = 5,
         updatedAt: Instant = Clock.System.now(),
     ) = DicteeList(
-            id = "list_${System.nanoTime()}",
-            profileId = "default",
-            title = "Test List",
-            language = "fr",
-            wordCount = wordCount,
-            masteredCount = masteredCount,
-            createdAt = Instant.fromEpochMilliseconds(0),
-            updatedAt = updatedAt,
-        )
+        id = "list_${System.nanoTime()}",
+        profileId = "default",
+        title = "Test List",
+        language = "fr",
+        wordCount = wordCount,
+        masteredCount = masteredCount,
+        createdAt = Instant.fromEpochMilliseconds(0),
+        updatedAt = updatedAt,
+    )
 
     @Test
     fun `initial state is loading`() {
@@ -121,128 +120,118 @@ class StatsViewModelTest {
     }
 
     @Test
-    fun `observes total stars from repository`() =
-        runTest {
-            setupDefaultMocks(totalPoints = 250L)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `observes total stars from repository`() = runTest {
+        setupDefaultMocks(totalPoints = 250L)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertEquals(250L, viewModel.state.value.totalStars)
-            assertFalse(viewModel.state.value.isLoading)
-        }
-
-    @Test
-    fun `counts total sessions from point events`() =
-        runTest {
-            val events = listOf(
-                createPointEvent(source = PointSource.DICTEE),
-                createPointEvent(source = PointSource.MATH),
-                createPointEvent(source = PointSource.MATH),
-                createPointEvent(source = PointSource.DAILY_LOGIN),
-            )
-            setupDefaultMocks(pointEvents = events)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            assertEquals(3, viewModel.state.value.totalSessions)
-        }
+        assertEquals(250L, viewModel.state.value.totalStars)
+        assertFalse(viewModel.state.value.isLoading)
+    }
 
     @Test
-    fun `weekly data has 7 days`() =
-        runTest {
-            setupDefaultMocks()
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `counts total sessions from point events`() = runTest {
+        val events = listOf(
+            createPointEvent(source = PointSource.DICTEE),
+            createPointEvent(source = PointSource.MATH),
+            createPointEvent(source = PointSource.MATH),
+            createPointEvent(source = PointSource.DAILY_LOGIN),
+        )
+        setupDefaultMocks(pointEvents = events)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertEquals(7, viewModel.state.value.weeklyData.size)
-        }
-
-    @Test
-    fun `weekly data marks today correctly`() =
-        runTest {
-            setupDefaultMocks()
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            val todayEntries = viewModel.state.value.weeklyData.filter { it.isToday }
-            assertEquals(1, todayEntries.size)
-        }
+        assertEquals(3, viewModel.state.value.totalSessions)
+    }
 
     @Test
-    fun `dictee accuracy is null with no lists`() =
-        runTest {
-            setupDefaultMocks(dicteeLists = emptyList())
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `weekly data has 7 days`() = runTest {
+        setupDefaultMocks()
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertNull(viewModel.state.value.dicteeAccuracy)
-        }
-
-    @Test
-    fun `dictee accuracy calculated correctly`() =
-        runTest {
-            val lists = listOf(
-                createDicteeList(wordCount = 10, masteredCount = 8),
-                createDicteeList(wordCount = 10, masteredCount = 6),
-            )
-            setupDefaultMocks(dicteeLists = lists)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            // (8 + 6) / (10 + 10) = 14/20 = 0.7
-            assertEquals(0.7f, viewModel.state.value.dicteeAccuracy)
-        }
+        assertEquals(7, viewModel.state.value.weeklyData.size)
+    }
 
     @Test
-    fun `math avg speed is null with no sessions`() =
-        runTest {
-            setupDefaultMocks(mathSessions = emptyList())
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `weekly data marks today correctly`() = runTest {
+        setupDefaultMocks()
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertNull(viewModel.state.value.mathAvgSpeed)
-        }
-
-    @Test
-    fun `math avg speed calculated from recent sessions`() =
-        runTest {
-            val sessions = listOf(
-                createMathSession(avgResponseMs = 2000L),
-                createMathSession(avgResponseMs = 4000L),
-            )
-            setupDefaultMocks(mathSessions = sessions)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
-
-            // (2000 + 4000) / 2 = 3000
-            assertEquals(3000L, viewModel.state.value.mathAvgSpeed)
-        }
+        val todayEntries = viewModel.state.value.weeklyData.filter { it.isToday }
+        assertEquals(1, todayEntries.size)
+    }
 
     @Test
-    fun `math speed trend is null with insufficient sessions`() =
-        runTest {
-            val sessions = listOf(
-                createMathSession(avgResponseMs = 3000L),
-            )
-            setupDefaultMocks(mathSessions = sessions)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `dictee accuracy is null with no lists`() = runTest {
+        setupDefaultMocks(dicteeLists = emptyList())
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertNull(viewModel.state.value.mathSpeedTrend)
-        }
+        assertNull(viewModel.state.value.dicteeAccuracy)
+    }
 
     @Test
-    fun `dictee accuracy trend is null with fewer than 2 lists`() =
-        runTest {
-            val lists = listOf(
-                createDicteeList(wordCount = 10, masteredCount = 8),
-            )
-            setupDefaultMocks(dicteeLists = lists)
-            val viewModel = createViewModel()
-            advanceUntilIdle()
+    fun `dictee accuracy calculated correctly`() = runTest {
+        val lists = listOf(
+            createDicteeList(wordCount = 10, masteredCount = 8),
+            createDicteeList(wordCount = 10, masteredCount = 6),
+        )
+        setupDefaultMocks(dicteeLists = lists)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
 
-            assertNull(viewModel.state.value.dicteeAccuracyTrend)
-        }
+        // (8 + 6) / (10 + 10) = 14/20 = 0.7
+        assertEquals(0.7f, viewModel.state.value.dicteeAccuracy)
+    }
+
+    @Test
+    fun `math avg speed is null with no sessions`() = runTest {
+        setupDefaultMocks(mathSessions = emptyList())
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.mathAvgSpeed)
+    }
+
+    @Test
+    fun `math avg speed calculated from recent sessions`() = runTest {
+        val sessions = listOf(
+            createMathSession(avgResponseMs = 2000L),
+            createMathSession(avgResponseMs = 4000L),
+        )
+        setupDefaultMocks(mathSessions = sessions)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // (2000 + 4000) / 2 = 3000
+        assertEquals(3000L, viewModel.state.value.mathAvgSpeed)
+    }
+
+    @Test
+    fun `math speed trend is null with insufficient sessions`() = runTest {
+        val sessions = listOf(
+            createMathSession(avgResponseMs = 3000L),
+        )
+        setupDefaultMocks(mathSessions = sessions)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.mathSpeedTrend)
+    }
+
+    @Test
+    fun `dictee accuracy trend is null with fewer than 2 lists`() = runTest {
+        val lists = listOf(
+            createDicteeList(wordCount = 10, masteredCount = 8),
+        )
+        setupDefaultMocks(dicteeLists = lists)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertNull(viewModel.state.value.dicteeAccuracyTrend)
+    }
 
     @Test
     fun `calculateDayStreak returns 0 for empty events`() {

@@ -525,13 +525,12 @@ private fun PurchaseDialog(
 
 // region Helper Functions
 
-private fun getItemsForTab(tab: AccessoryTab): List<RewardItem> =
-    when (tab) {
-        AccessoryTab.HATS -> RewardCatalog.hats
-        AccessoryTab.FACE -> RewardCatalog.faceAccessories
-        AccessoryTab.OUTFIT -> RewardCatalog.outfits
-        AccessoryTab.PETS -> RewardCatalog.pets
-    }
+private fun getItemsForTab(tab: AccessoryTab): List<RewardItem> = when (tab) {
+    AccessoryTab.HATS -> RewardCatalog.hats
+    AccessoryTab.FACE -> RewardCatalog.faceAccessories
+    AccessoryTab.OUTFIT -> RewardCatalog.outfits
+    AccessoryTab.PETS -> RewardCatalog.pets
+}
 
 private fun getEquippedIdForTab(
     tab: AccessoryTab,

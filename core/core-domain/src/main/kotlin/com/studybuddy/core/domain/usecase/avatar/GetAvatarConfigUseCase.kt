@@ -6,6 +6,5 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class GetAvatarConfigUseCase @Inject constructor(private val repository: AvatarRepository) {
-    operator fun invoke(profileId: String): Flow<AvatarConfig?> =
-        repository.getAvatarConfig(profileId)
+    operator fun invoke(profileId: String): Flow<AvatarConfig?> = repository.getAvatarConfig(profileId)
 }

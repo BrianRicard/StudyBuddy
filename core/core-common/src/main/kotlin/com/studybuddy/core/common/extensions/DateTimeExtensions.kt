@@ -9,8 +9,7 @@ import kotlinx.datetime.toLocalDateTime
 /**
  * Returns today's date in the system default timezone.
  */
-fun Clock.today(): LocalDate =
-    now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+fun Clock.today(): LocalDate = now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
 /**
  * Returns true if this Instant is from the same day as today.

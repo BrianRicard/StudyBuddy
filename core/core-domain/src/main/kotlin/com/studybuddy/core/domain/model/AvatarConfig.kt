@@ -9,13 +9,12 @@ data class AvatarConfig(
     val equippedTitle: String? = null,
 ) {
     companion object {
-        fun default() =
-            AvatarConfig(
-                bodyId = "fox",
-                hatId = "none",
-                faceId = "none",
-                outfitId = "default",
-                petId = "none",
-            )
+        fun default() = AvatarConfig(
+            bodyId = "fox",
+            hatId = "none",
+            faceId = "none",
+            outfitId = "default",
+            petId = "none",
+        )
     }
 }

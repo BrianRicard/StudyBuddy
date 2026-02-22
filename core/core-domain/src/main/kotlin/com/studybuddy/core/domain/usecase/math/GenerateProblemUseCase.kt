@@ -32,14 +32,13 @@ class GenerateProblemUseCase @Inject constructor() {
         operator: Operator,
         range: IntRange,
         difficulty: Difficulty,
-    ): MathProblem =
-        when (operator) {
-            Operator.PLUS -> generateAddition(range, difficulty)
-            Operator.MINUS -> generateSubtraction(range, difficulty)
-            Operator.MULTIPLY -> generateMultiplication(range, difficulty)
-            Operator.DIVIDE -> generateDivision(range, difficulty)
-            Operator.POWER -> generatePower()
-        }
+    ): MathProblem = when (operator) {
+        Operator.PLUS -> generateAddition(range, difficulty)
+        Operator.MINUS -> generateSubtraction(range, difficulty)
+        Operator.MULTIPLY -> generateMultiplication(range, difficulty)
+        Operator.DIVIDE -> generateDivision(range, difficulty)
+        Operator.POWER -> generatePower()
+    }
 
     private fun generateAddition(
         range: IntRange,

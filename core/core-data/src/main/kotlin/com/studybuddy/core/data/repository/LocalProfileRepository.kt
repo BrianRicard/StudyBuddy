@@ -13,11 +13,9 @@ import kotlinx.coroutines.flow.map
 @Singleton
 class LocalProfileRepository @Inject constructor(private val dao: ProfileDao) : ProfileRepository {
 
-    override fun getProfile(id: String): Flow<Profile?> =
-        dao.getProfile(id).map { it?.toDomain() }
+    override fun getProfile(id: String): Flow<Profile?> = dao.getProfile(id).map { it?.toDomain() }
 
-    override fun getActiveProfile(): Flow<Profile?> =
-        dao.getActiveProfile().map { it?.toDomain() }
+    override fun getActiveProfile(): Flow<Profile?> = dao.getActiveProfile().map { it?.toDomain() }
 
     override suspend fun createProfile(profile: Profile) {
         dao.insert(profile.toEntity())

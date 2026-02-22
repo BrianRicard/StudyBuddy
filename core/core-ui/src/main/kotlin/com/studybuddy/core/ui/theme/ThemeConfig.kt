@@ -10,7 +10,6 @@ enum class ThemeConfig(val displayName: String) {
     ;
 
     companion object {
-        fun fromId(id: String): ThemeConfig =
-            entries.firstOrNull { it.name.lowercase() == id.lowercase() } ?: Sunset
+        fun fromId(id: String): ThemeConfig = entries.firstOrNull { it.name.lowercase() == id.lowercase() } ?: Sunset
     }
 }

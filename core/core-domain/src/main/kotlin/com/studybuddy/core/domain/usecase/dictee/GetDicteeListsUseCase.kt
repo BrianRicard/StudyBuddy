@@ -6,6 +6,5 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class GetDicteeListsUseCase @Inject constructor(private val repository: DicteeRepository) {
-    operator fun invoke(profileId: String): Flow<List<DicteeList>> =
-        repository.getListsForProfile(profileId)
+    operator fun invoke(profileId: String): Flow<List<DicteeList>> = repository.getListsForProfile(profileId)
 }

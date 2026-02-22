@@ -131,14 +131,11 @@ object RewardCatalog {
         "sound_chime",
     )
 
-    fun getItemsByCategory(category: RewardCategory): List<RewardItem> =
-        allItems.filter { it.category == category }
+    fun getItemsByCategory(category: RewardCategory): List<RewardItem> = allItems.filter { it.category == category }
 
-    fun getItemById(id: String): RewardItem? =
-        allItems.firstOrNull { it.id == id }
+    fun getItemById(id: String): RewardItem? = allItems.firstOrNull { it.id == id }
 
-    fun isStarterItem(itemId: String): Boolean =
-        itemId in starterItemIds
+    fun isStarterItem(itemId: String): Boolean = itemId in starterItemIds
 }
 
 data class CharacterBody(val id: String, val name: String, val emoji: String)

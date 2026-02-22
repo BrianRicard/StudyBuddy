@@ -199,12 +199,11 @@ class AvatarClosetViewModel @Inject constructor(
     private fun applyItemToConfig(
         config: AvatarConfig,
         item: RewardItem,
-    ): AvatarConfig =
-        when (item.category) {
-            RewardCategory.HAT -> config.copy(hatId = item.id)
-            RewardCategory.FACE -> config.copy(faceId = item.id)
-            RewardCategory.OUTFIT -> config.copy(outfitId = item.id)
-            RewardCategory.PET -> config.copy(petId = item.id)
-            else -> config
-        }
+    ): AvatarConfig = when (item.category) {
+        RewardCategory.HAT -> config.copy(hatId = item.id)
+        RewardCategory.FACE -> config.copy(faceId = item.id)
+        RewardCategory.OUTFIT -> config.copy(outfitId = item.id)
+        RewardCategory.PET -> config.copy(petId = item.id)
+        else -> config
+    }
 }

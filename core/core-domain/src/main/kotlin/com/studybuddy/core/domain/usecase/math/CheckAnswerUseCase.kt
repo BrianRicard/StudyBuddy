@@ -8,10 +8,9 @@ class CheckAnswerUseCase @Inject constructor() {
     operator fun invoke(
         problem: MathProblem,
         userAnswer: Int,
-    ): Feedback =
-        if (userAnswer == problem.correctAnswer) {
-            Feedback.Correct
-        } else {
-            Feedback.Incorrect(correctAnswer = problem.correctAnswer.toString())
-        }
+    ): Feedback = if (userAnswer == problem.correctAnswer) {
+        Feedback.Correct
+    } else {
+        Feedback.Incorrect(correctAnswer = problem.correctAnswer.toString())
+    }
 }

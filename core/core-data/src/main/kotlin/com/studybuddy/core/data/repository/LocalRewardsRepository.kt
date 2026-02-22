@@ -32,8 +32,7 @@ class LocalRewardsRepository @Inject constructor(private val dao: RewardsDao) : 
     override fun isRewardOwned(
         profileId: String,
         rewardId: String,
-    ): Flow<Boolean> =
-        dao.isRewardOwned(profileId, rewardId)
+    ): Flow<Boolean> = dao.isRewardOwned(profileId, rewardId)
 
     override suspend fun purchaseReward(
         profileId: String,

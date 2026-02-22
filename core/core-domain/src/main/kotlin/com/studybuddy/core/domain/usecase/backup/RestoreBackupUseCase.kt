@@ -4,6 +4,5 @@ import com.studybuddy.core.domain.repository.BackupRepository
 import javax.inject.Inject
 
 class RestoreBackupUseCase @Inject constructor(private val repository: BackupRepository) {
-    suspend operator fun invoke(json: String) =
-        repository.restoreBackup(json)
+    suspend operator fun invoke(json: String) = repository.restoreBackup(json)
 }

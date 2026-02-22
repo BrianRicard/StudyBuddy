@@ -14,17 +14,13 @@ class LocalBackupRepository @Inject constructor(
     private val pdfReportGenerator: PdfReportGenerator,
 ) : BackupRepository {
 
-    override suspend fun createBackup(): String =
-        backupManager.createFullBackup()
+    override suspend fun createBackup(): String = backupManager.createFullBackup()
 
-    override suspend fun restoreBackup(json: String) =
-        backupManager.restoreFromBackup(json)
+    override suspend fun restoreBackup(json: String) = backupManager.restoreFromBackup(json)
 
-    override suspend fun exportPdf(profileId: String): ByteArray =
-        pdfReportGenerator.generateReport(profileId)
+    override suspend fun exportPdf(profileId: String): ByteArray = pdfReportGenerator.generateReport(profileId)
 
-    override suspend fun exportCsv(profileId: String): String =
-        csvExporter.exportWordLists(profileId)
+    override suspend fun exportCsv(profileId: String): String = csvExporter.exportWordLists(profileId)
 
     override suspend fun sync() { /* no-op: cloud migration hook */ }
 }

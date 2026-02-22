@@ -192,11 +192,10 @@ private fun SummaryStatCard(
     }
 }
 
-private fun formatStarCount(stars: Long): String =
-    when {
-        stars >= THOUSAND -> "%.1fk".format(stars / THOUSAND.toDouble())
-        else -> stars.toString()
-    }
+private fun formatStarCount(stars: Long): String = when {
+    stars >= THOUSAND -> "%.1fk".format(stars / THOUSAND.toDouble())
+    else -> stars.toString()
+}
 
 // endregion
 
@@ -460,8 +459,7 @@ private fun TrendRow(
     }
 }
 
-private fun formatPercentage(value: Float): String =
-    "${(value * PERCENTAGE_MULTIPLIER).toInt()}%"
+private fun formatPercentage(value: Float): String = "${(value * PERCENTAGE_MULTIPLIER).toInt()}%"
 
 private fun formatResponseTime(ms: Long): String {
     val seconds = ms / MS_PER_SECOND.toDouble()

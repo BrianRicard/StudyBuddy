@@ -9,10 +9,9 @@ class CheckSpellingUseCase @Inject constructor() {
         userInput: String,
         correctWord: String,
         accentStrict: Boolean,
-    ): Feedback =
-        if (userInput.matchesWord(correctWord, strict = accentStrict)) {
-            Feedback.Correct
-        } else {
-            Feedback.Incorrect(correctAnswer = correctWord)
-        }
+    ): Feedback = if (userInput.matchesWord(correctWord, strict = accentStrict)) {
+        Feedback.Correct
+    } else {
+        Feedback.Incorrect(correctAnswer = correctWord)
+    }
 }

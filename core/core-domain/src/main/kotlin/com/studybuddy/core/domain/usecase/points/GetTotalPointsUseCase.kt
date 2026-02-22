@@ -5,6 +5,5 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 
 class GetTotalPointsUseCase @Inject constructor(private val repository: PointsRepository) {
-    operator fun invoke(profileId: String): Flow<Long> =
-        repository.getTotalPoints(profileId)
+    operator fun invoke(profileId: String): Flow<Long> = repository.getTotalPoints(profileId)
 }

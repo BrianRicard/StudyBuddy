@@ -278,20 +278,18 @@ private fun CreateListDialog(
     )
 }
 
-private fun languageFlag(code: String): String =
-    when (code) {
-        "fr" -> "\uD83C\uDDEB\uD83C\uDDF7"
-        "en" -> "\uD83C\uDDEC\uD83C\uDDE7"
-        "de" -> "\uD83C\uDDE9\uD83C\uDDEA"
-        else -> "\uD83C\uDFF3\uFE0F"
-    }
+private fun languageFlag(code: String): String = when (code) {
+    "fr" -> "\uD83C\uDDEB\uD83C\uDDF7"
+    "en" -> "\uD83C\uDDEC\uD83C\uDDE7"
+    "de" -> "\uD83C\uDDE9\uD83C\uDDEA"
+    else -> "\uD83C\uDFF3\uFE0F"
+}
 
-private fun masteryColor(percent: Float): Color =
-    when {
-        percent < 0.5f -> Color(0xFFE53935)
-        percent < 0.8f -> Color(0xFFFDD835)
-        else -> Color(0xFF43A047)
-    }
+private fun masteryColor(percent: Float): Color = when {
+    percent < 0.5f -> Color(0xFFE53935)
+    percent < 0.8f -> Color(0xFFFDD835)
+    else -> Color(0xFF43A047)
+}
 
 @Preview
 @Composable

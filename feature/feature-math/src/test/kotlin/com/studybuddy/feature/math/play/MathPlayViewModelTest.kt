@@ -95,267 +95,251 @@ class MathPlayViewModelTest {
     }
 
     @Test
-    fun `initial state loads first problem`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `initial state loads first problem`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            val state = viewModel.state.value
-            assertNotNull(state.currentProblem)
-            assertEquals(testProblem, state.currentProblem)
-            assertEquals("", state.userAnswer)
-            assertEquals(0, state.problemsCompleted)
-            assertEquals(5, state.totalProblems)
-            assertFalse(state.isComplete)
-        }
-
-    @Test
-    fun `digit entered appends to user answer`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
-
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            assertEquals("1", viewModel.state.value.userAnswer)
-
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            assertEquals("10", viewModel.state.value.userAnswer)
-        }
+        val state = viewModel.state.value
+        assertNotNull(state.currentProblem)
+        assertEquals(testProblem, state.currentProblem)
+        assertEquals("", state.userAnswer)
+        assertEquals(0, state.problemsCompleted)
+        assertEquals(5, state.totalProblems)
+        assertFalse(state.isComplete)
+    }
 
     @Test
-    fun `backspace removes last digit`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `digit entered appends to user answer`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(2))
-            assertEquals("12", viewModel.state.value.userAnswer)
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        assertEquals("1", viewModel.state.value.userAnswer)
 
-            viewModel.onIntent(MathPlayIntent.Backspace)
-            assertEquals("1", viewModel.state.value.userAnswer)
-        }
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        assertEquals("10", viewModel.state.value.userAnswer)
+    }
 
     @Test
-    fun `backspace on empty answer does nothing`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `backspace removes last digit`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.onIntent(MathPlayIntent.Backspace)
-            assertEquals("", viewModel.state.value.userAnswer)
-        }
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(2))
+        assertEquals("12", viewModel.state.value.userAnswer)
 
-    @Test
-    fun `submit correct answer increments correct count and streak`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
-
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            runCurrent()
-
-            val state = viewModel.state.value
-            assertEquals(1, state.correctCount)
-            assertEquals(1, state.streak)
-        }
+        viewModel.onIntent(MathPlayIntent.Backspace)
+        assertEquals("1", viewModel.state.value.userAnswer)
+    }
 
     @Test
-    fun `submit incorrect answer resets streak`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `backspace on empty answer does nothing`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            // First answer correctly to build streak
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            advanceTimeBy(2_000)
-            runCurrent()
-            assertEquals(1, viewModel.state.value.streak)
-
-            // Now answer incorrectly
-            viewModel.onIntent(MathPlayIntent.DigitEntered(5))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            runCurrent()
-
-            assertEquals(0, viewModel.state.value.streak)
-        }
+        viewModel.onIntent(MathPlayIntent.Backspace)
+        assertEquals("", viewModel.state.value.userAnswer)
+    }
 
     @Test
-    fun `submit empty answer does nothing`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `submit correct answer increments correct count and streak`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.onIntent(MathPlayIntent.Submit)
-            runCurrent()
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        runCurrent()
 
-            // No feedback should be set
-            assertNull(viewModel.state.value.feedback)
-        }
-
-    @Test
-    fun `pause sets isPaused to true`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
-
-            viewModel.onIntent(MathPlayIntent.Pause)
-            assertTrue(viewModel.state.value.isPaused)
-        }
+        val state = viewModel.state.value
+        assertEquals(1, state.correctCount)
+        assertEquals(1, state.streak)
+    }
 
     @Test
-    fun `resume sets isPaused to false`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `submit incorrect answer resets streak`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.onIntent(MathPlayIntent.Pause)
-            assertTrue(viewModel.state.value.isPaused)
+        // First answer correctly to build streak
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+        assertEquals(1, viewModel.state.value.streak)
 
-            viewModel.onIntent(MathPlayIntent.Resume)
-            assertFalse(viewModel.state.value.isPaused)
-        }
+        // Now answer incorrectly
+        viewModel.onIntent(MathPlayIntent.DigitEntered(5))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        runCurrent()
 
-    @Test
-    fun `digit input ignored when paused`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
-
-            viewModel.onIntent(MathPlayIntent.Pause)
-            viewModel.onIntent(MathPlayIntent.DigitEntered(5))
-            assertEquals("", viewModel.state.value.userAnswer)
-        }
+        assertEquals(0, viewModel.state.value.streak)
+    }
 
     @Test
-    fun `digit input ignored when feedback is shown`() =
-        runTest {
-            val viewModel = createViewModel()
-            runCurrent()
+    fun `submit empty answer does nothing`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            runCurrent()
+        viewModel.onIntent(MathPlayIntent.Submit)
+        runCurrent()
 
-            // Now try to input while feedback is visible
-            viewModel.onIntent(MathPlayIntent.DigitEntered(5))
-
-            // Should still be "10", not "105"
-            assertFalse(viewModel.state.value.userAnswer.contains("5"))
-        }
+        // No feedback should be set
+        assertNull(viewModel.state.value.feedback)
+    }
 
     @Test
-    fun `completing all problems emits GameComplete effect`() =
-        runTest {
-            val viewModel = createViewModel(problemCount = 2)
-            runCurrent()
+    fun `pause sets isPaused to true`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
-            viewModel.effects.test {
-                // Answer problem 1
-                viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-                viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-                viewModel.onIntent(MathPlayIntent.Submit)
-                advanceTimeBy(2_000)
-                runCurrent()
-
-                // Answer problem 2
-                viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-                viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-                viewModel.onIntent(MathPlayIntent.Submit)
-                advanceTimeBy(2_000)
-                runCurrent()
-
-                // Collect effects
-                val effects = cancelAndConsumeRemainingEvents()
-                assertTrue(
-                    effects.filterIsInstance<app.cash.turbine.Event.Item<MathPlayEffect>>().any {
-                        it.value is MathPlayEffect.GameComplete
-                    },
-                )
-            }
-        }
+        viewModel.onIntent(MathPlayIntent.Pause)
+        assertTrue(viewModel.state.value.isPaused)
+    }
 
     @Test
-    fun `completing session saves math session`() =
-        runTest {
-            val viewModel = createViewModel(problemCount = 1)
-            runCurrent()
+    fun `resume sets isPaused to false`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
 
+        viewModel.onIntent(MathPlayIntent.Pause)
+        assertTrue(viewModel.state.value.isPaused)
+
+        viewModel.onIntent(MathPlayIntent.Resume)
+        assertFalse(viewModel.state.value.isPaused)
+    }
+
+    @Test
+    fun `digit input ignored when paused`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
+
+        viewModel.onIntent(MathPlayIntent.Pause)
+        viewModel.onIntent(MathPlayIntent.DigitEntered(5))
+        assertEquals("", viewModel.state.value.userAnswer)
+    }
+
+    @Test
+    fun `digit input ignored when feedback is shown`() = runTest {
+        val viewModel = createViewModel()
+        runCurrent()
+
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        runCurrent()
+
+        // Now try to input while feedback is visible
+        viewModel.onIntent(MathPlayIntent.DigitEntered(5))
+
+        // Should still be "10", not "105"
+        assertFalse(viewModel.state.value.userAnswer.contains("5"))
+    }
+
+    @Test
+    fun `completing all problems emits GameComplete effect`() = runTest {
+        val viewModel = createViewModel(problemCount = 2)
+        runCurrent()
+
+        viewModel.effects.test {
+            // Answer problem 1
             viewModel.onIntent(MathPlayIntent.DigitEntered(1))
             viewModel.onIntent(MathPlayIntent.DigitEntered(0))
             viewModel.onIntent(MathPlayIntent.Submit)
             advanceTimeBy(2_000)
             runCurrent()
 
-            coVerify { saveMathSession(any()) }
-        }
-
-    @Test
-    fun `completing session awards points`() =
-        runTest {
-            val viewModel = createViewModel(problemCount = 1)
-            runCurrent()
-
+            // Answer problem 2
             viewModel.onIntent(MathPlayIntent.DigitEntered(1))
             viewModel.onIntent(MathPlayIntent.DigitEntered(0))
             viewModel.onIntent(MathPlayIntent.Submit)
             advanceTimeBy(2_000)
             runCurrent()
 
-            coVerify {
-                awardPoints(
-                    profileId = any(),
-                    basePoints = any(),
-                    streak = any(),
-                    source = PointSource.MATH,
-                    reason = any(),
-                )
-            }
+            // Collect effects
+            val effects = cancelAndConsumeRemainingEvents()
+            assertTrue(
+                effects.filterIsInstance<app.cash.turbine.Event.Item<MathPlayEffect>>().any {
+                    it.value is MathPlayEffect.GameComplete
+                },
+            )
         }
+    }
 
     @Test
-    fun `best streak tracks maximum streak achieved`() =
-        runTest {
-            val viewModel = createViewModel(problemCount = 5)
-            runCurrent()
+    fun `completing session saves math session`() = runTest {
+        val viewModel = createViewModel(problemCount = 1)
+        runCurrent()
 
-            // Correct answer
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            advanceTimeBy(2_000)
-            runCurrent()
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
 
-            // Correct answer
-            viewModel.onIntent(MathPlayIntent.DigitEntered(1))
-            viewModel.onIntent(MathPlayIntent.DigitEntered(0))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            advanceTimeBy(2_000)
-            runCurrent()
-
-            assertEquals(2, viewModel.state.value.bestStreak)
-
-            // Wrong answer - streak resets but bestStreak stays
-            viewModel.onIntent(MathPlayIntent.DigitEntered(5))
-            viewModel.onIntent(MathPlayIntent.Submit)
-            runCurrent()
-
-            assertEquals(0, viewModel.state.value.streak)
-            assertEquals(2, viewModel.state.value.bestStreak)
-        }
+        coVerify { saveMathSession(any()) }
+    }
 
     @Test
-    fun `multiple operators are parsed from saved state`() =
-        runTest {
-            val viewModel = createViewModel(operators = "PLUS,MINUS,MULTIPLY")
-            runCurrent()
+    fun `completing session awards points`() = runTest {
+        val viewModel = createViewModel(problemCount = 1)
+        runCurrent()
 
-            // ViewModel should initialize successfully
-            assertNotNull(viewModel.state.value.currentProblem)
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        coVerify {
+            awardPoints(
+                profileId = any(),
+                basePoints = any(),
+                streak = any(),
+                source = PointSource.MATH,
+                reason = any(),
+            )
         }
+    }
+
+    @Test
+    fun `best streak tracks maximum streak achieved`() = runTest {
+        val viewModel = createViewModel(problemCount = 5)
+        runCurrent()
+
+        // Correct answer
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        // Correct answer
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        assertEquals(2, viewModel.state.value.bestStreak)
+
+        // Wrong answer - streak resets but bestStreak stays
+        viewModel.onIntent(MathPlayIntent.DigitEntered(5))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        runCurrent()
+
+        assertEquals(0, viewModel.state.value.streak)
+        assertEquals(2, viewModel.state.value.bestStreak)
+    }
+
+    @Test
+    fun `multiple operators are parsed from saved state`() = runTest {
+        val viewModel = createViewModel(operators = "PLUS,MINUS,MULTIPLY")
+        runCurrent()
+
+        // ViewModel should initialize successfully
+        assertNotNull(viewModel.state.value.currentProblem)
+    }
 }

@@ -37,96 +37,88 @@ class PurchaseItemUseCaseTest {
     }
 
     @Test
-    fun `purchase succeeds when balance is sufficient`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
+    fun `purchase succeeds when balance is sufficient`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
 
-            val result = useCase(profileId = "profile1", item = testItem)
+        val result = useCase(profileId = "profile1", item = testItem)
 
-            assertTrue(result is PurchaseResult.Success)
-        }
-
-    @Test
-    fun `purchase deducts points on success`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
-
-            useCase(profileId = "profile1", item = testItem)
-
-            coVerify {
-                pointsRepository.deductPoints(
-                    profileId = "profile1",
-                    amount = 50,
-                    reason = "Purchased: Crown",
-                )
-            }
-        }
+        assertTrue(result is PurchaseResult.Success)
+    }
 
     @Test
-    fun `purchase adds item to owned rewards on success`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
+    fun `purchase deducts points on success`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
 
-            useCase(profileId = "profile1", item = testItem)
+        useCase(profileId = "profile1", item = testItem)
 
-            coVerify {
-                rewardsRepository.purchaseReward(profileId = "profile1", reward = testItem)
-            }
+        coVerify {
+            pointsRepository.deductPoints(
+                profileId = "profile1",
+                amount = 50,
+                reason = "Purchased: Crown",
+            )
         }
+    }
 
     @Test
-    fun `purchase fails with insufficient points when balance is too low`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(30L)
+    fun `purchase adds item to owned rewards on success`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(100L)
 
-            val result = useCase(profileId = "profile1", item = testItem)
+        useCase(profileId = "profile1", item = testItem)
 
-            assertTrue(result is PurchaseResult.InsufficientPoints)
-            assertEquals(20L, (result as PurchaseResult.InsufficientPoints).needed)
+        coVerify {
+            rewardsRepository.purchaseReward(profileId = "profile1", reward = testItem)
         }
+    }
 
     @Test
-    fun `purchase does not deduct points on insufficient balance`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(10L)
+    fun `purchase fails with insufficient points when balance is too low`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(30L)
 
-            useCase(profileId = "profile1", item = testItem)
+        val result = useCase(profileId = "profile1", item = testItem)
 
-            coVerify(exactly = 0) {
-                pointsRepository.deductPoints(any(), any(), any())
-            }
-        }
+        assertTrue(result is PurchaseResult.InsufficientPoints)
+        assertEquals(20L, (result as PurchaseResult.InsufficientPoints).needed)
+    }
 
     @Test
-    fun `purchase does not add reward on insufficient balance`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(10L)
+    fun `purchase does not deduct points on insufficient balance`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(10L)
 
-            useCase(profileId = "profile1", item = testItem)
+        useCase(profileId = "profile1", item = testItem)
 
-            coVerify(exactly = 0) {
-                rewardsRepository.purchaseReward(any(), any())
-            }
+        coVerify(exactly = 0) {
+            pointsRepository.deductPoints(any(), any(), any())
         }
+    }
 
     @Test
-    fun `purchase succeeds with exact balance`() =
-        runTest {
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(50L)
+    fun `purchase does not add reward on insufficient balance`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(10L)
 
-            val result = useCase(profileId = "profile1", item = testItem)
+        useCase(profileId = "profile1", item = testItem)
 
-            assertTrue(result is PurchaseResult.Success)
+        coVerify(exactly = 0) {
+            rewardsRepository.purchaseReward(any(), any())
         }
+    }
 
     @Test
-    fun `purchase free item always succeeds`() =
-        runTest {
-            val freeItem = testItem.copy(id = "hat_none", cost = 0)
-            coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(0L)
+    fun `purchase succeeds with exact balance`() = runTest {
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(50L)
 
-            val result = useCase(profileId = "profile1", item = freeItem)
+        val result = useCase(profileId = "profile1", item = testItem)
 
-            assertTrue(result is PurchaseResult.Success)
-        }
+        assertTrue(result is PurchaseResult.Success)
+    }
+
+    @Test
+    fun `purchase free item always succeeds`() = runTest {
+        val freeItem = testItem.copy(id = "hat_none", cost = 0)
+        coEvery { pointsRepository.getTotalPoints("profile1") } returns flowOf(0L)
+
+        val result = useCase(profileId = "profile1", item = freeItem)
+
+        assertTrue(result is PurchaseResult.Success)
+    }
 }

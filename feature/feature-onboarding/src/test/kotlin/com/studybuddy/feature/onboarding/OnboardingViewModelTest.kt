@@ -43,193 +43,178 @@ class OnboardingViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel() =
-        OnboardingViewModel(
-            profileRepository = profileRepository,
-            avatarRepository = avatarRepository,
-            rewardsRepository = rewardsRepository,
-            settingsRepository = settingsRepository,
-        )
+    private fun createViewModel() = OnboardingViewModel(
+        profileRepository = profileRepository,
+        avatarRepository = avatarRepository,
+        rewardsRepository = rewardsRepository,
+        settingsRepository = settingsRepository,
+    )
 
     @Test
-    fun `initial state starts at step 0`() =
-        runTest {
-            val viewModel = createViewModel()
-            assertEquals(0, viewModel.state.value.currentStep)
-        }
+    fun `initial state starts at step 0`() = runTest {
+        val viewModel = createViewModel()
+        assertEquals(0, viewModel.state.value.currentStep)
+    }
 
     @Test
-    fun `set name updates state`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `set name updates state`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            advanceUntilIdle()
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
 
-            assertEquals("Alice", viewModel.state.value.name)
-        }
-
-    @Test
-    fun `set name clears error`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            // Trigger error by trying next with empty name
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
-            assertNotNull(viewModel.state.value.nameError)
-
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            advanceUntilIdle()
-            assertNull(viewModel.state.value.nameError)
-        }
+        assertEquals("Alice", viewModel.state.value.name)
+    }
 
     @Test
-    fun `select locale updates state`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `set name clears error`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SelectLocale("de"))
-            advanceUntilIdle()
+        // Trigger error by trying next with empty name
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertNotNull(viewModel.state.value.nameError)
 
-            assertEquals("de", viewModel.state.value.selectedLocale)
-        }
-
-    @Test
-    fun `select character updates avatar config`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            viewModel.onIntent(OnboardingIntent.SelectCharacter("unicorn"))
-            advanceUntilIdle()
-
-            assertEquals("unicorn", viewModel.state.value.avatarConfig.bodyId)
-        }
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
+        assertNull(viewModel.state.value.nameError)
+    }
 
     @Test
-    fun `select hat updates avatar config`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `select locale updates state`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SelectHat("hat_tophat"))
-            advanceUntilIdle()
+        viewModel.onIntent(OnboardingIntent.SelectLocale("de"))
+        advanceUntilIdle()
 
-            assertEquals("hat_tophat", viewModel.state.value.avatarConfig.hatId)
-        }
-
-    @Test
-    fun `select face updates avatar config`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            viewModel.onIntent(OnboardingIntent.SelectFace("face_shades"))
-            advanceUntilIdle()
-
-            assertEquals("face_shades", viewModel.state.value.avatarConfig.faceId)
-        }
+        assertEquals("de", viewModel.state.value.selectedLocale)
+    }
 
     @Test
-    fun `next step with empty name shows error`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `select character updates avatar config`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
+        viewModel.onIntent(OnboardingIntent.SelectCharacter("unicorn"))
+        advanceUntilIdle()
 
-            assertNotNull(viewModel.state.value.nameError)
-            assertEquals(0, viewModel.state.value.currentStep)
-        }
+        assertEquals("unicorn", viewModel.state.value.avatarConfig.bodyId)
+    }
 
     @Test
-    fun `next step with valid name advances to step 1`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `select hat updates avatar config`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            advanceUntilIdle()
+        viewModel.onIntent(OnboardingIntent.SelectHat("hat_tophat"))
+        advanceUntilIdle()
 
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
-
-            assertEquals(1, viewModel.state.value.currentStep)
-        }
+        assertEquals("hat_tophat", viewModel.state.value.avatarConfig.hatId)
+    }
 
     @Test
-    fun `next step from step 1 advances to step 2`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `select face updates avatar config`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
-            assertEquals(1, viewModel.state.value.currentStep)
+        viewModel.onIntent(OnboardingIntent.SelectFace("face_shades"))
+        advanceUntilIdle()
 
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
-
-            assertEquals(2, viewModel.state.value.currentStep)
-        }
+        assertEquals("face_shades", viewModel.state.value.avatarConfig.faceId)
+    }
 
     @Test
-    fun `previous step goes back`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `next step with empty name shows error`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            viewModel.onIntent(OnboardingIntent.NextStep)
-            advanceUntilIdle()
-            assertEquals(1, viewModel.state.value.currentStep)
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
 
-            viewModel.onIntent(OnboardingIntent.PreviousStep)
-            advanceUntilIdle()
-
-            assertEquals(0, viewModel.state.value.currentStep)
-        }
+        assertNotNull(viewModel.state.value.nameError)
+        assertEquals(0, viewModel.state.value.currentStep)
+    }
 
     @Test
-    fun `previous step from step 0 stays at 0`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `next step with valid name advances to step 1`() = runTest {
+        val viewModel = createViewModel()
 
-            viewModel.onIntent(OnboardingIntent.PreviousStep)
-            advanceUntilIdle()
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
 
-            assertEquals(0, viewModel.state.value.currentStep)
-        }
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
 
-    @Test
-    fun `complete creates profile and emits NavigateToHome`() =
-        runTest {
-            val viewModel = createViewModel()
-
-            viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-            viewModel.onIntent(OnboardingIntent.SelectLocale("fr"))
-            viewModel.onIntent(OnboardingIntent.SelectCharacter("unicorn"))
-            advanceUntilIdle()
-
-            viewModel.effects.test {
-                viewModel.onIntent(OnboardingIntent.Complete)
-                advanceUntilIdle()
-
-                val effect = awaitItem()
-                assertTrue(effect is OnboardingEffect.NavigateToHome)
-            }
-
-            coVerify { profileRepository.createProfile(any()) }
-            coVerify { avatarRepository.saveAvatarConfig(any(), any()) }
-            coVerify { settingsRepository.setAppLocale("fr") }
-            coVerify { settingsRepository.setOnboardingComplete(true) }
-        }
+        assertEquals(1, viewModel.state.value.currentStep)
+    }
 
     @Test
-    fun `complete with empty name shows error instead of completing`() =
-        runTest {
-            val viewModel = createViewModel()
+    fun `next step from step 1 advances to step 2`() = runTest {
+        val viewModel = createViewModel()
 
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.currentStep)
+
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.state.value.currentStep)
+    }
+
+    @Test
+    fun `previous step goes back`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.currentStep)
+
+        viewModel.onIntent(OnboardingIntent.PreviousStep)
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.state.value.currentStep)
+    }
+
+    @Test
+    fun `previous step from step 0 stays at 0`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.PreviousStep)
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.state.value.currentStep)
+    }
+
+    @Test
+    fun `complete creates profile and emits NavigateToHome`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        viewModel.onIntent(OnboardingIntent.SelectLocale("fr"))
+        viewModel.onIntent(OnboardingIntent.SelectCharacter("unicorn"))
+        advanceUntilIdle()
+
+        viewModel.effects.test {
             viewModel.onIntent(OnboardingIntent.Complete)
             advanceUntilIdle()
 
-            assertNotNull(viewModel.state.value.nameError)
-            assertFalse(viewModel.state.value.isCompleting)
+            val effect = awaitItem()
+            assertTrue(effect is OnboardingEffect.NavigateToHome)
         }
+
+        coVerify { profileRepository.createProfile(any()) }
+        coVerify { avatarRepository.saveAvatarConfig(any(), any()) }
+        coVerify { settingsRepository.setAppLocale("fr") }
+        coVerify { settingsRepository.setOnboardingComplete(true) }
+    }
+
+    @Test
+    fun `complete with empty name shows error instead of completing`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.Complete)
+        advanceUntilIdle()
+
+        assertNotNull(viewModel.state.value.nameError)
+        assertFalse(viewModel.state.value.isCompleting)
+    }
 }

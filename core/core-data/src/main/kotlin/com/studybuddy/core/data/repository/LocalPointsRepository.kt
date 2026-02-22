@@ -23,8 +23,7 @@ class LocalPointsRepository @Inject constructor(private val dao: PointsDao) : Po
             events.map { it.toDomain() }
         }
 
-    override fun getTotalPoints(profileId: String): Flow<Long> =
-        dao.getTotalPoints(profileId)
+    override fun getTotalPoints(profileId: String): Flow<Long> = dao.getTotalPoints(profileId)
 
     override fun getPointsToday(profileId: String): Flow<Int> {
         val tz = TimeZone.currentSystemDefault()
@@ -57,23 +56,21 @@ class LocalPointsRepository @Inject constructor(private val dao: PointsDao) : Po
 
     override suspend fun sync() { /* no-op: cloud migration hook */ }
 
-    private fun PointEventEntity.toDomain() =
-        PointEvent(
-            id = id,
-            profileId = profileId,
-            source = runCatching { PointSource.valueOf(source) }.getOrDefault(PointSource.MATH),
-            points = points,
-            reason = reason,
-            timestamp = Instant.fromEpochMilliseconds(timestamp),
-        )
+    private fun PointEventEntity.toDomain() = PointEvent(
+        id = id,
+        profileId = profileId,
+        source = runCatching { PointSource.valueOf(source) }.getOrDefault(PointSource.MATH),
+        points = points,
+        reason = reason,
+        timestamp = Instant.fromEpochMilliseconds(timestamp),
+    )
 
-    private fun PointEvent.toEntity() =
-        PointEventEntity(
-            id = id,
-            profileId = profileId,
-            source = source.name,
-            points = points,
-            reason = reason,
-            timestamp = timestamp.toEpochMilliseconds(),
-        )
+    private fun PointEvent.toEntity() = PointEventEntity(
+        id = id,
+        profileId = profileId,
+        source = source.name,
+        points = points,
+        reason = reason,
+        timestamp = timestamp.toEpochMilliseconds(),
+    )
 }
