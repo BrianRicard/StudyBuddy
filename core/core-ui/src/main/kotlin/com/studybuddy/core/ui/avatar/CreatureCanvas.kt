@@ -52,7 +52,10 @@ fun CreatureCanvas(
 
 // ─── Shared helpers ───────────────────────────────────────────────────────────
 
-private fun DrawScope.eye(center: Offset, radius: Float) {
+private fun DrawScope.eye(
+    center: Offset,
+    radius: Float,
+) {
     drawCircle(Color.White, radius, center)
     drawCircle(Color(0xFF1A1A1A), radius * 0.55f, center)
     drawCircle(Color.White, radius * 0.18f, center + Offset(radius * 0.25f, -radius * 0.25f))
@@ -69,15 +72,21 @@ private fun DrawScope.smile(
     val path = Path().apply {
         moveTo(centerX - width / 2, centerY)
         cubicTo(
-            centerX - width / 4, centerY + height,
-            centerX + width / 4, centerY + height,
-            centerX + width / 2, centerY,
+            centerX - width / 4,
+            centerY + height,
+            centerX + width / 4,
+            centerY + height,
+            centerX + width / 2,
+            centerY,
         )
     }
     drawPath(path, color, style = Stroke(strokeWidth, cap = StrokeCap.Round))
 }
 
-private fun DrawScope.blush(center: Offset, radius: Float) {
+private fun DrawScope.blush(
+    center: Offset,
+    radius: Float,
+) {
     drawCircle(Color(0xFFFFB3C1), radius, center, alpha = 0.55f)
 }
 
@@ -89,7 +98,10 @@ private fun DrawScope.tri(
 ) {
     drawPath(
         Path().apply {
-            moveTo(a.x, a.y); lineTo(b.x, b.y); lineTo(c.x, c.y); close()
+            moveTo(a.x, a.y)
+            lineTo(b.x, b.y)
+            lineTo(c.x, c.y)
+            close()
         },
         color,
     )
@@ -106,8 +118,10 @@ private fun DrawScope.oval(
 // ─── Fox ──────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawFox(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Tail
     val tailPath = Path().apply {
@@ -154,8 +168,10 @@ private fun DrawScope.drawFox(spec: CharacterSpec) {
 // ─── Cat ──────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawCat(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Tail — curls up on right
     val tailPath = Path().apply {
@@ -201,8 +217,11 @@ private fun DrawScope.drawCat(spec: CharacterSpec) {
 // ─── Unicorn ──────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawUnicorn(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor; val c3 = spec.accentColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+    val c3 = spec.accentColor
 
     // Body
     oval(c1, w * 0.50f, h * 0.68f, w * 0.28f, h * 0.24f)
@@ -249,8 +268,10 @@ private fun DrawScope.drawUnicorn(spec: CharacterSpec) {
 // ─── Panda ────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawPanda(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     oval(c1, w * 0.50f, h * 0.68f, w * 0.28f, h * 0.26f)
     // Arms
@@ -278,8 +299,10 @@ private fun DrawScope.drawPanda(spec: CharacterSpec) {
 // ─── Butterfly ────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawButterfly(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Upper wings
     oval(c1, w * 0.22f, h * 0.38f, w * 0.22f, h * 0.28f)
@@ -311,8 +334,10 @@ private fun DrawScope.drawButterfly(spec: CharacterSpec) {
 // ─── Bunny ────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawBunny(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Long ears
     oval(c1, w * 0.35f, h * 0.14f, w * 0.08f, h * 0.18f)
@@ -347,8 +372,11 @@ private fun DrawScope.drawBunny(spec: CharacterSpec) {
 // ─── Owl ──────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawOwl(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor; val c3 = spec.accentColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+    val c3 = spec.accentColor
 
     // Body
     oval(c1, w * 0.50f, h * 0.65f, w * 0.26f, h * 0.28f)
@@ -356,8 +384,18 @@ private fun DrawScope.drawOwl(spec: CharacterSpec) {
     oval(Color(0xFFEFEBE9), w * 0.50f, h * 0.70f, w * 0.16f, h * 0.20f)
     // Wing stripes
     for (i in 0..2) {
-        drawLine(Color(0xFF4E342E), Offset(w * 0.25f, h * (0.55f + i * 0.08f)), Offset(w * 0.42f, h * (0.55f + i * 0.08f)), w * 0.02f)
-        drawLine(Color(0xFF4E342E), Offset(w * 0.58f, h * (0.55f + i * 0.08f)), Offset(w * 0.75f, h * (0.55f + i * 0.08f)), w * 0.02f)
+        drawLine(
+            Color(0xFF4E342E),
+            Offset(w * 0.25f, h * (0.55f + i * 0.08f)),
+            Offset(w * 0.42f, h * (0.55f + i * 0.08f)),
+            w * 0.02f,
+        )
+        drawLine(
+            Color(0xFF4E342E),
+            Offset(w * 0.58f, h * (0.55f + i * 0.08f)),
+            Offset(w * 0.75f, h * (0.55f + i * 0.08f)),
+            w * 0.02f,
+        )
     }
 
     // Head — wide, round
@@ -391,8 +429,10 @@ private fun DrawScope.drawOwl(spec: CharacterSpec) {
 // ─── Dragon ───────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawDragon(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Wings — behind body
     val leftWing = Path().apply {
@@ -425,7 +465,12 @@ private fun DrawScope.drawDragon(spec: CharacterSpec) {
     tri(Offset(w * 0.82f, h * 0.65f), Offset(w * 0.92f, h * 0.58f), Offset(w * 0.88f, h * 0.68f), c2)
 
     // Head
-    drawRoundRect(c1, topLeft = Offset(w * 0.30f, h * 0.18f), size = Size(w * 0.40f, h * 0.28f), cornerRadius = CornerRadius(w * 0.10f))
+    drawRoundRect(
+        c1,
+        topLeft = Offset(w * 0.30f, h * 0.18f),
+        size = Size(w * 0.40f, h * 0.28f),
+        cornerRadius = CornerRadius(w * 0.10f),
+    )
 
     // Horns
     tri(Offset(w * 0.38f, h * 0.14f), Offset(w * 0.34f, h * 0.24f), Offset(w * 0.44f, h * 0.24f), c2)
@@ -450,8 +495,10 @@ private fun DrawScope.drawDragon(spec: CharacterSpec) {
 // ─── Dog ──────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawDog(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Tail wagging right
     val tailPath = Path().apply {
@@ -491,8 +538,10 @@ private fun DrawScope.drawDog(spec: CharacterSpec) {
 // ─── Bear ─────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawBear(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Body — large and round
     oval(c1, w * 0.50f, h * 0.68f, w * 0.30f, h * 0.26f)
@@ -519,27 +568,48 @@ private fun DrawScope.drawBear(spec: CharacterSpec) {
     blush(Offset(w * 0.69f, h * 0.36f), w * 0.055f)
 
     // Honey pot accessory hint
-    drawRoundRect(Color(0xFFFFB300), topLeft = Offset(w * 0.72f, h * 0.78f), size = Size(w * 0.14f, h * 0.12f), cornerRadius = CornerRadius(w * 0.03f))
+    drawRoundRect(
+        Color(0xFFFFB300),
+        topLeft = Offset(w * 0.72f, h * 0.78f),
+        size = Size(w * 0.14f, h * 0.12f),
+        cornerRadius = CornerRadius(w * 0.03f),
+    )
     drawLine(Color(0xFF795548), Offset(w * 0.72f, h * 0.80f), Offset(w * 0.86f, h * 0.80f), w * 0.02f)
 }
 
 // ─── Blue Monster ────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawBlueMonster(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Fuzzy body — draw many small circles around edge for fur effect
     for (i in 0..11) {
         val angle = i * (360f / 12) * (Math.PI / 180f).toFloat()
-        drawCircle(c1, w * 0.07f, Offset(w * 0.50f + w * 0.28f * kotlin.math.cos(angle.toDouble()).toFloat(), h * 0.68f + h * 0.24f * kotlin.math.sin(angle.toDouble()).toFloat()))
+        drawCircle(
+            c1,
+            w * 0.07f,
+            Offset(
+                w * 0.50f + w * 0.28f * kotlin.math.cos(angle.toDouble()).toFloat(),
+                h * 0.68f + h * 0.24f * kotlin.math.sin(angle.toDouble()).toFloat(),
+            ),
+        )
     }
     oval(c1, w * 0.50f, h * 0.68f, w * 0.28f, h * 0.24f)
 
     // Head — round with fur bumps
     for (i in 0..7) {
         val angle = i * (360f / 8) * (Math.PI / 180f).toFloat()
-        drawCircle(c1, w * 0.06f, Offset(w * 0.50f + w * 0.24f * kotlin.math.cos(angle.toDouble()).toFloat(), h * 0.30f + h * 0.20f * kotlin.math.sin(angle.toDouble()).toFloat()))
+        drawCircle(
+            c1,
+            w * 0.06f,
+            Offset(
+                w * 0.50f + w * 0.24f * kotlin.math.cos(angle.toDouble()).toFloat(),
+                h * 0.30f + h * 0.20f * kotlin.math.sin(angle.toDouble()).toFloat(),
+            ),
+        )
     }
     oval(c1, w * 0.50f, h * 0.30f, w * 0.24f, h * 0.20f)
 
@@ -574,8 +644,10 @@ private fun DrawScope.drawBlueMonster(spec: CharacterSpec) {
 // ─── Shrimp ───────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawShrimp(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Segmented curved body
     val segments = 7
@@ -619,8 +691,10 @@ private fun DrawScope.drawShrimp(spec: CharacterSpec) {
 // ─── Shark ────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawShark(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Tail fin
     tri(Offset(w * 0.12f, h * 0.55f), Offset(w * 0.05f, h * 0.40f), Offset(w * 0.05f, h * 0.70f), c1)
@@ -677,8 +751,10 @@ private fun DrawScope.drawShark(spec: CharacterSpec) {
 // ─── Octopus ─────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawOctopus(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // 8 tentacles
     for (i in 0..7) {
@@ -724,8 +800,10 @@ private fun DrawScope.drawOctopus(spec: CharacterSpec) {
 // ─── Moose ────────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawMoose(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Antlers — wide palmate
     fun antlerSide(flipX: Boolean) {
@@ -741,7 +819,12 @@ private fun DrawScope.drawMoose(spec: CharacterSpec) {
             drawLine(c2, Offset(tx, ty + h * 0.10f), Offset(tx + sign * w * 0.04f, ty), w * 0.018f)
         }
         // Brow tine
-        drawLine(c2, Offset(bx + sign * w * 0.04f, by + h * 0.08f), Offset(bx + sign * w * 0.12f, by + h * 0.03f), w * 0.018f)
+        drawLine(
+            c2,
+            Offset(bx + sign * w * 0.04f, by + h * 0.08f),
+            Offset(bx + sign * w * 0.12f, by + h * 0.03f),
+            w * 0.018f,
+        )
     }
     antlerSide(flipX = false)
     antlerSide(flipX = true)
@@ -753,7 +836,12 @@ private fun DrawScope.drawMoose(spec: CharacterSpec) {
     oval(c1, w * 0.50f, h * 0.48f, w * 0.12f, h * 0.14f)
 
     // Head — elongated
-    drawRoundRect(c1, topLeft = Offset(w * 0.34f, h * 0.25f), size = Size(w * 0.32f, h * 0.24f), cornerRadius = CornerRadius(w * 0.10f))
+    drawRoundRect(
+        c1,
+        topLeft = Offset(w * 0.34f, h * 0.25f),
+        size = Size(w * 0.32f, h * 0.24f),
+        cornerRadius = CornerRadius(w * 0.10f),
+    )
 
     // Big moose nose
     oval(c2, w * 0.50f, h * 0.44f, w * 0.14f, h * 0.07f)
@@ -774,7 +862,8 @@ private fun DrawScope.drawMoose(spec: CharacterSpec) {
 // ─── Canada Goose ────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawCanadaGoose(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
+    val w = size.width
+    val h = size.height
 
     // Body — warm brown
     oval(Color(0xFF795548), w * 0.50f, h * 0.68f, w * 0.28f, h * 0.22f)
@@ -808,19 +897,29 @@ private fun DrawScope.drawCanadaGoose(spec: CharacterSpec) {
 
     // Webbed feet
     for (fx in listOf(0.38f, 0.62f)) {
-        tri(Offset(w * fx, h * 0.92f), Offset(w * (fx - 0.07f), h * 0.97f), Offset(w * (fx + 0.07f), h * 0.97f), Color(0xFFFF8F00))
+        tri(
+            Offset(w * fx, h * 0.92f),
+            Offset(w * (fx - 0.07f), h * 0.97f),
+            Offset(w * (fx + 0.07f), h * 0.97f),
+            Color(0xFFFF8F00),
+        )
     }
 }
 
 // ─── Turkey ───────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawTurkey(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
+    val w = size.width
+    val h = size.height
 
     // Fan tail — colourful feathers fanning behind
     val tailColors = listOf(
-        Color(0xFFD32F2F), Color(0xFFFF8F00), Color(0xFFF9A825),
-        Color(0xFF388E3C), Color(0xFF1565C0), Color(0xFF6A1B9A),
+        Color(0xFFD32F2F),
+        Color(0xFFFF8F00),
+        Color(0xFFF9A825),
+        Color(0xFF388E3C),
+        Color(0xFF1565C0),
+        Color(0xFF6A1B9A),
     )
     tailColors.forEachIndexed { i, tc ->
         val angle = (-60f + i * 24f) * (Math.PI / 180.0).toFloat()
@@ -861,7 +960,13 @@ private fun DrawScope.drawTurkey(spec: CharacterSpec) {
     // Feet
     for (fx in listOf(0.38f, 0.62f)) {
         for (toe in listOf(-0.05f, 0f, 0.05f)) {
-            drawLine(Color(0xFFFF8F00), Offset(w * fx, h * 0.92f), Offset(w * (fx + toe), h * 0.98f), w * 0.02f, cap = StrokeCap.Round)
+            drawLine(
+                Color(0xFFFF8F00),
+                Offset(w * fx, h * 0.92f),
+                Offset(w * (fx + toe), h * 0.98f),
+                w * 0.02f,
+                cap = StrokeCap.Round,
+            )
         }
     }
 }
@@ -869,8 +974,10 @@ private fun DrawScope.drawTurkey(spec: CharacterSpec) {
 // ─── Squirrel ─────────────────────────────────────────────────────────────────
 
 private fun DrawScope.drawSquirrel(spec: CharacterSpec) {
-    val w = size.width; val h = size.height
-    val c1 = spec.primaryColor; val c2 = spec.secondaryColor
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
 
     // Large fluffy tail — signature squirrel feature
     val tailPath = Path().apply {
@@ -907,7 +1014,12 @@ private fun DrawScope.drawSquirrel(spec: CharacterSpec) {
 
     // Acorn in hands
     drawCircle(Color(0xFF6D4C41), w * 0.05f, Offset(w * 0.30f, h * 0.74f))
-    drawRoundRect(Color(0xFFFF8F00), topLeft = Offset(w * 0.26f, h * 0.76f), size = Size(w * 0.09f, h * 0.08f), cornerRadius = CornerRadius(w * 0.04f))
+    drawRoundRect(
+        Color(0xFFFF8F00),
+        topLeft = Offset(w * 0.26f, h * 0.76f),
+        size = Size(w * 0.09f, h * 0.08f),
+        cornerRadius = CornerRadius(w * 0.04f),
+    )
 }
 
 // ─── Previews ─────────────────────────────────────────────────────────────────

@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath("org.bouncycastle:bcprov-jdk18on:1.78.1")
+    }
+}
+
 plugins {
     alias(libs.plugins.android.application) apply false
     alias(libs.plugins.android.library) apply false

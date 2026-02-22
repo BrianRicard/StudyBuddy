@@ -69,7 +69,8 @@ object AvatarCharacterRegistry {
                 faceAnchor = Offset(0.50f, 0.28f),
                 chestAnchor = Offset(0.50f, 0.60f),
                 petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 0.85f, // hats appear slightly smaller over the horn
+                // hats appear slightly smaller over the horn
+                hatScale = 0.85f,
             ),
         ),
 
@@ -292,6 +293,5 @@ object AvatarCharacterRegistry {
 
     private val specsById: Map<String, CharacterSpec> = allSpecs.associateBy { it.id }
 
-    fun getSpec(characterId: String): CharacterSpec =
-        specsById[characterId] ?: specsById["fox"]!!
+    fun getSpec(characterId: String): CharacterSpec = specsById[characterId] ?: specsById["fox"]!!
 }

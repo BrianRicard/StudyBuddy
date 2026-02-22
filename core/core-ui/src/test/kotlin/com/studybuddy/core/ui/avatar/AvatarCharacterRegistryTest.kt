@@ -73,7 +73,14 @@ class AvatarCharacterRegistryTest {
     @Test
     fun `face anchor is always above chest anchor`() {
         val creatureIds = listOf(
-            "fox", "cat", "unicorn", "bear", "dog", "moose", "squirrel", "canada_goose",
+            "fox",
+            "cat",
+            "unicorn",
+            "bear",
+            "dog",
+            "moose",
+            "squirrel",
+            "canada_goose",
         )
         creatureIds.forEach { id ->
             val ap = AvatarCharacterRegistry.getSpec(id).attachmentPoints

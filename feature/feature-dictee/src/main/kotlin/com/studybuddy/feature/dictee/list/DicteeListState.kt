@@ -25,6 +25,7 @@ sealed interface DicteeListIntent {
     data class DeleteList(val listId: String) : DicteeListIntent
     data class UndoDelete(val list: DicteeList) : DicteeListIntent
     data class OpenList(val listId: String) : DicteeListIntent
+
     // Challenge / multi-select
     data object ToggleSelectMode : DicteeListIntent
     data class ToggleListSelection(val listId: String) : DicteeListIntent

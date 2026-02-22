@@ -9,6 +9,7 @@ object StudyBuddyRoutes {
     const val DICTEE_LISTS = "dictee/lists"
     const val DICTEE_WORDS = "dictee/words/{listId}"
     const val DICTEE_PRACTICE = "dictee/practice/{listId}"
+
     // listIds = pipe-separated UUIDs, e.g. "uuid1|uuid2|uuid3"
     const val DICTEE_CHALLENGE = "dictee/challenge/{listIds}"
     const val MATH_SETUP = "math/setup"

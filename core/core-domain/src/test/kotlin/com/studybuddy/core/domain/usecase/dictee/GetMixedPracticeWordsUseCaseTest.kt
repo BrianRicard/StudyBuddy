@@ -53,10 +53,14 @@ class GetMixedPracticeWordsUseCaseTest {
     @Test
     fun `sorts words by mastery ratio ascending — weakest first`() = runTest {
         val words = listOf(
-            word("w1", "perfect", "list1", attempts = 10, correctCount = 10), // 100%
-            word("w2", "never_tried", "list1"),                               // 0 attempts → 0.0
-            word("w3", "half", "list1", attempts = 4, correctCount = 2),      // 50%
-            word("w4", "almost", "list1", attempts = 10, correctCount = 8),   // 80%
+            // 100%
+            word("w1", "perfect", "list1", attempts = 10, correctCount = 10),
+            // 0 attempts → 0.0
+            word("w2", "never_tried", "list1"),
+            // 50%
+            word("w3", "half", "list1", attempts = 4, correctCount = 2),
+            // 80%
+            word("w4", "almost", "list1", attempts = 10, correctCount = 8),
         )
         every { repository.getWordsForLists(listOf("list1")) } returns flowOf(words)
 
