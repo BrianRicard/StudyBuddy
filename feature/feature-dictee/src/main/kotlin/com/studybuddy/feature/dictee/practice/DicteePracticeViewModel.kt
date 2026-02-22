@@ -13,6 +13,7 @@ import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
+import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
@@ -28,11 +29,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
 class DicteePracticeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getPracticeWordsUseCase: GetPracticeWordsUseCase,
+    private val getMixedPracticeWordsUseCase: GetMixedPracticeWordsUseCase,
     private val checkSpellingUseCase: CheckSpellingUseCase,
     private val dicteeRepository: DicteeRepository,
     private val settingsRepository: SettingsRepository,
@@ -40,9 +43,17 @@ class DicteePracticeViewModel @Inject constructor(
     private val ttsManager: TtsManager,
 ) : ViewModel() {
 
-    private val listId: String = checkNotNull(savedStateHandle["listId"])
+    // Single-list mode passes "listId"; challenge mode passes "listIds" (pipe-separated UUIDs)
+    private val listId: String? = savedStateHandle["listId"]
+    private val listIdsRaw: String? = savedStateHandle["listIds"]
+    private val isChallengeMode: Boolean = listIdsRaw != null
+    private val allListIds: List<String> = when {
+        listIdsRaw != null -> listIdsRaw.split("|").filter { it.isNotBlank() }
+        listId != null -> listOf(listId)
+        else -> emptyList()
+    }
 
-    private val _state = MutableStateFlow(DicteePracticeState())
+    private val _state = MutableStateFlow(DicteePracticeState(isChallengeMode = isChallengeMode))
     val state: StateFlow<DicteePracticeState> = _state.asStateFlow()
 
     private val _effects = MutableSharedFlow<DicteePracticeEffect>()
@@ -50,6 +61,11 @@ class DicteePracticeViewModel @Inject constructor(
 
     private val profileId = AppConstants.DEFAULT_PROFILE_ID
     private var correctInSession = 0
+
+    /** Maps listId → language code for multi-language challenge sessions. */
+    private var listLanguageMap: Map<String, String> = emptyMap()
+
+    /** Fallback language for single-list sessions. */
     private var listLanguage = "fr"
 
     init {
@@ -79,16 +95,44 @@ class DicteePracticeViewModel @Inject constructor(
 
     private fun loadPractice() {
         viewModelScope.launch {
-            val list = dicteeRepository.getList(listId).first() ?: return@launch
-            listLanguage = list.language
-            _state.update { it.copy(listTitle = list.title) }
-
-            val words = getPracticeWordsUseCase(listId).first()
-            _state.update { it.copy(words = words) }
-
-            if (words.isNotEmpty()) {
-                playCurrentWord(TtsManager.SPEED_NORMAL)
+            if (isChallengeMode) {
+                loadChallengeSession()
+            } else {
+                loadSingleListSession()
             }
+        }
+    }
+
+    private suspend fun loadSingleListSession() {
+        val id = allListIds.firstOrNull() ?: return
+        val list = dicteeRepository.getList(id).first() ?: return
+        listLanguage = list.language
+        _state.update { it.copy(listTitle = list.title) }
+
+        val words = getPracticeWordsUseCase(id).first()
+        _state.update { it.copy(words = words) }
+
+        if (words.isNotEmpty()) {
+            playCurrentWord(TtsManager.SPEED_NORMAL)
+        }
+    }
+
+    private suspend fun loadChallengeSession() {
+        // Build language map so TTS speaks each word in the correct language
+        val lists = allListIds.mapNotNull { dicteeRepository.getList(it).first() }
+        listLanguageMap = lists.associate { it.id to it.language }
+
+        val title = when {
+            lists.size <= 2 -> lists.joinToString(" + ") { it.title }
+            else -> "${lists.take(2).joinToString(" + ") { it.title }} + ${lists.size - 2} more"
+        }
+        _state.update { it.copy(listTitle = "Challenge: $title") }
+
+        val words = getMixedPracticeWordsUseCase(allListIds).first()
+        _state.update { it.copy(words = words) }
+
+        if (words.isNotEmpty()) {
+            playCurrentWord(TtsManager.SPEED_NORMAL)
         }
     }
 
@@ -102,7 +146,12 @@ class DicteePracticeViewModel @Inject constructor(
 
     private fun playCurrentWord(speed: Float) {
         val word = _state.value.currentWord ?: return
-        val locale = SupportedLocale.fromCode(listLanguage).javaLocale
+        val langCode = if (isChallengeMode) {
+            listLanguageMap[word.listId] ?: "fr"
+        } else {
+            listLanguage
+        }
+        val locale = SupportedLocale.fromCode(langCode).javaLocale
         ttsManager.speak(word.word, locale, speed)
     }
 
@@ -154,7 +203,6 @@ class DicteePracticeViewModel @Inject constructor(
             reason = "Dictée: ${word.word}",
         )
 
-        // Update word mastery
         val updatedWord = word.copy(
             attempts = word.attempts + 1,
             correctCount = word.correctCount + 1,
@@ -182,14 +230,13 @@ class DicteePracticeViewModel @Inject constructor(
 
         if (nextIndex >= currentState.words.size) {
             viewModelScope.launch {
-                // Check for perfect list bonus
                 if (correctInSession == currentState.words.size && currentState.words.isNotEmpty()) {
                     val bonusPoints = awardPointsUseCase(
                         profileId = profileId,
                         basePoints = PointValues.DICTEE_PERFECT_LIST,
                         streak = 0,
                         source = PointSource.DICTEE,
-                        reason = "Perfect list: ${currentState.listTitle}",
+                        reason = "Perfect session: ${currentState.listTitle}",
                     )
                     _state.update { it.copy(sessionScore = it.sessionScore + bonusPoints) }
                 }

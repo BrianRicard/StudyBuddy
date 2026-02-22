@@ -44,6 +44,9 @@ interface DicteeDao {
     @Query("SELECT COUNT(*) FROM dictee_words WHERE listId = :listId AND mastered = 1")
     fun getMasteredCount(listId: String): Flow<Int>
 
+    @Query("SELECT * FROM dictee_words WHERE listId IN (:listIds) ORDER BY word ASC")
+    fun getWordsForLists(listIds: List<String>): Flow<List<DicteeWordEntity>>
+
     @Query("SELECT * FROM dictee_lists")
     suspend fun getAllLists(): List<DicteeListEntity>
 

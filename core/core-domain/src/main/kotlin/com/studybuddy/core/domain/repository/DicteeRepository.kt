@@ -8,6 +8,7 @@ interface DicteeRepository {
     fun getListsForProfile(profileId: String): Flow<List<DicteeList>>
     fun getList(listId: String): Flow<DicteeList?>
     fun getWordsForList(listId: String): Flow<List<DicteeWord>>
+    fun getWordsForLists(listIds: List<String>): Flow<List<DicteeWord>>
     suspend fun createList(list: DicteeList)
     suspend fun updateList(list: DicteeList)
     suspend fun deleteList(listId: String)

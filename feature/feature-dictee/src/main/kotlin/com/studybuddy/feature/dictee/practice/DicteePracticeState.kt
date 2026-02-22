@@ -6,6 +6,7 @@ import com.studybuddy.core.domain.model.InputMode
 
 data class DicteePracticeState(
     val listTitle: String = "",
+    val isChallengeMode: Boolean = false,
     val words: List<DicteeWord> = emptyList(),
     val currentIndex: Int = 0,
     val userInput: String = "",

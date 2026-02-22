@@ -8,7 +8,12 @@ data class DicteeListState(
     val showCreateDialog: Boolean = false,
     val newListTitle: String = "",
     val newListLanguage: String = "fr",
-)
+    // Multi-select / challenge mode
+    val isSelectMode: Boolean = false,
+    val selectedListIds: Set<String> = emptySet(),
+) {
+    val canStartChallenge: Boolean get() = selectedListIds.size >= 2
+}
 
 sealed interface DicteeListIntent {
     data object LoadLists : DicteeListIntent
@@ -20,9 +25,14 @@ sealed interface DicteeListIntent {
     data class DeleteList(val listId: String) : DicteeListIntent
     data class UndoDelete(val list: DicteeList) : DicteeListIntent
     data class OpenList(val listId: String) : DicteeListIntent
+    // Challenge / multi-select
+    data object ToggleSelectMode : DicteeListIntent
+    data class ToggleListSelection(val listId: String) : DicteeListIntent
+    data object StartChallenge : DicteeListIntent
 }
 
 sealed interface DicteeListEffect {
     data class NavigateToWords(val listId: String) : DicteeListEffect
     data class ShowUndoSnackbar(val list: DicteeList) : DicteeListEffect
+    data class NavigateToChallenge(val listIds: List<String>) : DicteeListEffect
 }

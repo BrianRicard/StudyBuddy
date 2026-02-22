@@ -10,48 +10,24 @@ import org.junit.jupiter.api.Test
 class RewardCatalogTest {
 
     @Test
-    fun `characters list has 8 entries`() {
-        assertEquals(8, RewardCatalog.characters.size)
-    }
-
-    @Test
-    fun `hats list has 8 entries`() {
-        assertEquals(8, RewardCatalog.hats.size)
-    }
-
-    @Test
-    fun `face accessories list has 6 entries`() {
-        assertEquals(6, RewardCatalog.faceAccessories.size)
-    }
-
-    @Test
-    fun `outfits list has 6 entries`() {
-        assertEquals(6, RewardCatalog.outfits.size)
-    }
-
-    @Test
-    fun `pets list has 6 entries`() {
-        assertEquals(6, RewardCatalog.pets.size)
-    }
-
-    @Test
-    fun `themes list has 6 entries`() {
-        assertEquals(6, RewardCatalog.themes.size)
-    }
-
-    @Test
-    fun `effects list has 8 entries`() {
-        assertEquals(8, RewardCatalog.effects.size)
-    }
-
-    @Test
-    fun `sounds list has 4 entries`() {
-        assertEquals(4, RewardCatalog.sounds.size)
-    }
-
-    @Test
-    fun `titles list has 8 entries`() {
-        assertEquals(8, RewardCatalog.titles.size)
+    fun `characters list includes original and new Canadian creatures`() {
+        val ids = RewardCatalog.characters.map { it.id }
+        // Original roster
+        assertTrue("fox" in ids)
+        assertTrue("cat" in ids)
+        assertTrue("unicorn" in ids)
+        assertTrue("dragon" in ids)
+        // New Canadian & marine creatures
+        assertTrue("moose" in ids)
+        assertTrue("canada_goose" in ids)
+        assertTrue("turkey" in ids)
+        assertTrue("squirrel" in ids)
+        assertTrue("bear" in ids)
+        assertTrue("shark" in ids)
+        assertTrue("octopus" in ids)
+        assertTrue("shrimp" in ids)
+        assertTrue("blue_monster" in ids)
+        assertTrue("dog" in ids)
     }
 
     @Test
@@ -83,7 +59,6 @@ class RewardCatalogTest {
     fun `getItemsByCategory returns only items of that category`() {
         val hats = RewardCatalog.getItemsByCategory(RewardCategory.HAT)
         assertTrue(hats.all { it.category == RewardCategory.HAT })
-        assertEquals(8, hats.size)
     }
 
     @Test
@@ -97,20 +72,29 @@ class RewardCatalogTest {
     }
 
     @Test
-    fun `isStarterItem returns true for starter items`() {
+    fun `toque is a free starter hat`() {
+        val toque = RewardCatalog.getItemById("hat_toque")
+        assertNotNull(toque)
+        assertEquals(0, toque!!.cost)
+        assertTrue(RewardCatalog.isStarterItem("hat_toque"))
+    }
+
+    @Test
+    fun `isStarterItem returns true for classic starter items`() {
         assertTrue(RewardCatalog.isStarterItem("hat_tophat"))
         assertTrue(RewardCatalog.isStarterItem("face_shades"))
         assertTrue(RewardCatalog.isStarterItem("pet_chick"))
     }
 
     @Test
-    fun `isStarterItem returns false for non-starter items`() {
+    fun `isStarterItem returns false for premium items`() {
         assertFalse(RewardCatalog.isStarterItem("hat_crown"))
         assertFalse(RewardCatalog.isStarterItem("pet_hamster"))
+        assertFalse(RewardCatalog.isStarterItem("outfit_cape"))
     }
 
     @Test
-    fun `every category has at least one free none item`() {
+    fun `every avatar category has at least one free none item`() {
         val avatarCategories = listOf(
             RewardCategory.HAT,
             RewardCategory.FACE,
@@ -144,8 +128,35 @@ class RewardCatalogTest {
         RewardCatalog.avatarItems.forEach { item ->
             assertTrue(
                 item.category in avatarCategories,
-                "Item ${item.id} has category ${item.category} but should be an avatar category",
+                "Item ${item.id} has category ${item.category} which is not an avatar category",
             )
         }
+    }
+
+    @Test
+    fun `new Canadian pets are in catalog`() {
+        assertNotNull(RewardCatalog.getItemById("pet_beaver"))
+        assertNotNull(RewardCatalog.getItemById("pet_loon"))
+        assertNotNull(RewardCatalog.getItemById("pet_polar_bear"))
+        assertNotNull(RewardCatalog.getItemById("pet_raccoon"))
+    }
+
+    @Test
+    fun `hockey jersey exists and has correct category`() {
+        val jersey = RewardCatalog.getItemById("outfit_hockey_jersey")
+        assertNotNull(jersey)
+        assertEquals(RewardCategory.OUTFIT, jersey!!.category)
+    }
+
+    @Test
+    fun `maple theme exists`() {
+        assertNotNull(RewardCatalog.getItemById("theme_maple"))
+        assertEquals(RewardCategory.THEME, RewardCatalog.getItemById("theme_maple")!!.category)
+    }
+
+    @Test
+    fun `challenge titles exist`() {
+        assertNotNull(RewardCatalog.getItemById("title_true_north"))
+        assertNotNull(RewardCatalog.getItemById("title_mix_master"))
     }
 }

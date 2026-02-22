@@ -188,4 +188,127 @@ class DicteeListViewModelTest {
             assertEquals("list1", (effect as DicteeListEffect.NavigateToWords).listId)
         }
     }
+
+    // ── Challenge / multi-select mode ─────────────────────────────────────────
+
+    @Test
+    fun `toggle select mode enables selection mode`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isSelectMode)
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.isSelectMode)
+        assertTrue(viewModel.state.value.selectedListIds.isEmpty())
+    }
+
+    @Test
+    fun `toggle select mode off clears selection`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode) // cancel
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isSelectMode)
+        assertTrue(viewModel.state.value.selectedListIds.isEmpty())
+    }
+
+    @Test
+    fun `toggle list selection adds and removes list from selection`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+        advanceUntilIdle()
+
+        assertTrue("list1" in viewModel.state.value.selectedListIds)
+
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+        advanceUntilIdle()
+
+        assertFalse("list1" in viewModel.state.value.selectedListIds)
+    }
+
+    @Test
+    fun `canStartChallenge is true only when 2 or more lists selected`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        advanceUntilIdle()
+        assertFalse(viewModel.state.value.canStartChallenge)
+
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+        advanceUntilIdle()
+        assertFalse(viewModel.state.value.canStartChallenge)
+
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list2"))
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.canStartChallenge)
+    }
+
+    @Test
+    fun `start challenge emits NavigateToChallenge with selected ids and exits select mode`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list2"))
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.StartChallenge)
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.NavigateToChallenge)
+            val ids = (effect as DicteeListEffect.NavigateToChallenge).listIds
+            assertEquals(2, ids.size)
+            assertTrue("list1" in ids)
+            assertTrue("list2" in ids)
+        }
+
+        assertFalse(viewModel.state.value.isSelectMode)
+        assertTrue(viewModel.state.value.selectedListIds.isEmpty())
+    }
+
+    @Test
+    fun `start challenge with fewer than 2 lists does nothing`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+        viewModel.onIntent(DicteeListIntent.ToggleListSelection("list1"))
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.StartChallenge)
+            advanceUntilIdle()
+
+            expectNoEvents()
+        }
+    }
+
+    @Test
+    fun `open list in select mode toggles selection instead of navigating`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteeListIntent.ToggleSelectMode)
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.OpenList("list1"))
+            advanceUntilIdle()
+
+            // Should NOT emit NavigateToWords
+            expectNoEvents()
+        }
+
+        assertTrue("list1" in viewModel.state.value.selectedListIds)
+    }
 }

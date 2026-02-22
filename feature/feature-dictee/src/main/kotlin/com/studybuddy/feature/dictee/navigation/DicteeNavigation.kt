@@ -21,6 +21,9 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
                 onNavigateToWords = { listId ->
                     navController.navigate(StudyBuddyRoutes.dicteeWords(listId))
                 },
+                onNavigateToChallenge = { listIds ->
+                    navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
+                },
             )
         }
 
@@ -36,9 +39,20 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
             )
         }
 
+        // Single-list practice
         composable(
             route = StudyBuddyRoutes.DICTEE_PRACTICE,
             arguments = listOf(navArgument("listId") { type = NavType.StringType }),
+        ) {
+            DicteePracticeScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        // Multi-list challenge — same screen/ViewModel, receives pipe-separated listIds
+        composable(
+            route = StudyBuddyRoutes.DICTEE_CHALLENGE,
+            arguments = listOf(navArgument("listIds") { type = NavType.StringType }),
         ) {
             DicteePracticeScreen(
                 onNavigateBack = { navController.popBackStack() },

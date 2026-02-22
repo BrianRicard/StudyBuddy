@@ -56,10 +56,33 @@ class DicteeListViewModel @Inject constructor(
             is DicteeListIntent.DeleteList -> deleteList(intent.listId)
             is DicteeListIntent.UndoDelete -> undoDelete(intent.list)
             is DicteeListIntent.OpenList -> {
-                viewModelScope.launch {
-                    _effects.emit(DicteeListEffect.NavigateToWords(intent.listId))
+                if (_state.value.isSelectMode) {
+                    onIntent(DicteeListIntent.ToggleListSelection(intent.listId))
+                } else {
+                    viewModelScope.launch {
+                        _effects.emit(DicteeListEffect.NavigateToWords(intent.listId))
+                    }
                 }
             }
+            is DicteeListIntent.ToggleSelectMode -> {
+                _state.update {
+                    it.copy(
+                        isSelectMode = !it.isSelectMode,
+                        selectedListIds = emptySet(),
+                    )
+                }
+            }
+            is DicteeListIntent.ToggleListSelection -> {
+                _state.update { current ->
+                    val updated = if (intent.listId in current.selectedListIds) {
+                        current.selectedListIds - intent.listId
+                    } else {
+                        current.selectedListIds + intent.listId
+                    }
+                    current.copy(selectedListIds = updated)
+                }
+            }
+            is DicteeListIntent.StartChallenge -> startChallenge()
         }
     }
 
@@ -101,6 +124,15 @@ class DicteeListViewModel @Inject constructor(
     private fun undoDelete(list: DicteeList) {
         viewModelScope.launch {
             dicteeRepository.createList(list)
+        }
+    }
+
+    private fun startChallenge() {
+        val ids = _state.value.selectedListIds.toList()
+        if (ids.size < 2) return
+        viewModelScope.launch {
+            _state.update { it.copy(isSelectMode = false, selectedListIds = emptySet()) }
+            _effects.emit(DicteeListEffect.NavigateToChallenge(ids))
         }
     }
 }
