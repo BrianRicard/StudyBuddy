@@ -160,8 +160,19 @@ jobs:
         with:
           cache-read-only: true
 
+      - name: Create Debug Keystore
+        run: |
+          KEYSTORE_DIR="$HOME/.config/.android"
+          mkdir -p "$KEYSTORE_DIR"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE_DIR/debug.keystore" \
+            -storepass android -keypass android \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
       - name: Build Debug APK
-        run: ./gradlew assembleDebug -x validateSigningDebug
+        run: ./gradlew assembleDebug
 
       - name: Analyze APK Size
         run: |
