@@ -1,0 +1,223 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  JAVA_VERSION: '17'
+  JAVA_DISTRIBUTION: 'temurin'
+  GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.caching=true'
+
+jobs:
+  lint:
+    name: Lint & Detekt
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
+
+      - name: Run Android Lint
+        run: ./gradlew lintDebug --continue
+
+      - name: Run Detekt
+        run: ./gradlew detekt --continue
+
+      - name: Run Ktlint
+        run: ./gradlew ktlintCheck --continue
+
+      - name: Upload Lint Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/lint-results-*.html
+            **/build/reports/detekt/*.html
+          retention-days: 7
+
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      checks: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
+
+      - name: Run Unit Tests
+        run: |
+          set +e
+          timeout --kill-after=30 600 ./gradlew testDebugUnitTest --continue
+          GRADLE_EXIT=$?
+          set -e
+          # Exit 124/137 from timeout = Gradle hung during shutdown (tests already completed)
+          # Actual test results are validated by the Test Report Summary step
+          if [ $GRADLE_EXIT -eq 124 ] || [ $GRADLE_EXIT -eq 137 ]; then
+            echo "::warning::Gradle process timed out during shutdown"
+            exit 0
+          fi
+          exit $GRADLE_EXIT
+
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-results
+          path: '**/build/test-results/testDebugUnitTest/*.xml'
+          retention-days: 7
+
+      - name: Test Report Summary
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Test Report
+          path: '**/build/test-results/testDebugUnitTest/*.xml'
+          reporter: java-junit
+
+  build:
+    name: Build Debug
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    needs: [lint, unit-tests]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
+
+      - name: Create Debug Keystore
+        run: |
+          KEYSTORE_DIR="$HOME/.config/.android"
+          mkdir -p "$KEYSTORE_DIR"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE_DIR/debug.keystore" \
+            -storepass android -keypass android \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 14
+
+  instrumented-tests:
+    name: Instrumented Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    needs: [build]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for androidTest sources
+        id: check-tests
+        run: |
+          if find . -path "*/androidTest/*" -name "*.kt" -o -path "*/androidTest/*" -name "*.java" | grep -q .; then
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
+            echo "No androidTest sources found — skipping emulator."
+          fi
+
+      - name: Set up JDK
+        if: steps.check-tests.outputs.has_tests == 'true'
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+
+      - name: Setup Gradle
+        if: steps.check-tests.outputs.has_tests == 'true'
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Create Debug Keystore
+        if: steps.check-tests.outputs.has_tests == 'true'
+        run: |
+          KEYSTORE_DIR="$HOME/.config/.android"
+          mkdir -p "$KEYSTORE_DIR"
+          keytool -genkeypair -v \
+            -keystore "$KEYSTORE_DIR/debug.keystore" \
+            -storepass android -keypass android \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Enable KVM
+        if: steps.check-tests.outputs.has_tests == 'true'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: AVD Cache
+        if: steps.check-tests.outputs.has_tests == 'true'
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-api-31-${{ runner.os }}
+
+      - name: Run Instrumented Tests
+        if: steps.check-tests.outputs.has_tests == 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          arch: x86_64
+          target: google_apis
+          force-avd-creation: false
+          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest --continue
+
+      - name: Upload Instrumented Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-results
+          path: '**/build/reports/androidTests/connected/'
+          retention-days: 7

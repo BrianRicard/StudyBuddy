@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Security: Elevate security-sensitive checks to error -->
+    <issue id="HardcodedDebugMode" severity="error" />
+    <issue id="SetJavaScriptEnabled" severity="error" />
+    <issue id="ExportedContentProvider" severity="error" />
+    <issue id="ExportedService" severity="error" />
+    <issue id="ExportedReceiver" severity="error" />
+    <issue id="GrantAllUris" severity="error" />
+    <issue id="WorldReadableFiles" severity="error" />
+    <issue id="WorldWriteableFiles" severity="error" />
+    <issue id="AllowBackup" severity="warning" />
+    <issue id="UnprotectedSMSBroadcastReceiver" severity="error" />
+    <issue id="UnsafeProtectedBroadcastReceiver" severity="error" />
+    <issue id="UseCheckPermission" severity="error" />
+    <issue id="AddJavascriptInterface" severity="error" />
+    <issue id="PackageManagerGetSignatures" severity="error" />
+    <issue id="TrustAllX509TrustManager" severity="error" />
+    <issue id="UsesCleartextTraffic" severity="error" />
+    <issue id="InsecureBaseConfiguration" severity="error" />
+
+    <!-- Privacy: Children's app must not leak data -->
+    <issue id="HardwareIds" severity="error" />
+
+    <!-- Crypto: Prevent weak cryptographic usage -->
+    <issue id="TrulyRandom" severity="error" />
+    <issue id="GetInstance" severity="warning" />
+
+    <!-- SQL injection prevention -->
+    <issue id="Recycle" severity="error" />
+
+    <!-- Accessibility: Required for children's app -->
+    <issue id="ContentDescription" severity="warning" />
+    <issue id="LabelFor" severity="warning" />
+</lint>

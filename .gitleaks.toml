@@ -1,0 +1,19 @@
+title = "StudyBuddy Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Global allowlist"
+paths = [
+    '''\.gradle''',
+    '''build/''',
+    '''\.idea/''',
+    '''build-tools/''',
+    '''platform-tools/''',
+    '''platforms/''',
+    '''licenses/''',
+    '''\.knownPackages''',
+    '''gradle/wrapper/gradle-wrapper\.jar''',
+    '''owasp-suppressions\.xml''',
+]
