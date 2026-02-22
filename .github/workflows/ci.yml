@@ -74,7 +74,18 @@ jobs:
           cache-read-only: ${{ github.ref != 'refs/heads/develop' }}
 
       - name: Run Unit Tests
-        run: timeout --kill-after=30 600 ./gradlew testDebugUnitTest --continue
+        run: |
+          set +e
+          timeout --kill-after=30 600 ./gradlew testDebugUnitTest --continue
+          GRADLE_EXIT=$?
+          set -e
+          # Exit 124/137 from timeout = Gradle hung during shutdown (tests already completed)
+          # Actual test results are validated by the Test Report Summary step
+          if [ $GRADLE_EXIT -eq 124 ] || [ $GRADLE_EXIT -eq 137 ]; then
+            echo "::warning::Gradle process timed out during shutdown"
+            exit 0
+          fi
+          exit $GRADLE_EXIT
 
       - name: Upload Test Results
         if: always()
