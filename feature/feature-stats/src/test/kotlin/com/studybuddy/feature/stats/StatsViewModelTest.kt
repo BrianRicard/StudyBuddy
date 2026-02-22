@@ -89,7 +89,7 @@ class StatsViewModelTest {
     ) = MathSession(
         id = "session_${System.nanoTime()}",
         profileId = "default",
-        operators = setOf(Operator.ADDITION),
+        operators = setOf(Operator.PLUS),
         numberRange = 1..10,
         totalProblems = 10,
         correctCount = 8,

@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
+import androidx.work.WorkManager
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
@@ -31,6 +32,7 @@ class BackupExportViewModelTest {
     private val createBackupUseCase: CreateBackupUseCase = mockk()
     private val restoreBackupUseCase: RestoreBackupUseCase = mockk()
     private val exportProgressReportUseCase: ExportProgressReportUseCase = mockk()
+    private val workManager: WorkManager = mockk(relaxed = true)
 
     @BeforeEach
     fun setup() {
@@ -46,6 +48,7 @@ class BackupExportViewModelTest {
         createBackupUseCase = createBackupUseCase,
         restoreBackupUseCase = restoreBackupUseCase,
         exportProgressReportUseCase = exportProgressReportUseCase,
+        workManager = workManager,
     )
 
     @Test

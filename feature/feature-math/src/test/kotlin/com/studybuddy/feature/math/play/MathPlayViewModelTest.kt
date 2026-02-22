@@ -280,13 +280,8 @@ class MathPlayViewModelTest {
             advanceUntilIdle()
 
             // Collect effects
-            val effects = mutableListOf<MathPlayEffect>()
-            while (true) {
-                val effect = tryReceive().getOrNull() ?: break
-                effects.add(effect)
-            }
-
-            assertTrue(effects.any { it is MathPlayEffect.GameComplete })
+            val effects = cancelAndConsumeRemainingEvents()
+            assertTrue(effects.filterIsInstance<app.cash.turbine.Event.Item<MathPlayEffect>>().any { it.value is MathPlayEffect.GameComplete })
         }
     }
 

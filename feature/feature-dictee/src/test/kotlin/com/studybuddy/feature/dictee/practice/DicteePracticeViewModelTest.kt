@@ -196,12 +196,8 @@ class DicteePracticeViewModelTest {
             }
 
             // Collect effects - should include ShowPoints and NavigateToResults
-            val effects = mutableListOf<DicteePracticeEffect>()
-            while (true) {
-                val effect = tryReceive().getOrNull() ?: break
-                effects.add(effect)
-            }
-            assertTrue(effects.any { it is DicteePracticeEffect.NavigateToResults })
+            val effects = cancelAndConsumeRemainingEvents()
+            assertTrue(effects.filterIsInstance<app.cash.turbine.Event.Item<DicteePracticeEffect>>().any { it.value is DicteePracticeEffect.NavigateToResults })
         }
     }
 
