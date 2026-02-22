@@ -152,16 +152,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check for androidTest sources
+        id: check-tests
+        run: |
+          if find . -path "*/androidTest/*" -name "*.kt" -o -path "*/androidTest/*" -name "*.java" | grep -q .; then
+            echo "has_tests=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_tests=false" >> "$GITHUB_OUTPUT"
+            echo "No androidTest sources found — skipping emulator."
+          fi
+
       - name: Set up JDK
+        if: steps.check-tests.outputs.has_tests == 'true'
         uses: actions/setup-java@v4
         with:
           java-version: ${{ env.JAVA_VERSION }}
           distribution: ${{ env.JAVA_DISTRIBUTION }}
 
       - name: Setup Gradle
+        if: steps.check-tests.outputs.has_tests == 'true'
         uses: gradle/actions/setup-gradle@v4
 
       - name: Create Debug Keystore
+        if: steps.check-tests.outputs.has_tests == 'true'
         run: |
           KEYSTORE_DIR="$HOME/.config/.android"
           mkdir -p "$KEYSTORE_DIR"
@@ -173,12 +186,14 @@ jobs:
             -dname "CN=Android Debug,O=Android,C=US"
 
       - name: Enable KVM
+        if: steps.check-tests.outputs.has_tests == 'true'
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
       - name: AVD Cache
+        if: steps.check-tests.outputs.has_tests == 'true'
         uses: actions/cache@v4
         id: avd-cache
         with:
@@ -188,6 +203,7 @@ jobs:
           key: avd-api-31-${{ runner.os }}
 
       - name: Run Instrumented Tests
+        if: steps.check-tests.outputs.has_tests == 'true'
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 31
