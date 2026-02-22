@@ -258,7 +258,8 @@ class DicteePracticeViewModelTest {
             coVerify {
                 awardPointsUseCase(
                     profileId = any(),
-                    basePoints = 10, // DICTEE_CORRECT_TYPED
+                    // DICTEE_CORRECT_TYPED
+                    basePoints = 10,
                     streak = 1,
                     source = PointSource.DICTEE,
                     reason = any(),

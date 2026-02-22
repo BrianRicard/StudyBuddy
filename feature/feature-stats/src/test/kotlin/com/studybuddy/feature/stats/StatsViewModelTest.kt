@@ -72,8 +72,7 @@ class StatsViewModelTest {
         source: PointSource = PointSource.MATH,
         points: Int = 10,
         timestamp: Instant = Clock.System.now(),
-    ) =
-        PointEvent(
+    ) = PointEvent(
             id = "event_${System.nanoTime()}",
             profileId = "default",
             source = source,
@@ -85,8 +84,7 @@ class StatsViewModelTest {
     private fun createMathSession(
         avgResponseMs: Long = 3000L,
         completedAt: Instant = Clock.System.now(),
-    ) =
-        MathSession(
+    ) = MathSession(
             id = "session_${System.nanoTime()}",
             profileId = "default",
             operators = setOf(Operator.PLUS),
@@ -103,8 +101,7 @@ class StatsViewModelTest {
         wordCount: Int = 10,
         masteredCount: Int = 5,
         updatedAt: Instant = Clock.System.now(),
-    ) =
-        DicteeList(
+    ) = DicteeList(
             id = "list_${System.nanoTime()}",
             profileId = "default",
             title = "Test List",

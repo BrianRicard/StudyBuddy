@@ -9,8 +9,7 @@ import kotlinx.datetime.Instant
 fun DicteeListEntity.toDomain(
     wordCount: Int = 0,
     masteredCount: Int = 0,
-) =
-    DicteeList(
+) = DicteeList(
         id = id,
         profileId = profileId,
         title = title,

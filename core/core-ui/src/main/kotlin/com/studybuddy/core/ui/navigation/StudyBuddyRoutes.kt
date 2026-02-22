@@ -34,8 +34,7 @@ object StudyBuddyRoutes {
         rangeMax: Int,
         timerSeconds: Int,
         problemCount: Int,
-    ) =
-        "math/play/$operators/$rangeMin/$rangeMax/$timerSeconds/$problemCount"
+    ) = "math/play/$operators/$rangeMin/$rangeMax/$timerSeconds/$problemCount"
 
     fun mathResults(
         totalProblems: Int,
@@ -46,7 +45,6 @@ object StudyBuddyRoutes {
         operators: String,
         rangeMin: Int,
         rangeMax: Int,
-    ) =
-        "math/results/$totalProblems/$correctCount/$bestStreak/$avgResponseMs" +
-            "/$sessionScore/$operators/$rangeMin/$rangeMax"
+    ) = "math/results/$totalProblems/$correctCount/$bestStreak/$avgResponseMs" +
+        "/$sessionScore/$operators/$rangeMin/$rangeMax"
 }
