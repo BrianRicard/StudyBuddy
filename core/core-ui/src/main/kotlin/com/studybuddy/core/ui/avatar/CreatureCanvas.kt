@@ -26,27 +26,31 @@ fun CreatureCanvas(
     size: Dp = 130.dp,
 ) {
     Canvas(modifier = modifier.size(size)) {
-        when (spec.id) {
-            "fox" -> drawFox(spec)
-            "cat" -> drawCat(spec)
-            "unicorn" -> drawUnicorn(spec)
-            "panda" -> drawPanda(spec)
-            "butterfly" -> drawButterfly(spec)
-            "bunny" -> drawBunny(spec)
-            "owl" -> drawOwl(spec)
-            "dragon" -> drawDragon(spec)
-            "dog" -> drawDog(spec)
-            "bear" -> drawBear(spec)
-            "blue_monster" -> drawBlueMonster(spec)
-            "shrimp" -> drawShrimp(spec)
-            "shark" -> drawShark(spec)
-            "octopus" -> drawOctopus(spec)
-            "moose" -> drawMoose(spec)
-            "canada_goose" -> drawCanadaGoose(spec)
-            "turkey" -> drawTurkey(spec)
-            "squirrel" -> drawSquirrel(spec)
-            else -> drawFox(spec)
-        }
+        drawCreature(spec)
+    }
+}
+
+fun DrawScope.drawCreature(spec: CharacterSpec) {
+    when (spec.id) {
+        "fox" -> drawFox(spec)
+        "cat" -> drawCat(spec)
+        "unicorn" -> drawUnicorn(spec)
+        "panda" -> drawPanda(spec)
+        "butterfly" -> drawButterfly(spec)
+        "bunny" -> drawBunny(spec)
+        "owl" -> drawOwl(spec)
+        "dragon" -> drawDragon(spec)
+        "dog" -> drawDog(spec)
+        "bear" -> drawBear(spec)
+        "blue_monster" -> drawBlueMonster(spec)
+        "shrimp" -> drawShrimp(spec)
+        "shark" -> drawShark(spec)
+        "octopus" -> drawOctopus(spec)
+        "moose" -> drawMoose(spec)
+        "canada_goose" -> drawCanadaGoose(spec)
+        "turkey" -> drawTurkey(spec)
+        "squirrel" -> drawSquirrel(spec)
+        else -> drawFox(spec)
     }
 }
 
