@@ -13,7 +13,12 @@ import kotlin.math.sin
 
 // ─── Public dispatch functions ──────────────────────────────────────────────
 
-fun DrawScope.drawHat(hatId: String, cx: Float, cy: Float, s: Float) {
+fun DrawScope.drawHat(
+    hatId: String,
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     when (hatId) {
         "hat_tophat" -> drawTophat(cx, cy, s)
         "hat_crown" -> drawCrown(cx, cy, s)
@@ -31,7 +36,12 @@ fun DrawScope.drawHat(hatId: String, cx: Float, cy: Float, s: Float) {
     }
 }
 
-fun DrawScope.drawFaceAccessory(faceId: String, cx: Float, cy: Float, s: Float) {
+fun DrawScope.drawFaceAccessory(
+    faceId: String,
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     when (faceId) {
         "face_shades" -> drawShades(cx, cy, s)
         "face_monocle" -> drawMonocle(cx, cy, s)
@@ -45,7 +55,12 @@ fun DrawScope.drawFaceAccessory(faceId: String, cx: Float, cy: Float, s: Float) 
     }
 }
 
-fun DrawScope.drawOutfit(outfitId: String, cx: Float, cy: Float, s: Float) {
+fun DrawScope.drawOutfit(
+    outfitId: String,
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     when (outfitId) {
         "outfit_scarf" -> drawScarf(cx, cy, s)
         "outfit_bowtie" -> drawBowtie(cx, cy, s)
@@ -62,7 +77,12 @@ fun DrawScope.drawOutfit(outfitId: String, cx: Float, cy: Float, s: Float) {
     }
 }
 
-fun DrawScope.drawPet(petId: String, cx: Float, cy: Float, s: Float) {
+fun DrawScope.drawPet(
+    petId: String,
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     when (petId) {
         "pet_chick" -> drawChick(cx, cy, s)
         "pet_hamster" -> drawHamster(cx, cy, s)
@@ -80,7 +100,12 @@ fun DrawScope.drawPet(petId: String, cx: Float, cy: Float, s: Float) {
 
 // ─── Shared helpers ─────────────────────────────────────────────────────────
 
-private fun starPath(cx: Float, cy: Float, outerR: Float, innerR: Float): Path {
+private fun starPath(
+    cx: Float,
+    cy: Float,
+    outerR: Float,
+    innerR: Float,
+): Path {
     val path = Path()
     for (i in 0 until 10) {
         val angle = Math.PI / 2.0 + i * Math.PI / 5.0
@@ -93,7 +118,11 @@ private fun starPath(cx: Float, cy: Float, outerR: Float, innerR: Float): Path {
     return path
 }
 
-private fun mapleLeafPath(cx: Float, cy: Float, s: Float): Path {
+private fun mapleLeafPath(
+    cx: Float,
+    cy: Float,
+    s: Float,
+): Path {
     val path = Path()
     path.moveTo(cx, cy - s)
     path.lineTo(cx - s * 0.15f, cy - s * 0.6f)
@@ -115,7 +144,11 @@ private fun mapleLeafPath(cx: Float, cy: Float, s: Float): Path {
     return path
 }
 
-private fun heartPath(cx: Float, cy: Float, s: Float): Path {
+private fun heartPath(
+    cx: Float,
+    cy: Float,
+    s: Float,
+): Path {
     val path = Path()
     path.moveTo(cx, cy + s * 0.6f)
     path.cubicTo(cx - s, cy + s * 0.1f, cx - s, cy - s * 0.6f, cx, cy - s * 0.2f)
@@ -124,7 +157,11 @@ private fun heartPath(cx: Float, cy: Float, s: Float): Path {
     return path
 }
 
-private fun crownPath(cx: Float, cy: Float, s: Float): Path {
+private fun crownPath(
+    cx: Float,
+    cy: Float,
+    s: Float,
+): Path {
     val path = Path()
     val baseY = cy + s * 0.5f
     val topY = cy - s * 0.5f
@@ -139,13 +176,21 @@ private fun crownPath(cx: Float, cy: Float, s: Float): Path {
     return path
 }
 
-private fun DrawScope.miniEye(center: Offset, radius: Float) {
+private fun DrawScope.miniEye(
+    center: Offset,
+    radius: Float,
+) {
     drawCircle(Color.White, radius, center)
     drawCircle(Color(0xFF1A1A1A), radius * 0.55f, center)
     drawCircle(Color.White, radius * 0.2f, center + Offset(radius * 0.2f, -radius * 0.2f))
 }
 
-private fun DrawScope.miniSmile(cx: Float, cy: Float, width: Float, strokeW: Float) {
+private fun DrawScope.miniSmile(
+    cx: Float,
+    cy: Float,
+    width: Float,
+    strokeW: Float,
+) {
     val path = Path().apply {
         moveTo(cx - width / 2, cy)
         cubicTo(cx - width / 4, cy + width * 0.4f, cx + width / 4, cy + width * 0.4f, cx + width / 2, cy)
@@ -163,7 +208,11 @@ private fun DrawScope.accOval(
 
 // ─── Hats ───────────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawTophat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawTophat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Brim
     accOval(Color(0xFF1A1A1A), cx, cy + s * 0.55f, s * 1.1f, s * 0.2f)
     // Tall cylinder
@@ -181,7 +230,11 @@ private fun DrawScope.drawTophat(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawCrown(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawCrown(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     drawPath(crownPath(cx, cy, s), Color(0xFFFFD700))
     // Jewels
     drawCircle(Color(0xFFD32F2F), s * 0.12f, Offset(cx, cy))
@@ -189,7 +242,11 @@ private fun DrawScope.drawCrown(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFF1565C0), s * 0.08f, Offset(cx + s * 0.5f, cy + s * 0.15f))
 }
 
-private fun DrawScope.drawWizard(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawWizard(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Cone
     val conePath = Path().apply {
         moveTo(cx, cy - s)
@@ -206,7 +263,11 @@ private fun DrawScope.drawWizard(cx: Float, cy: Float, s: Float) {
     accOval(Color(0xFF6A1B9A), cx, cy + s * 0.7f, s * 0.9f, s * 0.15f)
 }
 
-private fun DrawScope.drawPartyHat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawPartyHat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     val conePath = Path().apply {
         moveTo(cx, cy - s)
         lineTo(cx - s * 0.7f, cy + s * 0.7f)
@@ -225,7 +286,11 @@ private fun DrawScope.drawPartyHat(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFFFFEB3B), s * 0.15f, Offset(cx, cy - s))
 }
 
-private fun DrawScope.drawBeret(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawBeret(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Flat tilted shape
     accOval(Color(0xFF1A1A1A), cx - s * 0.1f, cy + s * 0.1f, s * 0.9f, s * 0.45f)
     // Top nub
@@ -238,7 +303,11 @@ private fun DrawScope.drawBeret(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawFlowerCrown(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawFlowerCrown(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Vine base
     val vinePath = Path().apply {
         moveTo(cx - s * 0.9f, cy)
@@ -263,7 +332,11 @@ private fun DrawScope.drawFlowerCrown(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawCap(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawCap(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Cap dome
     val capPath = Path().apply {
         moveTo(cx - s * 0.8f, cy + s * 0.2f)
@@ -284,7 +357,11 @@ private fun DrawScope.drawCap(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFF0D47A1), s * 0.08f, Offset(cx, cy - s * 0.45f))
 }
 
-private fun DrawScope.drawToque(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawToque(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Knit body
     drawRoundRect(
         Color(0xFFD32F2F),
@@ -312,7 +389,11 @@ private fun DrawScope.drawToque(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFFF5F5F5), s * 0.2f, Offset(cx, cy - s * 0.5f))
 }
 
-private fun DrawScope.drawHockeyHelmet(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHockeyHelmet(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Helmet dome
     val domePath = Path().apply {
         moveTo(cx - s * 0.85f, cy + s * 0.3f)
@@ -338,7 +419,11 @@ private fun DrawScope.drawHockeyHelmet(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawMapleCrown(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMapleCrown(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Circlet
     drawCircle(
         Color(0xFF795548),
@@ -356,7 +441,11 @@ private fun DrawScope.drawMapleCrown(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawGraduation(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawGraduation(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Mortarboard top
     val boardPath = Path().apply {
         moveTo(cx, cy - s * 0.3f)
@@ -379,7 +468,11 @@ private fun DrawScope.drawGraduation(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFFFFD700), s * 0.06f, Offset(cx + s * 0.7f, cy + s * 0.5f))
 }
 
-private fun DrawScope.drawChefHat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawChefHat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Tall puffy top
     drawCircle(Color.White, s * 0.55f, Offset(cx, cy - s * 0.3f))
     drawCircle(Color.White, s * 0.4f, Offset(cx - s * 0.3f, cy - s * 0.15f))
@@ -397,7 +490,11 @@ private fun DrawScope.drawChefHat(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawHardhat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHardhat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Dome
     val domePath = Path().apply {
         moveTo(cx - s * 0.9f, cy + s * 0.3f)
@@ -417,7 +514,11 @@ private fun DrawScope.drawHardhat(cx: Float, cy: Float, s: Float) {
 
 // ─── Face ───────────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawShades(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawShades(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Left lens
     accOval(Color(0xFF1A1A1A), cx - s * 0.45f, cy, s * 0.4f, s * 0.35f)
     // Right lens
@@ -441,7 +542,11 @@ private fun DrawScope.drawShades(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawMonocle(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMonocle(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Single circle frame
     drawCircle(Color(0xFFFFD700), s * 0.45f, Offset(cx + s * 0.2f, cy), style = Stroke(s * 0.06f))
     // Glass tint
@@ -454,7 +559,11 @@ private fun DrawScope.drawMonocle(cx: Float, cy: Float, s: Float) {
     drawPath(chainPath, Color(0xFFFFD700), style = Stroke(s * 0.03f))
 }
 
-private fun DrawScope.drawGlasses(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawGlasses(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Left frame
     drawCircle(Color(0xFF424242), s * 0.35f, Offset(cx - s * 0.42f, cy), style = Stroke(s * 0.06f))
     // Right frame
@@ -466,7 +575,11 @@ private fun DrawScope.drawGlasses(cx: Float, cy: Float, s: Float) {
     drawLine(Color(0xFF424242), Offset(cx + s * 0.75f, cy), Offset(cx + s * 0.9f, cy - s * 0.1f), s * 0.04f)
 }
 
-private fun DrawScope.drawTheatreMask(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawTheatreMask(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Mask shape — comedy (smiling)
     val maskPath = Path().apply {
         moveTo(cx - s * 0.7f, cy - s * 0.4f)
@@ -482,17 +595,29 @@ private fun DrawScope.drawTheatreMask(cx: Float, cy: Float, s: Float) {
     miniSmile(cx, cy + s * 0.2f, s * 0.5f, s * 0.05f)
 }
 
-private fun DrawScope.drawStarMark(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawStarMark(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     drawPath(starPath(cx + s * 0.35f, cy, s * 0.3f, s * 0.13f), Color(0xFFFFD700))
 }
 
-private fun DrawScope.drawMapleBlush(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMapleBlush(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Two small maple leaves on cheeks
     drawPath(mapleLeafPath(cx - s * 0.5f, cy + s * 0.1f, s * 0.2f), Color(0xFFE57373))
     drawPath(mapleLeafPath(cx + s * 0.5f, cy + s * 0.1f, s * 0.2f), Color(0xFFE57373))
 }
 
-private fun DrawScope.drawHockeyMask(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHockeyMask(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // White goalie mask shape
     val maskPath = Path().apply {
         moveTo(cx - s * 0.6f, cy - s * 0.5f)
@@ -518,12 +643,20 @@ private fun DrawScope.drawHockeyMask(cx: Float, cy: Float, s: Float) {
     )
 }
 
-private fun DrawScope.drawHeartEyes(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHeartEyes(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     drawPath(heartPath(cx - s * 0.4f, cy, s * 0.3f), Color(0xFFE91E63))
     drawPath(heartPath(cx + s * 0.4f, cy, s * 0.3f), Color(0xFFE91E63))
 }
 
-private fun DrawScope.drawClownNose(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawClownNose(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     drawCircle(Color(0xFFD32F2F), s * 0.3f, Offset(cx, cy + s * 0.1f))
     // Shine
     drawCircle(Color(0x44FFFFFF), s * 0.1f, Offset(cx - s * 0.08f, cy))
@@ -531,7 +664,11 @@ private fun DrawScope.drawClownNose(cx: Float, cy: Float, s: Float) {
 
 // ─── Outfits ────────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawScarf(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawScarf(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Wavy scarf around neck
     val scarfPath = Path().apply {
         moveTo(cx - s * 0.8f, cy - s * 0.2f)
@@ -556,7 +693,11 @@ private fun DrawScope.drawScarf(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawBowtie(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawBowtie(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Left triangle
     val leftPath = Path().apply {
         moveTo(cx, cy)
@@ -577,7 +718,11 @@ private fun DrawScope.drawBowtie(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFFB71C1C), s * 0.15f, Offset(cx, cy))
 }
 
-private fun DrawScope.drawCape(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawCape(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     val capePath = Path().apply {
         moveTo(cx - s * 0.6f, cy - s * 0.3f)
         cubicTo(cx - s * 0.9f, cy + s * 0.5f, cx - s * 0.7f, cy + s * 1.0f, cx, cy + s * 0.8f)
@@ -589,7 +734,11 @@ private fun DrawScope.drawCape(cx: Float, cy: Float, s: Float) {
     accOval(Color(0xFFFFD700), cx, cy - s * 0.3f, s * 0.7f, s * 0.12f)
 }
 
-private fun DrawScope.drawMedal(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMedal(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Ribbon
     val ribbonPath = Path().apply {
         moveTo(cx - s * 0.15f, cy - s * 0.6f)
@@ -603,7 +752,11 @@ private fun DrawScope.drawMedal(cx: Float, cy: Float, s: Float) {
     drawPath(starPath(cx, cy + s * 0.15f, s * 0.18f, s * 0.08f), Color(0xFFF57F17))
 }
 
-private fun DrawScope.drawNecklace(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawNecklace(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // String arc
     val neckPath = Path().apply {
         moveTo(cx - s * 0.7f, cy - s * 0.3f)
@@ -620,7 +773,11 @@ private fun DrawScope.drawNecklace(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawHockeyJersey(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHockeyJersey(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Jersey body
     drawRoundRect(
         Color(0xFFD32F2F),
@@ -641,7 +798,11 @@ private fun DrawScope.drawHockeyJersey(cx: Float, cy: Float, s: Float) {
     accOval(Color.White, cx, cy - s * 0.4f, s * 0.3f, s * 0.1f)
 }
 
-private fun DrawScope.drawFlannel(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawFlannel(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Shirt body
     drawRoundRect(
         Color(0xFFD32F2F),
@@ -686,7 +847,11 @@ private fun DrawScope.drawFlannel(cx: Float, cy: Float, s: Float) {
     drawPath(rightCollar, Color(0xFFB71C1C))
 }
 
-private fun DrawScope.drawMapleTee(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMapleTee(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // T-shirt body
     drawRoundRect(
         Color.White,
@@ -703,7 +868,11 @@ private fun DrawScope.drawMapleTee(cx: Float, cy: Float, s: Float) {
     accOval(Color(0xFFE0E0E0), cx, cy - s * 0.3f, s * 0.25f, s * 0.08f)
 }
 
-private fun DrawScope.drawTuxedo(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawTuxedo(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Black jacket
     drawRoundRect(
         Color(0xFF1A1A1A),
@@ -725,7 +894,11 @@ private fun DrawScope.drawTuxedo(cx: Float, cy: Float, s: Float) {
     drawLine(Color(0xFF424242), Offset(cx + s * 0.25f, cy - s * 0.4f), Offset(cx + s * 0.4f, cy + s * 0.3f), s * 0.04f)
 }
 
-private fun DrawScope.drawLabCoat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawLabCoat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // White coat body
     drawRoundRect(
         Color.White,
@@ -762,7 +935,11 @@ private fun DrawScope.drawLabCoat(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawRaincoat(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawRaincoat(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Yellow coat body
     drawRoundRect(
         Color(0xFFFDD835),
@@ -777,10 +954,19 @@ private fun DrawScope.drawRaincoat(cx: Float, cy: Float, s: Float) {
         drawCircle(Color(0xFF795548), s * 0.05f, Offset(cx, cy - s * 0.2f + i * s * 0.2f))
     }
     // Pocket flap
-    drawLine(Color(0xFFF9A825), Offset(cx - s * 0.5f, cy + s * 0.15f), Offset(cx - s * 0.15f, cy + s * 0.15f), s * 0.06f)
+    drawLine(
+        Color(0xFFF9A825),
+        Offset(cx - s * 0.5f, cy + s * 0.15f),
+        Offset(cx - s * 0.15f, cy + s * 0.15f),
+        s * 0.06f,
+    )
 }
 
-private fun DrawScope.drawSuperhero(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawSuperhero(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Cape behind
     drawCape(cx, cy, s)
     // Chest emblem — shield shape
@@ -800,7 +986,11 @@ private fun DrawScope.drawSuperhero(cx: Float, cy: Float, s: Float) {
 
 // ─── Pets ───────────────────────────────────────────────────────────────────
 
-private fun DrawScope.drawChick(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawChick(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Yellow body
     drawCircle(Color(0xFFFFEB3B), s * 0.7f, Offset(cx, cy))
     // Beak
@@ -818,7 +1008,11 @@ private fun DrawScope.drawChick(cx: Float, cy: Float, s: Float) {
     accOval(Color(0xFFFDD835), cx - s * 0.45f, cy + s * 0.1f, s * 0.2f, s * 0.3f)
 }
 
-private fun DrawScope.drawHamster(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawHamster(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Round body
     drawCircle(Color(0xFFFFCC80), s * 0.65f, Offset(cx, cy))
     // Ears
@@ -837,7 +1031,11 @@ private fun DrawScope.drawHamster(cx: Float, cy: Float, s: Float) {
     miniSmile(cx, cy + s * 0.15f, s * 0.25f, s * 0.03f)
 }
 
-private fun DrawScope.drawFish(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawFish(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Body — oval
     accOval(Color(0xFF42A5F5), cx, cy, s * 0.7f, s * 0.45f)
     // Tail fin
@@ -866,7 +1064,11 @@ private fun DrawScope.drawFish(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawSnail(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawSnail(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Body (slug part)
     accOval(Color(0xFFA1887F), cx + s * 0.1f, cy + s * 0.3f, s * 0.7f, s * 0.25f)
     // Shell — spiral
@@ -875,7 +1077,12 @@ private fun DrawScope.drawSnail(cx: Float, cy: Float, s: Float) {
     drawCircle(Color(0xFFFF9800), s * 0.2f, Offset(cx, cy - s * 0.05f))
     drawCircle(Color(0xFFE65100), s * 0.1f, Offset(cx + s * 0.05f, cy - s * 0.05f))
     // Eye stalks
-    drawLine(Color(0xFFA1887F), Offset(cx + s * 0.4f, cy + s * 0.15f), Offset(cx + s * 0.55f, cy - s * 0.25f), s * 0.05f)
+    drawLine(
+        Color(0xFFA1887F),
+        Offset(cx + s * 0.4f, cy + s * 0.15f),
+        Offset(cx + s * 0.55f, cy - s * 0.25f),
+        s * 0.05f,
+    )
     drawLine(Color(0xFFA1887F), Offset(cx + s * 0.55f, cy + s * 0.15f), Offset(cx + s * 0.7f, cy - s * 0.2f), s * 0.05f)
     // Eyes
     miniEye(Offset(cx + s * 0.55f, cy - s * 0.3f), s * 0.07f)
@@ -883,7 +1090,11 @@ private fun DrawScope.drawSnail(cx: Float, cy: Float, s: Float) {
     miniSmile(cx + s * 0.5f, cy + s * 0.3f, s * 0.2f, s * 0.03f)
 }
 
-private fun DrawScope.drawLadybug(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawLadybug(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Red dome body
     val domePath = Path().apply {
         moveTo(cx - s * 0.7f, cy + s * 0.15f)
@@ -908,7 +1119,11 @@ private fun DrawScope.drawLadybug(cx: Float, cy: Float, s: Float) {
     drawLine(Color(0xFF1A1A1A), Offset(cx + s * 0.1f, cy - s * 0.7f), Offset(cx + s * 0.25f, cy - s * 0.85f), s * 0.03f)
 }
 
-private fun DrawScope.drawBeaver(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawBeaver(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Flat tail
     accOval(Color(0xFF5D4037), cx - s * 0.5f, cy + s * 0.35f, s * 0.4f, s * 0.15f)
     // Brown body
@@ -930,7 +1145,11 @@ private fun DrawScope.drawBeaver(cx: Float, cy: Float, s: Float) {
     drawRect(Color.White, topLeft = Offset(cx + s * 0.01f, cy - s * 0.18f), size = Size(s * 0.05f, s * 0.1f))
 }
 
-private fun DrawScope.drawLoon(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawLoon(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Body
     accOval(Color(0xFF1A1A1A), cx, cy + s * 0.1f, s * 0.6f, s * 0.35f)
     // White chest spots (checkerboard pattern)
@@ -962,7 +1181,11 @@ private fun DrawScope.drawLoon(cx: Float, cy: Float, s: Float) {
     drawLine(Color.White, Offset(cx - s * 0.18f, cy - s * 0.1f), Offset(cx + s * 0.18f, cy - s * 0.1f), s * 0.05f)
 }
 
-private fun DrawScope.drawPolarBear(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawPolarBear(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // White round body
     drawCircle(Color(0xFFF5F5F5), s * 0.6f, Offset(cx, cy))
     // Head
@@ -983,7 +1206,11 @@ private fun DrawScope.drawPolarBear(cx: Float, cy: Float, s: Float) {
     accOval(Color(0xFFE0E0E0), cx + s * 0.3f, cy + s * 0.5f, s * 0.12f, s * 0.08f)
 }
 
-private fun DrawScope.drawRaccoon(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawRaccoon(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Grey body
     drawCircle(Color(0xFF757575), s * 0.55f, Offset(cx, cy))
     // Lighter belly
@@ -1018,12 +1245,26 @@ private fun DrawScope.drawRaccoon(cx: Float, cy: Float, s: Float) {
     }
 }
 
-private fun DrawScope.drawMapleBug(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawMapleBug(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Small green body
     accOval(Color(0xFF4CAF50), cx, cy, s * 0.5f, s * 0.4f)
     // Leaf-shaped antenna
-    drawLine(Color(0xFF388E3C), Offset(cx - s * 0.15f, cy - s * 0.35f), Offset(cx - s * 0.3f, cy - s * 0.65f), s * 0.04f)
-    drawLine(Color(0xFF388E3C), Offset(cx + s * 0.15f, cy - s * 0.35f), Offset(cx + s * 0.3f, cy - s * 0.65f), s * 0.04f)
+    drawLine(
+        Color(0xFF388E3C),
+        Offset(cx - s * 0.15f, cy - s * 0.35f),
+        Offset(cx - s * 0.3f, cy - s * 0.65f),
+        s * 0.04f,
+    )
+    drawLine(
+        Color(0xFF388E3C),
+        Offset(cx + s * 0.15f, cy - s * 0.35f),
+        Offset(cx + s * 0.3f, cy - s * 0.65f),
+        s * 0.04f,
+    )
     // Tiny maple leaves at antenna tips
     drawPath(mapleLeafPath(cx - s * 0.3f, cy - s * 0.7f, s * 0.12f), Color(0xFF388E3C))
     drawPath(mapleLeafPath(cx + s * 0.3f, cy - s * 0.7f, s * 0.12f), Color(0xFF388E3C))
@@ -1032,19 +1273,39 @@ private fun DrawScope.drawMapleBug(cx: Float, cy: Float, s: Float) {
     miniEye(Offset(cx + s * 0.12f, cy - s * 0.1f), s * 0.07f)
     // Legs
     for (i in -1..1) {
-        drawLine(Color(0xFF388E3C), Offset(cx - s * 0.4f, cy + i * s * 0.12f), Offset(cx - s * 0.6f, cy + i * s * 0.2f), s * 0.03f)
-        drawLine(Color(0xFF388E3C), Offset(cx + s * 0.4f, cy + i * s * 0.12f), Offset(cx + s * 0.6f, cy + i * s * 0.2f), s * 0.03f)
+        drawLine(
+            Color(0xFF388E3C),
+            Offset(cx - s * 0.4f, cy + i * s * 0.12f),
+            Offset(cx - s * 0.6f, cy + i * s * 0.2f),
+            s * 0.03f,
+        )
+        drawLine(
+            Color(0xFF388E3C),
+            Offset(cx + s * 0.4f, cy + i * s * 0.12f),
+            Offset(cx + s * 0.6f, cy + i * s * 0.2f),
+            s * 0.03f,
+        )
     }
     miniSmile(cx, cy + s * 0.15f, s * 0.2f, s * 0.025f)
 }
 
-private fun DrawScope.drawNarwhal(cx: Float, cy: Float, s: Float) {
+private fun DrawScope.drawNarwhal(
+    cx: Float,
+    cy: Float,
+    s: Float,
+) {
     // Blue body
     accOval(Color(0xFF42A5F5), cx, cy, s * 0.65f, s * 0.4f)
     // Belly
     accOval(Color(0xFFBBDEFB), cx, cy + s * 0.1f, s * 0.45f, s * 0.2f)
     // Horn (tusk)
-    drawLine(Color(0xFFFFD700), Offset(cx + s * 0.5f, cy - s * 0.1f), Offset(cx + s * 1.0f, cy - s * 0.5f), s * 0.06f, cap = StrokeCap.Round)
+    drawLine(
+        Color(0xFFFFD700),
+        Offset(cx + s * 0.5f, cy - s * 0.1f),
+        Offset(cx + s * 1.0f, cy - s * 0.5f),
+        s * 0.06f,
+        cap = StrokeCap.Round,
+    )
     // Spiral on horn
     for (i in 0..2) {
         val hx = cx + s * (0.6f + i * 0.12f)
