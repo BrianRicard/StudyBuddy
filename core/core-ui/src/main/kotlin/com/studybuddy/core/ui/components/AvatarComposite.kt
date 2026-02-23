@@ -1,11 +1,15 @@
 package com.studybuddy.core.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.drawscope.rotate
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -13,8 +17,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.RewardCatalog
+import com.studybuddy.core.ui.avatar.AvatarCharacterDrawables
 import com.studybuddy.core.ui.avatar.AvatarCharacterRegistry
-import com.studybuddy.core.ui.avatar.drawCreature
 import com.studybuddy.core.ui.avatar.drawFaceAccessory
 import com.studybuddy.core.ui.avatar.drawHat
 import com.studybuddy.core.ui.avatar.drawOutfit
@@ -22,10 +26,10 @@ import com.studybuddy.core.ui.avatar.drawPet
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 /**
- * Renders a creature avatar with accessories snapped to per-character attachment points.
+ * Renders a creature avatar using a hybrid approach:
  *
- * Everything is drawn in a single [Canvas] — creature first, then accessories layered
- * in order: outfit, face, hat, pet.
+ * 1. **Body** — polished vector drawable (with gradients, smooth curves)
+ * 2. **Accessories** — Canvas-drawn at per-character attachment points
  *
  * Each creature in [AvatarCharacterRegistry] defines fractional anchor positions for:
  *  - hats    -> top of head
@@ -51,59 +55,67 @@ fun AvatarComposite(
     val spec = AvatarCharacterRegistry.getSpec(config.bodyId)
     val ap = spec.attachmentPoints
 
-    Canvas(
-        modifier = modifier
-            .size(size)
-            .semantics {
-                contentDescription = "Avatar: ${character.name}" +
-                    (hat?.takeIf { it.id != "hat_none" }?.let { " wearing ${it.name}" } ?: "") +
-                    (face?.takeIf { it.id != "face_none" }?.let { " with ${it.name}" } ?: "") +
-                    (outfit?.takeIf { it.id != "outfit_none" }?.let { ", ${it.name}" } ?: "") +
-                    (pet?.takeIf { it.id != "pet_none" }?.let { " and ${it.name}" } ?: "")
-            },
-    ) {
-        val w = this.size.width
-        val h = this.size.height
-
-        // ── Body — Canvas-drawn creature ──────────────────────────────────
-        drawCreature(spec)
-
-        // ── Outfit (drawn behind face / hat) ──────────────────────────────
-        if (outfit != null && outfit.id != "outfit_none") {
-            val s = w * OUTFIT_SCALE
-            val cx = w * ap.chestAnchor.x
-            val cy = h * ap.chestAnchor.y
-            drawOutfit(outfit.id, cx, cy, s / 2)
+    val semanticsModifier = modifier
+        .size(size)
+        .semantics {
+            contentDescription = "Avatar: ${character.name}" +
+                (hat?.takeIf { it.id != "hat_none" }?.let { " wearing ${it.name}" } ?: "") +
+                (face?.takeIf { it.id != "face_none" }?.let { " with ${it.name}" } ?: "") +
+                (outfit?.takeIf { it.id != "outfit_none" }?.let { ", ${it.name}" } ?: "") +
+                (pet?.takeIf { it.id != "pet_none" }?.let { " and ${it.name}" } ?: "")
         }
 
-        // ── Face accessory ────────────────────────────────────────────────
-        if (face != null && face.id != "face_none") {
-            val s = w * FACE_SCALE * ap.faceScale
-            val cx = w * ap.faceAnchor.x
-            val cy = h * ap.faceAnchor.y
-            drawFaceAccessory(face.id, cx, cy, s / 2)
-        }
+    Box(modifier = semanticsModifier) {
+        // ── Body — polished vector drawable ─────────────────────────────
+        Image(
+            painter = painterResource(AvatarCharacterDrawables.getDrawable(config.bodyId)),
+            contentDescription = null,
+            modifier = Modifier.size(size),
+            contentScale = ContentScale.Fit,
+        )
 
-        // ── Hat (with rotation) ───────────────────────────────────────────
-        if (hat != null && hat.id != "hat_none") {
-            val s = w * HAT_SCALE * ap.hatScale
-            val cx = w * ap.hatAnchor.x
-            val cy = h * ap.hatAnchor.y
-            if (ap.hatRotation != 0f) {
-                rotate(ap.hatRotation, pivot = Offset(cx, cy)) {
+        // ── Accessories — Canvas overlay at attachment points ───────────
+        Canvas(modifier = Modifier.size(size)) {
+            val w = this.size.width
+            val h = this.size.height
+
+            // Outfit (drawn behind face / hat)
+            if (outfit != null && outfit.id != "outfit_none") {
+                val s = w * OUTFIT_SCALE
+                val cx = w * ap.chestAnchor.x
+                val cy = h * ap.chestAnchor.y
+                drawOutfit(outfit.id, cx, cy, s / 2)
+            }
+
+            // Face accessory
+            if (face != null && face.id != "face_none") {
+                val s = w * FACE_SCALE * ap.faceScale
+                val cx = w * ap.faceAnchor.x
+                val cy = h * ap.faceAnchor.y
+                drawFaceAccessory(face.id, cx, cy, s / 2)
+            }
+
+            // Hat (with rotation)
+            if (hat != null && hat.id != "hat_none") {
+                val s = w * HAT_SCALE * ap.hatScale
+                val cx = w * ap.hatAnchor.x
+                val cy = h * ap.hatAnchor.y
+                if (ap.hatRotation != 0f) {
+                    rotate(ap.hatRotation, pivot = Offset(cx, cy)) {
+                        drawHat(hat.id, cx, cy, s / 2)
+                    }
+                } else {
                     drawHat(hat.id, cx, cy, s / 2)
                 }
-            } else {
-                drawHat(hat.id, cx, cy, s / 2)
             }
-        }
 
-        // ── Pet companion ─────────────────────────────────────────────────
-        if (pet != null && pet.id != "pet_none") {
-            val s = w * PET_SCALE
-            val cx = w * ap.petAnchor.x
-            val cy = h * ap.petAnchor.y
-            drawPet(pet.id, cx, cy, s / 2)
+            // Pet companion
+            if (pet != null && pet.id != "pet_none") {
+                val s = w * PET_SCALE
+                val cx = w * ap.petAnchor.x
+                val cy = h * ap.petAnchor.y
+                drawPet(pet.id, cx, cy, s / 2)
+            }
         }
     }
 }

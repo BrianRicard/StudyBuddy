@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Dorsal fin -->
+    <path android:pathData="M95,22 L100,2 L110,22 C107,24 98,24 95,22Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="100"
+                android:startY="2"
+                android:endX="100"
+                android:endY="22"
+                android:startColor="#607D8B"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+
+    <!-- Tail fin -->
+    <path android:pathData="M100,170 C95,175 82,185 78,192 C76,195 80,196 85,192 C90,188 98,178 100,175Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="78"
+                android:startY="192"
+                android:endX="100"
+                android:endY="170"
+                android:startColor="#607D8B"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+    <path android:pathData="M100,170 C105,175 118,185 122,192 C124,195 120,196 115,192 C110,188 102,178 100,175Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="122"
+                android:startY="192"
+                android:endX="100"
+                android:endY="170"
+                android:startColor="#607D8B"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+
+    <!-- Left pectoral fin -->
+    <path android:pathData="M50,95 C38,100 28,108 30,115 C32,120 40,118 45,112 C50,106 52,98 50,95Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="30"
+                android:startY="108"
+                android:endX="50"
+                android:endY="95"
+                android:startColor="#607D8B"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+
+    <!-- Right pectoral fin -->
+    <path android:pathData="M150,95 C162,100 172,108 170,115 C168,120 160,118 155,112 C150,106 148,98 150,95Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="170"
+                android:startY="108"
+                android:endX="150"
+                android:endY="95"
+                android:startColor="#607D8B"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+
+    <!-- Body (torpedo shape) -->
+    <path android:pathData="M48,85 C48,45 68,20 100,20 C132,20 152,45 152,85 C152,130 135,170 100,175 C65,170 48,130 48,85Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="100"
+                android:startY="20"
+                android:endX="100"
+                android:endY="175"
+                android:startColor="#6B8C99"
+                android:endColor="#546E7A" />
+        </aapt:attr>
+    </path>
+
+    <!-- White belly -->
+    <path android:pathData="M62,92 C62,78 78,68 100,68 C122,68 138,78 138,92 C138,132 125,162 100,165 C75,162 62,132 62,92Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="110"
+                android:gradientRadius="55"
+                android:startColor="#FFFFFF"
+                android:endColor="#ECEFF1" />
+        </aapt:attr>
+    </path>
+
+    <!-- Left eye -->
+    <path android:pathData="M68,62 C68,55 73,50 80,50 C87,50 92,55 92,62 C92,69 87,74 80,74 C73,74 68,69 68,62Z"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M73,62 C73,58 76,54 80,54 C84,54 87,58 87,62 C87,66 84,70 80,70 C76,70 73,66 73,62Z"
+        android:fillColor="#263238" />
+    <path android:pathData="M76,58 C76,56 77,55 79,55 C81,55 82,56 82,58 C82,60 81,61 79,61 C77,61 76,60 76,58Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Right eye -->
+    <path android:pathData="M108,62 C108,55 113,50 120,50 C127,50 132,55 132,62 C132,69 127,74 120,74 C113,74 108,69 108,62Z"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M113,62 C113,58 116,54 120,54 C124,54 127,58 127,62 C127,66 124,70 120,70 C116,70 113,66 113,62Z"
+        android:fillColor="#263238" />
+    <path android:pathData="M116,58 C116,56 117,55 119,55 C121,55 122,56 122,58 C122,60 121,61 119,61 C117,61 116,60 116,58Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Friendly grin -->
+    <path android:pathData="M68,95 C68,95 80,115 100,115 C120,115 132,95 132,95"
+        android:strokeColor="#263238"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Teeth (small, friendly) -->
+    <path android:pathData="M76,95 L78,100 L80,95"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M86,97 L88,103 L90,97"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M96,98 L98,104 L100,98"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M110,97 L112,103 L114,97"
+        android:fillColor="#FFFFFF" />
+    <path android:pathData="M120,95 L122,100 L124,95"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Gill lines left -->
+    <path android:pathData="M58,78 C56,82 55,88 56,92"
+        android:strokeColor="#40263238"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path android:pathData="M55,80 C53,84 52,90 53,94"
+        android:strokeColor="#40263238"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Gill lines right -->
+    <path android:pathData="M142,78 C144,82 145,88 144,92"
+        android:strokeColor="#40263238"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path android:pathData="M145,80 C147,84 148,90 147,94"
+        android:strokeColor="#40263238"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Left blush -->
+    <path android:pathData="M60,75 C60,72 63,70 66,70 C69,70 72,72 72,75 C72,78 69,80 66,80 C63,80 60,78 60,75Z"
+        android:fillColor="#25FF8A80" />
+
+    <!-- Right blush -->
+    <path android:pathData="M128,75 C128,72 131,70 134,70 C137,70 140,72 140,75 C140,78 137,80 134,80 C131,80 128,78 128,75Z"
+        android:fillColor="#25FF8A80" />
+
+</vector>
