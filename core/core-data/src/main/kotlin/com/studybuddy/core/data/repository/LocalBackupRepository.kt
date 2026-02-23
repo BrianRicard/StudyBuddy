@@ -24,8 +24,10 @@ class LocalBackupRepository @Inject constructor(
 
     override suspend fun exportCsv(profileId: String): String = csvExporter.exportWordLists(profileId)
 
-    override suspend fun importCsv(csvContent: String, profileId: String): Int =
-        csvImporter.importWordLists(csvContent, profileId)
+    override suspend fun importCsv(
+        csvContent: String,
+        profileId: String,
+    ): Int = csvImporter.importWordLists(csvContent, profileId)
 
     override suspend fun sync() { /* no-op: cloud migration hook */ }
 }

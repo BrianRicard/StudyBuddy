@@ -5,6 +5,9 @@ interface BackupRepository {
     suspend fun restoreBackup(json: String)
     suspend fun exportPdf(profileId: String): ByteArray
     suspend fun exportCsv(profileId: String): String
-    suspend fun importCsv(csvContent: String, profileId: String): Int
+    suspend fun importCsv(
+        csvContent: String,
+        profileId: String,
+    ): Int
     suspend fun sync()
 }

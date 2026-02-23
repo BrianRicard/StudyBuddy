@@ -2,6 +2,7 @@ package com.studybuddy.feature.dictee.practice
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
+import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.Feedback
@@ -12,11 +13,10 @@ import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
-import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
+import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
-import com.google.mlkit.vision.digitalink.Ink
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every

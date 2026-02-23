@@ -36,7 +36,10 @@ class CsvImporter @Inject constructor(private val database: StudyBuddyDatabase) 
      *
      * @return the number of words imported
      */
-    suspend fun importWordLists(csvContent: String, profileId: String): Int {
+    suspend fun importWordLists(
+        csvContent: String,
+        profileId: String,
+    ): Int {
         val lines = csvContent.lines()
             .map { it.trim() }
             .filter { it.isNotBlank() }

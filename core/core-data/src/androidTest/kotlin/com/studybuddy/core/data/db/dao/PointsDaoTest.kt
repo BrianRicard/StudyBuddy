@@ -6,6 +6,7 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.studybuddy.core.data.db.StudyBuddyDatabase
 import com.studybuddy.core.data.db.entity.PointEventEntity
 import com.studybuddy.core.data.db.entity.ProfileEntity
+import java.util.UUID
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
@@ -13,7 +14,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.UUID
 
 /**
  * Instrumented tests for [PointsDao].

@@ -409,7 +409,10 @@ class BackupExportViewModel @Inject constructor(
         )
     }
 
-    private fun writeExportFile(filename: String, data: ByteArray): File {
+    private fun writeExportFile(
+        filename: String,
+        data: ByteArray,
+    ): File {
         val exportsDir = File(context.cacheDir, "exports")
         exportsDir.mkdirs()
         val file = File(exportsDir, filename)
@@ -417,12 +420,11 @@ class BackupExportViewModel @Inject constructor(
         return file
     }
 
-    private fun getFileProviderUri(file: File): Uri =
-        FileProvider.getUriForFile(
-            context,
-            "${context.packageName}.fileprovider",
-            file,
-        )
+    private fun getFileProviderUri(file: File): Uri = FileProvider.getUriForFile(
+        context,
+        "${context.packageName}.fileprovider",
+        file,
+    )
 
     companion object {
         private const val AUTO_BACKUP_WORK_NAME = "studybuddy_auto_backup"

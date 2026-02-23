@@ -49,7 +49,10 @@ class CsvImporterTest {
             "école, école",
             "'hello world', 'hello world'",
         )
-        fun `preserves accents and spaces`(input: String, expected: String) {
+        fun `preserves accents and spaces`(
+            input: String,
+            expected: String,
+        ) {
             val result = parseCsvLine("List,fr,$input")
             assertEquals(expected.trim(), result[2].trim())
         }

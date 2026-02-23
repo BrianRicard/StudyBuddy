@@ -3,6 +3,7 @@ package com.studybuddy.feature.dictee.practice
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.common.locale.SupportedLocale
@@ -15,11 +16,10 @@ import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
-import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
+import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
-import com.google.mlkit.vision.digitalink.Ink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
