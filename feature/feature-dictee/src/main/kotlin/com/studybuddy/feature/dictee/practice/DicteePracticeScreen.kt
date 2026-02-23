@@ -174,6 +174,7 @@ private fun DicteePracticeContent(
                                     onIntent(DicteePracticeIntent.ToggleInputMode)
                                 }
                             },
+                            enabled = state.feedback == null,
                         ) {
                             Text(
                                 text = "Keyboard",
@@ -190,6 +191,7 @@ private fun DicteePracticeContent(
                                     onIntent(DicteePracticeIntent.ToggleInputMode)
                                 }
                             },
+                            enabled = state.feedback == null,
                         ) {
                             Text(
                                 text = "Handwriting",
