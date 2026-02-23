@@ -1,5 +1,8 @@
 package com.studybuddy.feature.backup
 
+import android.content.Context
+import android.net.Uri
+import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -9,7 +12,10 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
+import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
@@ -48,6 +54,7 @@ data class BackupExportState(
     val isBackingUp: Boolean = false,
     val isRestoring: Boolean = false,
     val isExporting: Boolean = false,
+    val isImporting: Boolean = false,
     val showRestoreConfirmDialog: Boolean = false,
     val pendingRestoreJson: String? = null,
     val exportFormat: ExportFormat = ExportFormat.PDF,
@@ -68,6 +75,7 @@ sealed interface BackupExportIntent {
     data object ExportPdf : BackupExportIntent
     data object ExportJson : BackupExportIntent
     data object ExportCsv : BackupExportIntent
+    data class ImportCsv(val csvContent: String) : BackupExportIntent
     data object DismissStatus : BackupExportIntent
     data class SetAutoBackupEnabled(val enabled: Boolean) : BackupExportIntent
     data class SetAutoBackupFrequency(val frequency: AutoBackupFrequency) : BackupExportIntent
@@ -77,16 +85,18 @@ sealed interface BackupExportIntent {
  * One-shot side effects emitted by the Backup & Export ViewModel.
  */
 sealed interface BackupExportEffect {
-    data class ShareFile(val uri: String, val mimeType: String) : BackupExportEffect
+    data class ShareFile(val uri: Uri, val mimeType: String) : BackupExportEffect
     data class ShowToast(val message: String) : BackupExportEffect
     data class FileCreated(val path: String) : BackupExportEffect
 }
 
 @HiltViewModel
 class BackupExportViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val createBackupUseCase: CreateBackupUseCase,
     private val restoreBackupUseCase: RestoreBackupUseCase,
     private val exportProgressReportUseCase: ExportProgressReportUseCase,
+    private val importWordListUseCase: ImportWordListUseCase,
     private val workManager: WorkManager,
 ) : ViewModel() {
 
@@ -109,6 +119,7 @@ class BackupExportViewModel @Inject constructor(
             is BackupExportIntent.ExportPdf -> handleExportPdf()
             is BackupExportIntent.ExportJson -> handleExportJson()
             is BackupExportIntent.ExportCsv -> handleExportCsv()
+            is BackupExportIntent.ImportCsv -> handleImportCsv(intent.csvContent)
             is BackupExportIntent.DismissStatus -> handleDismissStatus()
             is BackupExportIntent.SetAutoBackupEnabled -> {
                 handleSetAutoBackupEnabled(intent.enabled)
@@ -127,6 +138,11 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val backupJson = createBackupUseCase()
+                val file = writeExportFile(
+                    "studybuddy_backup.json",
+                    backupJson.toByteArray(Charsets.UTF_8),
+                )
+                val uri = getFileProviderUri(file)
                 val now = LocalDateTime.now().format(dateTimeFormatter)
                 _state.update {
                     it.copy(
@@ -135,7 +151,12 @@ class BackupExportViewModel @Inject constructor(
                         statusMessage = "Backup created successfully",
                     )
                 }
-                _effects.emit(BackupExportEffect.FileCreated(backupJson))
+                _effects.emit(
+                    BackupExportEffect.ShareFile(
+                        uri = uri,
+                        mimeType = "application/json",
+                    ),
+                )
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
@@ -215,7 +236,9 @@ class BackupExportViewModel @Inject constructor(
             }
 
             try {
-                exportProgressReportUseCase.exportPdf(profileId)
+                val pdfBytes = exportProgressReportUseCase.exportPdf(profileId)
+                val file = writeExportFile("studybuddy_progress_report.pdf", pdfBytes)
+                val uri = getFileProviderUri(file)
                 _state.update {
                     it.copy(
                         isExporting = false,
@@ -224,7 +247,7 @@ class BackupExportViewModel @Inject constructor(
                 }
                 _effects.emit(
                     BackupExportEffect.ShareFile(
-                        uri = "studybuddy_progress_report.pdf",
+                        uri = uri,
                         mimeType = "application/pdf",
                     ),
                 )
@@ -253,6 +276,11 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val json = createBackupUseCase()
+                val file = writeExportFile(
+                    "studybuddy_backup.json",
+                    json.toByteArray(Charsets.UTF_8),
+                )
+                val uri = getFileProviderUri(file)
                 _state.update {
                     it.copy(
                         isExporting = false,
@@ -261,7 +289,7 @@ class BackupExportViewModel @Inject constructor(
                 }
                 _effects.emit(
                     BackupExportEffect.ShareFile(
-                        uri = json,
+                        uri = uri,
                         mimeType = "application/json",
                     ),
                 )
@@ -290,6 +318,11 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val csv = exportProgressReportUseCase.exportCsv(profileId)
+                val file = writeExportFile(
+                    "studybuddy_word_lists.csv",
+                    csv.toByteArray(Charsets.UTF_8),
+                )
+                val uri = getFileProviderUri(file)
                 _state.update {
                     it.copy(
                         isExporting = false,
@@ -298,7 +331,7 @@ class BackupExportViewModel @Inject constructor(
                 }
                 _effects.emit(
                     BackupExportEffect.ShareFile(
-                        uri = csv,
+                        uri = uri,
                         mimeType = "text/csv",
                     ),
                 )
@@ -307,6 +340,31 @@ class BackupExportViewModel @Inject constructor(
                     it.copy(
                         isExporting = false,
                         error = "CSV export failed: ${e.message ?: "Unknown error"}",
+                    )
+                }
+            }
+        }
+    }
+
+    private fun handleImportCsv(csvContent: String) {
+        if (_state.value.isImporting) return
+
+        viewModelScope.launch {
+            _state.update { it.copy(isImporting = true, error = null) }
+
+            try {
+                val count = importWordListUseCase(csvContent, profileId)
+                _state.update {
+                    it.copy(
+                        isImporting = false,
+                        statusMessage = "Imported $count words",
+                    )
+                }
+            } catch (e: Exception) {
+                _state.update {
+                    it.copy(
+                        isImporting = false,
+                        error = "Import failed: ${e.message ?: "Unknown error"}",
                     )
                 }
             }
@@ -350,6 +408,21 @@ class BackupExportViewModel @Inject constructor(
             workRequest,
         )
     }
+
+    private fun writeExportFile(filename: String, data: ByteArray): File {
+        val exportsDir = File(context.cacheDir, "exports")
+        exportsDir.mkdirs()
+        val file = File(exportsDir, filename)
+        file.writeBytes(data)
+        return file
+    }
+
+    private fun getFileProviderUri(file: File): Uri =
+        FileProvider.getUriForFile(
+            context,
+            "${context.packageName}.fileprovider",
+            file,
+        )
 
     companion object {
         private const val AUTO_BACKUP_WORK_NAME = "studybuddy_auto_backup"

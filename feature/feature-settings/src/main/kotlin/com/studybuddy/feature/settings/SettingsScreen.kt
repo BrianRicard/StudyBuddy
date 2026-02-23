@@ -20,6 +20,8 @@ import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -64,13 +66,14 @@ fun SettingsScreen(
     onAppReset: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is SettingsEffect.NavigateTo -> onNavigate(effect.route)
                 is SettingsEffect.ShowToast -> {
-                    // Toast can be wired via SnackbarHostState from caller
+                    snackbarHostState.showSnackbar(effect.message)
                 }
                 is SettingsEffect.AppReset -> onAppReset()
             }
@@ -80,6 +83,7 @@ fun SettingsScreen(
     SettingsContent(
         state = state,
         onIntent = viewModel::onIntent,
+        snackbarHostState = snackbarHostState,
         modifier = modifier,
     )
 }
@@ -90,12 +94,14 @@ private fun SettingsContent(
     state: SettingsState,
     onIntent: (SettingsIntent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(title = { Text("Settings") })
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { padding ->
         if (state.isLoading) {
             LoadingState(modifier = Modifier.padding(padding))

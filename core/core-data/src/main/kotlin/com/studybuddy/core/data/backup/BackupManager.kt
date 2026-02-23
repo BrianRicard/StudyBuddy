@@ -11,6 +11,8 @@ import com.studybuddy.core.data.db.entity.PointEventEntity
 import com.studybuddy.core.data.db.entity.ProfileEntity
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -226,7 +228,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
     suspend fun restoreFromBackup(jsonString: String) {
         val backup = json.decodeFromString<BackupData>(jsonString)
 
-        database.clearAllTables()
+        withContext(Dispatchers.IO) { database.clearAllTables() }
 
         backup.profiles.forEach { profile ->
             database.profileDao().insert(

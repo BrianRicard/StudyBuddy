@@ -72,13 +72,24 @@ fun BackupExportScreen(
         }
     }
 
+    val csvPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri ->
+        uri?.let {
+            val csv = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
+            if (csv != null) {
+                viewModel.onIntent(BackupExportIntent.ImportCsv(csv))
+            }
+        }
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is BackupExportEffect.ShareFile -> {
                     val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                         type = effect.mimeType
-                        putExtra(android.content.Intent.EXTRA_TEXT, effect.uri)
+                        putExtra(android.content.Intent.EXTRA_STREAM, effect.uri)
                         addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     context.startActivity(
@@ -114,6 +125,7 @@ fun BackupExportScreen(
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
         onOpenFilePicker = { filePickerLauncher.launch("application/json") },
+        onOpenCsvPicker = { csvPickerLauncher.launch("text/*") },
         snackbarHostState = snackbarHostState,
     )
 }
@@ -125,6 +137,7 @@ private fun BackupExportContent(
     onIntent: (BackupExportIntent) -> Unit,
     onNavigateBack: () -> Unit,
     onOpenFilePicker: () -> Unit = {},
+    onOpenCsvPicker: () -> Unit = {},
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
@@ -250,6 +263,25 @@ private fun BackupExportContent(
                         state.exportFormat == ExportFormat.CSV,
                     enabled = !state.isExporting,
                     onClick = { onIntent(BackupExportIntent.ExportCsv) },
+                )
+            }
+            // endregion
+
+            // region Import Section
+            item {
+                SectionHeader(title = "Import")
+            }
+
+            item {
+                ExportOptionCard(
+                    title = "Import Word Lists (CSV)",
+                    description = "Import dictee word lists from a CSV file. " +
+                        "Expected format: List, Language, Word " +
+                        "(with optional Mastered, Attempts, Correct Count columns).",
+                    buttonText = "Import CSV",
+                    isExporting = state.isImporting,
+                    enabled = !state.isImporting,
+                    onClick = onOpenCsvPicker,
                 )
             }
             // endregion
