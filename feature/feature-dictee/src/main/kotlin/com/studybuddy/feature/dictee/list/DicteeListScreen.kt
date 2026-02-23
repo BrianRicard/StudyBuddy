@@ -1,5 +1,7 @@
 package com.studybuddy.feature.dictee.list
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
@@ -31,6 +33,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -52,6 +55,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,6 +74,18 @@ fun DicteeListScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
+
+    val importLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent(),
+    ) { uri ->
+        uri?.let {
+            val csv = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
+            if (csv != null) {
+                viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -86,6 +102,9 @@ fun DicteeListScreen(
                         viewModel.onIntent(DicteeListIntent.UndoDelete(effect.list))
                     }
                 }
+                is DicteeListEffect.ShowToast -> {
+                    snackbarHostState.showSnackbar(effect.message)
+                }
             }
         }
     }
@@ -94,6 +113,7 @@ fun DicteeListScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent,
+        onImportCsv = { importLauncher.launch("text/*") },
     )
 }
 
@@ -103,12 +123,18 @@ private fun DicteeListContent(
     state: DicteeListState,
     snackbarHostState: SnackbarHostState,
     onIntent: (DicteeListIntent) -> Unit,
+    onImportCsv: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(if (state.isSelectMode) "Select Lists to Mix" else "Dictée") },
                 actions = {
+                    if (!state.isSelectMode) {
+                        TextButton(onClick = onImportCsv) {
+                            Text("Import")
+                        }
+                    }
                     if (state.lists.size >= 2) {
                         TextButton(onClick = { onIntent(DicteeListIntent.ToggleSelectMode) }) {
                             Text(if (state.isSelectMode) "Cancel" else "Mix Lists")

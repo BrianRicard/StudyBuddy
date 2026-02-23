@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.filterNotNull
+
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -118,10 +118,12 @@ class AvatarClosetViewModel @Inject constructor(
     private fun observeData() {
         viewModelScope.launch {
             combine(
-                getAvatarConfigUseCase(profileId).filterNotNull(),
+                getAvatarConfigUseCase(profileId),
                 rewardsRepository.getOwnedRewards(profileId),
                 getTotalPointsUseCase(profileId),
             ) { config, ownedRewards, balance ->
+                @Suppress("NAME_SHADOWING")
+                val config = config ?: AvatarConfig.default()
                 val ownedIds = ownedRewards.map { it.id }.toSet() +
                     RewardCatalog.starterItemIds
                 Triple(config, ownedIds, balance)

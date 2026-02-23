@@ -20,12 +20,14 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -66,6 +68,7 @@ import com.studybuddy.core.ui.theme.StudyBuddyTheme
 @Composable
 fun AvatarClosetScreen(
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
     viewModel: AvatarClosetViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -87,6 +90,7 @@ fun AvatarClosetScreen(
         state = state,
         onIntent = viewModel::onIntent,
         modifier = modifier,
+        onNavigateBack = onNavigateBack,
     )
 }
 
@@ -96,12 +100,21 @@ private fun AvatarClosetContent(
     state: AvatarClosetState,
     onIntent: (AvatarClosetIntent) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
         topBar = {
             TopAppBar(
                 title = { Text("Avatar Closet") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
                 actions = {
                     PointsBadge(
                         points = state.starBalance,

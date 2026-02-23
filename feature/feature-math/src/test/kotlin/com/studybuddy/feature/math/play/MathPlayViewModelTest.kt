@@ -348,4 +348,93 @@ class MathPlayViewModelTest {
         // ViewModel should initialize successfully
         assertNotNull(viewModel.state.value.currentProblem)
     }
+
+    @Test
+    fun `completeSession awards points with streak 0 to avoid double multiplier`() = runTest {
+        // Regression: completeSession must pass streak=0 to awardPoints because
+        // PointsCalculator.calculateMathPoints already includes streak bonuses.
+        // Passing the actual streak would apply the multiplier twice, inflating points.
+        val viewModel = createViewModel(problemCount = 2)
+        runCurrent()
+
+        // Answer problem 1 correctly
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        // Answer problem 2 correctly (streak = 2)
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        // Verify session is complete
+        assertTrue(viewModel.state.value.isComplete)
+
+        // Verify awardPoints was called with streak = 0 (not the actual streak of 2)
+        // to prevent double-applying the streak multiplier
+        coVerify {
+            awardPoints(
+                profileId = any(),
+                basePoints = any(),
+                streak = eq(0),
+                source = eq(PointSource.MATH),
+                reason = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `completeSession awards correct total points without inflation`() = runTest {
+        // Regression: ensure the total points awarded match what PointsCalculator computes,
+        // without being inflated by an extra streak multiplier in AwardPointsUseCase.
+        // With 2 correct answers and bestStreak=2:
+        //   calculateMathPoints(correctCount=2, streak=2) = 2*5 + 0 (streak<5) = 10
+        //   awardPoints(basePoints=10, streak=0) => applyMultiplier(10, 0) = 10*1.0 = 10
+        val expectedScore = 10
+        coEvery {
+            awardPoints(
+                profileId = any(),
+                basePoints = eq(expectedScore),
+                streak = eq(0),
+                source = eq(PointSource.MATH),
+                reason = any(),
+            )
+        } returns expectedScore
+
+        val viewModel = createViewModel(problemCount = 2)
+        runCurrent()
+
+        // Answer problem 1 correctly
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        // Answer problem 2 correctly
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        val state = viewModel.state.value
+        assertTrue(state.isComplete)
+        assertEquals(expectedScore, state.pointsAwarded)
+
+        // Verify the exact call: basePoints should be the calculated score, streak must be 0
+        coVerify {
+            awardPoints(
+                profileId = any(),
+                basePoints = eq(expectedScore),
+                streak = eq(0),
+                source = eq(PointSource.MATH),
+                reason = eq("Math session: 2/2 correct"),
+            )
+        }
+    }
 }

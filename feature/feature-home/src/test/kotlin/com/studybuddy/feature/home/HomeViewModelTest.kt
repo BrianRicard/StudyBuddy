@@ -11,6 +11,7 @@ import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -71,6 +72,7 @@ class HomeViewModelTest {
         every { pointsRepository.getTotalPoints(profile.id) } returns flowOf(totalPoints)
         every { pointsRepository.getPointsForProfile(profile.id) } returns flowOf(pointEvents)
         every { pointsRepository.getPointsToday(profile.id) } returns flowOf(sessionsToday)
+        every { pointsRepository.getSessionsToday(profile.id) } returns flowOf(sessionsToday)
         every { settingsRepository.getAppLocale() } returns flowOf(locale)
         every { settingsRepository.getDailyGoal() } returns flowOf(dailyGoal)
     }
@@ -244,5 +246,42 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertEquals(7, viewModel.state.value.weekDots.size)
+    }
+
+    @Test
+    fun `sessionsToday uses session count not points sum`() = runTest {
+        // Regression: sessionsToday must reflect the number of sessions (getSessionsToday),
+        // not the total points earned today (getPointsToday).
+        // After 1 session worth 300 points, sessionsToday should be 1, not 300.
+        val profile = testProfile
+        every { profileRepository.getActiveProfile() } returns flowOf(profile)
+        every { avatarRepository.getAvatarConfig(profile.id) } returns flowOf(profile.avatarConfig)
+        every { pointsRepository.getTotalPoints(profile.id) } returns flowOf(300L)
+        every { pointsRepository.getPointsForProfile(profile.id) } returns flowOf(
+            listOf(
+                PointEvent(
+                    id = "event_1",
+                    profileId = profile.id,
+                    source = PointSource.MATH,
+                    points = 300,
+                    reason = "Math session: 5/5 correct",
+                    timestamp = Clock.System.now(),
+                ),
+            ),
+        )
+        // getSessionsToday returns 1 (one session), getPointsToday returns 300 (total points)
+        every { pointsRepository.getSessionsToday(profile.id) } returns flowOf(1)
+        every { pointsRepository.getPointsToday(profile.id) } returns flowOf(300)
+        every { settingsRepository.getAppLocale() } returns flowOf("en")
+        every { settingsRepository.getDailyGoal() } returns flowOf(5)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        // sessionsToday should be 1 (session count), NOT 300 (points sum)
+        assertEquals(1, state.sessionsToday)
+        // Verify the ViewModel calls getSessionsToday, not getPointsToday
+        verify { pointsRepository.getSessionsToday(profile.id) }
     }
 }

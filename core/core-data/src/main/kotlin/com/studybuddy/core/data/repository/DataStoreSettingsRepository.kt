@@ -76,5 +76,9 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         context.dataStore.edit { it[Keys.ONBOARDING_COMPLETE] = complete }
     }
 
+    override suspend fun clearAll() {
+        context.dataStore.edit { it.clear() }
+    }
+
     override suspend fun sync() { /* no-op: cloud migration hook */ }
 }

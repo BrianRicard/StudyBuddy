@@ -220,4 +220,34 @@ class AvatarClosetViewModelTest {
         // Dialog should still be showing
         assertNotNull(viewModel.state.value.showPurchaseDialog)
     }
+
+    // --- Regression test: null config from use case (bug fix #17) ---
+
+    @Test
+    fun `init with null avatar config uses default and finishes loading`() = runTest {
+        // Simulate the use case returning null (no config saved yet)
+        every { getAvatarConfig(any()) } returns flowOf(null)
+        every { rewardsRepository.getOwnedRewards(any()) } returns flowOf(emptyList())
+        every { getTotalPoints(any()) } returns flowOf(100L)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(
+            false,
+            state.isLoading,
+            "isLoading must become false even when avatar config is null",
+        )
+        assertNotNull(
+            state.avatarConfig,
+            "avatarConfig must be non-null (default) when use case returns null",
+        )
+        assertEquals(
+            AvatarConfig.default(),
+            state.avatarConfig,
+            "avatarConfig must be the default config when use case returns null",
+        )
+        assertEquals(100L, state.starBalance)
+    }
 }

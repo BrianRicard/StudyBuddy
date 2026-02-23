@@ -140,6 +140,10 @@ private fun DicteeWordEntryContent(
                     } else {
                         LazyColumn(
                             modifier = Modifier.weight(1f),
+                            contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                                top = 8.dp,
+                                bottom = 8.dp,
+                            ),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             items(state.words, key = { it.id }) { word ->

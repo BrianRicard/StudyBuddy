@@ -322,10 +322,12 @@ class MathPlayViewModel @Inject constructor(
                 )
                 saveMathSession(session)
 
+                // Pass streak = 0: calculateMathPoints already includes streak bonuses,
+                // so we must not apply the streak multiplier again via AwardPointsUseCase.
                 val awarded = awardPoints(
                     profileId = profileId,
                     basePoints = finalScore,
-                    streak = bestStreak,
+                    streak = 0,
                     source = PointSource.MATH,
                     reason = "Math session: $correctCount/$totalProblems correct",
                 )

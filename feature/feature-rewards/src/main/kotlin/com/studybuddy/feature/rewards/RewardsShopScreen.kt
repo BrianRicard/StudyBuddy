@@ -25,6 +25,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.AlertDialog
@@ -32,6 +33,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -75,7 +77,10 @@ import com.studybuddy.core.ui.theme.SunsetColorScheme
 import kotlinx.coroutines.launch
 
 @Composable
-fun RewardsShopScreen(viewModel: RewardsShopViewModel = hiltViewModel()) {
+fun RewardsShopScreen(
+    onNavigateBack: () -> Unit = {},
+    viewModel: RewardsShopViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
@@ -94,6 +99,7 @@ fun RewardsShopScreen(viewModel: RewardsShopViewModel = hiltViewModel()) {
     RewardsShopContent(
         state = state,
         onIntent = viewModel::onIntent,
+        onNavigateBack = onNavigateBack,
     )
 }
 
@@ -103,6 +109,7 @@ private fun RewardsShopContent(
     state: RewardsShopState,
     onIntent: (RewardsShopIntent) -> Unit,
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
         initialPage = state.selectedTab.ordinal,
@@ -128,6 +135,14 @@ private fun RewardsShopContent(
         topBar = {
             TopAppBar(
                 title = { Text("Rewards Shop") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
                 actions = {
                     PointsBadge(
                         points = state.starBalance,

@@ -24,6 +24,16 @@ interface PointsDao {
         startOfDayMs: Long,
     ): Flow<Int>
 
+    @Query(
+        "SELECT COUNT(*) FROM point_events WHERE profileId = :profileId " +
+            "AND timestamp >= :startOfDayMs " +
+            "AND (source = 'DICTEE' OR source = 'MATH')",
+    )
+    fun getSessionsToday(
+        profileId: String,
+        startOfDayMs: Long,
+    ): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(event: PointEventEntity)
 

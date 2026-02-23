@@ -34,6 +34,15 @@ class LocalPointsRepository @Inject constructor(private val dao: PointsDao) : Po
         return dao.getPointsToday(profileId, startOfDay)
     }
 
+    override fun getSessionsToday(profileId: String): Flow<Int> {
+        val tz = TimeZone.currentSystemDefault()
+        val startOfDay = Clock.System.now()
+            .toLocalDateTime(tz).date
+            .atStartOfDayIn(tz)
+            .toEpochMilliseconds()
+        return dao.getSessionsToday(profileId, startOfDay)
+    }
+
     override suspend fun addPointEvent(event: PointEvent) {
         dao.insert(event.toEntity())
     }

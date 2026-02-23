@@ -304,10 +304,10 @@ class SettingsViewModel @Inject constructor(
         }
         viewModelScope.launch {
             try {
-                // Restore an empty backup to clear all data
-                val emptyBackup = """{"version":1,"profile":null}"""
+                // Clear all database tables and preferences
+                val emptyBackup = """{"version":1}"""
                 backupRepository.restoreBackup(emptyBackup)
-                settingsRepository.setOnboardingComplete(false)
+                settingsRepository.clearAll()
                 _state.update { it.copy(showResetDialog = false) }
                 storedPinHash = null
                 _effects.emit(SettingsEffect.AppReset)

@@ -4,6 +4,8 @@ import app.cash.turbine.test
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
+import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -30,6 +32,7 @@ class DicteeListViewModelTest {
 
     private val dicteeRepository: DicteeRepository = mockk(relaxed = true)
     private val getDicteeListsUseCase: GetDicteeListsUseCase = mockk()
+    private val importWordListUseCase: ImportWordListUseCase = mockk()
 
     private val testLists = listOf(
         DicteeList(
@@ -68,6 +71,7 @@ class DicteeListViewModelTest {
     private fun createViewModel(): DicteeListViewModel = DicteeListViewModel(
         getDicteeListsUseCase = getDicteeListsUseCase,
         dicteeRepository = dicteeRepository,
+        importWordListUseCase = importWordListUseCase,
     )
 
     @Test
@@ -310,5 +314,64 @@ class DicteeListViewModelTest {
         }
 
         assertTrue("list1" in viewModel.state.value.selectedListIds)
+    }
+
+    // ── Import CSV tests ─────────────────────────────────────────────────────
+
+    @Test
+    fun `import csv calls use case and emits success toast`() = runTest {
+        val csv = "List,Language,Word\nAnimals,fr,chat\nAnimals,fr,chien"
+        coEvery { importWordListUseCase(csv, any()) } returns 2
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.ShowToast)
+            assertEquals("Imported 2 words", (effect as DicteeListEffect.ShowToast).message)
+        }
+
+        assertFalse(viewModel.state.value.isImporting)
+    }
+
+    @Test
+    fun `import csv with zero words emits no words found toast`() = runTest {
+        val csv = "List,Language,Word"
+        coEvery { importWordListUseCase(csv, any()) } returns 0
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.ShowToast)
+            assertEquals("No words found in file", (effect as DicteeListEffect.ShowToast).message)
+        }
+    }
+
+    @Test
+    fun `import csv error emits failure toast`() = runTest {
+        val csv = "bad data"
+        coEvery { importWordListUseCase(csv, any()) } throws RuntimeException("parse error")
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.ShowToast)
+            assertTrue(
+                (effect as DicteeListEffect.ShowToast).message.contains("Import failed"),
+            )
+        }
+
+        assertFalse(viewModel.state.value.isImporting)
     }
 }

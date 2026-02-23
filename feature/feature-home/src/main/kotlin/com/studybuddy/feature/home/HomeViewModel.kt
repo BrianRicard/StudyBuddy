@@ -127,7 +127,7 @@ class HomeViewModel @Inject constructor(
                         avatarRepository.getAvatarConfig(profile.id),
                         pointsRepository.getTotalPoints(profile.id),
                         pointsRepository.getPointsForProfile(profile.id),
-                        pointsRepository.getPointsToday(profile.id),
+                        pointsRepository.getSessionsToday(profile.id),
                     ) { avatarConfig, totalPoints, pointEvents, sessionsToday ->
                         val timeZone = TimeZone.currentSystemDefault()
                         val streak = calculateDayStreak(pointEvents, timeZone)

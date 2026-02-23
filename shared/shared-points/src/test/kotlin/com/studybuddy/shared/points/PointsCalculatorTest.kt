@@ -87,4 +87,57 @@ class PointsCalculatorTest {
         assertEquals(25 + 75, PointsCalculator.calculateStreakBonus(10))
         assertEquals(25 + 75 + 150, PointsCalculator.calculateStreakBonus(20))
     }
+
+    // --- Regression tests: no double multiplier on math points (bug fix #21) ---
+
+    @Test
+    fun `math points with streak 20 and 20 correct returns exact value without double multiplier`() {
+        // correctCount=20, streak=20:
+        // basePoints = 20 * 5 = 100
+        // streakBonus = 25 (streak_5) + 75 (streak_10) + 150 (streak_20) = 250
+        // total = 100 + 250 = 350
+        // A previous bug applied the streak multiplier ON TOP of the streak bonus,
+        // inflating the result. This test ensures no double multiplier.
+        val points = PointsCalculator.calculateMathPoints(correctCount = 20, streak = 20)
+        assertEquals(
+            350,
+            points,
+            "calculateMathPoints(20, 20) = 20*5 + 25 + 75 + 150 = 350, not an inflated value",
+        )
+    }
+
+    @Test
+    fun `applyMultiplier with streak 0 returns base points unchanged`() {
+        // streak 0 means multiplier = 1.0, so base points should not change
+        val basePoints = 42
+        val result = PointsCalculator.applyMultiplier(basePoints = basePoints, streak = 0)
+        assertEquals(
+            basePoints,
+            result,
+            "applyMultiplier with streak=0 must return basePoints unchanged (multiplier 1.0x)",
+        )
+    }
+
+    @Test
+    fun `applyMultiplier with streak 4 returns base points unchanged`() {
+        // streak 0-4 all have multiplier 1.0
+        val basePoints = 100
+        val result = PointsCalculator.applyMultiplier(basePoints = basePoints, streak = 4)
+        assertEquals(
+            basePoints,
+            result,
+            "applyMultiplier with streak=4 must return basePoints unchanged (multiplier 1.0x)",
+        )
+    }
+
+    @Test
+    fun `calculateMathPoints does not apply streak multiplier to result`() {
+        // streak=10 -> multiplier would be 2.0x if applied
+        // basePoints = 10 * 5 = 50
+        // streakBonus = 25 + 75 = 100
+        // correct total = 50 + 100 = 150
+        // wrong total (if multiplied) would be 150 * 2.0 = 300
+        val points = PointsCalculator.calculateMathPoints(correctCount = 10, streak = 10)
+        assertEquals(150, points, "Math points must be base + bonus, not multiplied")
+    }
 }

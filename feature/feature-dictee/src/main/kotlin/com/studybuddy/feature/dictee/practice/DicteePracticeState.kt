@@ -1,5 +1,6 @@
 package com.studybuddy.feature.dictee.practice
 
+import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.InputMode
@@ -34,6 +35,7 @@ sealed interface DicteePracticeIntent {
     data object NextWord : DicteePracticeIntent
     data object RetryWord : DicteePracticeIntent
     data class HandwritingRecognized(val text: String) : DicteePracticeIntent
+    data class RecognizeInk(val ink: Ink) : DicteePracticeIntent
 }
 
 sealed interface DicteePracticeEffect {

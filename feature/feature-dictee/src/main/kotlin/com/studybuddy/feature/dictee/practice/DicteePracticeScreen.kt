@@ -220,7 +220,7 @@ private fun DicteePracticeContent(
                             HandwritingCanvas(
                                 modifier = Modifier.fillMaxWidth(),
                                 onInkReady = { ink ->
-                                    // Recognition is handled by the ViewModel
+                                    onIntent(DicteePracticeIntent.RecognizeInk(ink))
                                 },
                                 onClear = { onIntent(DicteePracticeIntent.UpdateInput("")) },
                             )

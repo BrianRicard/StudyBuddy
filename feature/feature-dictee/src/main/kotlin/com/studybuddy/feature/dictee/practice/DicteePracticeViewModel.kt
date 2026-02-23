@@ -16,8 +16,10 @@ import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
+import com.google.mlkit.vision.digitalink.Ink
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,6 +42,7 @@ class DicteePracticeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
     private val ttsManager: TtsManager,
+    private val inkRecognitionManager: InkRecognitionManager,
 ) : ViewModel() {
 
     // Single-list mode passes "listId"; challenge mode passes "listIds" (pipe-separated UUIDs)
@@ -89,6 +92,18 @@ class DicteePracticeViewModel @Inject constructor(
             is DicteePracticeIntent.HandwritingRecognized -> {
                 _state.update { it.copy(recognizedText = intent.text, userInput = intent.text) }
             }
+            is DicteePracticeIntent.RecognizeInk -> recognizeInk(intent.ink)
+        }
+    }
+
+    private fun recognizeInk(ink: Ink) {
+        viewModelScope.launch {
+            val result = inkRecognitionManager.recognize(ink)
+            result.onSuccess { text ->
+                if (text.isNotBlank()) {
+                    onIntent(DicteePracticeIntent.HandwritingRecognized(text))
+                }
+            }
         }
     }
 
@@ -106,6 +121,7 @@ class DicteePracticeViewModel @Inject constructor(
         val id = allListIds.firstOrNull() ?: return
         val list = dicteeRepository.getList(id).first() ?: return
         listLanguage = list.language
+        inkRecognitionManager.initialize(list.language)
         _state.update { it.copy(listTitle = list.title) }
 
         val words = getPracticeWordsUseCase(id).first()

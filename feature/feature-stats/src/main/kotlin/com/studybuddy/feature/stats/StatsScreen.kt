@@ -14,7 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -48,10 +52,13 @@ import com.studybuddy.core.ui.theme.StreakOrange
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 @Composable
-fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
+fun StatsScreen(
+    onNavigateBack: () -> Unit = {},
+    viewModel: StatsViewModel = hiltViewModel(),
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    StatsContent(state = state)
+    StatsContent(state = state, onNavigateBack = onNavigateBack)
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -59,6 +66,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel()) {
 internal fun StatsContent(
     state: StatsState,
     modifier: Modifier = Modifier,
+    onNavigateBack: () -> Unit = {},
 ) {
     Scaffold(
         modifier = modifier,
@@ -70,6 +78,14 @@ internal fun StatsContent(
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                     )
+                },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
                 },
             )
         },

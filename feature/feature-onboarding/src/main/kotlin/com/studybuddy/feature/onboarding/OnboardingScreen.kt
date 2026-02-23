@@ -35,7 +35,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -106,17 +105,9 @@ private fun OnboardingContent(
         }
     }
 
-    // When the user swipes manually, update the ViewModel
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.settledPage }.collect { page ->
-            if (page != state.currentStep) {
-                when {
-                    page > state.currentStep -> onIntent(OnboardingIntent.NextStep)
-                    page < state.currentStep -> onIntent(OnboardingIntent.PreviousStep)
-                }
-            }
-        }
-    }
+    // Pager-to-ViewModel sync removed: userScrollEnabled = false means the pager
+    // is only driven programmatically via the LaunchedEffect above. The previous
+    // snapshotFlow on settledPage caused a feedback loop that skipped the avatar step.
 
     Scaffold(modifier = modifier) { padding ->
         Column(

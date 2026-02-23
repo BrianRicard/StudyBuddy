@@ -17,5 +17,6 @@ interface SettingsRepository {
     suspend fun setSelectedTheme(themeId: String)
     fun isOnboardingComplete(): Flow<Boolean>
     suspend fun setOnboardingComplete(complete: Boolean)
+    suspend fun clearAll()
     suspend fun sync()
 }

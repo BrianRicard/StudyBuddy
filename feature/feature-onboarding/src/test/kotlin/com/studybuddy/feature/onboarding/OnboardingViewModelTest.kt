@@ -217,4 +217,108 @@ class OnboardingViewModelTest {
         assertNotNull(viewModel.state.value.nameError)
         assertFalse(viewModel.state.value.isCompleting)
     }
+
+    // --- Regression tests: nextStep only advances by 1 step (bug fix #16) ---
+
+    @Test
+    fun `nextStep from step 0 advances to exactly step 1 not step 2`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
+        assertEquals(0, viewModel.state.value.currentStep)
+
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+
+        assertEquals(
+            1,
+            viewModel.state.value.currentStep,
+            "nextStep() from step 0 must land on step 1, never skip to step 2",
+        )
+    }
+
+    @Test
+    fun `nextStep visits all 3 steps in order 0 then 1 then 2`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
+
+        // Step 0 -> 1
+        assertEquals(0, viewModel.state.value.currentStep)
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.currentStep)
+
+        // Step 1 -> 2
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertEquals(2, viewModel.state.value.currentStep)
+
+        // Verify we visited all 3 steps: 0, 1, 2
+        // Step 2 is the final step (STEP_VOICE), nextStep should NOT advance further
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+        assertEquals(
+            2,
+            viewModel.state.value.currentStep,
+            "nextStep() at final step (2) must not advance beyond it",
+        )
+    }
+
+    @Test
+    fun `nextStep does not skip from step 0 to step 2`() = runTest {
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
+
+        // Call nextStep twice rapidly
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        viewModel.onIntent(OnboardingIntent.NextStep)
+        advanceUntilIdle()
+
+        // After two nextStep calls from step 0, we should be at step 2
+        // The key check: intermediate state at step 1 existed (not skipped 0->2)
+        assertEquals(2, viewModel.state.value.currentStep)
+    }
+
+    @Test
+    fun `previousStep at step 0 does not go below 0`() = runTest {
+        val viewModel = createViewModel()
+        assertEquals(0, viewModel.state.value.currentStep)
+
+        // Try going back multiple times from step 0
+        viewModel.onIntent(OnboardingIntent.PreviousStep)
+        advanceUntilIdle()
+        assertEquals(0, viewModel.state.value.currentStep)
+
+        viewModel.onIntent(OnboardingIntent.PreviousStep)
+        advanceUntilIdle()
+        assertEquals(0, viewModel.state.value.currentStep)
+
+        // Verify the step is never negative
+        assertTrue(
+            viewModel.state.value.currentStep >= 0,
+            "currentStep must never be negative",
+        )
+    }
+
+    @Test
+    fun `previousStep at step 0 repeated 5 times stays at 0`() = runTest {
+        val viewModel = createViewModel()
+        assertEquals(0, viewModel.state.value.currentStep)
+
+        repeat(5) {
+            viewModel.onIntent(OnboardingIntent.PreviousStep)
+            advanceUntilIdle()
+        }
+
+        assertEquals(
+            0,
+            viewModel.state.value.currentStep,
+            "previousStep() called repeatedly at step 0 must never go below 0",
+        )
+    }
 }

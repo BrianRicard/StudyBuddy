@@ -40,6 +40,17 @@ object DatabaseModule {
                             NULL, $now, $now)
                         """.trimIndent(),
                     )
+                    // Seed default avatar config so Avatar Closet can load immediately
+                    val avatarId = java.util.UUID.randomUUID().toString()
+                    db.execSQL(
+                        """
+                        INSERT OR IGNORE INTO avatar_configs (id, profileId, bodyId,
+                            hatId, faceId, outfitId, petId, equippedTitle, updatedAt)
+                        VALUES ('$avatarId', '${AppConstants.DEFAULT_PROFILE_ID}',
+                            'fox', 'hat_none', 'face_none', 'outfit_none', 'pet_none',
+                            NULL, $now)
+                        """.trimIndent(),
+                    )
                 }
             },
         )

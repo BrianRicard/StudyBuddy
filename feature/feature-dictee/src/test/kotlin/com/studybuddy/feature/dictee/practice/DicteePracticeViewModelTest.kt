@@ -13,8 +13,10 @@ import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
+import com.google.mlkit.vision.digitalink.Ink
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -49,6 +51,7 @@ class DicteePracticeViewModelTest {
     private val getPracticeWordsUseCase: GetPracticeWordsUseCase = mockk()
     private val getMixedPracticeWordsUseCase: GetMixedPracticeWordsUseCase = mockk(relaxed = true)
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
+    private val inkRecognitionManager: InkRecognitionManager = mockk(relaxed = true)
 
     private val testWords = listOf(
         DicteeWord(id = "w1", listId = "list1", word = "maison"),
@@ -91,6 +94,7 @@ class DicteePracticeViewModelTest {
             settingsRepository = settingsRepository,
             awardPointsUseCase = awardPointsUseCase,
             ttsManager = ttsManager,
+            inkRecognitionManager = inkRecognitionManager,
         )
     }
 
@@ -300,5 +304,61 @@ class DicteePracticeViewModelTest {
         advanceUntilIdle()
 
         verify { ttsManager.speak("maison", any(), any()) }
+    }
+
+    @Test
+    fun `RecognizeInk triggers ink recognition and updates userInput`() = runTest {
+        val testInk = Ink.builder().build()
+        coEvery { inkRecognitionManager.recognize(testInk) } returns Result.success("bonjour")
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.RecognizeInk(testInk))
+        advanceUntilIdle()
+
+        coVerify { inkRecognitionManager.recognize(testInk) }
+
+        val state = viewModel.state.value
+        assertEquals("bonjour", state.userInput)
+        assertEquals("bonjour", state.recognizedText)
+    }
+
+    @Test
+    fun `RecognizeInk with blank result does not update userInput`() = runTest {
+        val testInk = Ink.builder().build()
+        coEvery { inkRecognitionManager.recognize(testInk) } returns Result.success("")
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.RecognizeInk(testInk))
+        advanceUntilIdle()
+
+        coVerify { inkRecognitionManager.recognize(testInk) }
+
+        val state = viewModel.state.value
+        assertEquals("", state.userInput)
+        assertNull(state.recognizedText)
+    }
+
+    @Test
+    fun `RecognizeInk with failure does not update userInput`() = runTest {
+        val testInk = Ink.builder().build()
+        coEvery {
+            inkRecognitionManager.recognize(testInk)
+        } returns Result.failure(IllegalStateException("Recognizer not initialized"))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.RecognizeInk(testInk))
+        advanceUntilIdle()
+
+        coVerify { inkRecognitionManager.recognize(testInk) }
+
+        val state = viewModel.state.value
+        assertEquals("", state.userInput)
+        assertNull(state.recognizedText)
     }
 }

@@ -6,6 +6,7 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
+import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -23,6 +24,7 @@ import kotlinx.datetime.Clock
 class DicteeListViewModel @Inject constructor(
     private val getDicteeListsUseCase: GetDicteeListsUseCase,
     private val dicteeRepository: DicteeRepository,
+    private val importWordListUseCase: ImportWordListUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DicteeListState())
@@ -82,6 +84,7 @@ class DicteeListViewModel @Inject constructor(
                     current.copy(selectedListIds = updated)
                 }
             }
+            is DicteeListIntent.ImportCsv -> importCsv(intent.csvContent)
             is DicteeListIntent.StartChallenge -> startChallenge()
         }
     }
@@ -124,6 +127,26 @@ class DicteeListViewModel @Inject constructor(
     private fun undoDelete(list: DicteeList) {
         viewModelScope.launch {
             dicteeRepository.createList(list)
+        }
+    }
+
+    private fun importCsv(csvContent: String) {
+        viewModelScope.launch {
+            _state.update { it.copy(isImporting = true) }
+            try {
+                val count = importWordListUseCase(csvContent, profileId)
+                _state.update { it.copy(isImporting = false) }
+                if (count > 0) {
+                    _effects.emit(DicteeListEffect.ShowToast("Imported $count words"))
+                } else {
+                    _effects.emit(DicteeListEffect.ShowToast("No words found in file"))
+                }
+            } catch (e: Exception) {
+                _state.update { it.copy(isImporting = false) }
+                _effects.emit(
+                    DicteeListEffect.ShowToast("Import failed: ${e.message ?: "Unknown error"}"),
+                )
+            }
         }
     }
 
