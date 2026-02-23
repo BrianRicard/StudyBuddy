@@ -62,6 +62,7 @@ dependencies {
     implementation(project(":shared:shared-ink"))
 
     implementation(libs.activity.compose)
+    implementation(libs.appcompat)
     implementation(libs.navigation.compose)
     implementation(libs.core.ktx)
 

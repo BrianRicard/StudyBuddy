@@ -1,13 +1,21 @@
 package com.studybuddy.feature.backup
 
+import android.content.Context
+import android.net.Uri
+import androidx.core.content.FileProvider
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
+import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.unmockkStatic
+import java.io.File
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -23,31 +31,45 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BackupExportViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
+    @TempDir
+    lateinit var tempDir: File
+
+    private val context: Context = mockk(relaxed = true)
     private val createBackupUseCase: CreateBackupUseCase = mockk()
     private val restoreBackupUseCase: RestoreBackupUseCase = mockk()
     private val exportProgressReportUseCase: ExportProgressReportUseCase = mockk()
+    private val importWordListUseCase: ImportWordListUseCase = mockk()
     private val workManager: WorkManager = mockk(relaxed = true)
+    private val mockUri: Uri = mockk()
 
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        every { context.cacheDir } returns tempDir
+        every { context.packageName } returns "com.studybuddy.app"
+        mockkStatic(FileProvider::class)
+        every { FileProvider.getUriForFile(any(), any(), any()) } returns mockUri
     }
 
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
+        unmockkStatic(FileProvider::class)
     }
 
     private fun createViewModel() = BackupExportViewModel(
+        context = context,
         createBackupUseCase = createBackupUseCase,
         restoreBackupUseCase = restoreBackupUseCase,
         exportProgressReportUseCase = exportProgressReportUseCase,
+        importWordListUseCase = importWordListUseCase,
         workManager = workManager,
     )
 
@@ -81,7 +103,8 @@ class BackupExportViewModelTest {
             assertEquals("Backup created successfully", state.statusMessage)
 
             val effect = awaitItem()
-            assertTrue(effect is BackupExportEffect.FileCreated)
+            assertTrue(effect is BackupExportEffect.ShareFile)
+            assertEquals("application/json", (effect as BackupExportEffect.ShareFile).mimeType)
         }
     }
 
