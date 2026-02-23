@@ -10,6 +10,7 @@ import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
+import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
@@ -46,6 +47,7 @@ class DicteePracticeViewModelTest {
     private val ttsManager: TtsManager = mockk(relaxed = true)
     private val checkSpellingUseCase = CheckSpellingUseCase()
     private val getPracticeWordsUseCase: GetPracticeWordsUseCase = mockk()
+    private val getMixedPracticeWordsUseCase: GetMixedPracticeWordsUseCase = mockk(relaxed = true)
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
 
     private val testWords = listOf(
@@ -83,6 +85,7 @@ class DicteePracticeViewModelTest {
         return DicteePracticeViewModel(
             savedStateHandle = savedStateHandle,
             getPracticeWordsUseCase = getPracticeWordsUseCase,
+            getMixedPracticeWordsUseCase = getMixedPracticeWordsUseCase,
             checkSpellingUseCase = checkSpellingUseCase,
             dicteeRepository = dicteeRepository,
             settingsRepository = settingsRepository,
