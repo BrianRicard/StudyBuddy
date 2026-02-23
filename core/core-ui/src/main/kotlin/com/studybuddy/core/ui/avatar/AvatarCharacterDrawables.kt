@@ -35,6 +35,5 @@ object AvatarCharacterDrawables {
     /**
      * Returns the drawable resource ID for the given character, or the fox fallback.
      */
-    fun getDrawable(characterId: String): Int =
-        drawableMap[characterId] ?: drawableMap["fox"]!!
+    fun getDrawable(characterId: String): Int = drawableMap[characterId] ?: drawableMap["fox"]!!
 }
