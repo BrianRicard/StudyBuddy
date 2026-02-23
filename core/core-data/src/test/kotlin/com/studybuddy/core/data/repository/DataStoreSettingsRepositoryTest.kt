@@ -24,20 +24,36 @@ class FakeSettingsRepository : SettingsRepository {
     private val onboardingComplete = MutableStateFlow(false)
 
     override fun getAppLocale(): Flow<String> = locale
-    override suspend fun setAppLocale(locale: String) { this.locale.value = locale }
+    override suspend fun setAppLocale(locale: String) {
+        this.locale.value = locale
+    }
     override fun isAccentStrict(): Flow<Boolean> = accentStrict
-    override suspend fun setAccentStrict(strict: Boolean) { accentStrict.value = strict }
+    override suspend fun setAccentStrict(strict: Boolean) {
+        accentStrict.value = strict
+    }
     override fun isSoundEnabled(): Flow<Boolean> = soundEnabled
-    override suspend fun setSoundEnabled(enabled: Boolean) { soundEnabled.value = enabled }
+    override suspend fun setSoundEnabled(enabled: Boolean) {
+        soundEnabled.value = enabled
+    }
     override fun isHapticEnabled(): Flow<Boolean> = hapticEnabled
-    override suspend fun setHapticEnabled(enabled: Boolean) { hapticEnabled.value = enabled }
+    override suspend fun setHapticEnabled(enabled: Boolean) {
+        hapticEnabled.value = enabled
+    }
     override fun getDailyGoal(): Flow<Int> = dailyGoal
-    override suspend fun setDailyGoal(goal: Int) { dailyGoal.value = goal }
+    override suspend fun setDailyGoal(goal: Int) {
+        dailyGoal.value = goal
+    }
     override fun getSelectedTheme(): Flow<String> = selectedTheme
-    override suspend fun setSelectedTheme(themeId: String) { selectedTheme.value = themeId }
+    override suspend fun setSelectedTheme(themeId: String) {
+        selectedTheme.value = themeId
+    }
     override fun isOnboardingComplete(): Flow<Boolean> = onboardingComplete
-    override suspend fun setOnboardingComplete(complete: Boolean) { onboardingComplete.value = complete }
-    override suspend fun clearAll() { onboardingComplete.value = false }
+    override suspend fun setOnboardingComplete(complete: Boolean) {
+        onboardingComplete.value = complete
+    }
+    override suspend fun clearAll() {
+        onboardingComplete.value = false
+    }
     override suspend fun sync() {}
 }
 
