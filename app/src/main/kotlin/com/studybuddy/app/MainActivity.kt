@@ -57,11 +57,16 @@ class MainActivity : AppCompatActivity() {
 
             LaunchedEffect(locale) {
                 val targetLocale = locale ?: return@LaunchedEffect
-                val currentLocale = AppCompatDelegate.getApplicationLocales()
-                    .toLanguageTags().ifEmpty { "en" }
-                if (targetLocale != currentLocale) {
-                    val appLocale = LocaleListCompat.forLanguageTags(targetLocale)
-                    AppCompatDelegate.setApplicationLocales(appLocale)
+                val appLocales = AppCompatDelegate.getApplicationLocales()
+                val currentLang = if (!appLocales.isEmpty) {
+                    appLocales[0]?.toLanguageTag()
+                } else {
+                    null
+                }
+                if (targetLocale != currentLang) {
+                    AppCompatDelegate.setApplicationLocales(
+                        LocaleListCompat.forLanguageTags(targetLocale),
+                    )
                 }
             }
 
