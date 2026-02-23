@@ -343,6 +343,22 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
+    fun `toggle input mode clears user input`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("partial"))
+        advanceUntilIdle()
+        assertEquals("partial", viewModel.state.value.userInput)
+
+        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        advanceUntilIdle()
+
+        assertEquals("", viewModel.state.value.userInput)
+        assertEquals(InputMode.HANDWRITING, viewModel.state.value.inputMode)
+    }
+
+    @Test
     fun `RecognizeInk with failure does not update userInput`() = runTest {
         val testInk = Ink.builder().build()
         coEvery {

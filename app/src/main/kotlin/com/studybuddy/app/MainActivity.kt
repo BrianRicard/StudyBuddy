@@ -53,13 +53,14 @@ class MainActivity : AppCompatActivity() {
             val isOnboardingComplete by settingsRepository.isOnboardingComplete()
                 .collectAsState(initial = null)
             val locale by settingsRepository.getAppLocale()
-                .collectAsState(initial = "en")
+                .collectAsState(initial = null)
 
             LaunchedEffect(locale) {
+                val targetLocale = locale ?: return@LaunchedEffect
                 val currentLocale = AppCompatDelegate.getApplicationLocales()
                     .toLanguageTags().ifEmpty { "en" }
-                if (locale != currentLocale) {
-                    val appLocale = LocaleListCompat.forLanguageTags(locale)
+                if (targetLocale != currentLocale) {
+                    val appLocale = LocaleListCompat.forLanguageTags(targetLocale)
                     AppCompatDelegate.setApplicationLocales(appLocale)
                 }
             }
