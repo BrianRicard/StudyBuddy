@@ -83,15 +83,15 @@
     </path>
     <!-- Belly segments -->
     <path android:pathData="M82,115 L118,115"
-        android:strokeColor="#2080388E3C"
+        android:strokeColor="#20388E3C"
         android:strokeWidth="1"
         android:fillColor="#00000000" />
     <path android:pathData="M80,128 L120,128"
-        android:strokeColor="#2080388E3C"
+        android:strokeColor="#20388E3C"
         android:strokeWidth="1"
         android:fillColor="#00000000" />
     <path android:pathData="M82,141 L118,141"
-        android:strokeColor="#2080388E3C"
+        android:strokeColor="#20388E3C"
         android:strokeWidth="1"
         android:fillColor="#00000000" />
 
