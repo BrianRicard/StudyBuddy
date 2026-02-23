@@ -1,33 +1,37 @@
 package com.studybuddy.core.ui.components
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.absoluteOffset
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.ui.avatar.AvatarCharacterRegistry
-import com.studybuddy.core.ui.avatar.CreatureCanvas
+import com.studybuddy.core.ui.avatar.drawCreature
+import com.studybuddy.core.ui.avatar.drawFaceAccessory
+import com.studybuddy.core.ui.avatar.drawHat
+import com.studybuddy.core.ui.avatar.drawOutfit
+import com.studybuddy.core.ui.avatar.drawPet
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 /**
  * Renders a creature avatar with accessories snapped to per-character attachment points.
  *
+ * Everything is drawn in a single [Canvas] — creature first, then accessories layered
+ * in order: outfit, face, hat, pet.
+ *
  * Each creature in [AvatarCharacterRegistry] defines fractional anchor positions for:
- *  - hats    → top of head
- *  - face    → eye level (masks, glasses, stars)
- *  - outfits → neck / chest (scarves, bow ties, medals)
- *  - pets    → companion position
+ *  - hats    -> top of head
+ *  - face    -> eye level (masks, glasses, stars)
+ *  - outfits -> neck / chest (scarves, bow ties, medals)
+ *  - pets    -> companion position
  *
  * Accessories are centred at their anchor and scaled relative to [size].
  */
@@ -47,73 +51,59 @@ fun AvatarComposite(
     val spec = AvatarCharacterRegistry.getSpec(config.bodyId)
     val ap = spec.attachmentPoints
 
-    Box(
+    Canvas(
         modifier = modifier
             .size(size)
             .semantics {
                 contentDescription = "Avatar: ${character.name}" +
-                    (hat?.takeIf { it.icon.isNotEmpty() }?.let { " wearing ${it.name}" } ?: "") +
-                    (face?.takeIf { it.icon.isNotEmpty() }?.let { " with ${it.name}" } ?: "") +
-                    (outfit?.takeIf { it.icon.isNotEmpty() }?.let { ", ${it.name}" } ?: "") +
-                    (pet?.takeIf { it.icon.isNotEmpty() }?.let { " and ${it.name}" } ?: "")
+                    (hat?.takeIf { it.id != "hat_none" }?.let { " wearing ${it.name}" } ?: "") +
+                    (face?.takeIf { it.id != "face_none" }?.let { " with ${it.name}" } ?: "") +
+                    (outfit?.takeIf { it.id != "outfit_none" }?.let { ", ${it.name}" } ?: "") +
+                    (pet?.takeIf { it.id != "pet_none" }?.let { " and ${it.name}" } ?: "")
             },
     ) {
-        // ── Body — Canvas-drawn creature ──────────────────────────────────
-        CreatureCanvas(spec = spec, size = size)
+        val w = this.size.width
+        val h = this.size.height
 
-        // ── Hat ───────────────────────────────────────────────────────────
-        if (hat != null && hat.icon.isNotEmpty()) {
-            val hatSize = size * HAT_SCALE * ap.hatScale
-            // Centre of the accessory is placed at the anchor point
-            val offsetX = size * ap.hatAnchor.x - hatSize / 2
-            val offsetY = size * ap.hatAnchor.y - hatSize / 2
-            Text(
-                text = hat.icon,
-                fontSize = (hatSize.value).sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .absoluteOffset(x = offsetX, y = offsetY)
-                    .rotate(ap.hatRotation),
-            )
+        // ── Body — Canvas-drawn creature ──────────────────────────────────
+        drawCreature(spec)
+
+        // ── Outfit (drawn behind face / hat) ──────────────────────────────
+        if (outfit != null && outfit.id != "outfit_none") {
+            val s = w * OUTFIT_SCALE
+            val cx = w * ap.chestAnchor.x
+            val cy = h * ap.chestAnchor.y
+            drawOutfit(outfit.id, cx, cy, s / 2)
         }
 
         // ── Face accessory ────────────────────────────────────────────────
-        if (face != null && face.icon.isNotEmpty()) {
-            val faceSize = size * FACE_SCALE * ap.faceScale
-            val offsetX = size * ap.faceAnchor.x - faceSize / 2
-            val offsetY = size * ap.faceAnchor.y - faceSize / 2
-            Text(
-                text = face.icon,
-                fontSize = (faceSize.value).sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.absoluteOffset(x = offsetX, y = offsetY),
-            )
+        if (face != null && face.id != "face_none") {
+            val s = w * FACE_SCALE * ap.faceScale
+            val cx = w * ap.faceAnchor.x
+            val cy = h * ap.faceAnchor.y
+            drawFaceAccessory(face.id, cx, cy, s / 2)
         }
 
-        // ── Outfit / neck accessory ───────────────────────────────────────
-        if (outfit != null && outfit.icon.isNotEmpty()) {
-            val outfitSize = size * OUTFIT_SCALE
-            val offsetX = size * ap.chestAnchor.x - outfitSize / 2
-            val offsetY = size * ap.chestAnchor.y - outfitSize / 2
-            Text(
-                text = outfit.icon,
-                fontSize = (outfitSize.value).sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.absoluteOffset(x = offsetX, y = offsetY),
-            )
+        // ── Hat (with rotation) ───────────────────────────────────────────
+        if (hat != null && hat.id != "hat_none") {
+            val s = w * HAT_SCALE * ap.hatScale
+            val cx = w * ap.hatAnchor.x
+            val cy = h * ap.hatAnchor.y
+            if (ap.hatRotation != 0f) {
+                rotate(ap.hatRotation, pivot = Offset(cx, cy)) {
+                    drawHat(hat.id, cx, cy, s / 2)
+                }
+            } else {
+                drawHat(hat.id, cx, cy, s / 2)
+            }
         }
 
         // ── Pet companion ─────────────────────────────────────────────────
-        if (pet != null && pet.icon.isNotEmpty()) {
-            val petSize = size * PET_SCALE
-            val offsetX = size * ap.petAnchor.x - petSize / 2
-            val offsetY = size * ap.petAnchor.y - petSize / 2
-            Text(
-                text = pet.icon,
-                fontSize = (petSize.value).sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.absoluteOffset(x = offsetX, y = offsetY),
-            )
+        if (pet != null && pet.id != "pet_none") {
+            val s = w * PET_SCALE
+            val cx = w * ap.petAnchor.x
+            val cy = h * ap.petAnchor.y
+            drawPet(pet.id, cx, cy, s / 2)
         }
     }
 }
