@@ -14,7 +14,7 @@ jobs:
   release-build:
     name: Build Release APK & AAB
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     permissions:
       contents: write
     steps:
@@ -100,7 +100,15 @@ jobs:
           export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-android}"
           export KEY_ALIAS="${KEY_ALIAS:-release}"
           export KEY_PASSWORD="${KEY_PASSWORD:-android}"
-          ./gradlew testReleaseUnitTest
+          set +e
+          timeout --kill-after=30 600 ./gradlew testReleaseUnitTest --continue
+          GRADLE_EXIT=$?
+          set -e
+          # Publish results even on test failure, but fail if Gradle itself crashed
+          if [ $GRADLE_EXIT -eq 124 ] || [ $GRADLE_EXIT -eq 137 ]; then
+            echo "::warning::Unit tests timed out"
+          fi
+          exit $GRADLE_EXIT
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
