@@ -57,6 +57,16 @@ class OnboardingViewModelTest {
     }
 
     @Test
+    fun `initial state has onboarding defaults`() = runTest {
+        val viewModel = createViewModel()
+        val state = viewModel.state.value
+
+        assertEquals(0, state.currentStep)
+        assertEquals("", state.name)
+        assertEquals("fr", state.selectedLocale)
+    }
+
+    @Test
     fun `set name updates state`() = runTest {
         val viewModel = createViewModel()
 

@@ -51,7 +51,7 @@ class MainActivity : AppCompatActivity() {
             val themeId by settingsRepository.getSelectedTheme()
                 .collectAsState(initial = "sunset")
             val isOnboardingComplete by settingsRepository.isOnboardingComplete()
-                .collectAsState(initial = true)
+                .collectAsState(initial = null)
             val locale by settingsRepository.getAppLocale()
                 .collectAsState(initial = "en")
 
@@ -65,13 +65,20 @@ class MainActivity : AppCompatActivity() {
             }
 
             val themeConfig = ThemeConfig.fromId(themeId)
-            val startDestination = if (isOnboardingComplete) {
-                StudyBuddyRoutes.HOME
-            } else {
-                StudyBuddyRoutes.ONBOARDING
-            }
 
             StudyBuddyTheme(themeConfig = themeConfig) {
+                // Wait for DataStore to load before deciding start destination
+                if (isOnboardingComplete == null) {
+                    // Show nothing while loading — avoids wrong-screen flash
+                    return@StudyBuddyTheme
+                }
+
+                val startDestination = if (isOnboardingComplete == true) {
+                    StudyBuddyRoutes.HOME
+                } else {
+                    StudyBuddyRoutes.ONBOARDING
+                }
+
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentRoute = navBackStackEntry?.destination?.route
