@@ -33,26 +33,74 @@ jobs:
         id: version
         run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
 
-      - name: Decode Keystore
+      - name: Create release keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > app/release.keystore
+          STORE_PASS="${KEYSTORE_PASSWORD:-android}"
+          ALIAS="${KEY_ALIAS:-release}"
+          ALIAS_PASS="${KEY_PASSWORD:-android}"
+
+          converted=false
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > app/release-src.keystore
+            # Convert to JKS to work around AGP 8.x BouncyCastle "Tag number over 30" error
+            if keytool -importkeystore \
+                 -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" \
+                 -destkeystore app/release.keystore -deststoretype JKS \
+                 -deststorepass "$STORE_PASS" -noprompt 2>/dev/null; then
+              converted=true
+            fi
+            rm -f app/release-src.keystore
+          fi
+
+          if [ "$converted" != "true" ]; then
+            echo "::warning::Generating a temporary JKS release keystore for CI"
+            keytool -genkeypair -v \
+              -keystore app/release.keystore \
+              -storetype JKS \
+              -alias "$ALIAS" \
+              -keyalg RSA -keysize 2048 -validity 10000 \
+              -storepass "$STORE_PASS" \
+              -keypass "$ALIAS_PASS" \
+              -dname "CN=StudyBuddy CI,O=StudyBuddy,L=CI,C=CA"
+          fi
 
       - name: Build Release APK
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew assembleRelease
+        run: |
+          export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-android}"
+          export KEY_ALIAS="${KEY_ALIAS:-release}"
+          export KEY_PASSWORD="${KEY_PASSWORD:-android}"
+          ./gradlew assembleRelease
 
       - name: Build Release AAB
         env:
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-        run: ./gradlew bundleRelease
+        run: |
+          export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-android}"
+          export KEY_ALIAS="${KEY_ALIAS:-release}"
+          export KEY_PASSWORD="${KEY_PASSWORD:-android}"
+          ./gradlew bundleRelease
 
       - name: Run Release Unit Tests
-        run: ./gradlew testReleaseUnitTest
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          export KEYSTORE_PASSWORD="${KEYSTORE_PASSWORD:-android}"
+          export KEY_ALIAS="${KEY_ALIAS:-release}"
+          export KEY_PASSWORD="${KEY_PASSWORD:-android}"
+          ./gradlew testReleaseUnitTest
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
