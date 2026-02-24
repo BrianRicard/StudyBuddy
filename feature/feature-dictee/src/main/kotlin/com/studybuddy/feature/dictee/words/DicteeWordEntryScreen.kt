@@ -138,8 +138,8 @@ private fun DicteeWordEntryContent(
                     if (state.words.isEmpty()) {
                         Box(modifier = Modifier.weight(1f)) {
                             EmptyState(
-                                title = "No Words Yet",
-                                message = "Add words below to start practicing!",
+                                title = stringResource(CoreUiR.string.dictee_no_words),
+                                message = stringResource(CoreUiR.string.dictee_no_words_hint),
                             )
                         }
                     } else {

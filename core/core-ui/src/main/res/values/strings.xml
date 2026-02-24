@@ -12,6 +12,14 @@
     <string name="greeting_afternoon">Good afternoon</string>
     <string name="greeting_evening">Good evening</string>
     <string name="streak_label">%d day streak!</string>
+    <plurals name="streak_label_plural">
+        <item quantity="one">%d day streak!</item>
+        <item quantity="other">%d day streak!</item>
+    </plurals>
+    <plurals name="dictee_word_count_plural">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
     <string name="streak_start">Start your streak!</string>
     <string name="daily_challenge">Daily Challenge</string>
     <string name="daily_goal_complete">Daily Goal Complete!</string>
@@ -187,7 +195,7 @@
     <string name="math_digit">Digit %d</string>
     <string name="math_game_paused">Game Paused</string>
     <string name="math_pause_message">Take a break! Tap Resume when you\'re ready to continue.</string>
-    <string name="math_answer_was">The answer was %d</string>
+    <string name="math_answer_was">The answer was %s</string>
     <string name="math_times_up">Time\'s up! Keep going!</string>
     <string name="math_streak_celebration">%d streak!</string>
 
@@ -267,6 +275,11 @@
     <string name="settings_type_reset">Type RESET to confirm:</string>
     <string name="settings_reset_everything">Reset Everything</string>
     <string name="settings_go_avatar">Go to avatar closet</string>
+    <string name="settings_pin_wrong_length">PIN must be 4 digits</string>
+    <string name="settings_pin_incorrect">Incorrect PIN. Try again.</string>
+    <string name="settings_pin_set_success">Parent PIN set successfully</string>
+    <string name="settings_type_reset_confirm">Type RESET to confirm</string>
+    <string name="settings_reset_failed">Reset failed</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Backup</string>
@@ -342,6 +355,8 @@
     <string name="dictee_create">Create</string>
     <string name="dictee_list_deleted">List \"%s\" deleted</string>
     <string name="dictee_undo">Undo</string>
+    <string name="dictee_no_words">No Words Yet</string>
+    <string name="dictee_no_words_hint">Add words below to start practicing!</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">%s operator, selected</string>
