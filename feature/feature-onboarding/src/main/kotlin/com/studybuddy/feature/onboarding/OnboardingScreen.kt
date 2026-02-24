@@ -29,12 +29,15 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,13 +71,14 @@ fun OnboardingScreen(
     viewModel: OnboardingViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is OnboardingEffect.NavigateToHome -> onNavigateToHome()
                 is OnboardingEffect.ShowError -> {
-                    // Snackbar or toast can be wired here
+                    snackbarHostState.showSnackbar(effect.message)
                 }
             }
         }
@@ -84,6 +88,7 @@ fun OnboardingScreen(
         state = state,
         onIntent = viewModel::onIntent,
         modifier = modifier,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -92,6 +97,7 @@ private fun OnboardingContent(
     state: OnboardingState,
     onIntent: (OnboardingIntent) -> Unit,
     modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val pagerState = rememberPagerState(
         initialPage = state.currentStep,
@@ -109,7 +115,11 @@ private fun OnboardingContent(
     // is only driven programmatically via the LaunchedEffect above. The previous
     // snapshotFlow on settledPage caused a feedback loop that skipped the avatar step.
 
-    Scaffold(modifier = modifier) { padding ->
+    Scaffold(
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
