@@ -9,15 +9,40 @@ import com.studybuddy.core.domain.repository.DicteeRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @Singleton
 class LocalDicteeRepository @Inject constructor(private val dao: DicteeDao) : DicteeRepository {
 
     override fun getListsForProfile(profileId: String): Flow<List<DicteeList>> =
-        dao.getListsForProfile(profileId).map { lists -> lists.map { it.toDomain() } }
+        dao.getListsForProfile(profileId).flatMapLatest { lists ->
+            if (lists.isEmpty()) {
+                flowOf(emptyList())
+            } else {
+                combine(
+                    lists.map { entity ->
+                        combine(
+                            dao.getWordCount(entity.id),
+                            dao.getMasteredCount(entity.id),
+                        ) { wc, mc -> entity.toDomain(wordCount = wc, masteredCount = mc) }
+                    },
+                ) { it.toList() }
+            }
+        }
 
-    override fun getList(listId: String): Flow<DicteeList?> = dao.getList(listId).map { it?.toDomain() }
+    override fun getList(listId: String): Flow<DicteeList?> = dao.getList(listId).flatMapLatest { entity ->
+        if (entity == null) {
+            flowOf(null)
+        } else {
+            combine(
+                dao.getWordCount(entity.id),
+                dao.getMasteredCount(entity.id),
+            ) { wc, mc -> entity.toDomain(wordCount = wc, masteredCount = mc) }
+        }
+    }
 
     override fun getWordsForList(listId: String): Flow<List<DicteeWord>> =
         dao.getWordsForList(listId).map { words -> words.map { it.toDomain() } }
