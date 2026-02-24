@@ -36,6 +36,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -44,6 +46,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,12 +85,13 @@ fun RewardsShopScreen(
     viewModel: RewardsShopViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is RewardsShopEffect.PurchaseSuccess -> {
-                    // Snackbar or celebration can be added here
+                    snackbarHostState.showSnackbar("Unlocked ${effect.itemName}!")
                 }
                 is RewardsShopEffect.ThemeChanged -> {
                     // Theme change handled globally
@@ -100,6 +104,7 @@ fun RewardsShopScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
+        snackbarHostState = snackbarHostState,
     )
 }
 
@@ -110,6 +115,7 @@ private fun RewardsShopContent(
     onIntent: (RewardsShopIntent) -> Unit,
     modifier: Modifier = Modifier,
     onNavigateBack: () -> Unit = {},
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
     val pagerState = rememberPagerState(
         initialPage = state.selectedTab.ordinal,
@@ -132,6 +138,7 @@ private fun RewardsShopContent(
 
     Scaffold(
         modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = { Text("Rewards Shop") },
@@ -151,6 +158,7 @@ private fun RewardsShopContent(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { padding ->
         if (state.isLoading) {
             Box(
