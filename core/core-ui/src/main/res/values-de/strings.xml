@@ -42,6 +42,28 @@
     <string name="dictee_draw_word">Zeichne das Wort, das du hörst</string>
     <string name="dictee_perfect_score">Perfekte Punktzahl!</string>
     <string name="dictee_words_mastered">%1$d / %2$d Wörter gemeistert</string>
+    <string name="dictee_play">&#x1F50A; Abspielen</string>
+    <string name="dictee_playing">Wird abgespielt…</string>
+    <string name="dictee_slow">Langsam</string>
+    <string name="dictee_show_hint">Hinweis zeigen</string>
+    <string name="dictee_hint_format">%1$s (%2$d Buchstaben)</string>
+    <string name="dictee_keyboard">Tastatur</string>
+    <string name="dictee_handwriting">Handschrift</string>
+    <string name="dictee_recognizing">Erkennung…</string>
+    <string name="dictee_recognized">Erkannt: %s</string>
+    <string name="dictee_check">Prüfen</string>
+    <string name="dictee_correct_spelling">Die richtige Schreibweise ist:</string>
+    <string name="dictee_try_again">Nochmal versuchen</string>
+    <string name="dictee_next_word">Nächstes Wort</string>
+    <string name="dictee_keep_going">Toll gemacht! Weiter so!</string>
+    <string name="dictee_practice_complete">Übung abgeschlossen!</string>
+    <string name="dictee_score_points">Du hast %d Punkte erreicht</string>
+    <string name="dictee_on_list">bei „%s"</string>
+    <string name="dictee_done">Fertig</string>
+    <string name="dictee_start_practice">Übung starten</string>
+    <string name="dictee_add_a_word">Wort hinzufügen</string>
+    <string name="dictee_words_count">%d Wörter</string>
+    <string name="dictee_add">Hinzufügen</string>
 
     <!-- Speed Math -->
     <string name="math_setup_title">Kopfrechnen Einstellungen</string>

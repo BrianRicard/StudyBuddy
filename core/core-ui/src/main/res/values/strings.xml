@@ -42,6 +42,28 @@
     <string name="dictee_draw_word">Draw the word you hear</string>
     <string name="dictee_perfect_score">Perfect score!</string>
     <string name="dictee_words_mastered">%1$d / %2$d words mastered</string>
+    <string name="dictee_play">&#x1F50A; Play</string>
+    <string name="dictee_playing">Playing…</string>
+    <string name="dictee_slow">Slow</string>
+    <string name="dictee_show_hint">Show Hint</string>
+    <string name="dictee_hint_format">%1$s (%2$d letters)</string>
+    <string name="dictee_keyboard">Keyboard</string>
+    <string name="dictee_handwriting">Handwriting</string>
+    <string name="dictee_recognizing">Recognizing…</string>
+    <string name="dictee_recognized">Recognized: %s</string>
+    <string name="dictee_check">Check</string>
+    <string name="dictee_correct_spelling">The correct spelling is:</string>
+    <string name="dictee_try_again">Try Again</string>
+    <string name="dictee_next_word">Next Word</string>
+    <string name="dictee_keep_going">Great job! Keep going!</string>
+    <string name="dictee_practice_complete">Practice Complete!</string>
+    <string name="dictee_score_points">You scored %d points</string>
+    <string name="dictee_on_list">on \"%s\"</string>
+    <string name="dictee_done">Done</string>
+    <string name="dictee_start_practice">Start Practice</string>
+    <string name="dictee_add_a_word">Add a word</string>
+    <string name="dictee_words_count">%d words</string>
+    <string name="dictee_add">Add</string>
 
     <!-- Speed Math -->
     <string name="math_setup_title">Speed Math Setup</string>
