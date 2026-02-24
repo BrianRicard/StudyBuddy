@@ -64,6 +64,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
@@ -279,10 +280,16 @@ private fun AvatarTabContent(
     modifier: Modifier = Modifier,
 ) {
     val sections = listOf(
-        AvatarSection(title = "\uD83C\uDFA9 Hats", items = RewardCatalog.hats),
-        AvatarSection(title = "\uD83D\uDD76\uFE0F Face", items = RewardCatalog.faceAccessories),
-        AvatarSection(title = "\uD83D\uDC54 Outfits", items = RewardCatalog.outfits),
-        AvatarSection(title = "\uD83D\uDC3E Pets", items = RewardCatalog.pets),
+        AvatarSection(title = "\uD83C\uDFA9 Hats", items = RewardCatalog.hats.filterNot { it.id.endsWith("_none") }),
+        AvatarSection(
+            title = "\uD83D\uDD76\uFE0F Face",
+            items = RewardCatalog.faceAccessories.filterNot { it.id.endsWith("_none") },
+        ),
+        AvatarSection(
+            title = "\uD83D\uDC54 Outfits",
+            items = RewardCatalog.outfits.filterNot { it.id.endsWith("_none") },
+        ),
+        AvatarSection(title = "\uD83D\uDC3E Pets", items = RewardCatalog.pets.filterNot { it.id.endsWith("_none") }),
     )
 
     LazyVerticalGrid(
@@ -348,13 +355,10 @@ private fun AvatarItemCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            if (item.icon.isNotEmpty()) {
-                Text(
-                    text = item.icon,
-                    fontSize = 28.sp,
-                    textAlign = TextAlign.Center,
-                )
-            }
+            AccessoryPreview(
+                itemId = item.id,
+                size = 32.dp,
+            )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = item.name,

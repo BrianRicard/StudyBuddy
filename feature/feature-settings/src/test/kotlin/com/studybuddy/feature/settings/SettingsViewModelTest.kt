@@ -52,7 +52,6 @@ class SettingsViewModelTest {
         every { avatarRepository.getAvatarConfig(any()) } returns flowOf(AvatarConfig.default())
         every { settingsRepository.getAppLocale() } returns flowOf("en")
         every { settingsRepository.isSoundEnabled() } returns flowOf(true)
-        every { settingsRepository.isHapticEnabled() } returns flowOf(true)
         every { settingsRepository.getDailyGoal() } returns flowOf(5)
         every { settingsRepository.isAccentStrict() } returns flowOf(false)
         every { settingsRepository.getSelectedTheme() } returns flowOf("sunset")
@@ -79,7 +78,6 @@ class SettingsViewModelTest {
         val state = viewModel.state.value
         assertEquals("en", state.locale)
         assertTrue(state.isSoundEnabled)
-        assertTrue(state.isHapticEnabled)
         assertEquals(5, state.dailyGoal)
         assertFalse(state.isAccentStrict)
     }
@@ -104,17 +102,6 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         coVerify { settingsRepository.setSoundEnabled(false) }
-    }
-
-    @Test
-    fun `toggle haptic calls repository`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onIntent(SettingsIntent.ToggleHaptic)
-        advanceUntilIdle()
-
-        coVerify { settingsRepository.setHapticEnabled(false) }
     }
 
     @Test

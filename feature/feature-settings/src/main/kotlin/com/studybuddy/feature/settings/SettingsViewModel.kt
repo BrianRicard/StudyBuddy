@@ -29,7 +29,6 @@ data class SettingsState(
     val avatarConfig: AvatarConfig? = null,
     val locale: String = "en",
     val isSoundEnabled: Boolean = true,
-    val isHapticEnabled: Boolean = true,
     val dailyGoal: Int = 5,
     val isAccentStrict: Boolean = false,
     val selectedTheme: String = "sunset",
@@ -47,7 +46,6 @@ data class SettingsState(
 sealed interface SettingsIntent {
     data class SetLocale(val locale: String) : SettingsIntent
     data object ToggleSound : SettingsIntent
-    data object ToggleHaptic : SettingsIntent
     data class SetDailyGoal(val goal: Int) : SettingsIntent
     data object ToggleAccentStrict : SettingsIntent
     data object OpenParentZone : SettingsIntent
@@ -103,7 +101,6 @@ class SettingsViewModel @Inject constructor(
         when (intent) {
             is SettingsIntent.SetLocale -> setLocale(intent.locale)
             is SettingsIntent.ToggleSound -> toggleSound()
-            is SettingsIntent.ToggleHaptic -> toggleHaptic()
             is SettingsIntent.SetDailyGoal -> setDailyGoal(intent.goal)
             is SettingsIntent.ToggleAccentStrict -> toggleAccentStrict()
             is SettingsIntent.OpenParentZone -> openParentZone()
@@ -129,18 +126,16 @@ class SettingsViewModel @Inject constructor(
                 combine(
                     settingsRepository.getAppLocale(),
                     settingsRepository.isSoundEnabled(),
-                    settingsRepository.isHapticEnabled(),
-                ) { locale, sound, haptic -> Triple(locale, sound, haptic) },
+                ) { locale, sound -> Pair(locale, sound) },
                 combine(
                     settingsRepository.getDailyGoal(),
                     settingsRepository.isAccentStrict(),
                     settingsRepository.getSelectedTheme(),
                 ) { goal, accent, theme -> Triple(goal, accent, theme) },
-            ) { (locale, sound, haptic), (goal, accent, theme) ->
+            ) { (locale, sound), (goal, accent, theme) ->
                 SettingsData(
                     locale = locale,
                     isSoundEnabled = sound,
-                    isHapticEnabled = haptic,
                     dailyGoal = goal,
                     isAccentStrict = accent,
                     selectedTheme = theme,
@@ -150,7 +145,6 @@ class SettingsViewModel @Inject constructor(
                     it.copy(
                         locale = data.locale,
                         isSoundEnabled = data.isSoundEnabled,
-                        isHapticEnabled = data.isHapticEnabled,
                         dailyGoal = data.dailyGoal,
                         isAccentStrict = data.isAccentStrict,
                         selectedTheme = data.selectedTheme,
@@ -205,12 +199,6 @@ class SettingsViewModel @Inject constructor(
     private fun toggleSound() {
         viewModelScope.launch {
             settingsRepository.setSoundEnabled(!_state.value.isSoundEnabled)
-        }
-    }
-
-    private fun toggleHaptic() {
-        viewModelScope.launch {
-            settingsRepository.setHapticEnabled(!_state.value.isHapticEnabled)
         }
     }
 
@@ -361,7 +349,6 @@ class SettingsViewModel @Inject constructor(
 private data class SettingsData(
     val locale: String,
     val isSoundEnabled: Boolean,
-    val isHapticEnabled: Boolean,
     val dailyGoal: Int,
     val isAccentStrict: Boolean,
     val selectedTheme: String,

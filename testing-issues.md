@@ -82,22 +82,52 @@
 - **Problem**: Word count and mastery % always showed 0 because repository never fetched counts from DAO
 - **Fix**: Updated `LocalDicteeRepository.getListsForProfile()` and `getList()` to combine word/mastered counts via `flatMapLatest` + `combine`
 
-## Open Issues
+### Issue 20: Dictée/Math missing back buttons (PR #26)
+- **Screen**: Dictée List, Math Setup
+- **Problem**: No back button on screens without bottom nav, making navigation impossible without system back
+- **Fix**: Added ArrowBack IconButton to TopAppBar on DicteeListScreen and MathSetupScreen; wired onNavigateBack in NavHost
 
-### Issue 13: Hardcoded strings not localized
-- **Screens**: BackupExportScreen, SettingsScreen, RewardsShopScreen, OnboardingScreen
-- **Problem**: Many strings are hardcoded instead of using stringResource()
-- **Severity**: Minor - functional but not i18n-ready
+### Issue 21: Keyboard pushes content in word entry (PR #26)
+- **Screen**: Dictée Word Entry
+- **Problem**: Keyboard pushed entire list up, hiding input field
+- **Fix**: Added `imePadding()` to main Column; added `rememberLazyListState()` with auto-scroll to last item
+
+### Issue 22: Haptic feedback option removal (PR #26)
+- **Screen**: Settings
+- **Problem**: Haptic feedback toggle present but not desired
+- **Fix**: Removed from SettingsScreen, SettingsViewModel, SettingsRepository, DataStoreSettingsRepository, and tests
+
+### Issue 23: 'None' items in Rewards Shop (PR #26)
+- **Screen**: Rewards Shop (Avatar tab)
+- **Problem**: 'None' items for each accessory category visible in shop (pointless to purchase)
+- **Fix**: Added `.filterNot { it.id.endsWith("_none") }` to all 4 avatar sections
+
+### Issue 24: Emoji icons in shop/closet (PR #26)
+- **Screen**: Rewards Shop, Avatar Closet
+- **Problem**: Accessory and character previews used emoji Text instead of actual drawable renders
+- **Fix**: Created AccessoryPreview/CharacterPreview composables using Canvas drawing + vector drawables
+
+### Issue 25: Dictée header spacing (PR #26)
+- **Screen**: Dictée List
+- **Problem**: First list card too close to header bar
+- **Fix**: Added `top = 8.dp` to LazyColumn contentPadding
+
+### Issue 26: Hardcoded strings localization (PR #26)
+- **Screens**: Multiple feature screens
+- **Problem**: String resources in app module unreachable by feature modules
+- **Fix**: Moved strings.xml (3 locales) from app to core-ui module; feature modules now resolve via core-ui dependency
+
+## Open Issues (Accepted)
 
 ### Issue 14: Parent PIN uses String.hashCode() (not cryptographic)
 - **Screen**: Settings (Parent Zone)
 - **Problem**: PIN hashing uses Java hashCode() which has trivial collisions
-- **Severity**: Medium - but acceptable for kid's app with no sensitive data
+- **Severity**: Accepted - kid's app with no sensitive data, no network access
 
 ### Issue 18: Extra "Maple" theme not in spec
 - **Screen**: Rewards Shop (Themes)
 - **Problem**: 7 themes exist instead of the 6 defined in the spec (extra "Maple" theme)
-- **Severity**: Info - may be intentional addition
+- **Severity**: Info - intentional addition for Canadian locale
 
 ## Screens Tested
 - [x] Onboarding (3 steps)

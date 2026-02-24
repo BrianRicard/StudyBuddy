@@ -18,7 +18,6 @@ class FakeSettingsRepository : SettingsRepository {
     private val locale = MutableStateFlow("en")
     private val accentStrict = MutableStateFlow(false)
     private val soundEnabled = MutableStateFlow(true)
-    private val hapticEnabled = MutableStateFlow(true)
     private val dailyGoal = MutableStateFlow(5)
     private val selectedTheme = MutableStateFlow("sunset")
     private val onboardingComplete = MutableStateFlow(false)
@@ -35,10 +34,6 @@ class FakeSettingsRepository : SettingsRepository {
     override fun isSoundEnabled(): Flow<Boolean> = soundEnabled
     override suspend fun setSoundEnabled(enabled: Boolean) {
         soundEnabled.value = enabled
-    }
-    override fun isHapticEnabled(): Flow<Boolean> = hapticEnabled
-    override suspend fun setHapticEnabled(enabled: Boolean) {
-        hapticEnabled.value = enabled
     }
     override fun getDailyGoal(): Flow<Int> = dailyGoal
     override suspend fun setDailyGoal(goal: Int) {
@@ -121,11 +116,6 @@ class SettingsRepositoryContractTest {
     @Test
     fun `sound defaults to enabled`() = runTest {
         assertTrue(repo.isSoundEnabled().first())
-    }
-
-    @Test
-    fun `haptic defaults to enabled`() = runTest {
-        assertTrue(repo.isHapticEnabled().first())
     }
 
     @Test
