@@ -95,29 +95,34 @@ fun BackupExportScreen(
                         addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     }
                     context.startActivity(
-                        android.content.Intent.createChooser(shareIntent, "Share export"),
+                        android.content.Intent.createChooser(
+                            shareIntent,
+                            context.getString(CoreUiR.string.backup_share_export),
+                        ),
                     )
                 }
                 is BackupExportEffect.ShowToast -> {
-                    snackbarHostState.showSnackbar(effect.message)
+                    snackbarHostState.showSnackbar(context.getString(effect.messageResId))
                 }
                 is BackupExportEffect.FileCreated -> {
-                    snackbarHostState.showSnackbar("Backup saved successfully")
+                    snackbarHostState.showSnackbar(context.getString(CoreUiR.string.backup_saved))
                 }
             }
         }
     }
 
-    LaunchedEffect(state.statusMessage) {
-        state.statusMessage?.let { message ->
-            snackbarHostState.showSnackbar(message)
+    LaunchedEffect(state.statusMessageResId) {
+        state.statusMessageResId?.let { resId ->
+            snackbarHostState.showSnackbar(
+                context.getString(resId, *state.statusMessageArgs),
+            )
             viewModel.onIntent(BackupExportIntent.DismissStatus)
         }
     }
 
-    LaunchedEffect(state.error) {
-        state.error?.let { error ->
-            snackbarHostState.showSnackbar(error)
+    LaunchedEffect(state.errorResId) {
+        state.errorResId?.let { resId ->
+            snackbarHostState.showSnackbar(context.getString(resId))
             viewModel.onIntent(BackupExportIntent.DismissStatus)
         }
     }
@@ -161,7 +166,7 @@ private fun BackupExportContent(
         },
         snackbarHost = {
             SnackbarHost(hostState = snackbarHostState) { data ->
-                val isError = state.error != null
+                val isError = state.errorResId != null
                 Snackbar(
                     snackbarData = data,
                     containerColor = if (isError) {

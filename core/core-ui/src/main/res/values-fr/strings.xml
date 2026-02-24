@@ -27,6 +27,7 @@
     <string name="recent_activity">Activité récente</string>
     <string name="mode_dictee">Dictée</string>
     <string name="mode_math">Calcul mental</string>
+    <string name="mode_activity">Activité</string>
     <string name="mode_poems">Poèmes</string>
     <string name="mode_more">Plus</string>
     <string name="label_spelling_practice">Pratique d\'orthographe</string>
@@ -317,6 +318,20 @@
     <string name="backup_restore_btn">Restaurer</string>
     <string name="backup_share">Partager l\'export</string>
     <string name="backup_saved">Sauvegarde créée avec succès</string>
+    <string name="backup_created_success">Sauvegarde créée avec succès</string>
+    <string name="backup_restored_success">Données restaurées avec succès</string>
+    <string name="backup_all_restored">Toutes les données ont été restaurées</string>
+    <string name="backup_pdf_generated">Rapport PDF généré</string>
+    <string name="backup_json_exported">Données JSON exportées</string>
+    <string name="backup_csv_exported">Listes de mots CSV exportées</string>
+    <string name="backup_imported_words">%d mots importés</string>
+    <string name="backup_failed_generic">Échec de la sauvegarde</string>
+    <string name="backup_restore_failed">Échec de la restauration</string>
+    <string name="backup_pdf_failed">Échec de l\'export PDF</string>
+    <string name="backup_json_failed">Échec de l\'export JSON</string>
+    <string name="backup_csv_failed">Échec de l\'export CSV</string>
+    <string name="backup_import_failed">Échec de l\'importation</string>
+    <string name="backup_share_export">Partager l\'export</string>
 
     <!-- Onboarding additions -->
     <string name="onboarding_welcome_title">Bienvenue sur StudyBuddy !</string>
@@ -357,6 +372,16 @@
     <string name="dictee_undo">Annuler</string>
     <string name="dictee_no_words">Aucun mot encore</string>
     <string name="dictee_no_words_hint">Ajoute des mots ci-dessous pour commencer à t\'entraîner !</string>
+    <string name="dictee_add_word_error">Impossible d\'ajouter le mot. Réessaie.</string>
+    <string name="dictee_delete_word_error">Impossible de supprimer le mot.</string>
+    <string name="dictee_restore_word_error">Impossible de restaurer le mot.</string>
+    <string name="dictee_word_deleted">« %s » supprimé</string>
+    <string name="dictee_toggle_edit">Basculer le mode édition</string>
+    <string name="dictee_imported_count">%d mots importés</string>
+    <string name="dictee_import_no_words">Aucun mot trouvé dans le fichier</string>
+    <string name="dictee_import_error">Échec de l\'importation</string>
+    <string name="dictee_recognition_error">Impossible de lire. Réessaie ou passe au clavier.</string>
+    <string name="dictee_handwriting_unavailable">Écriture non disponible. Passe au clavier pour taper.</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">Opérateur %s, sélectionné</string>

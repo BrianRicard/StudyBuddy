@@ -108,7 +108,7 @@ fun DicteeListScreen(
                     }
                 }
                 is DicteeListEffect.ShowToast -> {
-                    snackbarHostState.showSnackbar(effect.message)
+                    snackbarHostState.showSnackbar(context.getString(effect.messageResId, *effect.args))
                 }
             }
         }

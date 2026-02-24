@@ -9,6 +9,7 @@ import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.ui.R as CoreUiR
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -172,38 +173,18 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `buildGreeting returns French greetings for fr locale`() = runTest {
+    fun `buildGreetingResId returns a valid greeting resource ID`() = runTest {
         setupDefaultMocks()
         val viewModel = createViewModel()
 
-        val greeting = viewModel.buildGreeting("fr")
+        val greetingResId = viewModel.buildGreetingResId()
         assertTrue(
-            greeting in listOf("Bonjour", "Bon après-midi", "Bonsoir"),
-            "French greeting should be one of the expected values, got: $greeting",
-        )
-    }
-
-    @Test
-    fun `buildGreeting returns English greetings for en locale`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-
-        val greeting = viewModel.buildGreeting("en")
-        assertTrue(
-            greeting in listOf("Good morning", "Good afternoon", "Good evening"),
-            "English greeting should be one of the expected values, got: $greeting",
-        )
-    }
-
-    @Test
-    fun `buildGreeting returns German greetings for de locale`() = runTest {
-        setupDefaultMocks()
-        val viewModel = createViewModel()
-
-        val greeting = viewModel.buildGreeting("de")
-        assertTrue(
-            greeting in listOf("Guten Morgen", "Guten Tag", "Guten Abend"),
-            "German greeting should be one of the expected values, got: $greeting",
+            greetingResId in listOf(
+                CoreUiR.string.greeting_morning,
+                CoreUiR.string.greeting_afternoon,
+                CoreUiR.string.greeting_evening,
+            ),
+            "Greeting resource ID should be one of the expected values, got: $greetingResId",
         )
     }
 

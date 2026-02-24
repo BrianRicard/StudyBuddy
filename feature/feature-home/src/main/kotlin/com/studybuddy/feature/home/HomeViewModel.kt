@@ -1,5 +1,6 @@
 package com.studybuddy.feature.home
 
+import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.domain.model.AvatarConfig
@@ -9,6 +10,7 @@ import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,9 +32,35 @@ import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
 /**
+ * Represents a time-ago value that can be resolved to a localized string in the UI.
+ */
+sealed interface TimeAgo {
+    /** Less than 1 minute ago. */
+    data object JustNow : TimeAgo
+
+    /** [minutes] minutes ago. */
+    data class Minutes(val minutes: Long) : TimeAgo
+
+    /** [hours] hours ago. */
+    data class Hours(val hours: Long) : TimeAgo
+
+    /** Yesterday. */
+    data object Yesterday : TimeAgo
+
+    /** [days] days ago. */
+    data class Days(val days: Long) : TimeAgo
+}
+
+/**
  * Represents a recent activity entry on the home screen.
  */
-data class RecentActivity(val mode: String, val points: Int, val reason: String, val timeAgo: String)
+data class RecentActivity(
+    @StringRes val modeResId: Int,
+    val source: PointSource,
+    val points: Int,
+    val reason: String,
+    val timeAgo: TimeAgo,
+)
 
 /**
  * UI state for the Home screen.
@@ -42,7 +70,7 @@ data class HomeState(
     val avatarConfig: AvatarConfig = AvatarConfig.default(),
     val totalStars: Long = 0L,
     val locale: String = "fr",
-    val greeting: String = "",
+    @StringRes val greetingResId: Int = CoreUiR.string.greeting_morning,
     val dayStreak: Int = 0,
     val weekDots: List<Boolean> = List(WEEK_DAYS) { false },
     val sessionsToday: Int = 0,
@@ -158,39 +186,28 @@ class HomeViewModel @Inject constructor(
             ) { locale, dailyGoal ->
                 Pair(locale, dailyGoal)
             }.collect { (locale, dailyGoal) ->
-                val greeting = buildGreeting(locale)
+                val greetingResId = buildGreetingResId()
                 _state.update {
                     it.copy(
                         locale = locale,
                         dailyGoal = dailyGoal,
-                        greeting = greeting,
+                        greetingResId = greetingResId,
                     )
                 }
             }
         }
     }
 
-    internal fun buildGreeting(locale: String): String {
+    @StringRes
+    internal fun buildGreetingResId(): Int {
         val hour = Clock.System.now()
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .hour
 
-        return when (locale) {
-            "fr" -> when {
-                hour < AFTERNOON_HOUR -> "Bonjour"
-                hour < EVENING_HOUR -> "Bon après-midi"
-                else -> "Bonsoir"
-            }
-            "de" -> when {
-                hour < AFTERNOON_HOUR -> "Guten Morgen"
-                hour < EVENING_HOUR -> "Guten Tag"
-                else -> "Guten Abend"
-            }
-            else -> when {
-                hour < AFTERNOON_HOUR -> "Good morning"
-                hour < EVENING_HOUR -> "Good afternoon"
-                else -> "Good evening"
-            }
+        return when {
+            hour < AFTERNOON_HOUR -> CoreUiR.string.greeting_morning
+            hour < EVENING_HOUR -> CoreUiR.string.greeting_afternoon
+            else -> CoreUiR.string.greeting_evening
         }
     }
 
@@ -251,16 +268,17 @@ class HomeViewModel @Inject constructor(
             .sortedByDescending { it.timestamp }
             .take(MAX_RECENT_ACTIVITIES)
             .map { event ->
-                val mode = when (event.source) {
-                    PointSource.DICTEE -> "Dictée"
-                    PointSource.MATH -> "Speed Math"
-                    else -> "Activity"
+                @StringRes val modeResId = when (event.source) {
+                    PointSource.DICTEE -> CoreUiR.string.mode_dictee
+                    PointSource.MATH -> CoreUiR.string.mode_math
+                    else -> CoreUiR.string.mode_activity
                 }
                 val elapsed = now - event.timestamp
                 val timeAgo = formatTimeAgo(elapsed)
 
                 RecentActivity(
-                    mode = mode,
+                    modeResId = modeResId,
+                    source = event.source,
                     points = event.points,
                     reason = event.reason,
                     timeAgo = timeAgo,
@@ -268,17 +286,17 @@ class HomeViewModel @Inject constructor(
             }
     }
 
-    private fun formatTimeAgo(duration: kotlin.time.Duration): String {
+    private fun formatTimeAgo(duration: kotlin.time.Duration): TimeAgo {
         val minutes = duration.inWholeMinutes
         val hours = duration.inWholeHours
         val days = duration.inWholeDays
 
         return when {
-            minutes < 1 -> "Just now"
-            minutes < MINUTES_IN_HOUR -> "${minutes}m ago"
-            hours < HOURS_IN_DAY -> "${hours}h ago"
-            days < 2 -> "Yesterday"
-            else -> "${days}d ago"
+            minutes < 1 -> TimeAgo.JustNow
+            minutes < MINUTES_IN_HOUR -> TimeAgo.Minutes(minutes)
+            hours < HOURS_IN_DAY -> TimeAgo.Hours(hours)
+            days < 2 -> TimeAgo.Yesterday
+            else -> TimeAgo.Days(days)
         }
     }
 

@@ -97,7 +97,7 @@ class DicteePracticeViewModel @Inject constructor(
     }
 
     private fun recognizeInk(ink: Ink) {
-        _state.update { it.copy(recognitionPending = true, recognitionError = null) }
+        _state.update { it.copy(recognitionPending = true, recognitionErrorResId = null) }
         viewModelScope.launch {
             val result = inkRecognitionManager.recognize(ink)
             result.onSuccess { text ->
@@ -108,7 +108,7 @@ class DicteePracticeViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             recognitionPending = false,
-                            recognitionError = "Couldn't read that. Try again or switch to keyboard.",
+                            recognitionErrorResId = com.studybuddy.core.ui.R.string.dictee_recognition_error,
                         )
                     }
                 }
@@ -116,7 +116,7 @@ class DicteePracticeViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         recognitionPending = false,
-                        recognitionError = "Handwriting not available. Switch to keyboard to type.",
+                        recognitionErrorResId = com.studybuddy.core.ui.R.string.dictee_handwriting_unavailable,
                     )
                 }
             }
@@ -196,7 +196,7 @@ class DicteePracticeViewModel @Inject constructor(
                 inputMode = newMode,
                 userInput = "",
                 recognizedText = null,
-                recognitionError = null,
+                recognitionErrorResId = null,
             )
         }
     }
@@ -287,7 +287,7 @@ class DicteePracticeViewModel @Inject constructor(
                     feedback = null,
                     hintVisible = false,
                     recognizedText = null,
-                    recognitionError = null,
+                    recognitionErrorResId = null,
                 )
             }
             playCurrentWord(TtsManager.SPEED_NORMAL)
@@ -296,7 +296,7 @@ class DicteePracticeViewModel @Inject constructor(
 
     private fun retryWord() {
         _state.update {
-            it.copy(userInput = "", feedback = null, recognizedText = null, recognitionError = null)
+            it.copy(userInput = "", feedback = null, recognizedText = null, recognitionErrorResId = null)
         }
         playCurrentWord(TtsManager.SPEED_NORMAL)
     }

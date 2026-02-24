@@ -61,7 +61,7 @@ class DicteeWordEntryViewModel @Inject constructor(
                 }
             }
             is DicteeWordEntryIntent.DismissError -> {
-                _state.update { it.copy(errorMessage = null) }
+                _state.update { it.copy(errorMessageResId = null) }
             }
         }
     }
@@ -95,8 +95,8 @@ class DicteeWordEntryViewModel @Inject constructor(
                 addWordUseCase(word)
                 _state.update { it.copy(newWordText = "") }
             } catch (e: Exception) {
-                _state.update { it.copy(errorMessage = "Could not add word. Please try again.") }
-                _effects.emit(DicteeWordEntryEffect.ShowError("Could not add word. Please try again."))
+                _state.update { it.copy(errorMessageResId = com.studybuddy.core.ui.R.string.dictee_add_word_error) }
+                _effects.emit(DicteeWordEntryEffect.ShowError(com.studybuddy.core.ui.R.string.dictee_add_word_error))
             }
         }
     }
@@ -108,8 +108,8 @@ class DicteeWordEntryViewModel @Inject constructor(
                 dicteeRepository.deleteWord(wordId)
                 _effects.emit(DicteeWordEntryEffect.ShowUndoSnackbar(word))
             } catch (e: Exception) {
-                _state.update { it.copy(errorMessage = "Could not delete word.") }
-                _effects.emit(DicteeWordEntryEffect.ShowError("Could not delete word."))
+                _state.update { it.copy(errorMessageResId = com.studybuddy.core.ui.R.string.dictee_delete_word_error) }
+                _effects.emit(DicteeWordEntryEffect.ShowError(com.studybuddy.core.ui.R.string.dictee_delete_word_error))
             }
         }
     }
@@ -119,8 +119,8 @@ class DicteeWordEntryViewModel @Inject constructor(
             try {
                 dicteeRepository.addWord(word)
             } catch (e: Exception) {
-                _state.update { it.copy(errorMessage = "Could not restore word.") }
-                _effects.emit(DicteeWordEntryEffect.ShowError("Could not restore word."))
+                _state.update { it.copy(errorMessageResId = com.studybuddy.core.ui.R.string.dictee_restore_word_error) }
+                _effects.emit(DicteeWordEntryEffect.ShowError(com.studybuddy.core.ui.R.string.dictee_restore_word_error))
             }
         }
     }

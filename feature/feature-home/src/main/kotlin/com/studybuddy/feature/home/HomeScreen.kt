@@ -53,6 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
@@ -198,7 +199,7 @@ private fun HomeHeader(
         // Greeting + Name
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = state.greeting,
+                text = stringResource(state.greetingResId),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -566,13 +567,13 @@ private fun RecentActivityRow(activity: RecentActivity) {
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = if (activity.mode == "Dictée") "\u270D\uFE0F" else "\uD83E\uDDEE",
+                text = if (activity.source == PointSource.DICTEE) "\u270D\uFE0F" else "\uD83E\uDDEE",
                 fontSize = 24.sp,
             )
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = activity.mode,
+                    text = stringResource(activity.modeResId),
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -592,13 +593,22 @@ private fun RecentActivityRow(activity: RecentActivity) {
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = activity.timeAgo,
+                    text = resolveTimeAgo(activity.timeAgo),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun resolveTimeAgo(timeAgo: TimeAgo): String = when (timeAgo) {
+    is TimeAgo.JustNow -> stringResource(CoreUiR.string.time_just_now)
+    is TimeAgo.Minutes -> stringResource(CoreUiR.string.time_minutes_ago, timeAgo.minutes.toInt())
+    is TimeAgo.Hours -> stringResource(CoreUiR.string.time_hours_ago, timeAgo.hours.toInt())
+    is TimeAgo.Yesterday -> stringResource(CoreUiR.string.time_yesterday)
+    is TimeAgo.Days -> stringResource(CoreUiR.string.time_days_ago, timeAgo.days.toInt())
 }
 
 private val MODE_CARD_HEIGHT = 140.dp

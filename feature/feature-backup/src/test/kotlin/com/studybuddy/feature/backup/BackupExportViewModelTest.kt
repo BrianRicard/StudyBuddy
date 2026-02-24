@@ -9,6 +9,7 @@ import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
 import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
+import com.studybuddy.core.ui.R as CoreUiR
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -84,8 +85,8 @@ class BackupExportViewModelTest {
         assertFalse(state.isExporting)
         assertFalse(state.showRestoreConfirmDialog)
         assertEquals(ExportFormat.PDF, state.exportFormat)
-        assertNull(state.statusMessage)
-        assertNull(state.error)
+        assertNull(state.statusMessageResId)
+        assertNull(state.errorResId)
     }
 
     @Test
@@ -100,7 +101,7 @@ class BackupExportViewModelTest {
             val state = viewModel.state.value
             assertFalse(state.isBackingUp)
             assertNotNull(state.lastBackupDate)
-            assertEquals("Backup created successfully", state.statusMessage)
+            assertEquals(CoreUiR.string.backup_created_success, state.statusMessageResId)
 
             val effect = awaitItem()
             assertTrue(effect is BackupExportEffect.ShareFile)
@@ -118,7 +119,7 @@ class BackupExportViewModelTest {
 
         val state = viewModel.state.value
         assertFalse(state.isBackingUp)
-        assertEquals("Backup failed: disk full", state.error)
+        assertEquals(CoreUiR.string.backup_failed_generic, state.errorResId)
     }
 
     @Test
@@ -163,7 +164,7 @@ class BackupExportViewModelTest {
             val state = viewModel.state.value
             assertFalse(state.isRestoring)
             assertFalse(state.showRestoreConfirmDialog)
-            assertEquals("Data restored successfully", state.statusMessage)
+            assertEquals(CoreUiR.string.backup_restored_success, state.statusMessageResId)
 
             val effect = awaitItem()
             assertTrue(effect is BackupExportEffect.ShowToast)
@@ -185,7 +186,7 @@ class BackupExportViewModelTest {
 
         val state = viewModel.state.value
         assertFalse(state.isRestoring)
-        assertEquals("Restore failed: corrupt data", state.error)
+        assertEquals(CoreUiR.string.backup_restore_failed, state.errorResId)
     }
 
     @Test
@@ -199,7 +200,7 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals("PDF report generated", state.statusMessage)
+            assertEquals(CoreUiR.string.backup_pdf_generated, state.statusMessageResId)
 
             val effect = awaitItem()
             assertTrue(effect is BackupExportEffect.ShareFile)
@@ -218,7 +219,7 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals("JSON data exported", state.statusMessage)
+            assertEquals(CoreUiR.string.backup_json_exported, state.statusMessageResId)
 
             val effect = awaitItem()
             assertTrue(effect is BackupExportEffect.ShareFile)
@@ -237,7 +238,7 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals("CSV word lists exported", state.statusMessage)
+            assertEquals(CoreUiR.string.backup_csv_exported, state.statusMessageResId)
 
             val effect = awaitItem()
             assertTrue(effect is BackupExportEffect.ShareFile)
@@ -252,13 +253,13 @@ class BackupExportViewModelTest {
 
         viewModel.onIntent(BackupExportIntent.CreateBackup)
         advanceUntilIdle()
-        assertNotNull(viewModel.state.value.statusMessage)
+        assertNotNull(viewModel.state.value.statusMessageResId)
 
         viewModel.onIntent(BackupExportIntent.DismissStatus)
         advanceUntilIdle()
 
-        assertNull(viewModel.state.value.statusMessage)
-        assertNull(viewModel.state.value.error)
+        assertNull(viewModel.state.value.statusMessageResId)
+        assertNull(viewModel.state.value.errorResId)
     }
 
     @Test

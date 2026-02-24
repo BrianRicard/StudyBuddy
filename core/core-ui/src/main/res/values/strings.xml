@@ -27,6 +27,7 @@
     <string name="recent_activity">Recent Activity</string>
     <string name="mode_dictee">Dictée</string>
     <string name="mode_math">Speed Math</string>
+    <string name="mode_activity">Activity</string>
     <string name="mode_poems">Poems</string>
     <string name="mode_more">More</string>
     <string name="label_spelling_practice">Spelling practice</string>
@@ -317,6 +318,20 @@
     <string name="backup_restore_btn">Restore</string>
     <string name="backup_share">Share export</string>
     <string name="backup_saved">Backup saved successfully</string>
+    <string name="backup_created_success">Backup created successfully</string>
+    <string name="backup_restored_success">Data restored successfully</string>
+    <string name="backup_all_restored">All data has been restored</string>
+    <string name="backup_pdf_generated">PDF report generated</string>
+    <string name="backup_json_exported">JSON data exported</string>
+    <string name="backup_csv_exported">CSV word lists exported</string>
+    <string name="backup_imported_words">Imported %d words</string>
+    <string name="backup_failed_generic">Backup failed</string>
+    <string name="backup_restore_failed">Restore failed</string>
+    <string name="backup_pdf_failed">PDF export failed</string>
+    <string name="backup_json_failed">JSON export failed</string>
+    <string name="backup_csv_failed">CSV export failed</string>
+    <string name="backup_import_failed">Import failed</string>
+    <string name="backup_share_export">Share export</string>
 
     <!-- Onboarding additions -->
     <string name="onboarding_welcome_title">Welcome to StudyBuddy!</string>
@@ -357,6 +372,16 @@
     <string name="dictee_undo">Undo</string>
     <string name="dictee_no_words">No Words Yet</string>
     <string name="dictee_no_words_hint">Add words below to start practicing!</string>
+    <string name="dictee_add_word_error">Could not add word. Please try again.</string>
+    <string name="dictee_delete_word_error">Could not delete word.</string>
+    <string name="dictee_restore_word_error">Could not restore word.</string>
+    <string name="dictee_word_deleted">"%s" deleted</string>
+    <string name="dictee_toggle_edit">Toggle edit mode</string>
+    <string name="dictee_imported_count">Imported %d words</string>
+    <string name="dictee_import_no_words">No words found in file</string>
+    <string name="dictee_import_error">Import failed</string>
+    <string name="dictee_recognition_error">Couldn\'t read that. Try again or switch to keyboard.</string>
+    <string name="dictee_handwriting_unavailable">Handwriting not available. Switch to keyboard to type.</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">%s operator, selected</string>
