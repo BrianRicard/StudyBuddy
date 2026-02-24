@@ -22,6 +22,7 @@ class FakeSettingsRepository : SettingsRepository {
     private val dailyGoal = MutableStateFlow(5)
     private val selectedTheme = MutableStateFlow("sunset")
     private val onboardingComplete = MutableStateFlow(false)
+    private val parentPinHash = MutableStateFlow<Int?>(null)
 
     override fun getAppLocale(): Flow<String> = locale
     override suspend fun setAppLocale(locale: String) {
@@ -51,8 +52,13 @@ class FakeSettingsRepository : SettingsRepository {
     override suspend fun setOnboardingComplete(complete: Boolean) {
         onboardingComplete.value = complete
     }
+    override fun getParentPinHash(): Flow<Int?> = parentPinHash
+    override suspend fun setParentPinHash(hash: Int?) {
+        parentPinHash.value = hash
+    }
     override suspend fun clearAll() {
         onboardingComplete.value = false
+        parentPinHash.value = null
     }
     override suspend fun sync() {}
 }

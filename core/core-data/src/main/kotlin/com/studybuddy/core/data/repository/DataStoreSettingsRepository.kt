@@ -30,6 +30,7 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val SELECTED_THEME = stringPreferencesKey("selected_theme")
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
+        val PARENT_PIN_HASH = intPreferencesKey("parent_pin_hash")
     }
 
     override fun getAppLocale(): Flow<String> = context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
@@ -74,6 +75,18 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
 
     override suspend fun setOnboardingComplete(complete: Boolean) {
         context.dataStore.edit { it[Keys.ONBOARDING_COMPLETE] = complete }
+    }
+
+    override fun getParentPinHash(): Flow<Int?> = context.dataStore.data.map { it[Keys.PARENT_PIN_HASH] }
+
+    override suspend fun setParentPinHash(hash: Int?) {
+        context.dataStore.edit {
+            if (hash != null) {
+                it[Keys.PARENT_PIN_HASH] = hash
+            } else {
+                it.remove(Keys.PARENT_PIN_HASH)
+            }
+        }
     }
 
     override suspend fun clearAll() {
