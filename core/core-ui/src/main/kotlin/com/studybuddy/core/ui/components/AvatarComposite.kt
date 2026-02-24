@@ -123,10 +123,10 @@ fun AvatarComposite(
 private val DEFAULT_AVATAR_SIZE = 130.dp
 
 // Accessory size as fraction of total avatar size
-private const val HAT_SCALE = 0.28f
-private const val FACE_SCALE = 0.24f
-private const val OUTFIT_SCALE = 0.24f
-private const val PET_SCALE = 0.22f
+private const val HAT_SCALE = 0.45f
+private const val FACE_SCALE = 0.40f
+private const val OUTFIT_SCALE = 0.38f
+private const val PET_SCALE = 0.32f
 
 @Preview(showBackground = true)
 @Composable
