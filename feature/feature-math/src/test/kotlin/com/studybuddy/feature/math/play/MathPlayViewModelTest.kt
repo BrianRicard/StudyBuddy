@@ -112,6 +112,8 @@ class MathPlayViewModelTest {
         assertEquals(0, state.problemsCompleted)
         assertEquals(5, state.totalProblems)
         assertFalse(state.isComplete)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -124,6 +126,8 @@ class MathPlayViewModelTest {
 
         viewModel.onIntent(MathPlayIntent.DigitEntered(0))
         assertEquals("10", viewModel.state.value.userAnswer)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -137,6 +141,8 @@ class MathPlayViewModelTest {
 
         viewModel.onIntent(MathPlayIntent.Backspace)
         assertEquals("1", viewModel.state.value.userAnswer)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -146,6 +152,8 @@ class MathPlayViewModelTest {
 
         viewModel.onIntent(MathPlayIntent.Backspace)
         assertEquals("", viewModel.state.value.userAnswer)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -161,6 +169,8 @@ class MathPlayViewModelTest {
         val state = viewModel.state.value
         assertEquals(1, state.correctCount)
         assertEquals(1, state.streak)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -182,6 +192,8 @@ class MathPlayViewModelTest {
         runCurrent()
 
         assertEquals(0, viewModel.state.value.streak)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -194,6 +206,8 @@ class MathPlayViewModelTest {
 
         // No feedback should be set
         assertNull(viewModel.state.value.feedback)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -203,6 +217,8 @@ class MathPlayViewModelTest {
 
         viewModel.onIntent(MathPlayIntent.Pause)
         assertTrue(viewModel.state.value.isPaused)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -215,6 +231,8 @@ class MathPlayViewModelTest {
 
         viewModel.onIntent(MathPlayIntent.Resume)
         assertFalse(viewModel.state.value.isPaused)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -225,6 +243,8 @@ class MathPlayViewModelTest {
         viewModel.onIntent(MathPlayIntent.Pause)
         viewModel.onIntent(MathPlayIntent.DigitEntered(5))
         assertEquals("", viewModel.state.value.userAnswer)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -242,6 +262,8 @@ class MathPlayViewModelTest {
 
         // Should still be "10", not "105"
         assertFalse(viewModel.state.value.userAnswer.contains("5"))
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -272,6 +294,8 @@ class MathPlayViewModelTest {
                 },
             )
         }
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -286,6 +310,8 @@ class MathPlayViewModelTest {
         runCurrent()
 
         coVerify { saveMathSession(any()) }
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -308,6 +334,8 @@ class MathPlayViewModelTest {
                 reason = any(),
             )
         }
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -338,6 +366,8 @@ class MathPlayViewModelTest {
 
         assertEquals(0, viewModel.state.value.streak)
         assertEquals(2, viewModel.state.value.bestStreak)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -347,6 +377,8 @@ class MathPlayViewModelTest {
 
         // ViewModel should initialize successfully
         assertNotNull(viewModel.state.value.currentProblem)
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -385,6 +417,8 @@ class MathPlayViewModelTest {
                 reason = any(),
             )
         }
+
+        viewModel.viewModelScope.cancel()
     }
 
     @Test
@@ -436,5 +470,7 @@ class MathPlayViewModelTest {
                 reason = eq("Math session: 2/2 correct"),
             )
         }
+
+        viewModel.viewModelScope.cancel()
     }
 }

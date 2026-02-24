@@ -148,8 +148,8 @@ class OnboardingViewModel @Inject constructor(
      * 1. Creates the user profile in Room.
      * 2. Saves the chosen avatar configuration.
      * 3. Grants all starter items as owned rewards.
-     * 4. Sets the app locale.
-     * 5. Marks onboarding as complete.
+     * 4. Marks onboarding as complete.
+     * 5. Sets the app locale (may trigger Activity recreation).
      * 6. Emits [OnboardingEffect.NavigateToHome].
      */
     private fun completeOnboarding() {
@@ -188,8 +188,13 @@ class OnboardingViewModel @Inject constructor(
 
                 grantStarterItems(profileId)
 
-                settingsRepository.setAppLocale(current.selectedLocale)
+                // Mark onboarding complete BEFORE setting locale, because
+                // setAppLocale triggers a locale Flow emission that causes
+                // MainActivity to call AppCompatDelegate.setApplicationLocales(),
+                // which recreates the Activity. The onboarding flag must be
+                // persisted first so the recreated Activity navigates to HOME.
                 settingsRepository.setOnboardingComplete(complete = true)
+                settingsRepository.setAppLocale(current.selectedLocale)
 
                 _effects.emit(OnboardingEffect.NavigateToHome)
             } catch (e: Exception) {
