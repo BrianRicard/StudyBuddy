@@ -1,5 +1,6 @@
 package com.studybuddy.feature.dictee.words
 
+import androidx.annotation.StringRes
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
 
@@ -9,7 +10,7 @@ data class DicteeWordEntryState(
     val isLoading: Boolean = true,
     val newWordText: String = "",
     val isEditMode: Boolean = false,
-    val errorMessage: String? = null,
+    @StringRes val errorMessageResId: Int? = null,
 )
 
 sealed interface DicteeWordEntryIntent {
@@ -27,5 +28,5 @@ sealed interface DicteeWordEntryIntent {
 sealed interface DicteeWordEntryEffect {
     data class NavigateToPractice(val listId: String) : DicteeWordEntryEffect
     data class ShowUndoSnackbar(val word: DicteeWord) : DicteeWordEntryEffect
-    data class ShowError(val message: String) : DicteeWordEntryEffect
+    data class ShowError(@StringRes val messageResId: Int) : DicteeWordEntryEffect
 }

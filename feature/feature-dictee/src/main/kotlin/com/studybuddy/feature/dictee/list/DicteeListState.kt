@@ -1,5 +1,6 @@
 package com.studybuddy.feature.dictee.list
 
+import androidx.annotation.StringRes
 import com.studybuddy.core.domain.model.DicteeList
 
 data class DicteeListState(
@@ -38,5 +39,5 @@ sealed interface DicteeListEffect {
     data class NavigateToWords(val listId: String) : DicteeListEffect
     data class ShowUndoSnackbar(val list: DicteeList) : DicteeListEffect
     data class NavigateToChallenge(val listIds: List<String>) : DicteeListEffect
-    data class ShowToast(val message: String) : DicteeListEffect
+    data class ShowToast(@StringRes val messageResId: Int, val args: Array<Any> = emptyArray()) : DicteeListEffect
 }

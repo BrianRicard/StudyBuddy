@@ -137,14 +137,14 @@ class DicteeListViewModel @Inject constructor(
                 val count = importWordListUseCase(csvContent, profileId)
                 _state.update { it.copy(isImporting = false) }
                 if (count > 0) {
-                    _effects.emit(DicteeListEffect.ShowToast("Imported $count words"))
+                    _effects.emit(DicteeListEffect.ShowToast(com.studybuddy.core.ui.R.string.dictee_imported_count, arrayOf(count)))
                 } else {
-                    _effects.emit(DicteeListEffect.ShowToast("No words found in file"))
+                    _effects.emit(DicteeListEffect.ShowToast(com.studybuddy.core.ui.R.string.dictee_import_no_words))
                 }
             } catch (e: Exception) {
                 _state.update { it.copy(isImporting = false) }
                 _effects.emit(
-                    DicteeListEffect.ShowToast("Import failed: ${e.message ?: "Unknown error"}"),
+                    DicteeListEffect.ShowToast(com.studybuddy.core.ui.R.string.dictee_import_error),
                 )
             }
         }

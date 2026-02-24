@@ -251,9 +251,9 @@ private fun DicteePracticeContent(
                                     modifier = Modifier.padding(top = 8.dp),
                                 )
                             }
-                            state.recognitionError?.let { error ->
+                            state.recognitionErrorResId?.let { errorResId ->
                                 Text(
-                                    text = error,
+                                    text = stringResource(errorResId),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.padding(top = 8.dp),

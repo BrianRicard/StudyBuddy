@@ -2,6 +2,7 @@ package com.studybuddy.feature.backup
 
 import android.content.Context
 import android.net.Uri
+import androidx.annotation.StringRes
 import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +14,7 @@ import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
 import com.studybuddy.core.domain.usecase.backup.ExportProgressReportUseCase
 import com.studybuddy.core.domain.usecase.backup.RestoreBackupUseCase
 import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
+import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.io.File
@@ -58,8 +60,9 @@ data class BackupExportState(
     val showRestoreConfirmDialog: Boolean = false,
     val pendingRestoreJson: String? = null,
     val exportFormat: ExportFormat = ExportFormat.PDF,
-    val statusMessage: String? = null,
-    val error: String? = null,
+    @StringRes val statusMessageResId: Int? = null,
+    val statusMessageArgs: Array<Any> = emptyArray(),
+    @StringRes val errorResId: Int? = null,
     val autoBackupEnabled: Boolean = false,
     val autoBackupFrequency: AutoBackupFrequency = AutoBackupFrequency.WEEKLY,
 )
@@ -86,7 +89,7 @@ sealed interface BackupExportIntent {
  */
 sealed interface BackupExportEffect {
     data class ShareFile(val uri: Uri, val mimeType: String) : BackupExportEffect
-    data class ShowToast(val message: String) : BackupExportEffect
+    data class ShowToast(@StringRes val messageResId: Int) : BackupExportEffect
     data class FileCreated(val path: String) : BackupExportEffect
 }
 
@@ -134,7 +137,7 @@ class BackupExportViewModel @Inject constructor(
         if (_state.value.isBackingUp) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isBackingUp = true, error = null) }
+            _state.update { it.copy(isBackingUp = true, errorResId = null) }
 
             try {
                 val backupJson = createBackupUseCase()
@@ -148,7 +151,8 @@ class BackupExportViewModel @Inject constructor(
                     it.copy(
                         isBackingUp = false,
                         lastBackupDate = now,
-                        statusMessage = "Backup created successfully",
+                        statusMessageResId = CoreUiR.string.backup_created_success,
+                        statusMessageArgs = emptyArray(),
                     )
                 }
                 _effects.emit(
@@ -161,7 +165,7 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isBackingUp = false,
-                        error = "Backup failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_failed_generic,
                     )
                 }
             }
@@ -173,7 +177,7 @@ class BackupExportViewModel @Inject constructor(
             it.copy(
                 showRestoreConfirmDialog = true,
                 pendingRestoreJson = json,
-                error = null,
+                errorResId = null,
             )
         }
     }
@@ -186,7 +190,7 @@ class BackupExportViewModel @Inject constructor(
                 it.copy(
                     showRestoreConfirmDialog = false,
                     isRestoring = true,
-                    error = null,
+                    errorResId = null,
                 )
             }
 
@@ -196,18 +200,19 @@ class BackupExportViewModel @Inject constructor(
                     it.copy(
                         isRestoring = false,
                         pendingRestoreJson = null,
-                        statusMessage = "Data restored successfully",
+                        statusMessageResId = CoreUiR.string.backup_restored_success,
+                        statusMessageArgs = emptyArray(),
                     )
                 }
                 _effects.emit(
-                    BackupExportEffect.ShowToast("All data has been restored"),
+                    BackupExportEffect.ShowToast(CoreUiR.string.backup_all_restored),
                 )
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         isRestoring = false,
                         pendingRestoreJson = null,
-                        error = "Restore failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_restore_failed,
                     )
                 }
             }
@@ -231,7 +236,7 @@ class BackupExportViewModel @Inject constructor(
                 it.copy(
                     isExporting = true,
                     exportFormat = ExportFormat.PDF,
-                    error = null,
+                    errorResId = null,
                 )
             }
 
@@ -242,7 +247,8 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        statusMessage = "PDF report generated",
+                        statusMessageResId = CoreUiR.string.backup_pdf_generated,
+                        statusMessageArgs = emptyArray(),
                     )
                 }
                 _effects.emit(
@@ -255,7 +261,7 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        error = "PDF export failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_pdf_failed,
                     )
                 }
             }
@@ -270,7 +276,7 @@ class BackupExportViewModel @Inject constructor(
                 it.copy(
                     isExporting = true,
                     exportFormat = ExportFormat.JSON,
-                    error = null,
+                    errorResId = null,
                 )
             }
 
@@ -284,7 +290,8 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        statusMessage = "JSON data exported",
+                        statusMessageResId = CoreUiR.string.backup_json_exported,
+                        statusMessageArgs = emptyArray(),
                     )
                 }
                 _effects.emit(
@@ -297,7 +304,7 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        error = "JSON export failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_json_failed,
                     )
                 }
             }
@@ -312,7 +319,7 @@ class BackupExportViewModel @Inject constructor(
                 it.copy(
                     isExporting = true,
                     exportFormat = ExportFormat.CSV,
-                    error = null,
+                    errorResId = null,
                 )
             }
 
@@ -326,7 +333,8 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        statusMessage = "CSV word lists exported",
+                        statusMessageResId = CoreUiR.string.backup_csv_exported,
+                        statusMessageArgs = emptyArray(),
                     )
                 }
                 _effects.emit(
@@ -339,7 +347,7 @@ class BackupExportViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isExporting = false,
-                        error = "CSV export failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_csv_failed,
                     )
                 }
             }
@@ -350,21 +358,22 @@ class BackupExportViewModel @Inject constructor(
         if (_state.value.isImporting) return
 
         viewModelScope.launch {
-            _state.update { it.copy(isImporting = true, error = null) }
+            _state.update { it.copy(isImporting = true, errorResId = null) }
 
             try {
                 val count = importWordListUseCase(csvContent, profileId)
                 _state.update {
                     it.copy(
                         isImporting = false,
-                        statusMessage = "Imported $count words",
+                        statusMessageResId = CoreUiR.string.backup_imported_words,
+                        statusMessageArgs = arrayOf(count),
                     )
                 }
             } catch (e: Exception) {
                 _state.update {
                     it.copy(
                         isImporting = false,
-                        error = "Import failed: ${e.message ?: "Unknown error"}",
+                        errorResId = CoreUiR.string.backup_import_failed,
                     )
                 }
             }
@@ -372,7 +381,9 @@ class BackupExportViewModel @Inject constructor(
     }
 
     private fun handleDismissStatus() {
-        _state.update { it.copy(statusMessage = null, error = null) }
+        _state.update {
+            it.copy(statusMessageResId = null, statusMessageArgs = emptyArray(), errorResId = null)
+        }
     }
 
     private fun handleSetAutoBackupEnabled(enabled: Boolean) {

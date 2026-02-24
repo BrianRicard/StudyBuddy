@@ -1,5 +1,6 @@
 package com.studybuddy.feature.dictee.practice
 
+import androidx.annotation.StringRes
 import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.Feedback
@@ -19,7 +20,7 @@ data class DicteePracticeState(
     val hintVisible: Boolean = false,
     val recognizedText: String? = null,
     val recognitionPending: Boolean = false,
-    val recognitionError: String? = null,
+    @StringRes val recognitionErrorResId: Int? = null,
 ) {
     val currentWord: DicteeWord? get() = words.getOrNull(currentIndex)
     val progress: Float get() = if (words.isEmpty()) 0f else currentIndex.toFloat() / words.size

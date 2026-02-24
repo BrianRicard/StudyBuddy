@@ -202,7 +202,7 @@ class DicteeWordEntryViewModelTest {
             assertTrue(effect is DicteeWordEntryEffect.ShowError)
 
             val state = viewModel.state.value
-            assertEquals("Could not add word. Please try again.", state.errorMessage)
+            assertEquals(com.studybuddy.core.ui.R.string.dictee_add_word_error, state.errorMessageResId)
         }
     }
 
@@ -217,11 +217,11 @@ class DicteeWordEntryViewModelTest {
         viewModel.onIntent(DicteeWordEntryIntent.AddWord)
         advanceUntilIdle()
 
-        assertEquals("Could not add word. Please try again.", viewModel.state.value.errorMessage)
+        assertEquals(com.studybuddy.core.ui.R.string.dictee_add_word_error, viewModel.state.value.errorMessageResId)
 
         viewModel.onIntent(DicteeWordEntryIntent.DismissError)
         advanceUntilIdle()
 
-        assertEquals(null, viewModel.state.value.errorMessage)
+        assertEquals(null, viewModel.state.value.errorMessageResId)
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -58,6 +59,7 @@ fun DicteeWordEntryScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -65,8 +67,8 @@ fun DicteeWordEntryScreen(
                 is DicteeWordEntryEffect.NavigateToPractice -> onNavigateToPractice(effect.listId)
                 is DicteeWordEntryEffect.ShowUndoSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = "\"${effect.word.word}\" deleted",
-                        actionLabel = "Undo",
+                        message = context.getString(CoreUiR.string.dictee_word_deleted, effect.word.word),
+                        actionLabel = context.getString(CoreUiR.string.dictee_undo),
                         duration = SnackbarDuration.Short,
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -75,7 +77,7 @@ fun DicteeWordEntryScreen(
                 }
                 is DicteeWordEntryEffect.ShowError -> {
                     snackbarHostState.showSnackbar(
-                        message = effect.message,
+                        message = context.getString(effect.messageResId),
                         duration = SnackbarDuration.Short,
                     )
                 }
@@ -112,7 +114,7 @@ private fun DicteeWordEntryContent(
                     IconButton(onClick = { onIntent(DicteeWordEntryIntent.ToggleEditMode) }) {
                         Icon(
                             Icons.Default.Edit,
-                            contentDescription = "Toggle Edit Mode",
+                            contentDescription = stringResource(CoreUiR.string.dictee_toggle_edit),
                             tint = if (state.isEditMode) {
                                 MaterialTheme.colorScheme.primary
                             } else {
