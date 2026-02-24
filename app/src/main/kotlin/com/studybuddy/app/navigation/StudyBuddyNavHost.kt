@@ -117,6 +117,7 @@ fun StudyBuddyNavHost(
                 onNavigateToChallenge = { listIds ->
                     navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
                 },
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
@@ -153,6 +154,7 @@ fun StudyBuddyNavHost(
         // Math flow
         composable(route = StudyBuddyRoutes.MATH_SETUP) {
             MathSetupScreen(
+                onNavigateBack = { navController.popBackStack() },
                 onStartGame = { setupState ->
                     val operatorsStr = setupState.selectedOperators
                         .joinToString(",") { it.name }

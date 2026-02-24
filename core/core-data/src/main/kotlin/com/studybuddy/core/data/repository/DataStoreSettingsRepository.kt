@@ -26,7 +26,6 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val APP_LOCALE = stringPreferencesKey("app_locale")
         val ACCENT_STRICT = booleanPreferencesKey("accent_strict")
         val SOUND_ENABLED = booleanPreferencesKey("sound_enabled")
-        val HAPTIC_ENABLED = booleanPreferencesKey("haptic_enabled")
         val DAILY_GOAL = intPreferencesKey("daily_goal")
         val SELECTED_THEME = stringPreferencesKey("selected_theme")
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
@@ -49,12 +48,6 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
 
     override suspend fun setSoundEnabled(enabled: Boolean) {
         context.dataStore.edit { it[Keys.SOUND_ENABLED] = enabled }
-    }
-
-    override fun isHapticEnabled(): Flow<Boolean> = context.dataStore.data.map { it[Keys.HAPTIC_ENABLED] ?: true }
-
-    override suspend fun setHapticEnabled(enabled: Boolean) {
-        context.dataStore.edit { it[Keys.HAPTIC_ENABLED] = enabled }
     }
 
     override fun getDailyGoal(): Flow<Int> =

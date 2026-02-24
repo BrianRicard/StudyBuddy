@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RangeSlider
 import androidx.compose.material3.Scaffold
@@ -46,6 +48,7 @@ import com.studybuddy.core.ui.theme.StudyBuddyTheme
 fun MathSetupScreen(
     viewModel: MathSetupViewModel = hiltViewModel(),
     onStartGame: (MathSetupState) -> Unit,
+    onNavigateBack: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -53,6 +56,7 @@ fun MathSetupScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onStartGame = { onStartGame(state) },
+        onNavigateBack = onNavigateBack,
     )
 }
 
@@ -62,10 +66,21 @@ private fun MathSetupContent(
     state: MathSetupState,
     onIntent: (MathSetupIntent) -> Unit,
     onStartGame: () -> Unit,
+    onNavigateBack: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(title = { Text("Speed Math") })
+            TopAppBar(
+                title = { Text("Speed Math") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
+            )
         },
     ) { padding ->
         Column(

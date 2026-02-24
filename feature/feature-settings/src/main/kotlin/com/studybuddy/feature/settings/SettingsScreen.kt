@@ -141,14 +141,6 @@ private fun SettingsContent(
                         onToggle = { onIntent(SettingsIntent.ToggleSound) },
                     )
                 }
-                item {
-                    SwitchSettingRow(
-                        label = "Haptic Feedback",
-                        isChecked = state.isHapticEnabled,
-                        onToggle = { onIntent(SettingsIntent.ToggleHaptic) },
-                    )
-                }
-
                 // -- Learning Section --
                 item {
                     Spacer(modifier = Modifier.height(12.dp))
@@ -797,7 +789,6 @@ private fun SettingsScreenPreview() {
                 ),
                 locale = "fr",
                 isSoundEnabled = true,
-                isHapticEnabled = true,
                 dailyGoal = 5,
                 isAccentStrict = false,
                 selectedTheme = "sunset",
@@ -819,7 +810,6 @@ private fun SettingsScreenParentZonePreview() {
                 avatarConfig = AvatarConfig.default(),
                 locale = "en",
                 isSoundEnabled = false,
-                isHapticEnabled = true,
                 dailyGoal = 10,
                 isAccentStrict = true,
                 selectedTheme = "ocean",

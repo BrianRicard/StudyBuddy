@@ -44,7 +44,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.AvatarConfig
@@ -52,7 +51,9 @@ import com.studybuddy.core.domain.model.CharacterBody
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.AvatarComposite
+import com.studybuddy.core.ui.components.CharacterPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
@@ -278,13 +279,12 @@ private fun CharacterChip(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 8.dp),
+                .padding(vertical = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = character.emoji,
-                fontSize = 28.sp,
-                textAlign = TextAlign.Center,
+            CharacterPreview(
+                characterId = character.id,
+                size = 36.dp,
             )
             Spacer(modifier = Modifier.height(2.dp))
             Text(
@@ -411,13 +411,10 @@ private fun ItemCard(
         ) {
             // Icon + name centered in card
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                if (item.icon.isNotEmpty()) {
-                    Text(
-                        text = item.icon,
-                        fontSize = 28.sp,
-                        textAlign = TextAlign.Center,
-                    )
-                }
+                AccessoryPreview(
+                    itemId = item.id,
+                    size = 32.dp,
+                )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = item.name,

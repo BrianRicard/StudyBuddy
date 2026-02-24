@@ -9,8 +9,6 @@ interface SettingsRepository {
     suspend fun setAccentStrict(strict: Boolean)
     fun isSoundEnabled(): Flow<Boolean>
     suspend fun setSoundEnabled(enabled: Boolean)
-    fun isHapticEnabled(): Flow<Boolean>
-    suspend fun setHapticEnabled(enabled: Boolean)
     fun getDailyGoal(): Flow<Int>
     suspend fun setDailyGoal(goal: Int)
     fun getSelectedTheme(): Flow<String>

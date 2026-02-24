@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Delete
@@ -33,6 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -69,6 +71,7 @@ import com.studybuddy.core.ui.components.StudyBuddyCard
 fun DicteeListScreen(
     onNavigateToWords: (String) -> Unit,
     onNavigateToChallenge: (List<String>) -> Unit,
+    onNavigateBack: () -> Unit,
     viewModel: DicteeListViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -113,6 +116,7 @@ fun DicteeListScreen(
         snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent,
         onImportCsv = { importLauncher.launch("text/*") },
+        onNavigateBack = onNavigateBack,
     )
 }
 
@@ -123,11 +127,20 @@ private fun DicteeListContent(
     snackbarHostState: SnackbarHostState,
     onIntent: (DicteeListIntent) -> Unit,
     onImportCsv: () -> Unit = {},
+    onNavigateBack: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text(if (state.isSelectMode) "Select Lists to Mix" else "Dictée") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                        )
+                    }
+                },
                 actions = {
                     if (!state.isSelectMode) {
                         TextButton(onClick = onImportCsv) {
@@ -164,6 +177,7 @@ private fun DicteeListContent(
                         .padding(horizontal = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                        top = 8.dp,
                         bottom = if (state.isSelectMode) 100.dp else 80.dp,
                     ),
                 ) {

@@ -24,6 +24,7 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
                 onNavigateToChallenge = { listIds ->
                     navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
                 },
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 
