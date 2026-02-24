@@ -77,6 +77,11 @@
 - **Problem**: Soft keyboard can cover the "Set PIN" button, causing a silent failure on first attempt
 - **Fix**: Added `imeAction = ImeAction.Done` and `keyboardActions` to PIN text field; user can submit via keyboard "Done" button
 
+### Issue 19: Dictee word count always shows "0 words" (PR #25)
+- **Screen**: Dictee list overview
+- **Problem**: Word count and mastery % always showed 0 because repository never fetched counts from DAO
+- **Fix**: Updated `LocalDicteeRepository.getListsForProfile()` and `getList()` to combine word/mastered counts via `flatMapLatest` + `combine`
+
 ## Open Issues
 
 ### Issue 13: Hardcoded strings not localized
@@ -108,6 +113,6 @@
 - [x] Theme switching (Ocean theme purchased and activated successfully)
 - [x] Parent Zone (PIN creation, unlock, options visible)
 - [x] Backup/Restore (Backup Now, Restore, Export PDF/JSON/CSV options)
-- [ ] Dictee with word lists (requires creating/importing a list first)
-- [ ] Dictee handwriting mode (requires active word list)
+- [x] Dictee with word lists (created list, added 5 words, practiced, correct/wrong/hint all working)
+- [ ] Dictee handwriting mode (requires stylus or touch drawing - tested via code review)
 - [ ] All 18 avatar characters with accessories (tested Fox/Cat with various accessories)
