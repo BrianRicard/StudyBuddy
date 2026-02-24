@@ -61,10 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge

@@ -120,7 +120,9 @@ class DicteeWordEntryViewModel @Inject constructor(
                 dicteeRepository.addWord(word)
             } catch (e: Exception) {
                 _state.update { it.copy(errorMessageResId = com.studybuddy.core.ui.R.string.dictee_restore_word_error) }
-                _effects.emit(DicteeWordEntryEffect.ShowError(com.studybuddy.core.ui.R.string.dictee_restore_word_error))
+                _effects.emit(
+                    DicteeWordEntryEffect.ShowError(com.studybuddy.core.ui.R.string.dictee_restore_word_error),
+                )
             }
         }
     }

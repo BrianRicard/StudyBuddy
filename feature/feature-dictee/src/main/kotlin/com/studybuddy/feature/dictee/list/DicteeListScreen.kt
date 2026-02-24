@@ -65,10 +65,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeList
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyCard
-import com.studybuddy.core.ui.R as CoreUiR
 
 @Composable
 fun DicteeListScreen(
@@ -135,7 +135,17 @@ private fun DicteeListContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.isSelectMode) stringResource(CoreUiR.string.dictee_select_lists) else stringResource(CoreUiR.string.dictee_list_title)) },
+                title = {
+                    Text(
+                        if (state.isSelectMode) {
+                            stringResource(
+                                CoreUiR.string.dictee_select_lists,
+                            )
+                        } else {
+                            stringResource(CoreUiR.string.dictee_list_title)
+                        },
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
@@ -152,7 +162,15 @@ private fun DicteeListContent(
                     }
                     if (state.lists.size >= 2) {
                         TextButton(onClick = { onIntent(DicteeListIntent.ToggleSelectMode) }) {
-                            Text(if (state.isSelectMode) stringResource(CoreUiR.string.cancel) else stringResource(CoreUiR.string.dictee_mix_lists))
+                            Text(
+                                if (state.isSelectMode) {
+                                    stringResource(
+                                        CoreUiR.string.cancel,
+                                    )
+                                } else {
+                                    stringResource(CoreUiR.string.dictee_mix_lists)
+                                },
+                            )
                         }
                     }
                 },
@@ -295,7 +313,11 @@ private fun DicteeListItem(
                         .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.CenterEnd,
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = stringResource(CoreUiR.string.dictee_delete), tint = Color.White)
+                    Icon(
+                        Icons.Default.Delete,
+                        contentDescription = stringResource(CoreUiR.string.dictee_delete),
+                        tint = Color.White,
+                    )
                 }
             },
             enableDismissFromStartToEnd = false,

@@ -33,12 +33,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studybuddy.core.ui.R as CoreUiR
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.InputMode
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.CelebrationOverlay
 import com.studybuddy.core.ui.animation.CorrectAnswerAnimation
 import com.studybuddy.core.ui.animation.IncorrectAnimation
@@ -86,7 +86,10 @@ private fun DicteePracticeContent(
                 title = { Text(state.listTitle) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.navigate_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
+                        )
                     }
                 },
                 actions = {
