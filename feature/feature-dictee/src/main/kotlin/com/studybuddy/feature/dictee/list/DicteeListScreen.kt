@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -339,7 +340,7 @@ private fun DicteeListItemContent(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = stringResource(CoreUiR.string.dictee_word_count, list.wordCount),
+            text = pluralStringResource(CoreUiR.plurals.dictee_word_count_plural, list.wordCount, list.wordCount),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

@@ -46,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -268,7 +269,7 @@ private fun StreakBanner(
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = if (dayStreak > 0) {
-                        stringResource(CoreUiR.string.streak_label, dayStreak)
+                        pluralStringResource(CoreUiR.plurals.streak_label_plural, dayStreak, dayStreak)
                     } else {
                         stringResource(CoreUiR.string.streak_start)
                     },

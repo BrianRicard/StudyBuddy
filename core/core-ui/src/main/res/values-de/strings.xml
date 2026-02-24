@@ -12,6 +12,14 @@
     <string name="greeting_afternoon">Guten Tag</string>
     <string name="greeting_evening">Guten Abend</string>
     <string name="streak_label">%d Tage in Folge!</string>
+    <plurals name="streak_label_plural">
+        <item quantity="one">%d Tag in Folge!</item>
+        <item quantity="other">%d Tage in Folge!</item>
+    </plurals>
+    <plurals name="dictee_word_count_plural">
+        <item quantity="one">%d Wort</item>
+        <item quantity="other">%d Wörter</item>
+    </plurals>
     <string name="streak_start">Starte deine Serie!</string>
     <string name="daily_challenge">Tägliche Herausforderung</string>
     <string name="daily_goal_complete">Tagesziel erreicht!</string>
@@ -187,7 +195,7 @@
     <string name="math_digit">Ziffer %d</string>
     <string name="math_game_paused">Spiel pausiert</string>
     <string name="math_pause_message">Mach eine Pause! Tippe auf Weiter, wenn du bereit bist.</string>
-    <string name="math_answer_was">Die Antwort war %d</string>
+    <string name="math_answer_was">Die Antwort war %s</string>
     <string name="math_times_up">Zeit vorbei! Weiter so!</string>
     <string name="math_streak_celebration">%d in Folge!</string>
 
@@ -267,6 +275,11 @@
     <string name="settings_type_reset">Tippe RESET zur Bestätigung:</string>
     <string name="settings_reset_everything">Alles zurücksetzen</string>
     <string name="settings_go_avatar">Zum Avatar-Ankleidezimmer</string>
+    <string name="settings_pin_wrong_length">PIN muss 4 Ziffern haben</string>
+    <string name="settings_pin_incorrect">Falsche PIN. Versuche es erneut.</string>
+    <string name="settings_pin_set_success">Eltern-PIN erfolgreich festgelegt</string>
+    <string name="settings_type_reset_confirm">Geben Sie RESET zur Bestätigung ein</string>
+    <string name="settings_reset_failed">Zurücksetzen fehlgeschlagen</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Sicherung</string>
@@ -342,6 +355,8 @@
     <string name="dictee_create">Erstellen</string>
     <string name="dictee_list_deleted">Liste „%s" gelöscht</string>
     <string name="dictee_undo">Rückgängig</string>
+    <string name="dictee_no_words">Noch keine Wörter</string>
+    <string name="dictee_no_words_hint">Füge unten Wörter hinzu, um mit dem Üben zu beginnen!</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">%s Operator, ausgewählt</string>

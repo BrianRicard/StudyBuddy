@@ -12,6 +12,14 @@
     <string name="greeting_afternoon">Bon après-midi</string>
     <string name="greeting_evening">Bonsoir</string>
     <string name="streak_label">%d jours de suite !</string>
+    <plurals name="streak_label_plural">
+        <item quantity="one">%d jour de suite !</item>
+        <item quantity="other">%d jours de suite !</item>
+    </plurals>
+    <plurals name="dictee_word_count_plural">
+        <item quantity="one">%d mot</item>
+        <item quantity="other">%d mots</item>
+    </plurals>
     <string name="streak_start">Commence ta série !</string>
     <string name="daily_challenge">Défi du jour</string>
     <string name="daily_goal_complete">Objectif atteint !</string>
@@ -187,7 +195,7 @@
     <string name="math_digit">Chiffre %d</string>
     <string name="math_game_paused">Jeu en pause</string>
     <string name="math_pause_message">Fais une pause ! Appuie sur Reprendre quand tu es prêt.</string>
-    <string name="math_answer_was">La réponse était %d</string>
+    <string name="math_answer_was">La réponse était %s</string>
     <string name="math_times_up">Temps écoulé ! Continue !</string>
     <string name="math_streak_celebration">Série de %d !</string>
 
@@ -267,6 +275,11 @@
     <string name="settings_type_reset">Tape RESET pour confirmer :</string>
     <string name="settings_reset_everything">Tout réinitialiser</string>
     <string name="settings_go_avatar">Aller au dressing avatar</string>
+    <string name="settings_pin_wrong_length">Le PIN doit contenir 4 chiffres</string>
+    <string name="settings_pin_incorrect">PIN incorrect. Réessaie.</string>
+    <string name="settings_pin_set_success">PIN parent défini avec succès</string>
+    <string name="settings_type_reset_confirm">Tapez RESET pour confirmer</string>
+    <string name="settings_reset_failed">La réinitialisation a échoué</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Sauvegarde</string>
@@ -342,6 +355,8 @@
     <string name="dictee_create">Créer</string>
     <string name="dictee_list_deleted">Liste « %s » supprimée</string>
     <string name="dictee_undo">Annuler</string>
+    <string name="dictee_no_words">Aucun mot encore</string>
+    <string name="dictee_no_words_hint">Ajoute des mots ci-dessous pour commencer à t\'entraîner !</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">Opérateur %s, sélectionné</string>

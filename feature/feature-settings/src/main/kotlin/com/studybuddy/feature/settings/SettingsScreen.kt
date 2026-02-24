@@ -71,13 +71,14 @@ fun SettingsScreen(
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
+    val context = androidx.compose.ui.platform.LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is SettingsEffect.NavigateTo -> onNavigate(effect.route)
                 is SettingsEffect.ShowToast -> {
-                    snackbarHostState.showSnackbar(effect.message)
+                    snackbarHostState.showSnackbar(context.getString(effect.messageResId))
                 }
                 is SettingsEffect.AppReset -> onAppReset()
             }
@@ -208,7 +209,7 @@ private fun SettingsContent(
     if (state.showPinDialog) {
         PinEntryDialog(
             isNewPin = !state.parentPinSet,
-            error = state.pinError,
+            error = state.pinErrorResId?.let { stringResource(it) },
             onSubmit = { pin ->
                 if (state.parentPinSet) {
                     onIntent(SettingsIntent.SubmitPin(pin))

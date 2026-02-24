@@ -35,7 +35,7 @@ data class SettingsState(
     val showParentZone: Boolean = false,
     val parentPinSet: Boolean = false,
     val showPinDialog: Boolean = false,
-    val pinError: String? = null,
+    @androidx.annotation.StringRes val pinErrorResId: Int? = null,
     val showResetDialog: Boolean = false,
     val isLoading: Boolean = true,
 )
@@ -65,7 +65,7 @@ sealed interface SettingsIntent {
  */
 sealed interface SettingsEffect {
     data class NavigateTo(val route: String) : SettingsEffect
-    data class ShowToast(val message: String) : SettingsEffect
+    data class ShowToast(@androidx.annotation.StringRes val messageResId: Int) : SettingsEffect
     data object AppReset : SettingsEffect
 }
 
@@ -227,14 +227,14 @@ class SettingsViewModel @Inject constructor(
         if (storedPinHash != null) {
             // PIN set — require verification
             _state.update {
-                it.copy(showPinDialog = true, pinError = null)
+                it.copy(showPinDialog = true, pinErrorResId = null)
             }
         } else {
             // No PIN yet — prompt to create one
             _state.update {
                 it.copy(
                     showPinDialog = true,
-                    pinError = null,
+                    pinErrorResId = null,
                     parentPinSet = false,
                 )
             }
@@ -246,7 +246,7 @@ class SettingsViewModel @Inject constructor(
      */
     private fun submitPin(pin: String) {
         if (pin.length != PIN_LENGTH) {
-            _state.update { it.copy(pinError = "PIN must be $PIN_LENGTH digits") }
+            _state.update { it.copy(pinErrorResId = com.studybuddy.core.ui.R.string.settings_pin_wrong_length) }
             return
         }
         if (pin.hashCode() == storedPinHash) {
@@ -254,11 +254,11 @@ class SettingsViewModel @Inject constructor(
                 it.copy(
                     showParentZone = true,
                     showPinDialog = false,
-                    pinError = null,
+                    pinErrorResId = null,
                 )
             }
         } else {
-            _state.update { it.copy(pinError = "Incorrect PIN. Try again.") }
+            _state.update { it.copy(pinErrorResId = com.studybuddy.core.ui.R.string.settings_pin_incorrect) }
         }
     }
 
@@ -268,7 +268,7 @@ class SettingsViewModel @Inject constructor(
      */
     private fun setNewPin(pin: String) {
         if (pin.length != PIN_LENGTH) {
-            _state.update { it.copy(pinError = "PIN must be $PIN_LENGTH digits") }
+            _state.update { it.copy(pinErrorResId = com.studybuddy.core.ui.R.string.settings_pin_wrong_length) }
             return
         }
         val hash = pin.hashCode()
@@ -277,18 +277,18 @@ class SettingsViewModel @Inject constructor(
             it.copy(
                 showParentZone = true,
                 showPinDialog = false,
-                pinError = null,
+                pinErrorResId = null,
                 parentPinSet = true,
             )
         }
         viewModelScope.launch {
             settingsRepository.setParentPinHash(hash)
-            _effects.emit(SettingsEffect.ShowToast("Parent PIN set successfully"))
+            _effects.emit(SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_pin_set_success))
         }
     }
 
     private fun dismissPinDialog() {
-        _state.update { it.copy(showPinDialog = false, pinError = null) }
+        _state.update { it.copy(showPinDialog = false, pinErrorResId = null) }
     }
 
     private fun requestReset() {
@@ -303,7 +303,7 @@ class SettingsViewModel @Inject constructor(
         if (confirmText != RESET_CONFIRMATION_TEXT) {
             viewModelScope.launch {
                 _effects.emit(
-                    SettingsEffect.ShowToast("Type RESET to confirm"),
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_type_reset_confirm),
                 )
             }
             return
@@ -320,7 +320,7 @@ class SettingsViewModel @Inject constructor(
                 _effects.emit(SettingsEffect.AppReset)
             } catch (e: Exception) {
                 _effects.emit(
-                    SettingsEffect.ShowToast("Reset failed: ${e.message}"),
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_reset_failed),
                 )
             }
         }
