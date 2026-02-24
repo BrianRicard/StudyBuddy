@@ -58,6 +58,7 @@ import com.studybuddy.core.ui.components.StreakIndicator
 import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.IncorrectRed
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.theme.TimeoutAmber
 
 @Composable
 fun MathPlayScreen(
@@ -329,7 +330,8 @@ private fun AnswerDisplay(
 ) {
     val answerColor = when (feedback) {
         is Feedback.Correct -> CorrectGreen
-        is Feedback.Incorrect, is Feedback.TimeUp -> IncorrectRed
+        is Feedback.Incorrect -> IncorrectRed
+        is Feedback.TimeUp -> TimeoutAmber
         null -> MaterialTheme.colorScheme.onSurface
     }
 
@@ -374,7 +376,8 @@ private fun FeedbackMessage(
 
     val color = when (feedback) {
         is Feedback.Correct -> CorrectGreen
-        is Feedback.Incorrect, is Feedback.TimeUp -> IncorrectRed
+        is Feedback.Incorrect -> IncorrectRed
+        is Feedback.TimeUp -> TimeoutAmber
         null -> MaterialTheme.colorScheme.onSurface
     }
 

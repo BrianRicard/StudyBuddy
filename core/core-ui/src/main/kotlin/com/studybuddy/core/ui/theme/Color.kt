@@ -112,5 +112,6 @@ val ArcticColorScheme = lightColorScheme(
 // Shared colors
 val CorrectGreen = Color(0xFF4CAF50)
 val IncorrectRed = Color(0xFFE57373)
+val TimeoutAmber = Color(0xFFFFA726)
 val StreakOrange = Color(0xFFFF9800)
 val PointsGold = Color(0xFFFFD700)
