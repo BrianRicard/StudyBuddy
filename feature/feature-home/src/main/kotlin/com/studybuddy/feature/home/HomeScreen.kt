@@ -25,13 +25,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -44,10 +42,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -113,7 +111,6 @@ fun HomeScreen(
                     state = state,
                     onAvatarClick = { viewModel.onIntent(HomeIntent.NavigateToAvatar) },
                     onStarsClick = { viewModel.onIntent(HomeIntent.NavigateToStats) },
-                    onSettingsClick = { viewModel.onIntent(HomeIntent.NavigateToSettings) },
                 )
             }
 
@@ -171,7 +168,6 @@ private fun HomeHeader(
     state: HomeState,
     onAvatarClick: () -> Unit,
     onStarsClick: () -> Unit,
-    onSettingsClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -236,16 +232,6 @@ private fun HomeHeader(
                 style = MaterialTheme.typography.labelLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
-            )
-        }
-
-        Spacer(Modifier.width(4.dp))
-
-        // Settings
-        IconButton(onClick = onSettingsClick) {
-            Icon(
-                imageVector = Icons.Default.Settings,
-                contentDescription = stringResource(CoreUiR.string.nav_settings),
             )
         }
     }

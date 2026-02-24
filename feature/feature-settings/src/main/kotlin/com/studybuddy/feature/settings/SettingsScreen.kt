@@ -40,23 +40,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.AvatarConfig
-import com.studybuddy.core.ui.components.AvatarComposite
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyButton
-import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
-import com.studybuddy.core.ui.R as CoreUiR
 
 /**
  * Entry-point composable for the Settings screen.
@@ -119,16 +117,6 @@ private fun SettingsContent(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // -- Profile Card --
-                item {
-                    ProfileCard(
-                        name = state.profileName,
-                        avatarConfig = state.avatarConfig,
-                        onClick = { onIntent(SettingsIntent.NavigateToAvatarCloset) },
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
                 // -- General Section --
                 item { SectionHeader(title = stringResource(CoreUiR.string.settings_general)) }
                 item {
@@ -228,52 +216,6 @@ private fun SettingsContent(
         )
     }
 }
-
-// region Profile Card
-
-@Composable
-private fun ProfileCard(
-    name: String,
-    avatarConfig: AvatarConfig?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    StudyBuddyCard(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AvatarComposite(
-                config = avatarConfig ?: AvatarConfig.default(),
-                size = 50.dp,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = name.ifEmpty { stringResource(CoreUiR.string.settings_student) },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = stringResource(CoreUiR.string.settings_tap_edit),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = stringResource(CoreUiR.string.settings_go_avatar),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-// endregion
 
 // region Section Header
 
@@ -433,7 +375,11 @@ private fun AccentModeSettingRow(
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = if (isStrict) stringResource(CoreUiR.string.settings_strict) else stringResource(CoreUiR.string.settings_lenient),
+                text = if (isStrict) {
+                    stringResource(CoreUiR.string.settings_strict)
+                } else {
+                    stringResource(CoreUiR.string.settings_lenient)
+                },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -516,13 +462,21 @@ private fun ParentZoneLockRow(
     ) {
         Icon(
             imageVector = if (isUnlocked) Icons.Default.LockOpen else Icons.Default.Lock,
-            contentDescription = if (isUnlocked) stringResource(CoreUiR.string.settings_parent_unlocked_desc) else stringResource(CoreUiR.string.settings_parent_locked_desc),
+            contentDescription = if (isUnlocked) {
+                stringResource(CoreUiR.string.settings_parent_unlocked_desc)
+            } else {
+                stringResource(CoreUiR.string.settings_parent_locked_desc)
+            },
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = if (isUnlocked) stringResource(CoreUiR.string.settings_parent_unlocked) else stringResource(CoreUiR.string.settings_unlock_parent),
+            text = if (isUnlocked) {
+                stringResource(CoreUiR.string.settings_parent_unlocked)
+            } else {
+                stringResource(CoreUiR.string.settings_unlock_parent)
+            },
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
@@ -653,7 +607,11 @@ private fun PinEntryDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isNewPin) stringResource(CoreUiR.string.settings_create_pin) else stringResource(CoreUiR.string.settings_enter_pin_title),
+                text = if (isNewPin) {
+                    stringResource(CoreUiR.string.settings_create_pin)
+                } else {
+                    stringResource(CoreUiR.string.settings_enter_pin_title)
+                },
             )
         },
         text = {
@@ -696,7 +654,11 @@ private fun PinEntryDialog(
         },
         confirmButton = {
             StudyBuddyButton(
-                text = if (isNewPin) stringResource(CoreUiR.string.settings_set_pin_btn) else stringResource(CoreUiR.string.settings_unlock_btn),
+                text = if (isNewPin) {
+                    stringResource(CoreUiR.string.settings_set_pin_btn)
+                } else {
+                    stringResource(CoreUiR.string.settings_unlock_btn)
+                },
                 onClick = { onSubmit(pin) },
                 enabled = pin.length == SettingsViewModel.PIN_LENGTH,
             )

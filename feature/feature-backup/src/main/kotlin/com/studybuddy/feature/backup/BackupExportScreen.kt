@@ -48,11 +48,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
-import com.studybuddy.core.ui.R as CoreUiR
 
 @Composable
 fun BackupExportScreen(
@@ -212,7 +212,13 @@ private fun BackupExportContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     StudyBuddyButton(
-                        text = if (state.isBackingUp) stringResource(CoreUiR.string.backup_backing_up) else stringResource(CoreUiR.string.backup_now),
+                        text = if (state.isBackingUp) {
+                            stringResource(
+                                CoreUiR.string.backup_backing_up,
+                            )
+                        } else {
+                            stringResource(CoreUiR.string.backup_now)
+                        },
                         onClick = { onIntent(BackupExportIntent.CreateBackup) },
                         enabled = !state.isBackingUp && !state.isRestoring,
                         modifier = Modifier.fillMaxWidth(),

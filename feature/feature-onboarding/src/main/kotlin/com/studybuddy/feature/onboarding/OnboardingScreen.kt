@@ -41,9 +41,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,12 +55,12 @@ import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.CharacterBody
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
-import com.studybuddy.core.ui.R as CoreUiR
 
 /**
  * Entry-point composable for the Onboarding flow.
@@ -734,7 +734,13 @@ private fun VoiceStep(
                 modifier = Modifier.weight(1f),
             )
             StudyBuddyButton(
-                text = if (isCompleting) stringResource(CoreUiR.string.onboarding_saving) else stringResource(CoreUiR.string.onboarding_lets_go),
+                text = if (isCompleting) {
+                    stringResource(
+                        CoreUiR.string.onboarding_saving,
+                    )
+                } else {
+                    stringResource(CoreUiR.string.onboarding_lets_go)
+                },
                 onClick = onComplete,
                 enabled = !isCompleting,
                 modifier = Modifier.weight(1f),

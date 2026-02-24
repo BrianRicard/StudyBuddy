@@ -1,6 +1,5 @@
 package com.studybuddy.feature.rewards
 
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,10 +61,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
@@ -333,11 +332,6 @@ private fun AvatarItemCard(
     onPurchase: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isOwned) CorrectGreen else MaterialTheme.colorScheme.outlineVariant,
-        label = "avatar-item-border",
-    )
-
     Card(
         onClick = { if (!isOwned && item.cost > 0) onPurchase() },
         modifier = modifier.aspectRatio(0.85f),
@@ -346,11 +340,11 @@ private fun AvatarItemCard(
             containerColor = if (isOwned) {
                 CorrectGreen.copy(alpha = 0.08f)
             } else {
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f)
             },
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isOwned) 2.dp else 1.dp,
+            defaultElevation = if (isOwned) 2.dp else 0.dp,
         ),
     ) {
         Column(

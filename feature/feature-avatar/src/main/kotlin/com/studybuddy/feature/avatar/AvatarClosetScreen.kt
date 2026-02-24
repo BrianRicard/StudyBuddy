@@ -1,7 +1,5 @@
 package com.studybuddy.feature.avatar
 
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -250,23 +248,10 @@ private fun CharacterChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.outlineVariant
-        },
-        label = "character-border",
-    )
-
     Card(
         onClick = onClick,
         modifier = modifier.width(72.dp),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = if (isSelected) 2.dp else 1.dp,
-            color = borderColor,
-        ),
         colors = CardDefaults.cardColors(
             containerColor = if (isSelected) {
                 MaterialTheme.colorScheme.primaryContainer
@@ -275,7 +260,7 @@ private fun CharacterChip(
             },
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp,
+            defaultElevation = if (isSelected) 4.dp else 0.dp,
         ),
     ) {
         Column(
@@ -378,33 +363,25 @@ private fun ItemCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val borderColor by animateColorAsState(
-        targetValue = when {
-            isEquipped -> CorrectGreen
-            else -> MaterialTheme.colorScheme.outlineVariant
-        },
-        label = "item-border",
-    )
-
     Card(
         onClick = onClick,
         modifier = modifier.aspectRatio(1f),
         shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = if (isEquipped) 2.dp else 1.dp,
-            color = borderColor,
-        ),
         colors = CardDefaults.cardColors(
             containerColor = when {
                 isEquipped -> CorrectGreen.copy(alpha = 0.1f)
                 isOwned -> MaterialTheme.colorScheme.surface
                 else ->
                     MaterialTheme.colorScheme.surfaceVariant
-                        .copy(alpha = 0.5f)
+                        .copy(alpha = 0.3f)
             },
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isEquipped) 4.dp else 1.dp,
+            defaultElevation = when {
+                isEquipped -> 4.dp
+                isOwned -> 1.dp
+                else -> 0.dp
+            },
         ),
     ) {
         Box(

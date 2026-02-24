@@ -137,7 +137,12 @@ class DicteeListViewModel @Inject constructor(
                 val count = importWordListUseCase(csvContent, profileId)
                 _state.update { it.copy(isImporting = false) }
                 if (count > 0) {
-                    _effects.emit(DicteeListEffect.ShowToast(com.studybuddy.core.ui.R.string.dictee_imported_count, arrayOf(count)))
+                    _effects.emit(
+                        DicteeListEffect.ShowToast(
+                            com.studybuddy.core.ui.R.string.dictee_imported_count,
+                            arrayOf(count),
+                        ),
+                    )
                 } else {
                     _effects.emit(DicteeListEffect.ShowToast(com.studybuddy.core.ui.R.string.dictee_import_no_words))
                 }

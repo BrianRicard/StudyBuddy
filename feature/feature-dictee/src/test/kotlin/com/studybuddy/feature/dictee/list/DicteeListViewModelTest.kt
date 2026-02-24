@@ -331,7 +331,10 @@ class DicteeListViewModelTest {
 
             val effect = awaitItem()
             assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(com.studybuddy.core.ui.R.string.dictee_imported_count, (effect as DicteeListEffect.ShowToast).messageResId)
+            assertEquals(
+                com.studybuddy.core.ui.R.string.dictee_imported_count,
+                (effect as DicteeListEffect.ShowToast).messageResId,
+            )
         }
 
         assertFalse(viewModel.state.value.isImporting)
@@ -350,7 +353,10 @@ class DicteeListViewModelTest {
 
             val effect = awaitItem()
             assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(com.studybuddy.core.ui.R.string.dictee_import_no_words, (effect as DicteeListEffect.ShowToast).messageResId)
+            assertEquals(
+                com.studybuddy.core.ui.R.string.dictee_import_no_words,
+                (effect as DicteeListEffect.ShowToast).messageResId,
+            )
         }
     }
 
@@ -367,7 +373,10 @@ class DicteeListViewModelTest {
 
             val effect = awaitItem()
             assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(com.studybuddy.core.ui.R.string.dictee_import_error, (effect as DicteeListEffect.ShowToast).messageResId)
+            assertEquals(
+                com.studybuddy.core.ui.R.string.dictee_import_error,
+                (effect as DicteeListEffect.ShowToast).messageResId,
+            )
         }
 
         assertFalse(viewModel.state.value.isImporting)

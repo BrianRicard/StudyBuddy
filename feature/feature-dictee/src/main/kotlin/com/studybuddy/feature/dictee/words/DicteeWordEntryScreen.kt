@@ -42,10 +42,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.studybuddy.core.ui.R as CoreUiR
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyButton
@@ -107,7 +107,10 @@ private fun DicteeWordEntryContent(
                 title = { Text(state.list?.title ?: stringResource(CoreUiR.string.dictee_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.navigate_back))
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
+                        )
                     }
                 },
                 actions = {

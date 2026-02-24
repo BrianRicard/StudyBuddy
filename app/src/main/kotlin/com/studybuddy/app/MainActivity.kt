@@ -3,6 +3,7 @@ package com.studybuddy.app
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
@@ -25,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.annotation.StringRes
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -34,10 +34,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.studybuddy.app.navigation.StudyBuddyNavHost
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.core.ui.theme.ThemeConfig
-import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
