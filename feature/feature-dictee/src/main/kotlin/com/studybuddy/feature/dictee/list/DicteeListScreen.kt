@@ -57,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,6 +67,7 @@ import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyCard
+import com.studybuddy.core.ui.R as CoreUiR
 
 @Composable
 fun DicteeListScreen(
@@ -96,8 +98,8 @@ fun DicteeListScreen(
                 is DicteeListEffect.NavigateToChallenge -> onNavigateToChallenge(effect.listIds)
                 is DicteeListEffect.ShowUndoSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = "List \"${effect.list.title}\" deleted",
-                        actionLabel = "Undo",
+                        message = context.getString(CoreUiR.string.dictee_list_deleted, effect.list.title),
+                        actionLabel = context.getString(CoreUiR.string.dictee_undo),
                         duration = SnackbarDuration.Short,
                     )
                     if (result == SnackbarResult.ActionPerformed) {
@@ -132,24 +134,24 @@ private fun DicteeListContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.isSelectMode) "Select Lists to Mix" else "Dictée") },
+                title = { Text(if (state.isSelectMode) stringResource(CoreUiR.string.dictee_select_lists) else stringResource(CoreUiR.string.dictee_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
                 actions = {
                     if (!state.isSelectMode) {
                         TextButton(onClick = onImportCsv) {
-                            Text("Import")
+                            Text(stringResource(CoreUiR.string.dictee_import))
                         }
                     }
                     if (state.lists.size >= 2) {
                         TextButton(onClick = { onIntent(DicteeListIntent.ToggleSelectMode) }) {
-                            Text(if (state.isSelectMode) "Cancel" else "Mix Lists")
+                            Text(if (state.isSelectMode) stringResource(CoreUiR.string.cancel) else stringResource(CoreUiR.string.dictee_mix_lists))
                         }
                     }
                 },
@@ -158,7 +160,7 @@ private fun DicteeListContent(
         floatingActionButton = {
             if (!state.isSelectMode) {
                 FloatingActionButton(onClick = { onIntent(DicteeListIntent.ShowCreateDialog) }) {
-                    Icon(Icons.Default.Add, contentDescription = "New List")
+                    Icon(Icons.Default.Add, contentDescription = stringResource(CoreUiR.string.dictee_new_list))
                 }
             }
         },
@@ -168,8 +170,8 @@ private fun DicteeListContent(
             when {
                 state.isLoading -> LoadingState()
                 state.lists.isEmpty() -> EmptyState(
-                    title = "No Word Lists Yet",
-                    message = "Tap + to create your first dictée list!",
+                    title = stringResource(CoreUiR.string.dictee_no_lists),
+                    message = stringResource(CoreUiR.string.dictee_no_lists_hint),
                 )
                 else -> LazyColumn(
                     modifier = Modifier
@@ -249,7 +251,7 @@ private fun DicteeListItem(
                 if (isSelected) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
-                        contentDescription = "Selected",
+                        contentDescription = stringResource(CoreUiR.string.dictee_selected),
                         tint = MaterialTheme.colorScheme.primary,
                         modifier = Modifier.size(24.dp),
                     )
@@ -292,7 +294,7 @@ private fun DicteeListItem(
                         .padding(horizontal = 20.dp),
                     contentAlignment = Alignment.CenterEnd,
                 ) {
-                    Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.White)
+                    Icon(Icons.Default.Delete, contentDescription = stringResource(CoreUiR.string.dictee_delete), tint = Color.White)
                 }
             },
             enableDismissFromStartToEnd = false,
@@ -337,7 +339,7 @@ private fun DicteeListItemContent(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = "${list.wordCount} words",
+            text = stringResource(CoreUiR.string.dictee_word_count, list.wordCount),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -377,12 +379,12 @@ private fun ChallengeStartBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "$selectedCount lists selected",
+            text = stringResource(CoreUiR.string.dictee_lists_selected, selectedCount),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
         Button(onClick = onStart) {
-            Text("Start Challenge!")
+            Text(stringResource(CoreUiR.string.dictee_start_challenge))
         }
     }
 }
@@ -398,19 +400,19 @@ private fun CreateListDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("New Word List") },
+        title = { Text(stringResource(CoreUiR.string.dictee_new_word_list)) },
         text = {
             Column {
                 OutlinedTextField(
                     value = title,
                     onValueChange = onTitleChange,
-                    label = { Text("List Title") },
-                    placeholder = { Text("e.g. Week 1, Difficult Words…") },
+                    label = { Text(stringResource(CoreUiR.string.dictee_list_title_label)) },
+                    placeholder = { Text(stringResource(CoreUiR.string.dictee_list_title_hint)) },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("Language", style = MaterialTheme.typography.labelMedium)
+                Text(stringResource(CoreUiR.string.dictee_language), style = MaterialTheme.typography.labelMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     SupportedLocale.entries.forEach { locale ->
@@ -432,11 +434,11 @@ private fun CreateListDialog(
         },
         confirmButton = {
             TextButton(onClick = onConfirm, enabled = title.isNotBlank()) {
-                Text("Create")
+                Text(stringResource(CoreUiR.string.dictee_create))
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("Cancel") }
+            TextButton(onClick = onDismiss) { Text(stringResource(CoreUiR.string.cancel)) }
         },
     )
 }

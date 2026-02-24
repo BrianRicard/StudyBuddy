@@ -166,6 +166,196 @@
     <string name="stars">Stars</string>
     <string name="points_earned">+%d</string>
 
+    <!-- General shared -->
+    <string name="navigate_back">Back</string>
+
+    <!-- Home additions -->
+    <string name="home_no_activity">No activity yet</string>
+    <string name="home_no_activity_hint">Start a Dictée or Math session to see your progress here!</string>
+    <string name="day_mon">M</string>
+    <string name="day_tue">T</string>
+    <string name="day_wed">W</string>
+    <string name="day_thu">T</string>
+    <string name="day_fri">F</string>
+    <string name="day_sat">S</string>
+    <string name="day_sun">S</string>
+
+    <!-- Math Play -->
+    <string name="math_pause_game">Pause game</string>
+    <string name="math_backspace">Backspace</string>
+    <string name="math_submit_answer">Submit answer</string>
+    <string name="math_digit">Digit %d</string>
+    <string name="math_game_paused">Game Paused</string>
+    <string name="math_pause_message">Take a break! Tap Resume when you\'re ready to continue.</string>
+    <string name="math_answer_was">The answer was %d</string>
+    <string name="math_times_up">Time\'s up! Keep going!</string>
+    <string name="math_streak_celebration">%d streak!</string>
+
+    <!-- Math Setup -->
+    <string name="math_go">Go!</string>
+    <string name="math_min_value">Min: %d</string>
+    <string name="math_max_value">Max: %d</string>
+    <string name="math_smart_mode">Smart Mode</string>
+    <string name="math_smart_mode_desc">Adaptive difficulty adjusts problems based on your performance. Get more right and the challenge increases!</string>
+    <string name="math_time_per_problem">Time per Problem</string>
+
+    <!-- Math Results -->
+    <string name="math_great_job">Great Job!</string>
+    <string name="math_score_label">Score</string>
+    <string name="math_accuracy_label">Accuracy</string>
+    <string name="math_best_streak_label">Best Streak</string>
+    <string name="math_avg_time_label">Avg Time</string>
+    <string name="math_points_earned">Points Earned</string>
+    <string name="math_base_points">Base</string>
+    <string name="math_streak_bonus">Streak bonus</string>
+    <string name="math_total">Total</string>
+    <string name="math_badges_unlocked">Badges Unlocked!</string>
+
+    <!-- Avatar additions -->
+    <string name="avatar_get_item">Get %s?</string>
+    <string name="avatar_cost_message">This will cost ⭐ %d stars.</string>
+    <string name="avatar_buy_item">Buy ⭐ %d</string>
+
+    <!-- Rewards additions -->
+    <string name="rewards_get_item">Get %s?</string>
+    <string name="rewards_cost_message">This will cost ⭐ %d stars.</string>
+    <string name="rewards_buy_item">Buy ⭐ %d</string>
+    <string name="rewards_active">Active</string>
+    <string name="rewards_activate">Activate</string>
+    <string name="rewards_hats_section">\uD83C\uDFA9 Hats</string>
+    <string name="rewards_face_section">\uD83D\uDD76\uFE0F Face</string>
+    <string name="rewards_outfits_section">\uD83D\uDC54 Outfits</string>
+    <string name="rewards_pets_section">\uD83D\uDC3E Pets</string>
+    <string name="rewards_celebrations">\uD83C\uDF89 Celebrations</string>
+    <string name="rewards_sounds">\uD83D\uDD0A Sounds</string>
+    <string name="rewards_unlocked">Unlocked %s!</string>
+
+    <!-- Stats additions -->
+    <string name="stats_trends">Trends</string>
+    <string name="stats_faster">faster</string>
+    <string name="stats_slower">slower</string>
+
+    <!-- Settings additions -->
+    <string name="settings_general">General</string>
+    <string name="settings_learning">Learning</string>
+    <string name="settings_parent_zone_section">Parent Zone</string>
+    <string name="settings_progress_stats">Progress &amp; Stats</string>
+    <string name="settings_backup_export">Backup &amp; Export</string>
+    <string name="settings_cloud_sync">Cloud Sync</string>
+    <string name="settings_coming_soon">Coming Soon</string>
+    <string name="settings_reset_all">Reset All Data</string>
+    <string name="settings_accent_mode">Accent Mode</string>
+    <string name="settings_strict">Strict</string>
+    <string name="settings_lenient">Lenient</string>
+    <string name="settings_tap_edit">Tap to edit avatar</string>
+    <string name="settings_student">Student</string>
+    <string name="settings_activities">%d activities</string>
+    <string name="settings_activities_per_day">%d activities per day</string>
+    <string name="settings_select_language">Select Language</string>
+    <string name="settings_set_daily_goal">Set Daily Goal</string>
+    <string name="settings_parent_unlocked">Parent Zone (Unlocked)</string>
+    <string name="settings_unlock_parent">Unlock Parent Zone</string>
+    <string name="settings_create_pin">Create Parent PIN</string>
+    <string name="settings_enter_pin_title">Enter Parent PIN</string>
+    <string name="settings_set_pin_desc">Set a 4-digit PIN to protect parent settings.</string>
+    <string name="settings_enter_pin_desc">Enter your 4-digit PIN to access parent settings.</string>
+    <string name="settings_pin_label">PIN</string>
+    <string name="settings_set_pin_btn">Set PIN</string>
+    <string name="settings_unlock_btn">Unlock</string>
+    <string name="settings_reset_title">Reset All Data?</string>
+    <string name="settings_reset_warning">This will permanently delete all profiles, progress, rewards, and settings. This cannot be undone.</string>
+    <string name="settings_type_reset">Type RESET to confirm:</string>
+    <string name="settings_reset_everything">Reset Everything</string>
+    <string name="settings_go_avatar">Go to avatar closet</string>
+
+    <!-- Backup additions -->
+    <string name="backup_section">Backup</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_auto">Auto-Backup</string>
+    <string name="backup_backing_up">Backing up…</string>
+    <string name="backup_now">Backup Now</string>
+    <string name="backup_restoring">Restoring…</string>
+    <string name="backup_restore_from">Restore from Backup</string>
+    <string name="backup_creating">Creating backup…</string>
+    <string name="backup_last">Last Backup</string>
+    <string name="backup_please_wait">Please wait</string>
+    <string name="backup_no_backups">No backups yet</string>
+    <string name="backup_pdf_title">PDF Progress Report</string>
+    <string name="backup_pdf_desc">A printable report with charts showing your learning progress across all activities.</string>
+    <string name="backup_export_pdf_btn">Export PDF</string>
+    <string name="backup_json_title">Raw Data (JSON)</string>
+    <string name="backup_json_desc">Full data export for backup or transfer to another device. Includes all profiles and settings.</string>
+    <string name="backup_export_json_btn">Export JSON</string>
+    <string name="backup_csv_title">Word Lists (CSV)</string>
+    <string name="backup_csv_desc">Export your dictee word lists as a spreadsheet-compatible file with attempt statistics.</string>
+    <string name="backup_export_csv_btn">Export CSV</string>
+    <string name="backup_import_csv_title">Import Word Lists (CSV)</string>
+    <string name="backup_import_csv_desc">Import dictee word lists from a CSV file. Expected format: List, Language, Word (with optional Mastered, Attempts, Correct Count columns).</string>
+    <string name="backup_import_csv_btn">Import CSV</string>
+    <string name="backup_enable_auto">Enable Auto-Backup</string>
+    <string name="backup_auto_desc">Automatically back up your data</string>
+    <string name="backup_frequency">Frequency</string>
+    <string name="backup_daily">Daily</string>
+    <string name="backup_weekly">Weekly</string>
+    <string name="backup_exporting">Exporting…</string>
+    <string name="backup_restore_title">Restore from Backup?</string>
+    <string name="backup_restore_warning">This will replace all your current data with the backup data. This action cannot be undone. Make sure you have a recent backup of your current data before proceeding.</string>
+    <string name="backup_restore_btn">Restore</string>
+    <string name="backup_share">Share export</string>
+    <string name="backup_saved">Backup saved successfully</string>
+
+    <!-- Onboarding additions -->
+    <string name="onboarding_welcome_title">Welcome to StudyBuddy!</string>
+    <string name="onboarding_whats_name">What\'s your name?</string>
+    <string name="onboarding_your_name">Your name</string>
+    <string name="onboarding_choose_buddy">Choose Your Buddy</string>
+    <string name="onboarding_pick_character">Pick a character</string>
+    <string name="onboarding_pick_hat">Pick a hat</string>
+    <string name="onboarding_pick_face">Pick a face accessory</string>
+    <string name="onboarding_earn_stars">⭐ Earn stars to unlock more!</string>
+    <string name="onboarding_voice_setup">Voice Setup</string>
+    <string name="onboarding_voice_desc">Download voices for offline dictée</string>
+    <string name="onboarding_voice_pack">Voice pack</string>
+    <string name="onboarding_voice_ready">✅ Ready</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_saving">Saving…</string>
+    <string name="onboarding_lets_go">Let\'s Go!</string>
+
+    <!-- Dictée list screen -->
+    <string name="dictee_select_lists">Select Lists to Mix</string>
+    <string name="dictee_list_title">Dictée</string>
+    <string name="dictee_import">Import</string>
+    <string name="dictee_mix_lists">Mix Lists</string>
+    <string name="dictee_new_list">New List</string>
+    <string name="dictee_no_lists">No Word Lists Yet</string>
+    <string name="dictee_no_lists_hint">Tap + to create your first dictée list!</string>
+    <string name="dictee_word_count">%d words</string>
+    <string name="dictee_selected">Selected</string>
+    <string name="dictee_delete">Delete</string>
+    <string name="dictee_lists_selected">%d lists selected</string>
+    <string name="dictee_start_challenge">Start Challenge!</string>
+    <string name="dictee_new_word_list">New Word List</string>
+    <string name="dictee_list_title_label">List Title</string>
+    <string name="dictee_list_title_hint">e.g. Week 1, Difficult Words…</string>
+    <string name="dictee_language">Language</string>
+    <string name="dictee_create">Create</string>
+    <string name="dictee_list_deleted">List \"%s\" deleted</string>
+    <string name="dictee_undo">Undo</string>
+
+    <!-- Math operator accessibility -->
+    <string name="math_operator_selected">%s operator, selected</string>
+    <string name="math_operator_not_selected">%s operator, not selected</string>
+
+    <!-- Settings parent zone accessibility -->
+    <string name="settings_parent_unlocked_desc">Parent zone unlocked</string>
+    <string name="settings_parent_locked_desc">Parent zone locked</string>
+
+    <!-- Poems -->
+    <string name="poems_title">Poems</string>
+    <string name="poems_mode">Poems Mode</string>
+    <string name="poems_coming_soon_desc">Coming soon! Practice reading and reciting\nbeautiful poems in French, English, and German.</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Great job!</string>
     <string name="encourage_2">You\'re doing amazing!</string>

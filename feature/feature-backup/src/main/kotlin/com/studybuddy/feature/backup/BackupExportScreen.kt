@@ -42,6 +42,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -51,6 +52,7 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.R as CoreUiR
 
 @Composable
 fun BackupExportScreen(
@@ -146,12 +148,12 @@ private fun BackupExportContent(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Backup & Export") },
+                title = { Text(stringResource(CoreUiR.string.backup_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -187,7 +189,7 @@ private fun BackupExportContent(
 
             // region Backup Section
             item {
-                SectionHeader(title = "Backup")
+                SectionHeader(title = stringResource(CoreUiR.string.backup_section))
             }
 
             item {
@@ -203,7 +205,7 @@ private fun BackupExportContent(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     StudyBuddyButton(
-                        text = if (state.isBackingUp) "Backing up..." else "Backup Now",
+                        text = if (state.isBackingUp) stringResource(CoreUiR.string.backup_backing_up) else stringResource(CoreUiR.string.backup_now),
                         onClick = { onIntent(BackupExportIntent.CreateBackup) },
                         enabled = !state.isBackingUp && !state.isRestoring,
                         modifier = Modifier.fillMaxWidth(),
@@ -211,9 +213,9 @@ private fun BackupExportContent(
 
                     StudyBuddyOutlinedButton(
                         text = if (state.isRestoring) {
-                            "Restoring..."
+                            stringResource(CoreUiR.string.backup_restoring)
                         } else {
-                            "Restore from Backup"
+                            stringResource(CoreUiR.string.backup_restore_from)
                         },
                         onClick = onOpenFilePicker,
                         enabled = !state.isBackingUp && !state.isRestoring,
@@ -225,15 +227,14 @@ private fun BackupExportContent(
 
             // region Export Section
             item {
-                SectionHeader(title = "Export")
+                SectionHeader(title = stringResource(CoreUiR.string.backup_export))
             }
 
             item {
                 ExportOptionCard(
-                    title = "PDF Progress Report",
-                    description = "A printable report with charts showing " +
-                        "your learning progress across all activities.",
-                    buttonText = "Export PDF",
+                    title = stringResource(CoreUiR.string.backup_pdf_title),
+                    description = stringResource(CoreUiR.string.backup_pdf_desc),
+                    buttonText = stringResource(CoreUiR.string.backup_export_pdf_btn),
                     isExporting = state.isExporting &&
                         state.exportFormat == ExportFormat.PDF,
                     enabled = !state.isExporting,
@@ -243,10 +244,9 @@ private fun BackupExportContent(
 
             item {
                 ExportOptionCard(
-                    title = "Raw Data (JSON)",
-                    description = "Full data export for backup or transfer " +
-                        "to another device. Includes all profiles and settings.",
-                    buttonText = "Export JSON",
+                    title = stringResource(CoreUiR.string.backup_json_title),
+                    description = stringResource(CoreUiR.string.backup_json_desc),
+                    buttonText = stringResource(CoreUiR.string.backup_export_json_btn),
                     isExporting = state.isExporting &&
                         state.exportFormat == ExportFormat.JSON,
                     enabled = !state.isExporting,
@@ -256,10 +256,9 @@ private fun BackupExportContent(
 
             item {
                 ExportOptionCard(
-                    title = "Word Lists (CSV)",
-                    description = "Export your dictee word lists as a " +
-                        "spreadsheet-compatible file with attempt statistics.",
-                    buttonText = "Export CSV",
+                    title = stringResource(CoreUiR.string.backup_csv_title),
+                    description = stringResource(CoreUiR.string.backup_csv_desc),
+                    buttonText = stringResource(CoreUiR.string.backup_export_csv_btn),
                     isExporting = state.isExporting &&
                         state.exportFormat == ExportFormat.CSV,
                     enabled = !state.isExporting,
@@ -270,16 +269,14 @@ private fun BackupExportContent(
 
             // region Import Section
             item {
-                SectionHeader(title = "Import")
+                SectionHeader(title = stringResource(CoreUiR.string.backup_import))
             }
 
             item {
                 ExportOptionCard(
-                    title = "Import Word Lists (CSV)",
-                    description = "Import dictee word lists from a CSV file. " +
-                        "Expected format: List, Language, Word " +
-                        "(with optional Mastered, Attempts, Correct Count columns).",
-                    buttonText = "Import CSV",
+                    title = stringResource(CoreUiR.string.backup_import_csv_title),
+                    description = stringResource(CoreUiR.string.backup_import_csv_desc),
+                    buttonText = stringResource(CoreUiR.string.backup_import_csv_btn),
                     isExporting = state.isImporting,
                     enabled = !state.isImporting,
                     onClick = onOpenCsvPicker,
@@ -289,7 +286,7 @@ private fun BackupExportContent(
 
             // region Auto-Backup Section
             item {
-                SectionHeader(title = "Auto-Backup")
+                SectionHeader(title = stringResource(CoreUiR.string.backup_auto))
             }
 
             item {
@@ -374,9 +371,9 @@ private fun BackupStatusCard(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = if (isBackingUp) {
-                        "Creating backup..."
+                        stringResource(CoreUiR.string.backup_creating)
                     } else {
-                        "Last Backup"
+                        stringResource(CoreUiR.string.backup_last)
                     },
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -384,9 +381,9 @@ private fun BackupStatusCard(
                 Spacer(modifier = Modifier.height(2.dp))
                 Text(
                     text = when {
-                        isBackingUp -> "Please wait"
+                        isBackingUp -> stringResource(CoreUiR.string.backup_please_wait)
                         lastBackupDate != null -> lastBackupDate
-                        else -> "No backups yet"
+                        else -> stringResource(CoreUiR.string.backup_no_backups)
                     },
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Medium,
@@ -439,7 +436,7 @@ private fun ExportOptionCard(
                     }
                 }
                 StudyBuddyOutlinedButton(
-                    text = if (isExporting) "Exporting..." else buttonText,
+                    text = if (isExporting) stringResource(CoreUiR.string.backup_exporting) else buttonText,
                     onClick = onClick,
                     enabled = enabled && !isExporting,
                 )
@@ -470,12 +467,12 @@ private fun AutoBackupCard(
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "Enable Auto-Backup",
+                        text = stringResource(CoreUiR.string.backup_enable_auto),
                         style = MaterialTheme.typography.titleSmall,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "Automatically back up your data",
+                        text = stringResource(CoreUiR.string.backup_auto_desc),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -491,7 +488,7 @@ private fun AutoBackupCard(
                 Column {
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(
-                        text = "Frequency",
+                        text = stringResource(CoreUiR.string.backup_frequency),
                         style = MaterialTheme.typography.labelMedium,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -510,8 +507,8 @@ private fun AutoBackupCard(
                             ) {
                                 Text(
                                     text = when (option) {
-                                        AutoBackupFrequency.DAILY -> "Daily"
-                                        AutoBackupFrequency.WEEKLY -> "Weekly"
+                                        AutoBackupFrequency.DAILY -> stringResource(CoreUiR.string.backup_daily)
+                                        AutoBackupFrequency.WEEKLY -> stringResource(CoreUiR.string.backup_weekly)
                                     },
                                 )
                             }
@@ -543,26 +540,23 @@ private fun RestoreConfirmDialog(
             )
         },
         title = {
-            Text(text = "Restore from Backup?")
+            Text(text = stringResource(CoreUiR.string.backup_restore_title))
         },
         text = {
             Text(
-                text = "This will replace all your current data with " +
-                    "the backup data. This action cannot be undone. " +
-                    "Make sure you have a recent backup of your " +
-                    "current data before proceeding.",
+                text = stringResource(CoreUiR.string.backup_restore_warning),
                 style = MaterialTheme.typography.bodyMedium,
             )
         },
         confirmButton = {
             StudyBuddyButton(
-                text = "Restore",
+                text = stringResource(CoreUiR.string.backup_restore_btn),
                 onClick = onConfirm,
             )
         },
         dismissButton = {
             StudyBuddyOutlinedButton(
-                text = "Cancel",
+                text = stringResource(CoreUiR.string.cancel),
                 onClick = onDismiss,
             )
         },

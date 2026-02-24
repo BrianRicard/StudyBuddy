@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +52,7 @@ import com.studybuddy.core.domain.model.CharacterBody
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.CharacterPreview
@@ -107,12 +109,12 @@ private fun AvatarClosetContent(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Avatar Closet") },
+                title = { Text(stringResource(CoreUiR.string.avatar_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -318,7 +320,7 @@ private fun AccessoryTabBar(
                 onClick = { onTabSelected(tab) },
                 text = {
                     Text(
-                        text = "${tab.icon} ${tab.label}",
+                        text = "${tab.icon} ${stringResource(tab.labelResId)}",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -430,7 +432,7 @@ private fun ItemCard(
             if (isEquipped) {
                 Icon(
                     imageVector = Icons.Default.Check,
-                    contentDescription = "Equipped",
+                    contentDescription = stringResource(CoreUiR.string.rewards_equipped),
                     tint = CorrectGreen,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
@@ -487,7 +489,7 @@ private fun PurchaseDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Get ${item.name}?")
+            Text(text = stringResource(CoreUiR.string.avatar_get_item, item.name))
         },
         text = {
             Column {
@@ -499,7 +501,7 @@ private fun PurchaseDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "This will cost \u2B50 ${item.cost} stars.",
+                    text = stringResource(CoreUiR.string.avatar_cost_message, item.cost),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -518,13 +520,13 @@ private fun PurchaseDialog(
         },
         confirmButton = {
             StudyBuddyButton(
-                text = "Buy \u2B50 ${item.cost}",
+                text = stringResource(CoreUiR.string.avatar_buy_item, item.cost),
                 onClick = onConfirm,
             )
         },
         dismissButton = {
             StudyBuddyOutlinedButton(
-                text = "Cancel",
+                text = stringResource(CoreUiR.string.cancel),
                 onClick = onDismiss,
             )
         },

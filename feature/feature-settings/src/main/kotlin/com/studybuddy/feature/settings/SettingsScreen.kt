@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -55,6 +56,7 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.R as CoreUiR
 
 /**
  * Entry-point composable for the Settings screen.
@@ -102,7 +104,7 @@ private fun SettingsContent(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(title = { Text("Settings") })
+            TopAppBar(title = { Text(stringResource(CoreUiR.string.settings_title)) })
         },
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { padding ->
@@ -127,7 +129,7 @@ private fun SettingsContent(
                 }
 
                 // -- General Section --
-                item { SectionHeader(title = "General") }
+                item { SectionHeader(title = stringResource(CoreUiR.string.settings_general)) }
                 item {
                     LanguageSettingRow(
                         currentLocale = state.locale,
@@ -136,7 +138,7 @@ private fun SettingsContent(
                 }
                 item {
                     SwitchSettingRow(
-                        label = "Sound Effects",
+                        label = stringResource(CoreUiR.string.settings_sound),
                         isChecked = state.isSoundEnabled,
                         onToggle = { onIntent(SettingsIntent.ToggleSound) },
                     )
@@ -144,7 +146,7 @@ private fun SettingsContent(
                 // -- Learning Section --
                 item {
                     Spacer(modifier = Modifier.height(12.dp))
-                    SectionHeader(title = "Learning")
+                    SectionHeader(title = stringResource(CoreUiR.string.settings_learning))
                 }
                 item {
                     DailyGoalSettingRow(
@@ -162,7 +164,7 @@ private fun SettingsContent(
                 // -- Parent Zone Section --
                 item {
                     Spacer(modifier = Modifier.height(12.dp))
-                    SectionHeader(title = "Parent Zone")
+                    SectionHeader(title = stringResource(CoreUiR.string.settings_parent_zone_section))
                 }
                 item {
                     ParentZoneLockRow(
@@ -173,20 +175,20 @@ private fun SettingsContent(
                 if (state.showParentZone) {
                     item {
                         NavigationSettingRow(
-                            label = "Progress & Stats",
+                            label = stringResource(CoreUiR.string.settings_progress_stats),
                             onClick = { onIntent(SettingsIntent.NavigateToStats) },
                         )
                     }
                     item {
                         NavigationSettingRow(
-                            label = "Backup & Export",
+                            label = stringResource(CoreUiR.string.settings_backup_export),
                             onClick = { onIntent(SettingsIntent.NavigateToBackup) },
                         )
                     }
                     item {
                         DisabledSettingRow(
-                            label = "Cloud Sync",
-                            subtitle = "Coming Soon",
+                            label = stringResource(CoreUiR.string.settings_cloud_sync),
+                            subtitle = stringResource(CoreUiR.string.settings_coming_soon),
                         )
                     }
                     item {
@@ -252,18 +254,18 @@ private fun ProfileCard(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = name.ifEmpty { "Student" },
+                    text = name.ifEmpty { stringResource(CoreUiR.string.settings_student) },
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Text(
-                    text = "Tap to edit avatar",
+                    text = stringResource(CoreUiR.string.settings_tap_edit),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
             Icon(
                 imageVector = Icons.Default.ChevronRight,
-                contentDescription = "Go to avatar closet",
+                contentDescription = stringResource(CoreUiR.string.settings_go_avatar),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
@@ -335,7 +337,7 @@ private fun LanguageSettingRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Language",
+            text = stringResource(CoreUiR.string.settings_language),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
@@ -381,12 +383,12 @@ private fun DailyGoalSettingRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Daily Goal",
+            text = stringResource(CoreUiR.string.settings_daily_goal),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
         Text(
-            text = "$currentGoal activities",
+            text = stringResource(CoreUiR.string.settings_activities, currentGoal),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -426,11 +428,11 @@ private fun AccentModeSettingRow(
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = "Accent Mode",
+                text = stringResource(CoreUiR.string.settings_accent_mode),
                 style = MaterialTheme.typography.bodyLarge,
             )
             Text(
-                text = if (isStrict) "Strict" else "Lenient",
+                text = if (isStrict) stringResource(CoreUiR.string.settings_strict) else stringResource(CoreUiR.string.settings_lenient),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -513,13 +515,13 @@ private fun ParentZoneLockRow(
     ) {
         Icon(
             imageVector = if (isUnlocked) Icons.Default.LockOpen else Icons.Default.Lock,
-            contentDescription = if (isUnlocked) "Parent zone unlocked" else "Parent zone locked",
+            contentDescription = if (isUnlocked) stringResource(CoreUiR.string.settings_parent_unlocked_desc) else stringResource(CoreUiR.string.settings_parent_locked_desc),
             tint = MaterialTheme.colorScheme.primary,
             modifier = Modifier.size(24.dp),
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-            text = if (isUnlocked) "Parent Zone (Unlocked)" else "Unlock Parent Zone",
+            text = if (isUnlocked) stringResource(CoreUiR.string.settings_parent_unlocked) else stringResource(CoreUiR.string.settings_unlock_parent),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.weight(1f),
         )
@@ -545,7 +547,7 @@ private fun ResetSettingRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = "Reset All Data",
+            text = stringResource(CoreUiR.string.settings_reset_all),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.error,
         )
@@ -565,7 +567,7 @@ private fun LocalePickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Select Language") },
+        title = { Text(stringResource(CoreUiR.string.settings_select_language)) },
         text = {
             Column {
                 SupportedLocale.entries.forEach { locale ->
@@ -591,7 +593,7 @@ private fun LocalePickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(CoreUiR.string.cancel))
             }
         },
     )
@@ -605,7 +607,7 @@ private fun DailyGoalPickerDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Set Daily Goal") },
+        title = { Text(stringResource(CoreUiR.string.settings_set_daily_goal)) },
         text = {
             Column {
                 DAILY_GOAL_OPTIONS.forEach { goal ->
@@ -622,7 +624,7 @@ private fun DailyGoalPickerDialog(
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
-                            text = "$goal activities per day",
+                            text = stringResource(CoreUiR.string.settings_activities_per_day, goal),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     }
@@ -631,7 +633,7 @@ private fun DailyGoalPickerDialog(
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(CoreUiR.string.cancel))
             }
         },
     )
@@ -650,16 +652,16 @@ private fun PinEntryDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = if (isNewPin) "Create Parent PIN" else "Enter Parent PIN",
+                text = if (isNewPin) stringResource(CoreUiR.string.settings_create_pin) else stringResource(CoreUiR.string.settings_enter_pin_title),
             )
         },
         text = {
             Column {
                 Text(
                     text = if (isNewPin) {
-                        "Set a 4-digit PIN to protect parent settings."
+                        stringResource(CoreUiR.string.settings_set_pin_desc)
                     } else {
-                        "Enter your 4-digit PIN to access parent settings."
+                        stringResource(CoreUiR.string.settings_enter_pin_desc)
                     },
                     style = MaterialTheme.typography.bodyMedium,
                 )
@@ -671,7 +673,7 @@ private fun PinEntryDialog(
                             pin = value
                         }
                     },
-                    label = { Text("PIN") },
+                    label = { Text(stringResource(CoreUiR.string.settings_pin_label)) },
                     singleLine = true,
                     visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(
@@ -693,14 +695,14 @@ private fun PinEntryDialog(
         },
         confirmButton = {
             StudyBuddyButton(
-                text = if (isNewPin) "Set PIN" else "Unlock",
+                text = if (isNewPin) stringResource(CoreUiR.string.settings_set_pin_btn) else stringResource(CoreUiR.string.settings_unlock_btn),
                 onClick = { onSubmit(pin) },
                 enabled = pin.length == SettingsViewModel.PIN_LENGTH,
             )
         },
         dismissButton = {
             StudyBuddyOutlinedButton(
-                text = "Cancel",
+                text = stringResource(CoreUiR.string.cancel),
                 onClick = onDismiss,
             )
         },
@@ -718,20 +720,19 @@ private fun ResetConfirmationDialog(
         onDismissRequest = onDismiss,
         title = {
             Text(
-                text = "Reset All Data?",
+                text = stringResource(CoreUiR.string.settings_reset_title),
                 color = MaterialTheme.colorScheme.error,
             )
         },
         text = {
             Column {
                 Text(
-                    text = "This will permanently delete all profiles, " +
-                        "progress, rewards, and settings. This cannot be undone.",
+                    text = stringResource(CoreUiR.string.settings_reset_warning),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = "Type RESET to confirm:",
+                    text = stringResource(CoreUiR.string.settings_type_reset),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -749,14 +750,14 @@ private fun ResetConfirmationDialog(
         },
         confirmButton = {
             StudyBuddyButton(
-                text = "Reset Everything",
+                text = stringResource(CoreUiR.string.settings_reset_everything),
                 onClick = { onConfirm(confirmText) },
                 enabled = confirmText == SettingsViewModel.RESET_CONFIRMATION_TEXT,
             )
         },
         dismissButton = {
             StudyBuddyOutlinedButton(
-                text = "Cancel",
+                text = stringResource(CoreUiR.string.cancel),
                 onClick = onDismiss,
             )
         },

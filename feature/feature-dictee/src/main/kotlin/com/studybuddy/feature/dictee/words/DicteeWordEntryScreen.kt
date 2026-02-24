@@ -105,7 +105,7 @@ private fun DicteeWordEntryContent(
                 title = { Text(state.list?.title ?: "Words") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.navigate_back))
                     }
                 },
                 actions = {
@@ -264,7 +264,7 @@ private fun WordItem(
                 IconButton(onClick = onDelete) {
                     Icon(
                         Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(CoreUiR.string.dictee_delete),
                         tint = MaterialTheme.colorScheme.error,
                     )
                 }

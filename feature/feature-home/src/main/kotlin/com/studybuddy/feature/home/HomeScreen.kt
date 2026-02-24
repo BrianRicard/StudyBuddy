@@ -46,11 +46,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
@@ -142,7 +144,7 @@ fun HomeScreen(
             // Recent Activity
             item {
                 Text(
-                    text = "Recent Activity",
+                    text = stringResource(CoreUiR.string.recent_activity),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -222,7 +224,7 @@ private fun HomeHeader(
         ) {
             Icon(
                 imageVector = Icons.Default.Star,
-                contentDescription = "Stars",
+                contentDescription = stringResource(CoreUiR.string.stars),
                 tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp),
             )
@@ -241,7 +243,7 @@ private fun HomeHeader(
         IconButton(onClick = onSettingsClick) {
             Icon(
                 imageVector = Icons.Default.Settings,
-                contentDescription = "Settings",
+                contentDescription = stringResource(CoreUiR.string.nav_settings),
             )
         }
     }
@@ -265,7 +267,11 @@ private fun StreakBanner(
                 Text(text = "\uD83D\uDD25", fontSize = 24.sp)
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = if (dayStreak > 0) "$dayStreak day streak!" else "Start your streak!",
+                    text = if (dayStreak > 0) {
+                        stringResource(CoreUiR.string.streak_label, dayStreak)
+                    } else {
+                        stringResource(CoreUiR.string.streak_start)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSecondaryContainer,
@@ -279,7 +285,15 @@ private fun StreakBanner(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                val dayLabels = listOf("M", "T", "W", "T", "F", "S", "S")
+                val dayLabels = listOf(
+                    stringResource(CoreUiR.string.day_mon),
+                    stringResource(CoreUiR.string.day_tue),
+                    stringResource(CoreUiR.string.day_wed),
+                    stringResource(CoreUiR.string.day_thu),
+                    stringResource(CoreUiR.string.day_fri),
+                    stringResource(CoreUiR.string.day_sat),
+                    stringResource(CoreUiR.string.day_sun),
+                )
                 weekDots.forEachIndexed { index, active ->
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Box(
@@ -341,7 +355,11 @@ private fun DailyChallengeCard(
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    text = if (isComplete) "Daily Goal Complete!" else "Daily Challenge",
+                    text = if (isComplete) {
+                        stringResource(CoreUiR.string.daily_goal_complete)
+                    } else {
+                        stringResource(CoreUiR.string.daily_challenge)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                 )
@@ -360,7 +378,7 @@ private fun DailyChallengeCard(
             Spacer(Modifier.height(4.dp))
 
             Text(
-                text = "$sessionsToday / $dailyGoal sessions",
+                text = stringResource(CoreUiR.string.daily_progress, sessionsToday, dailyGoal),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -382,8 +400,8 @@ private fun ModeCardsGrid(
         ) {
             ModeCard(
                 emoji = "\u270D\uFE0F",
-                title = "Dictée",
-                subtitle = "Spelling practice",
+                title = stringResource(CoreUiR.string.mode_dictee),
+                subtitle = stringResource(CoreUiR.string.label_spelling_practice),
                 onClick = onDicteeClick,
                 modifier = Modifier.weight(1f),
                 infiniteTransition = infiniteTransition,
@@ -391,8 +409,8 @@ private fun ModeCardsGrid(
             )
             ModeCard(
                 emoji = "\uD83E\uDDEE",
-                title = "Speed Math",
-                subtitle = "Mental math drills",
+                title = stringResource(CoreUiR.string.mode_math),
+                subtitle = stringResource(CoreUiR.string.label_mental_math),
                 onClick = onMathClick,
                 modifier = Modifier.weight(1f),
                 infiniteTransition = infiniteTransition,
@@ -405,8 +423,8 @@ private fun ModeCardsGrid(
         ) {
             ModeCard(
                 emoji = "\uD83D\uDCDC",
-                title = "Poems",
-                subtitle = "Coming soon",
+                title = stringResource(CoreUiR.string.mode_poems),
+                subtitle = stringResource(CoreUiR.string.label_coming_soon),
                 onClick = {},
                 modifier = Modifier.weight(1f),
                 isLocked = true,
@@ -415,8 +433,8 @@ private fun ModeCardsGrid(
             )
             ModeCard(
                 emoji = "\u2795",
-                title = "More",
-                subtitle = "Coming soon",
+                title = stringResource(CoreUiR.string.mode_more),
+                subtitle = stringResource(CoreUiR.string.label_coming_soon),
                 onClick = {},
                 modifier = Modifier.weight(1f),
                 isLocked = true,
@@ -490,7 +508,7 @@ private fun ModeCard(
             if (isLocked) {
                 Icon(
                     imageVector = Icons.Default.Lock,
-                    contentDescription = "Locked",
+                    contentDescription = stringResource(CoreUiR.string.locked),
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .size(16.dp),
@@ -518,12 +536,12 @@ private fun EmptyRecentActivity() {
             Text(text = "\uD83C\uDF1F", fontSize = 32.sp)
             Spacer(Modifier.height(8.dp))
             Text(
-                text = "No activity yet",
+                text = stringResource(CoreUiR.string.home_no_activity),
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Bold,
             )
             Text(
-                text = "Start a Dictée or Math session to see your progress here!",
+                text = stringResource(CoreUiR.string.home_no_activity_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

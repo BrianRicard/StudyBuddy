@@ -35,6 +35,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.drawText
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.theme.CorrectGreen
@@ -75,7 +77,7 @@ internal fun StatsContent(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Progress",
+                        text = stringResource(CoreUiR.string.stats_title),
                         style = MaterialTheme.typography.headlineMedium,
                         fontWeight = FontWeight.Bold,
                     )
@@ -84,7 +86,7 @@ internal fun StatsContent(
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -149,21 +151,21 @@ private fun SummaryRow(
         SummaryStatCard(
             icon = "\u2B50",
             value = formatStarCount(state.totalStars),
-            label = "Total Stars",
+            label = stringResource(CoreUiR.string.stats_total_stars),
             valueColor = PointsGold,
             modifier = Modifier.weight(1f),
         )
         SummaryStatCard(
             icon = "\uD83D\uDD25",
             value = state.dayStreak.toString(),
-            label = "Day Streak",
+            label = stringResource(CoreUiR.string.stats_day_streak),
             valueColor = StreakOrange,
             modifier = Modifier.weight(1f),
         )
         SummaryStatCard(
             icon = "\uD83D\uDCD6",
             value = state.totalSessions.toString(),
-            label = "Sessions",
+            label = stringResource(CoreUiR.string.stats_total_sessions),
             valueColor = MaterialTheme.colorScheme.primary,
             modifier = Modifier.weight(1f),
         )
@@ -230,7 +232,7 @@ private fun WeeklyChartSection(
                 .padding(20.dp),
         ) {
             Text(
-                text = "This Week",
+                text = stringResource(CoreUiR.string.stats_weekly_chart),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -378,7 +380,7 @@ private fun TrendsSection(
                 .padding(20.dp),
         ) {
             Text(
-                text = "Trends",
+                text = stringResource(CoreUiR.string.stats_trends),
                 style = MaterialTheme.typography.titleLarge,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onSurface,
@@ -389,7 +391,7 @@ private fun TrendsSection(
             if (hasDicteeData) {
                 TrendRow(
                     icon = "\uD83D\uDCDD",
-                    label = "Dictee Accuracy",
+                    label = stringResource(CoreUiR.string.stats_dictee_accuracy),
                     currentValue = formatPercentage(dicteeAccuracy!!),
                     trend = dicteeAccuracyTrend,
                     trendFormatter = { trend ->
@@ -406,9 +408,11 @@ private fun TrendsSection(
             }
 
             if (hasMathData) {
+                val fasterText = stringResource(CoreUiR.string.stats_faster)
+                val slowerText = stringResource(CoreUiR.string.stats_slower)
                 TrendRow(
                     icon = "\u2795",
-                    label = "Math Speed",
+                    label = stringResource(CoreUiR.string.stats_math_speed),
                     currentValue = formatResponseTime(mathAvgSpeed!!),
                     trend = mathSpeedTrend?.toFloat(),
                     trendFormatter = { trend ->
@@ -418,7 +422,7 @@ private fun TrendsSection(
                         val diffFormatted = formatResponseTime(
                             kotlin.math.abs(trendMs),
                         )
-                        "$arrow ${if (trendMs <= 0) "faster" else "slower"} by $diffFormatted"
+                        "$arrow ${if (trendMs <= 0) fasterText else slowerText} by $diffFormatted"
                     },
                     isPositiveBetter = false,
                 )
