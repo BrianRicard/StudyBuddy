@@ -56,6 +56,7 @@ class SettingsViewModelTest {
         every { settingsRepository.getDailyGoal() } returns flowOf(5)
         every { settingsRepository.isAccentStrict() } returns flowOf(false)
         every { settingsRepository.getSelectedTheme() } returns flowOf("sunset")
+        every { settingsRepository.getParentPinHash() } returns flowOf(null)
     }
 
     @AfterEach

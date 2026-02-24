@@ -89,12 +89,14 @@ class SettingsViewModel @Inject constructor(
 
     /**
      * Stored parent PIN hash. Null means no PIN has been set yet.
+     * Loaded from DataStore on init and kept in sync.
      */
     private var storedPinHash: Int? = null
 
     init {
         observeSettings()
         observeProfile()
+        observePinHash()
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -155,6 +157,19 @@ class SettingsViewModel @Inject constructor(
                         isLoading = false,
                     )
                 }
+            }
+        }
+    }
+
+    /**
+     * Observes the persisted parent PIN hash from DataStore so the
+     * in-memory [storedPinHash] survives process death.
+     */
+    private fun observePinHash() {
+        viewModelScope.launch {
+            settingsRepository.getParentPinHash().collect { hash ->
+                storedPinHash = hash
+                _state.update { it.copy(parentPinSet = hash != null) }
             }
         }
     }
@@ -261,13 +276,15 @@ class SettingsViewModel @Inject constructor(
 
     /**
      * Sets a new parent PIN (hashed for simple local storage).
+     * The hash is persisted in DataStore so it survives process death.
      */
     private fun setNewPin(pin: String) {
         if (pin.length != PIN_LENGTH) {
             _state.update { it.copy(pinError = "PIN must be $PIN_LENGTH digits") }
             return
         }
-        storedPinHash = pin.hashCode()
+        val hash = pin.hashCode()
+        storedPinHash = hash
         _state.update {
             it.copy(
                 showParentZone = true,
@@ -277,6 +294,7 @@ class SettingsViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
+            settingsRepository.setParentPinHash(hash)
             _effects.emit(SettingsEffect.ShowToast("Parent PIN set successfully"))
         }
     }
@@ -307,6 +325,7 @@ class SettingsViewModel @Inject constructor(
                 // Clear all database tables and preferences
                 val emptyBackup = """{"version":1}"""
                 backupRepository.restoreBackup(emptyBackup)
+                settingsRepository.setParentPinHash(null)
                 settingsRepository.clearAll()
                 _state.update { it.copy(showResetDialog = false) }
                 storedPinHash = null

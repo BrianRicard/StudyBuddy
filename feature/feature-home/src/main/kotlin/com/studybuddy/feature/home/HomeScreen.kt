@@ -140,16 +140,20 @@ fun HomeScreen(
             }
 
             // Recent Activity
+            item {
+                Text(
+                    text = "Recent Activity",
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
             if (state.recentActivities.isNotEmpty()) {
-                item {
-                    Text(
-                        text = "Recent Activity",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
                 items(state.recentActivities) { activity ->
                     RecentActivityRow(activity)
+                }
+            } else {
+                item {
+                    EmptyRecentActivity()
                 }
             }
 
@@ -493,6 +497,37 @@ private fun ModeCard(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun EmptyRecentActivity() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+        ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(text = "\uD83C\uDF1F", fontSize = 32.sp)
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = "No activity yet",
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = "Start a Dictée or Math session to see your progress here!",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
