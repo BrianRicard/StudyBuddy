@@ -226,10 +226,26 @@ private fun DicteePracticeContent(
                                 },
                                 onClear = { onIntent(DicteePracticeIntent.UpdateInput("")) },
                             )
+                            if (state.recognitionPending) {
+                                Text(
+                                    text = "Recognizing...",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                            }
                             state.recognizedText?.let { text ->
                                 Text(
                                     text = "Recognized: $text",
                                     style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
+                            }
+                            state.recognitionError?.let { error ->
+                                Text(
+                                    text = error,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.error,
                                     modifier = Modifier.padding(top = 8.dp),
                                 )
                             }

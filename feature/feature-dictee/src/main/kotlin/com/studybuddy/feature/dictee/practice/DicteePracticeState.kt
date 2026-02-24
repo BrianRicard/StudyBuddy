@@ -18,6 +18,8 @@ data class DicteePracticeState(
     val isPlaying: Boolean = false,
     val hintVisible: Boolean = false,
     val recognizedText: String? = null,
+    val recognitionPending: Boolean = false,
+    val recognitionError: String? = null,
 ) {
     val currentWord: DicteeWord? get() = words.getOrNull(currentIndex)
     val progress: Float get() = if (words.isEmpty()) 0f else currentIndex.toFloat() / words.size
