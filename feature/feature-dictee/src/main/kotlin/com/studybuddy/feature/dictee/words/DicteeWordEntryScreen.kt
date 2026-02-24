@@ -104,7 +104,7 @@ private fun DicteeWordEntryContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(state.list?.title ?: "Words") },
+                title = { Text(state.list?.title ?: stringResource(CoreUiR.string.dictee_list_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.navigate_back))
@@ -257,7 +257,7 @@ private fun WordItem(
             IconButton(onClick = onPlay) {
                 Icon(
                     Icons.Default.PlayArrow,
-                    contentDescription = "Play",
+                    contentDescription = stringResource(CoreUiR.string.dictee_play),
                     tint = MaterialTheme.colorScheme.primary,
                 )
             }

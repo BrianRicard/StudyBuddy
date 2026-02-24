@@ -93,13 +93,15 @@ fun BackupExportScreen(
                         type = effect.mimeType
                         putExtra(android.content.Intent.EXTRA_STREAM, effect.uri)
                         addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        clipData = android.content.ClipData.newRawUri(null, effect.uri)
                     }
-                    context.startActivity(
-                        android.content.Intent.createChooser(
-                            shareIntent,
-                            context.getString(CoreUiR.string.backup_share_export),
-                        ),
-                    )
+                    val chooser = android.content.Intent.createChooser(
+                        shareIntent,
+                        context.getString(CoreUiR.string.backup_share_export),
+                    ).apply {
+                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                    }
+                    context.startActivity(chooser)
                 }
                 is BackupExportEffect.ShowToast -> {
                     snackbarHostState.showSnackbar(context.getString(effect.messageResId))
