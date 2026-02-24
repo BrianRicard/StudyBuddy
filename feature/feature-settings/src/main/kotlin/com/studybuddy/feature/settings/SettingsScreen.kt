@@ -50,10 +50,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.AvatarConfig
-import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyButton
-import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.core.ui.R as CoreUiR
@@ -119,16 +117,6 @@ private fun SettingsContent(
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                // -- Profile Card --
-                item {
-                    ProfileCard(
-                        name = state.profileName,
-                        avatarConfig = state.avatarConfig,
-                        onClick = { onIntent(SettingsIntent.NavigateToAvatarCloset) },
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
                 // -- General Section --
                 item { SectionHeader(title = stringResource(CoreUiR.string.settings_general)) }
                 item {
@@ -228,52 +216,6 @@ private fun SettingsContent(
         )
     }
 }
-
-// region Profile Card
-
-@Composable
-private fun ProfileCard(
-    name: String,
-    avatarConfig: AvatarConfig?,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    StudyBuddyCard(
-        modifier = modifier.fillMaxWidth(),
-        onClick = onClick,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            AvatarComposite(
-                config = avatarConfig ?: AvatarConfig.default(),
-                size = 50.dp,
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = name.ifEmpty { stringResource(CoreUiR.string.settings_student) },
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    text = stringResource(CoreUiR.string.settings_tap_edit),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Icon(
-                imageVector = Icons.Default.ChevronRight,
-                contentDescription = stringResource(CoreUiR.string.settings_go_avatar),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
-}
-
-// endregion
 
 // region Section Header
 
