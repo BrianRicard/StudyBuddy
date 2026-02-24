@@ -86,7 +86,7 @@ private fun DicteePracticeContent(
                 title = { Text(state.listTitle) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(CoreUiR.string.navigate_back))
                     }
                 },
                 actions = {

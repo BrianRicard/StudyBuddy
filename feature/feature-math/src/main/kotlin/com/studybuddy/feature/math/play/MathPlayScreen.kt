@@ -46,6 +46,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,6 +55,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.MathProblem
 import com.studybuddy.core.domain.model.Operator
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StreakIndicator
 import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.IncorrectRed
@@ -229,10 +231,11 @@ private fun TopBar(
                 .clip(RoundedCornerShape(4.dp)),
         )
 
+        val pauseDesc = stringResource(CoreUiR.string.math_pause_game)
         IconButton(
             onClick = onPause,
             modifier = Modifier.semantics {
-                contentDescription = "Pause game"
+                contentDescription = pauseDesc
             },
         ) {
             Icon(
@@ -368,9 +371,18 @@ private fun FeedbackMessage(
     modifier: Modifier = Modifier,
 ) {
     val message = when (feedback) {
-        is Feedback.Correct -> ENCOURAGEMENTS.random()
-        is Feedback.Incorrect -> "The answer was ${feedback.correctAnswer}"
-        is Feedback.TimeUp -> "Time's up! Keep going!"
+        is Feedback.Correct -> listOf(
+            stringResource(CoreUiR.string.encourage_1),
+            stringResource(CoreUiR.string.encourage_2),
+            stringResource(CoreUiR.string.encourage_3),
+            stringResource(CoreUiR.string.encourage_4),
+            stringResource(CoreUiR.string.encourage_5),
+            stringResource(CoreUiR.string.encourage_6),
+            stringResource(CoreUiR.string.encourage_7),
+            stringResource(CoreUiR.string.encourage_8),
+        ).random()
+        is Feedback.Incorrect -> stringResource(CoreUiR.string.math_answer_was, feedback.correctAnswer)
+        is Feedback.TimeUp -> stringResource(CoreUiR.string.math_times_up)
         null -> ""
     }
 
@@ -422,13 +434,14 @@ private fun NumberPad(
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         ) {
             // Backspace
+            val backspaceDesc = stringResource(CoreUiR.string.math_backspace)
             Box(
                 modifier = Modifier
                     .size(NUMPAD_BUTTON_SIZE.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable(enabled = enabled) { onBackspace() }
-                    .semantics { contentDescription = "Backspace" },
+                    .semantics { contentDescription = backspaceDesc },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -443,13 +456,14 @@ private fun NumberPad(
             NumPadButton(digit = 0, onClick = { onDigit(0) }, enabled = enabled)
 
             // Submit
+            val submitDesc = stringResource(CoreUiR.string.math_submit_answer)
             Box(
                 modifier = Modifier
                     .size(NUMPAD_BUTTON_SIZE.dp)
                     .clip(CircleShape)
                     .background(MaterialTheme.colorScheme.primary)
                     .clickable(enabled = enabled) { onSubmit() }
-                    .semantics { contentDescription = "Submit answer" },
+                    .semantics { contentDescription = submitDesc },
                 contentAlignment = Alignment.Center,
             ) {
                 Icon(
@@ -487,13 +501,14 @@ private fun NumPadButton(
     enabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val digitDesc = stringResource(CoreUiR.string.math_digit, digit)
     Box(
         modifier = modifier
             .size(NUMPAD_BUTTON_SIZE.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surfaceVariant)
             .clickable(enabled = enabled, onClick = onClick)
-            .semantics { contentDescription = "Digit $digit" },
+            .semantics { contentDescription = digitDesc },
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -515,19 +530,19 @@ private fun PauseDialog(onResume: () -> Unit) {
         onDismissRequest = onResume,
         title = {
             Text(
-                text = "Game Paused",
+                text = stringResource(CoreUiR.string.math_game_paused),
                 style = MaterialTheme.typography.headlineMedium,
             )
         },
         text = {
             Text(
-                text = "Take a break! Tap Resume when you're ready to continue.",
+                text = stringResource(CoreUiR.string.math_pause_message),
                 style = MaterialTheme.typography.bodyLarge,
             )
         },
         confirmButton = {
             TextButton(onClick = onResume) {
-                Text("Resume")
+                Text(stringResource(CoreUiR.string.math_resume))
             }
         },
     )
@@ -552,24 +567,13 @@ private fun CelebrationOverlay(
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "$streak streak!",
+            text = stringResource(CoreUiR.string.math_streak_celebration, streak),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary,
         )
     }
 }
-
-private val ENCOURAGEMENTS = listOf(
-    "Great job!",
-    "Awesome!",
-    "You got it!",
-    "Well done!",
-    "Fantastic!",
-    "Super!",
-    "Perfect!",
-    "Amazing!",
-)
 
 private const val PROGRESS_ANIM_MS = 300
 private const val TIMER_ANIM_MS = 100

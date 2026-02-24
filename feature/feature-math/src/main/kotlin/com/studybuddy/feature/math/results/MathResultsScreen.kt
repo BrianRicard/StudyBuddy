@@ -26,11 +26,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
@@ -94,7 +96,7 @@ internal fun MathResultsContent(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Great Job!",
+            text = stringResource(CoreUiR.string.math_great_job),
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.primary,
             textAlign = TextAlign.Center,
@@ -155,13 +157,13 @@ private fun SummaryGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SummaryStatCard(
-                label = "Score",
+                label = stringResource(CoreUiR.string.math_score_label),
                 value = "${state.correctCount}/${state.totalProblems}",
                 icon = "\uD83C\uDFAF",
                 modifier = Modifier.weight(1f),
             )
             SummaryStatCard(
-                label = "Accuracy",
+                label = stringResource(CoreUiR.string.math_accuracy_label),
                 value = "${(state.accuracy * PERCENTAGE_MULTIPLIER).toInt()}%",
                 icon = "\u2705",
                 modifier = Modifier.weight(1f),
@@ -172,13 +174,13 @@ private fun SummaryGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             SummaryStatCard(
-                label = "Best Streak",
+                label = stringResource(CoreUiR.string.math_best_streak_label),
                 value = state.bestStreak.toString(),
                 icon = "\uD83D\uDD25",
                 modifier = Modifier.weight(1f),
             )
             SummaryStatCard(
-                label = "Avg Time",
+                label = stringResource(CoreUiR.string.math_avg_time_label),
                 value = formatResponseTime(state.avgResponseMs),
                 icon = "\u23F1\uFE0F",
                 modifier = Modifier.weight(1f),
@@ -236,7 +238,7 @@ private fun PointsBreakdownCard(
                 .padding(20.dp),
         ) {
             Text(
-                text = "Points Earned",
+                text = stringResource(CoreUiR.string.math_points_earned),
                 style = MaterialTheme.typography.titleLarge,
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -244,7 +246,7 @@ private fun PointsBreakdownCard(
             Spacer(modifier = Modifier.height(16.dp))
 
             PointsRow(
-                label = "Base",
+                label = stringResource(CoreUiR.string.math_base_points),
                 value = "${state.sessionScore} pts",
                 color = MaterialTheme.colorScheme.onSurface,
             )
@@ -252,7 +254,7 @@ private fun PointsBreakdownCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             PointsRow(
-                label = "Streak bonus",
+                label = stringResource(CoreUiR.string.math_streak_bonus),
                 value = "+${state.streakBonus} pts",
                 color = StreakOrange,
             )
@@ -273,7 +275,7 @@ private fun PointsBreakdownCard(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Total",
+                    text = stringResource(CoreUiR.string.math_total),
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.onSurface,
@@ -329,7 +331,7 @@ private fun BadgesCard(
                 .padding(20.dp),
         ) {
             Text(
-                text = "Badges Unlocked!",
+                text = stringResource(CoreUiR.string.math_badges_unlocked),
                 style = MaterialTheme.typography.titleLarge,
                 color = CorrectGreen,
                 fontWeight = FontWeight.Bold,
@@ -375,12 +377,12 @@ private fun ActionButtons(
         ),
     ) {
         StudyBuddyOutlinedButton(
-            text = "Home",
+            text = stringResource(CoreUiR.string.math_go_home),
             onClick = onHome,
             modifier = Modifier.weight(1f),
         )
         StudyBuddyButton(
-            text = "Play Again",
+            text = stringResource(CoreUiR.string.math_play_again),
             onClick = onPlayAgain,
             modifier = Modifier.weight(1f),
         )

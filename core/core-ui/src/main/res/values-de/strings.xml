@@ -166,6 +166,196 @@
     <string name="stars">Sterne</string>
     <string name="points_earned">+%d</string>
 
+    <!-- General shared -->
+    <string name="navigate_back">Zurück</string>
+
+    <!-- Home additions -->
+    <string name="home_no_activity">Noch keine Aktivität</string>
+    <string name="home_no_activity_hint">Starte ein Diktat oder Kopfrechnen, um deinen Fortschritt hier zu sehen!</string>
+    <string name="day_mon">M</string>
+    <string name="day_tue">D</string>
+    <string name="day_wed">M</string>
+    <string name="day_thu">D</string>
+    <string name="day_fri">F</string>
+    <string name="day_sat">S</string>
+    <string name="day_sun">S</string>
+
+    <!-- Math Play -->
+    <string name="math_pause_game">Spiel pausieren</string>
+    <string name="math_backspace">Löschen</string>
+    <string name="math_submit_answer">Antwort abgeben</string>
+    <string name="math_digit">Ziffer %d</string>
+    <string name="math_game_paused">Spiel pausiert</string>
+    <string name="math_pause_message">Mach eine Pause! Tippe auf Weiter, wenn du bereit bist.</string>
+    <string name="math_answer_was">Die Antwort war %d</string>
+    <string name="math_times_up">Zeit vorbei! Weiter so!</string>
+    <string name="math_streak_celebration">%d in Folge!</string>
+
+    <!-- Math Setup -->
+    <string name="math_go">Los!</string>
+    <string name="math_min_value">Min: %d</string>
+    <string name="math_max_value">Max: %d</string>
+    <string name="math_smart_mode">Intelligenter Modus</string>
+    <string name="math_smart_mode_desc">Die Schwierigkeit passt sich deiner Leistung an. Je mehr du richtig hast, desto schwieriger wird es!</string>
+    <string name="math_time_per_problem">Zeit pro Aufgabe</string>
+
+    <!-- Math Results -->
+    <string name="math_great_job">Toll gemacht!</string>
+    <string name="math_score_label">Ergebnis</string>
+    <string name="math_accuracy_label">Genauigkeit</string>
+    <string name="math_best_streak_label">Beste Serie</string>
+    <string name="math_avg_time_label">Durchschn. Zeit</string>
+    <string name="math_points_earned">Verdiente Punkte</string>
+    <string name="math_base_points">Basis</string>
+    <string name="math_streak_bonus">Serienbonus</string>
+    <string name="math_total">Gesamt</string>
+    <string name="math_badges_unlocked">Abzeichen freigeschaltet!</string>
+
+    <!-- Avatar additions -->
+    <string name="avatar_get_item">%s holen?</string>
+    <string name="avatar_cost_message">Das kostet ⭐ %d Sterne.</string>
+    <string name="avatar_buy_item">Kaufen ⭐ %d</string>
+
+    <!-- Rewards additions -->
+    <string name="rewards_get_item">%s holen?</string>
+    <string name="rewards_cost_message">Das kostet ⭐ %d Sterne.</string>
+    <string name="rewards_buy_item">Kaufen ⭐ %d</string>
+    <string name="rewards_active">Aktiv</string>
+    <string name="rewards_activate">Aktivieren</string>
+    <string name="rewards_hats_section">\uD83C\uDFA9 Hüte</string>
+    <string name="rewards_face_section">\uD83D\uDD76\uFE0F Gesicht</string>
+    <string name="rewards_outfits_section">\uD83D\uDC54 Outfits</string>
+    <string name="rewards_pets_section">\uD83D\uDC3E Haustiere</string>
+    <string name="rewards_celebrations">\uD83C\uDF89 Feierlichkeiten</string>
+    <string name="rewards_sounds">\uD83D\uDD0A Klänge</string>
+    <string name="rewards_unlocked">%s freigeschaltet!</string>
+
+    <!-- Stats additions -->
+    <string name="stats_trends">Trends</string>
+    <string name="stats_faster">schneller</string>
+    <string name="stats_slower">langsamer</string>
+
+    <!-- Settings additions -->
+    <string name="settings_general">Allgemein</string>
+    <string name="settings_learning">Lernen</string>
+    <string name="settings_parent_zone_section">Elternbereich</string>
+    <string name="settings_progress_stats">Fortschritt &amp; Statistik</string>
+    <string name="settings_backup_export">Sicherung &amp; Export</string>
+    <string name="settings_cloud_sync">Cloud-Synchronisierung</string>
+    <string name="settings_coming_soon">Bald verfügbar</string>
+    <string name="settings_reset_all">Alle Daten zurücksetzen</string>
+    <string name="settings_accent_mode">Akzent-Modus</string>
+    <string name="settings_strict">Streng</string>
+    <string name="settings_lenient">Nachsichtig</string>
+    <string name="settings_tap_edit">Tippe, um den Avatar zu bearbeiten</string>
+    <string name="settings_student">Schüler</string>
+    <string name="settings_activities">%d Aktivitäten</string>
+    <string name="settings_activities_per_day">%d Aktivitäten pro Tag</string>
+    <string name="settings_select_language">Sprache auswählen</string>
+    <string name="settings_set_daily_goal">Tagesziel festlegen</string>
+    <string name="settings_parent_unlocked">Elternbereich (entsperrt)</string>
+    <string name="settings_unlock_parent">Elternbereich entsperren</string>
+    <string name="settings_create_pin">Eltern-PIN erstellen</string>
+    <string name="settings_enter_pin_title">Eltern-PIN eingeben</string>
+    <string name="settings_set_pin_desc">Lege eine 4-stellige PIN fest, um die Elterneinstellungen zu schützen.</string>
+    <string name="settings_enter_pin_desc">Gib deine 4-stellige PIN ein, um auf die Elterneinstellungen zuzugreifen.</string>
+    <string name="settings_pin_label">PIN</string>
+    <string name="settings_set_pin_btn">PIN festlegen</string>
+    <string name="settings_unlock_btn">Entsperren</string>
+    <string name="settings_reset_title">Alle Daten zurücksetzen?</string>
+    <string name="settings_reset_warning">Alle Profile, Fortschritte, Belohnungen und Einstellungen werden dauerhaft gelöscht. Dies kann nicht rückgängig gemacht werden.</string>
+    <string name="settings_type_reset">Tippe RESET zur Bestätigung:</string>
+    <string name="settings_reset_everything">Alles zurücksetzen</string>
+    <string name="settings_go_avatar">Zum Avatar-Ankleidezimmer</string>
+
+    <!-- Backup additions -->
+    <string name="backup_section">Sicherung</string>
+    <string name="backup_export">Export</string>
+    <string name="backup_import">Import</string>
+    <string name="backup_auto">Auto-Sicherung</string>
+    <string name="backup_backing_up">Sicherung läuft…</string>
+    <string name="backup_now">Jetzt sichern</string>
+    <string name="backup_restoring">Wiederherstellung läuft…</string>
+    <string name="backup_restore_from">Sicherung wiederherstellen</string>
+    <string name="backup_creating">Sicherung wird erstellt…</string>
+    <string name="backup_last">Letzte Sicherung</string>
+    <string name="backup_please_wait">Bitte warten</string>
+    <string name="backup_no_backups">Noch keine Sicherungen</string>
+    <string name="backup_pdf_title">PDF-Fortschrittsbericht</string>
+    <string name="backup_pdf_desc">Ein druckbarer Bericht mit Diagrammen, der deinen Lernfortschritt zeigt.</string>
+    <string name="backup_export_pdf_btn">PDF exportieren</string>
+    <string name="backup_json_title">Rohdaten (JSON)</string>
+    <string name="backup_json_desc">Vollständiger Datenexport zur Sicherung oder Übertragung. Enthält alle Profile und Einstellungen.</string>
+    <string name="backup_export_json_btn">JSON exportieren</string>
+    <string name="backup_csv_title">Wortlisten (CSV)</string>
+    <string name="backup_csv_desc">Exportiere deine Diktat-Wortlisten als tabellenkompatible Datei mit Versuchsstatistiken.</string>
+    <string name="backup_export_csv_btn">CSV exportieren</string>
+    <string name="backup_import_csv_title">Wortlisten importieren (CSV)</string>
+    <string name="backup_import_csv_desc">Importiere Diktat-Wortlisten aus einer CSV-Datei. Erwartetes Format: Liste, Sprache, Wort (mit optionalen Spalten Gemeistert, Versuche, Richtige).</string>
+    <string name="backup_import_csv_btn">CSV importieren</string>
+    <string name="backup_enable_auto">Auto-Sicherung aktivieren</string>
+    <string name="backup_auto_desc">Daten automatisch sichern</string>
+    <string name="backup_frequency">Häufigkeit</string>
+    <string name="backup_daily">Täglich</string>
+    <string name="backup_weekly">Wöchentlich</string>
+    <string name="backup_exporting">Export läuft…</string>
+    <string name="backup_restore_title">Sicherung wiederherstellen?</string>
+    <string name="backup_restore_warning">Alle aktuellen Daten werden durch die Sicherungsdaten ersetzt. Dies kann nicht rückgängig gemacht werden. Stelle sicher, dass du eine aktuelle Sicherung hast.</string>
+    <string name="backup_restore_btn">Wiederherstellen</string>
+    <string name="backup_share">Export teilen</string>
+    <string name="backup_saved">Sicherung erfolgreich erstellt</string>
+
+    <!-- Onboarding additions -->
+    <string name="onboarding_welcome_title">Willkommen bei StudyBuddy!</string>
+    <string name="onboarding_whats_name">Wie heißt du?</string>
+    <string name="onboarding_your_name">Dein Name</string>
+    <string name="onboarding_choose_buddy">Wähle deinen Begleiter</string>
+    <string name="onboarding_pick_character">Wähle eine Figur</string>
+    <string name="onboarding_pick_hat">Wähle einen Hut</string>
+    <string name="onboarding_pick_face">Wähle ein Gesichtszubehör</string>
+    <string name="onboarding_earn_stars">⭐ Verdiene Sterne, um mehr freizuschalten!</string>
+    <string name="onboarding_voice_setup">Stimme einrichten</string>
+    <string name="onboarding_voice_desc">Stimmen für Offline-Diktate herunterladen</string>
+    <string name="onboarding_voice_pack">Sprachpaket</string>
+    <string name="onboarding_voice_ready">✅ Bereit</string>
+    <string name="onboarding_skip">Jetzt überspringen</string>
+    <string name="onboarding_saving">Wird gespeichert…</string>
+    <string name="onboarding_lets_go">Los geht\'s!</string>
+
+    <!-- Dictée list screen -->
+    <string name="dictee_select_lists">Listen zum Mischen auswählen</string>
+    <string name="dictee_list_title">Diktat</string>
+    <string name="dictee_import">Importieren</string>
+    <string name="dictee_mix_lists">Mischen</string>
+    <string name="dictee_new_list">Neue Liste</string>
+    <string name="dictee_no_lists">Noch keine Wortlisten</string>
+    <string name="dictee_no_lists_hint">Tippe auf + um deine erste Diktatliste zu erstellen!</string>
+    <string name="dictee_word_count">%d Wörter</string>
+    <string name="dictee_selected">Ausgewählt</string>
+    <string name="dictee_delete">Löschen</string>
+    <string name="dictee_lists_selected">%d Listen ausgewählt</string>
+    <string name="dictee_start_challenge">Herausforderung starten!</string>
+    <string name="dictee_new_word_list">Neue Wortliste</string>
+    <string name="dictee_list_title_label">Listentitel</string>
+    <string name="dictee_list_title_hint">z.B. Woche 1, Schwierige Wörter…</string>
+    <string name="dictee_language">Sprache</string>
+    <string name="dictee_create">Erstellen</string>
+    <string name="dictee_list_deleted">Liste „%s" gelöscht</string>
+    <string name="dictee_undo">Rückgängig</string>
+
+    <!-- Math operator accessibility -->
+    <string name="math_operator_selected">%s Operator, ausgewählt</string>
+    <string name="math_operator_not_selected">%s Operator, nicht ausgewählt</string>
+
+    <!-- Settings parent zone accessibility -->
+    <string name="settings_parent_unlocked_desc">Elternbereich entsperrt</string>
+    <string name="settings_parent_locked_desc">Elternbereich gesperrt</string>
+
+    <!-- Poems -->
+    <string name="poems_title">Gedichte</string>
+    <string name="poems_mode">Gedichte-Modus</string>
+    <string name="poems_coming_soon_desc">Bald verfügbar! Übe das Lesen und Vortragen\nschöner Gedichte auf Französisch, Englisch und Deutsch.</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Toll gemacht!</string>
     <string name="encourage_2">Du bist großartig!</string>

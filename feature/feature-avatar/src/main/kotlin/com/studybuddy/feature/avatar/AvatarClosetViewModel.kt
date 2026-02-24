@@ -41,11 +41,11 @@ data class AvatarClosetState(
 /**
  * Accessory tab categories displayed in the Avatar Closet.
  */
-enum class AccessoryTab(val label: String, val icon: String) {
-    HATS("Hats", "\uD83C\uDFA9"),
-    FACE("Face", "\uD83D\uDD76\uFE0F"),
-    OUTFIT("Outfit", "\uD83D\uDC54"),
-    PETS("Pets", "\uD83D\uDC3E"),
+enum class AccessoryTab(val labelResId: Int, val icon: String) {
+    HATS(com.studybuddy.core.ui.R.string.avatar_hats, "\uD83C\uDFA9"),
+    FACE(com.studybuddy.core.ui.R.string.avatar_face, "\uD83D\uDD76\uFE0F"),
+    OUTFIT(com.studybuddy.core.ui.R.string.avatar_outfit, "\uD83D\uDC54"),
+    PETS(com.studybuddy.core.ui.R.string.avatar_pets, "\uD83D\uDC3E"),
 }
 
 /**

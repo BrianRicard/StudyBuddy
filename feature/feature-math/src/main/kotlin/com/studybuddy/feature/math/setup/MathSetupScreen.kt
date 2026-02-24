@@ -35,11 +35,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.Operator
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
@@ -71,12 +73,12 @@ private fun MathSetupContent(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Speed Math") },
+                title = { Text(stringResource(CoreUiR.string.mode_math)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -94,13 +96,18 @@ private fun MathSetupContent(
             Spacer(modifier = Modifier.height(8.dp))
 
             // --- Operator multi-select ---
-            SectionLabel(text = "Operators")
+            SectionLabel(text = stringResource(CoreUiR.string.math_operators))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Operator.entries.forEach { operator ->
                     val selected = operator in state.selectedOperators
+                    val operatorDesc = if (selected) {
+                        stringResource(CoreUiR.string.math_operator_selected, operator.name)
+                    } else {
+                        stringResource(CoreUiR.string.math_operator_not_selected, operator.name)
+                    }
                     FilterChip(
                         selected = selected,
                         onClick = {
@@ -113,9 +120,7 @@ private fun MathSetupContent(
                             )
                         },
                         modifier = Modifier.semantics {
-                            contentDescription =
-                                "${operator.name} operator, " +
-                                if (selected) "selected" else "not selected"
+                            contentDescription = operatorDesc
                         },
                         colors = FilterChipDefaults.filterChipColors(
                             selectedContainerColor =
@@ -128,17 +133,17 @@ private fun MathSetupContent(
             }
 
             // --- Number range ---
-            SectionLabel(text = "Number Range")
+            SectionLabel(text = stringResource(CoreUiR.string.math_number_range))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = "Min: ${state.numberRangeMin}",
+                    text = stringResource(CoreUiR.string.math_min_value, state.numberRangeMin),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    text = "Max: ${state.numberRangeMax}",
+                    text = stringResource(CoreUiR.string.math_max_value, state.numberRangeMax),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -158,14 +163,14 @@ private fun MathSetupContent(
             )
 
             // --- Time per problem ---
-            SectionLabel(text = "Time per Problem")
+            SectionLabel(text = stringResource(CoreUiR.string.math_time_per_problem))
             TimerSegmentedRow(
                 selectedSeconds = state.timerSeconds,
                 onSelect = { onIntent(MathSetupIntent.SetTimer(it)) },
             )
 
             // --- Number of problems ---
-            SectionLabel(text = "Number of Problems")
+            SectionLabel(text = stringResource(CoreUiR.string.math_problem_count))
             ProblemCountSegmentedRow(
                 selectedCount = state.problemCount,
                 onSelect = { onIntent(MathSetupIntent.SetProblemCount(it)) },
@@ -176,7 +181,7 @@ private fun MathSetupContent(
 
             // --- Go! button ---
             StudyBuddyButton(
-                text = "Go!",
+                text = stringResource(CoreUiR.string.math_go),
                 onClick = onStartGame,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -270,14 +275,12 @@ private fun SmartModeBanner(modifier: Modifier = Modifier) {
             )
             Column {
                 Text(
-                    text = "Smart Mode",
+                    text = stringResource(CoreUiR.string.math_smart_mode),
                     style = MaterialTheme.typography.titleSmall,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "Adaptive difficulty adjusts problems " +
-                        "based on your performance. Get more " +
-                        "right and the challenge increases!",
+                    text = stringResource(CoreUiR.string.math_smart_mode_desc),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

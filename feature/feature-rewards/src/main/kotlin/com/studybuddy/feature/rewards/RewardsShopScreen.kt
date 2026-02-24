@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,6 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
@@ -142,12 +144,12 @@ private fun RewardsShopContent(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
-                title = { Text("Rewards Shop") },
+                title = { Text(stringResource(CoreUiR.string.rewards_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -243,7 +245,12 @@ private fun RewardsTabBar(
                 onClick = { onTabSelected(tab) },
                 text = {
                     Text(
-                        text = "${tab.tabIcon} ${tab.tabLabel}",
+                        text = "${tab.tabIcon} ${when (tab) {
+                            RewardsTab.AVATAR -> stringResource(CoreUiR.string.rewards_tab_avatar)
+                            RewardsTab.THEMES -> stringResource(CoreUiR.string.rewards_tab_themes)
+                            RewardsTab.EFFECTS -> stringResource(CoreUiR.string.rewards_tab_effects)
+                            RewardsTab.TITLES -> stringResource(CoreUiR.string.rewards_tab_titles)
+                        }}",
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
@@ -252,14 +259,6 @@ private fun RewardsTabBar(
         }
     }
 }
-
-private val RewardsTab.tabLabel: String
-    get() = when (this) {
-        RewardsTab.AVATAR -> "Avatar"
-        RewardsTab.THEMES -> "Themes"
-        RewardsTab.EFFECTS -> "Effects"
-        RewardsTab.TITLES -> "Titles"
-    }
 
 private val RewardsTab.tabIcon: String
     get() = when (this) {
@@ -280,16 +279,22 @@ private fun AvatarTabContent(
     modifier: Modifier = Modifier,
 ) {
     val sections = listOf(
-        AvatarSection(title = "\uD83C\uDFA9 Hats", items = RewardCatalog.hats.filterNot { it.id.endsWith("_none") }),
         AvatarSection(
-            title = "\uD83D\uDD76\uFE0F Face",
+            title = stringResource(CoreUiR.string.rewards_hats_section),
+            items = RewardCatalog.hats.filterNot { it.id.endsWith("_none") },
+        ),
+        AvatarSection(
+            title = stringResource(CoreUiR.string.rewards_face_section),
             items = RewardCatalog.faceAccessories.filterNot { it.id.endsWith("_none") },
         ),
         AvatarSection(
-            title = "\uD83D\uDC54 Outfits",
+            title = stringResource(CoreUiR.string.rewards_outfits_section),
             items = RewardCatalog.outfits.filterNot { it.id.endsWith("_none") },
         ),
-        AvatarSection(title = "\uD83D\uDC3E Pets", items = RewardCatalog.pets.filterNot { it.id.endsWith("_none") }),
+        AvatarSection(
+            title = stringResource(CoreUiR.string.rewards_pets_section),
+            items = RewardCatalog.pets.filterNot { it.id.endsWith("_none") },
+        ),
     )
 
     LazyVerticalGrid(
@@ -474,7 +479,7 @@ private fun ThemeCard(
                 when {
                     isActive -> ActiveBadge()
                     isOwned -> StudyBuddyOutlinedButton(
-                        text = "Activate",
+                        text = stringResource(CoreUiR.string.rewards_activate),
                         onClick = onActivate,
                     )
                     else -> StudyBuddyButton(
@@ -506,7 +511,7 @@ private fun ActiveBadge(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "Active",
+                text = stringResource(CoreUiR.string.rewards_active),
                 style = MaterialTheme.typography.labelMedium,
                 color = CorrectGreen,
             )
@@ -569,7 +574,7 @@ private fun EffectsTabContent(
     ) {
         item {
             Text(
-                text = "\uD83C\uDF89 Celebrations",
+                text = stringResource(CoreUiR.string.rewards_celebrations),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp),
@@ -602,7 +607,7 @@ private fun EffectsTabContent(
         item {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "\uD83D\uDD0A Sounds",
+                text = stringResource(CoreUiR.string.rewards_sounds),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier.padding(bottom = 4.dp),
@@ -836,7 +841,7 @@ private fun TitleCard(
                             )
                             Spacer(modifier = Modifier.width(4.dp))
                             Text(
-                                text = "Equipped",
+                                text = stringResource(CoreUiR.string.rewards_equipped),
                                 style = MaterialTheme.typography.labelMedium,
                                 color = CorrectGreen,
                             )
@@ -845,7 +850,7 @@ private fun TitleCard(
                 }
                 isUnlocked -> {
                     StudyBuddyOutlinedButton(
-                        text = "Equip",
+                        text = stringResource(CoreUiR.string.rewards_equip),
                         onClick = onEquip,
                     )
                 }
@@ -876,7 +881,7 @@ private fun LockedBadge(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.width(4.dp))
             Text(
-                text = "Locked",
+                text = stringResource(CoreUiR.string.locked),
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -907,7 +912,7 @@ private fun OwnedBadge(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.width(3.dp))
             Text(
-                text = "Owned",
+                text = stringResource(CoreUiR.string.rewards_owned),
                 style = MaterialTheme.typography.labelSmall,
                 color = CorrectGreen,
             )
@@ -947,7 +952,7 @@ private fun PurchaseConfirmDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text(text = "Get ${item.name}?")
+            Text(text = stringResource(CoreUiR.string.rewards_get_item, item.name))
         },
         text = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -966,7 +971,7 @@ private fun PurchaseConfirmDialog(
                 )
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
-                    text = "This will cost \u2B50 ${item.cost} stars.",
+                    text = stringResource(CoreUiR.string.rewards_cost_message, item.cost),
                     style = MaterialTheme.typography.bodyMedium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
@@ -985,13 +990,13 @@ private fun PurchaseConfirmDialog(
         },
         confirmButton = {
             StudyBuddyButton(
-                text = "Buy \u2B50 ${item.cost}",
+                text = stringResource(CoreUiR.string.rewards_buy_item, item.cost),
                 onClick = onConfirm,
             )
         },
         dismissButton = {
             StudyBuddyOutlinedButton(
-                text = "Cancel",
+                text = stringResource(CoreUiR.string.cancel),
                 onClick = onDismiss,
             )
         },

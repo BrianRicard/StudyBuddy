@@ -19,10 +19,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.R as CoreUiR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,12 +36,12 @@ fun PoemsScreen(
         modifier = modifier,
         topBar = {
             TopAppBar(
-                title = { Text("Poems") },
+                title = { Text(stringResource(CoreUiR.string.poems_title)) },
                 navigationIcon = {
                     IconButton(onClick = onNavigateBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Navigate back",
+                            contentDescription = stringResource(CoreUiR.string.navigate_back),
                         )
                     }
                 },
@@ -60,13 +62,13 @@ fun PoemsScreen(
             )
             Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Poems Mode",
+                text = stringResource(CoreUiR.string.poems_mode),
                 style = MaterialTheme.typography.headlineMedium,
                 color = MaterialTheme.colorScheme.primary,
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "Coming soon! Practice reading and reciting\nbeautiful poems in French, English, and German.",
+                text = stringResource(CoreUiR.string.poems_coming_soon_desc),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,

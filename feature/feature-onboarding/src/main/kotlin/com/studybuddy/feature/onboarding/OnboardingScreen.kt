@@ -43,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -59,6 +60,7 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.R as CoreUiR
 
 /**
  * Entry-point composable for the Onboarding flow.
@@ -240,7 +242,7 @@ private fun WelcomeStep(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Welcome to StudyBuddy!",
+            text = stringResource(CoreUiR.string.onboarding_welcome_title),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -249,7 +251,7 @@ private fun WelcomeStep(
         Spacer(modifier = Modifier.height(32.dp))
 
         Text(
-            text = "What's your name?",
+            text = stringResource(CoreUiR.string.onboarding_whats_name),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
@@ -259,7 +261,7 @@ private fun WelcomeStep(
         OutlinedTextField(
             value = name,
             onValueChange = onNameChange,
-            label = { Text("Your name") },
+            label = { Text(stringResource(CoreUiR.string.onboarding_your_name)) },
             singleLine = true,
             isError = nameError != null,
             supportingText = nameError?.let { error ->
@@ -272,7 +274,7 @@ private fun WelcomeStep(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = "Choose your language",
+            text = stringResource(CoreUiR.string.onboarding_choose_language),
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
@@ -300,7 +302,7 @@ private fun WelcomeStep(
         Spacer(modifier = Modifier.weight(1f))
 
         StudyBuddyButton(
-            text = "Next",
+            text = stringResource(CoreUiR.string.onboarding_next),
             onClick = onNext,
             enabled = name.isNotBlank(),
             modifier = Modifier
@@ -397,7 +399,7 @@ private fun AvatarStep(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Choose Your Buddy",
+            text = stringResource(CoreUiR.string.onboarding_choose_buddy),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -415,7 +417,7 @@ private fun AvatarStep(
 
         // Character grid — 4 columns, 8 characters
         Text(
-            text = "Pick a character",
+            text = stringResource(CoreUiR.string.onboarding_pick_character),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.align(Alignment.Start),
         )
@@ -446,7 +448,7 @@ private fun AvatarStep(
 
         // Free hats row
         Text(
-            text = "Pick a hat",
+            text = stringResource(CoreUiR.string.onboarding_pick_hat),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.align(Alignment.Start),
         )
@@ -471,7 +473,7 @@ private fun AvatarStep(
 
         // Free face accessories row
         Text(
-            text = "Pick a face accessory",
+            text = stringResource(CoreUiR.string.onboarding_pick_face),
             style = MaterialTheme.typography.titleSmall,
             modifier = Modifier.align(Alignment.Start),
         )
@@ -501,7 +503,7 @@ private fun AvatarStep(
             color = MaterialTheme.colorScheme.tertiaryContainer,
         ) {
             Text(
-                text = "\u2B50 Earn stars to unlock more!",
+                text = stringResource(CoreUiR.string.onboarding_earn_stars),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(
@@ -521,12 +523,12 @@ private fun AvatarStep(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StudyBuddyOutlinedButton(
-                text = "Back",
+                text = stringResource(CoreUiR.string.onboarding_back),
                 onClick = onBack,
                 modifier = Modifier.weight(1f),
             )
             StudyBuddyButton(
-                text = "Next",
+                text = stringResource(CoreUiR.string.onboarding_next),
                 onClick = onNext,
                 modifier = Modifier.weight(1f),
             )
@@ -680,7 +682,7 @@ private fun VoiceStep(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = "Voice Setup",
+            text = stringResource(CoreUiR.string.onboarding_voice_setup),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
@@ -689,7 +691,7 @@ private fun VoiceStep(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = "Download voices for offline dict\u00E9e",
+            text = stringResource(CoreUiR.string.onboarding_voice_desc),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -710,7 +712,7 @@ private fun VoiceStep(
         // "Skip for now" text link
         TextButton(onClick = onComplete) {
             Text(
-                text = "Skip for now",
+                text = stringResource(CoreUiR.string.onboarding_skip),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -726,13 +728,13 @@ private fun VoiceStep(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             StudyBuddyOutlinedButton(
-                text = "Back",
+                text = stringResource(CoreUiR.string.onboarding_back),
                 onClick = onBack,
                 enabled = !isCompleting,
                 modifier = Modifier.weight(1f),
             )
             StudyBuddyButton(
-                text = if (isCompleting) "Saving..." else "Let's Go!",
+                text = if (isCompleting) stringResource(CoreUiR.string.onboarding_saving) else stringResource(CoreUiR.string.onboarding_lets_go),
                 onClick = onComplete,
                 enabled = !isCompleting,
                 modifier = Modifier.weight(1f),
@@ -775,7 +777,7 @@ private fun VoiceLanguageCard(
                         fontWeight = FontWeight.Medium,
                     )
                     Text(
-                        text = "Voice pack",
+                        text = stringResource(CoreUiR.string.onboarding_voice_pack),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -788,7 +790,7 @@ private fun VoiceLanguageCard(
                 color = MaterialTheme.colorScheme.primaryContainer,
             ) {
                 Text(
-                    text = "\u2705 Ready",
+                    text = stringResource(CoreUiR.string.onboarding_voice_ready),
                     style = MaterialTheme.typography.labelMedium,
                     modifier = Modifier.padding(
                         horizontal = 10.dp,
