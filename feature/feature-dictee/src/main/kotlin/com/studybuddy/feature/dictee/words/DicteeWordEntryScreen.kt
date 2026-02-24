@@ -38,8 +38,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studybuddy.core.ui.R as CoreUiR
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
@@ -178,12 +180,12 @@ private fun DicteeWordEntryContent(
                             value = state.newWordText,
                             onValueChange = { onIntent(DicteeWordEntryIntent.UpdateNewWordText(it)) },
                             modifier = Modifier.weight(1f),
-                            label = { Text("Add a word") },
+                            label = { Text(stringResource(CoreUiR.string.dictee_add_a_word)) },
                             singleLine = true,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         StudyBuddyButton(
-                            text = "Add",
+                            text = stringResource(CoreUiR.string.dictee_add),
                             onClick = { onIntent(DicteeWordEntryIntent.AddWord) },
                             enabled = state.newWordText.isNotBlank(),
                         )
@@ -192,7 +194,7 @@ private fun DicteeWordEntryContent(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     StudyBuddyButton(
-                        text = "Start Practice",
+                        text = stringResource(CoreUiR.string.dictee_start_practice),
                         onClick = { onIntent(DicteeWordEntryIntent.StartPractice) },
                         modifier = Modifier.fillMaxWidth(),
                         enabled = state.words.isNotEmpty(),

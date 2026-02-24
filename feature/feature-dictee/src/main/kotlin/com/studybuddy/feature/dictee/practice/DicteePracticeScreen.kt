@@ -29,9 +29,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.studybuddy.core.ui.R as CoreUiR
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
@@ -129,13 +131,17 @@ private fun DicteePracticeContent(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         StudyBuddyButton(
-                            text = if (state.isPlaying) "Playing..." else "\uD83D\uDD0A Play",
+                            text = if (state.isPlaying) {
+                                stringResource(CoreUiR.string.dictee_playing)
+                            } else {
+                                stringResource(CoreUiR.string.dictee_play)
+                            },
                             onClick = { onIntent(DicteePracticeIntent.PlayWord) },
                             enabled = !state.isPlaying,
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         StudyBuddyOutlinedButton(
-                            text = "Slow",
+                            text = stringResource(CoreUiR.string.dictee_slow),
                             onClick = { onIntent(DicteePracticeIntent.PlayWordSlow) },
                             enabled = !state.isPlaying,
                         )
@@ -147,9 +153,13 @@ private fun DicteePracticeContent(
                     AnimatedVisibility(visible = state.hintVisible) {
                         val word = state.currentWord
                         if (word != null) {
-                            val hint = "${word.word.first()}" +
-                                "${"_".repeat(word.word.length - 1)}" +
-                                " (${word.word.length} letters)"
+                            val maskedWord = "${word.word.first()}" +
+                                "_".repeat(word.word.length - 1)
+                            val hint = stringResource(
+                                CoreUiR.string.dictee_hint_format,
+                                maskedWord,
+                                word.word.length,
+                            )
                             Text(
                                 text = hint,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -160,7 +170,7 @@ private fun DicteePracticeContent(
 
                     if (!state.hintVisible && state.feedback == null) {
                         TextButton(onClick = { onIntent(DicteePracticeIntent.ShowHint) }) {
-                            Text("Show Hint")
+                            Text(stringResource(CoreUiR.string.dictee_show_hint))
                         }
                     }
 
@@ -177,7 +187,7 @@ private fun DicteePracticeContent(
                             enabled = state.feedback == null,
                         ) {
                             Text(
-                                text = "Keyboard",
+                                text = stringResource(CoreUiR.string.dictee_keyboard),
                                 color = if (state.inputMode == InputMode.KEYBOARD) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
@@ -194,7 +204,7 @@ private fun DicteePracticeContent(
                             enabled = state.feedback == null,
                         ) {
                             Text(
-                                text = "Handwriting",
+                                text = stringResource(CoreUiR.string.dictee_handwriting),
                                 color = if (state.inputMode == InputMode.HANDWRITING) {
                                     MaterialTheme.colorScheme.primary
                                 } else {
@@ -213,7 +223,7 @@ private fun DicteePracticeContent(
                                 value = state.userInput,
                                 onValueChange = { onIntent(DicteePracticeIntent.UpdateInput(it)) },
                                 modifier = Modifier.fillMaxWidth(),
-                                label = { Text("Type the word") },
+                                label = { Text(stringResource(CoreUiR.string.dictee_type_word)) },
                                 singleLine = true,
                                 enabled = state.feedback == null,
                             )
@@ -228,7 +238,7 @@ private fun DicteePracticeContent(
                             )
                             if (state.recognitionPending) {
                                 Text(
-                                    text = "Recognizing...",
+                                    text = stringResource(CoreUiR.string.dictee_recognizing),
                                     style = MaterialTheme.typography.bodySmall,
                                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                                     modifier = Modifier.padding(top = 8.dp),
@@ -236,7 +246,7 @@ private fun DicteePracticeContent(
                             }
                             state.recognizedText?.let { text ->
                                 Text(
-                                    text = "Recognized: $text",
+                                    text = stringResource(CoreUiR.string.dictee_recognized, text),
                                     style = MaterialTheme.typography.bodyMedium,
                                     modifier = Modifier.padding(top = 8.dp),
                                 )
@@ -260,20 +270,20 @@ private fun DicteePracticeContent(
                             CorrectAnswerAnimation(isCorrect = true) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
-                                        text = "Correct!",
+                                        text = stringResource(CoreUiR.string.dictee_word_correct),
                                         style = MaterialTheme.typography.headlineSmall,
                                         color = MaterialTheme.colorScheme.primary,
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "Great job! Keep going!",
+                                        text = stringResource(CoreUiR.string.dictee_keep_going),
                                         style = MaterialTheme.typography.bodyMedium,
                                     )
                                 }
                             }
                             Spacer(modifier = Modifier.height(12.dp))
                             StudyBuddyButton(
-                                text = "Next Word",
+                                text = stringResource(CoreUiR.string.dictee_next_word),
                                 onClick = { onIntent(DicteePracticeIntent.NextWord) },
                                 modifier = Modifier.fillMaxWidth(),
                             )
@@ -282,13 +292,13 @@ private fun DicteePracticeContent(
                             IncorrectAnimation(trigger = true) {
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Text(
-                                        text = "Almost there!",
+                                        text = stringResource(CoreUiR.string.encourage_wrong_1),
                                         style = MaterialTheme.typography.headlineSmall,
                                         color = MaterialTheme.colorScheme.error,
                                     )
                                     Spacer(modifier = Modifier.height(8.dp))
                                     Text(
-                                        text = "The correct spelling is:",
+                                        text = stringResource(CoreUiR.string.dictee_correct_spelling),
                                         style = MaterialTheme.typography.bodyMedium,
                                     )
                                     Text(
@@ -304,12 +314,12 @@ private fun DicteePracticeContent(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                             ) {
                                 StudyBuddyOutlinedButton(
-                                    text = "Try Again",
+                                    text = stringResource(CoreUiR.string.dictee_try_again),
                                     onClick = { onIntent(DicteePracticeIntent.RetryWord) },
                                     modifier = Modifier.weight(1f),
                                 )
                                 StudyBuddyButton(
-                                    text = "Next Word",
+                                    text = stringResource(CoreUiR.string.dictee_next_word),
                                     onClick = { onIntent(DicteePracticeIntent.NextWord) },
                                     modifier = Modifier.weight(1f),
                                 )
@@ -317,7 +327,7 @@ private fun DicteePracticeContent(
                         }
                         null -> {
                             StudyBuddyButton(
-                                text = "Check",
+                                text = stringResource(CoreUiR.string.dictee_check),
                                 onClick = { onIntent(DicteePracticeIntent.CheckAnswer) },
                                 modifier = Modifier.fillMaxWidth(),
                                 enabled = state.userInput.isNotBlank(),
@@ -375,24 +385,24 @@ private fun PracticeCompleteContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Practice Complete!",
+            text = stringResource(CoreUiR.string.dictee_practice_complete),
             style = MaterialTheme.typography.headlineMedium,
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "You scored ${state.sessionScore} points",
+            text = stringResource(CoreUiR.string.dictee_score_points, state.sessionScore),
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = "on \"${state.listTitle}\"",
+            text = stringResource(CoreUiR.string.dictee_on_list, state.listTitle),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
         Spacer(modifier = Modifier.height(32.dp))
         StudyBuddyButton(
-            text = "Done",
+            text = stringResource(CoreUiR.string.dictee_done),
             onClick = onNavigateBack,
             modifier = Modifier.fillMaxWidth(),
         )
