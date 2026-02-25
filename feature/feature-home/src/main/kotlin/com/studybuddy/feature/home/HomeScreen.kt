@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +43,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.annotation.DrawableRes
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -392,6 +395,7 @@ private fun ModeCardsGrid(
                 subtitle = stringResource(CoreUiR.string.label_spelling_practice),
                 onClick = onDicteeClick,
                 modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_dictee_illustration,
                 infiniteTransition = infiniteTransition,
                 animationDelay = 0,
             )
@@ -401,6 +405,7 @@ private fun ModeCardsGrid(
                 subtitle = stringResource(CoreUiR.string.label_mental_math),
                 onClick = onMathClick,
                 modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_math_illustration,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY,
             )
@@ -440,6 +445,7 @@ private fun ModeCard(
     subtitle: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    @DrawableRes iconRes: Int = 0,
     isLocked: Boolean = false,
     infiniteTransition: InfiniteTransition,
     animationDelay: Int = 0,
@@ -477,7 +483,15 @@ private fun ModeCard(
                 modifier = Modifier.align(Alignment.Center),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text(text = emoji, fontSize = 36.sp)
+                if (iconRes != 0) {
+                    Image(
+                        painter = painterResource(iconRes),
+                        contentDescription = title,
+                        modifier = Modifier.size(48.dp),
+                    )
+                } else {
+                    Text(text = emoji, fontSize = 36.sp)
+                }
                 Spacer(Modifier.height(4.dp))
                 Text(
                     text = title,

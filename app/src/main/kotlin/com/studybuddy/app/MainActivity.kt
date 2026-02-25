@@ -3,6 +3,7 @@ package com.studybuddy.app
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -12,7 +13,6 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Face
 import androidx.compose.material3.Icon
@@ -24,7 +24,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
@@ -119,13 +121,18 @@ class MainActivity : AppCompatActivity() {
 private data class BottomNavItem(
     val route: String,
     @StringRes val labelResId: Int,
-    val icon: ImageVector,
+    val icon: ImageVector? = null,
+    @DrawableRes val iconResId: Int = 0,
 )
 
 private val BOTTOM_NAV_ITEMS = listOf(
     BottomNavItem(StudyBuddyRoutes.HOME, CoreUiR.string.nav_home, Icons.Default.Home),
     BottomNavItem(StudyBuddyRoutes.STATS, CoreUiR.string.nav_stats, Icons.Default.Star),
-    BottomNavItem(StudyBuddyRoutes.REWARDS, CoreUiR.string.nav_rewards, Icons.Default.ShoppingCart),
+    BottomNavItem(
+        StudyBuddyRoutes.REWARDS,
+        CoreUiR.string.nav_rewards,
+        iconResId = CoreUiR.drawable.ic_rewards_illustration,
+    ),
     BottomNavItem(StudyBuddyRoutes.AVATAR, CoreUiR.string.nav_avatar, Icons.Outlined.Face),
     BottomNavItem(StudyBuddyRoutes.SETTINGS, CoreUiR.string.nav_settings, Icons.Default.Settings),
 )
@@ -141,7 +148,17 @@ private fun StudyBuddyBottomNav(navController: NavHostController) {
         BOTTOM_NAV_ITEMS.forEach { item ->
             val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
             NavigationBarItem(
-                icon = { Icon(item.icon, contentDescription = stringResource(item.labelResId)) },
+                icon = {
+                    if (item.iconResId != 0) {
+                        Icon(
+                            painter = painterResource(item.iconResId),
+                            contentDescription = stringResource(item.labelResId),
+                            tint = Color.Unspecified,
+                        )
+                    } else {
+                        Icon(item.icon!!, contentDescription = stringResource(item.labelResId))
+                    }
+                },
                 label = { Text(stringResource(item.labelResId)) },
                 selected = isSelected,
                 onClick = {
