@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Achievement Trophy (Rewards) feature illustration.
+    Style: classic gold trophy cup with handles, star emblem, radial glow,
+    and sparkle accents — as seen in the reference.
+    200x200dp viewport.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- ===== RADIAL GLOW RINGS (behind trophy) ===== -->
+    <path android:pathData="M100,100 C100,60 140,20 180,20 C180,60 180,140 140,180 C100,180 20,180 20,140 C20,100 60,100 100,100Z"
+        android:fillColor="#00000000" />
+    <!-- Glow ring 1 (largest, most transparent) -->
+    <path android:pathData="M100,106 C131,106 156,131 156,162 C156,193 131,218 100,218 C69,218 44,193 44,162 C44,131 69,106 100,106Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.06" />
+    <!-- Glow ring 2 -->
+    <path android:pathData="M100,96 C138,96 169,127 169,165 C169,203 138,234 100,234 C62,234 31,203 31,165 C31,127 62,96 100,96Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.04" />
+    <!-- Small gold dot accents (floating sparkle dots) -->
+    <path android:pathData="M46,80 C46,77 49,77 49,80 C49,83 46,83 46,80Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.6" />
+    <path android:pathData="M154,75 C154,72 157,72 157,75 C157,78 154,78 154,75Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.5" />
+    <path android:pathData="M38,115 C38,113 40,113 40,115 C40,117 38,117 38,115Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.4" />
+    <path android:pathData="M162,120 C162,118 164,118 164,120 C164,122 162,122 162,120Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.4" />
+
+    <!-- Trophy drop shadow -->
+    <path android:pathData="M62,186 C62,184 78,182 100,182 C122,182 138,184 138,186 C138,190 122,192 100,192 C78,192 62,190 62,186Z"
+        android:fillColor="#1A1A2E"
+        android:fillAlpha="0.15" />
+
+    <!-- ===== TROPHY BASE / PEDESTAL ===== -->
+    <!-- Base bottom flat -->
+    <path android:pathData="M62,180 L138,180 L138,172 L62,172Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="62"
+                android:startY="176"
+                android:endX="138"
+                android:endY="176"
+                android:startColor="#E8A800"
+                android:endColor="#C88000" />
+        </aapt:attr>
+    </path>
+    <!-- Base foot highlight top edge -->
+    <path android:pathData="M62,172 L138,172"
+        android:strokeColor="#FFE840"
+        android:strokeWidth="2"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.5" />
+
+    <!-- Pedestal column -->
+    <path android:pathData="M84,172 L116,172 L116,148 L84,148Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="84"
+                android:startY="160"
+                android:endX="116"
+                android:endY="160"
+                android:startColor="#FFD166"
+                android:endColor="#D49000" />
+        </aapt:attr>
+    </path>
+
+    <!-- ===== CUP SHAPE ===== -->
+    <!-- Cup main body (front face) -->
+    <path android:pathData="M58,50 C58,46 70,42 100,42 C130,42 142,46 142,50 L155,115 C155,128 135,140 100,140 C65,140 45,128 45,115Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="45"
+                android:startY="42"
+                android:endX="155"
+                android:endY="140"
+                android:startColor="#FFD166"
+                android:endColor="#D49000" />
+        </aapt:attr>
+    </path>
+
+    <!-- Cup inner shadow (darkens toward bottom of bowl) -->
+    <path android:pathData="M62,60 L130,60 L148,110 C148,124 130,136 100,136 C70,136 52,124 52,110Z"
+        android:fillColor="#C88000"
+        android:fillAlpha="0.25" />
+
+    <!-- Cup inner glow highlight (bright area at top inside) -->
+    <path android:pathData="M70,55 C80,50 120,50 130,55 L135,75 C125,68 120,62 100,62 C80,62 75,68 65,75Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.22" />
+
+    <!-- Cup top rim -->
+    <path android:pathData="M58,50 C58,44 76,38 100,38 C124,38 142,44 142,50 C142,56 124,60 100,60 C76,60 58,56 58,50Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="50"
+                android:gradientRadius="44"
+                android:startColor="#FFE840"
+                android:endColor="#E8B800" />
+        </aapt:attr>
+    </path>
+
+    <!-- Pedestal collar (where cup meets pedestal) -->
+    <path android:pathData="M78,140 C78,136 86,132 100,132 C114,132 122,136 122,140 L122,148 C122,152 114,154 100,154 C86,154 78,152 78,148Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="78"
+                android:startY="143"
+                android:endX="122"
+                android:endY="143"
+                android:startColor="#FFD166"
+                android:endColor="#C88000" />
+        </aapt:attr>
+    </path>
+
+    <!-- ===== LEFT HANDLE ===== -->
+    <!-- Handle outer shape -->
+    <path android:pathData="M58,55 C40,55 30,70 30,90 C30,110 40,125 58,125 L58,118 C46,118 38,108 38,90 C38,72 46,62 58,62Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="30"
+                android:startY="90"
+                android:endX="58"
+                android:endY="90"
+                android:startColor="#E8A800"
+                android:endColor="#C88000" />
+        </aapt:attr>
+    </path>
+    <!-- Left handle inner highlight -->
+    <path android:pathData="M52,62 C42,66 38,76 38,90 C38,104 42,114 52,118"
+        android:strokeColor="#FFE840"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.35" />
+
+    <!-- ===== RIGHT HANDLE ===== -->
+    <!-- Handle outer shape -->
+    <path android:pathData="M142,55 C160,55 170,70 170,90 C170,110 160,125 142,125 L142,118 C154,118 162,108 162,90 C162,72 154,62 142,62Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="142"
+                android:startY="90"
+                android:endX="170"
+                android:endY="90"
+                android:startColor="#FFD166"
+                android:endColor="#C88000" />
+        </aapt:attr>
+    </path>
+    <!-- Right handle inner highlight -->
+    <path android:pathData="M148,62 C158,66 162,76 162,90 C162,104 158,114 148,118"
+        android:strokeColor="#FFE840"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.35" />
+
+    <!-- ===== STAR EMBLEM (center of cup) ===== -->
+    <!-- Star glow halo -->
+    <path android:pathData="M100,70 C117,70 131,84 131,101 C131,118 117,132 100,132 C83,132 69,118 69,101 C69,84 83,70 100,70Z"
+        android:fillColor="#FFE840"
+        android:fillAlpha="0.2" />
+    <!-- 5-pointed star -->
+    <path android:pathData="M100,74 L106.2,92.4 L126,92.4 L110.4,103.6 L116.6,122 L100,111 L83.4,122 L89.6,103.6 L74,92.4 L93.8,92.4Z"
+        android:fillColor="#FFFFFF" />
+    <!-- Star inner highlight (makes it sparkle) -->
+    <path android:pathData="M100,78 L104.8,92.4 L118,92.4 L107.4,100.4 L112,114 L100,106 L88,114 L92.6,100.4 L82,92.4 L95.2,92.4Z"
+        android:fillColor="#FFE840"
+        android:fillAlpha="0.5" />
+
+    <!-- ===== SPARKLE DECORATIONS ===== -->
+    <!-- Large top-right sparkle -->
+    <path android:pathData="M158,28 L160,34 L166,34 L161,38 L163,44 L158,40 L153,44 L155,38 L150,34 L156,34Z"
+        android:fillColor="#FFD700" />
+    <!-- Medium top-left sparkle -->
+    <path android:pathData="M42,42 L43.5,47 L49,47 L44.8,50 L46.5,55 L42,52 L37.5,55 L39.2,50 L35,47 L40.5,47Z"
+        android:fillColor="#FFD700"
+        android:fillAlpha="0.9" />
+    <!-- Small lower-right sparkle -->
+    <path android:pathData="M162,148 L163.2,151.8 L167,152 L163.2,154.2 L162,158 L160.8,154.2 L157,152 L160.8,151.8Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.8" />
+
+</vector>

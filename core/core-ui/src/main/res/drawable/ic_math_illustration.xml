@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Speed Math (Math Games) feature illustration.
+    Style: friendly gold/amber calculator with glowing teal screen showing "42",
+    colourful number keys, and a red star badge — as seen in the reference.
+    200x200dp viewport.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Calculator drop shadow -->
+    <path android:pathData="M44,192 C44,190 70,188 100,188 C130,188 156,190 156,192 C156,196 130,198 100,198 C70,198 44,196 44,192Z"
+        android:fillColor="#1A1A2E"
+        android:fillAlpha="0.12" />
+
+    <!-- ===== CALCULATOR BODY ===== -->
+    <path android:pathData="M36,24 C36,16 42,10 50,10 L150,10 C158,10 164,16 164,24 L164,176 C164,184 158,190 150,190 L50,190 C42,190 36,184 36,176Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="36"
+                android:startY="10"
+                android:endX="164"
+                android:endY="190"
+                android:startColor="#FFD166"
+                android:endColor="#E8960A" />
+        </aapt:attr>
+    </path>
+    <!-- Body subtle left highlight -->
+    <path android:pathData="M36,24 C36,16 42,10 50,10 L66,10 L66,190 L50,190 C42,190 36,184 36,176Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.12" />
+
+    <!-- ===== SCREEN ===== -->
+    <!-- Screen glow backdrop -->
+    <path android:pathData="M46,26 C46,22 50,18 54,18 L146,18 C150,18 154,22 154,26 L154,82 C154,86 150,90 146,90 L54,90 C50,90 46,86 46,82Z"
+        android:fillColor="#2AC3A2"
+        android:fillAlpha="0.25" />
+    <!-- Screen main surface -->
+    <path android:pathData="M48,28 C48,24 52,20 56,20 L144,20 C148,20 152,24 152,28 L152,80 C152,84 148,88 144,88 L56,88 C52,88 48,84 48,80Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="48"
+                android:startY="20"
+                android:endX="152"
+                android:endY="88"
+                android:startColor="#4DFFD6B0"
+                android:endColor="#FF2AC3A2" />
+        </aapt:attr>
+    </path>
+    <!-- Screen inner shine -->
+    <path android:pathData="M50,30 L140,30 C140,26 130,24 100,24 C70,24 58,26 50,30Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.3" />
+
+    <!-- ===== DIGIT "4" ON SCREEN (white strokes) ===== -->
+    <!-- Left stem + horizontal bar -->
+    <path android:pathData="M79,40 L79,62 L95,62"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+    <!-- Right full stem -->
+    <path android:pathData="M92,38 L92,76"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- ===== DIGIT "2" ON SCREEN (white stroke) ===== -->
+    <path android:pathData="M108,46 C108,38 126,38 126,48 C126,56 110,62 108,76 L126,76"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="7"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000" />
+
+    <!-- ===== NUMBER KEY GRID (4 rows × 3 cols + operator col) ===== -->
+    <!-- Row 1 keys (7, 8, 9) -->
+    <path android:pathData="M46,98 C46,95 50,92 54,92 L74,92 C78,92 82,95 82,98 L82,110 C82,113 78,116 74,116 L54,116 C50,116 46,113 46,110Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.85" />
+    <path android:pathData="M88,98 C88,95 92,92 96,92 L116,92 C120,92 124,95 124,98 L124,110 C124,113 120,116 116,116 L96,116 C92,116 88,113 88,110Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.85" />
+    <path android:pathData="M130,98 C130,95 134,92 138,92 L154,92 C158,92 162,95 162,98 L162,110 C162,113 158,116 154,116 L138,116 C134,116 130,113 130,110Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.85" />
+
+    <!-- Row 2 keys (4, 5, 6) -->
+    <path android:pathData="M46,120 C46,117 50,114 54,114 L74,114 C78,114 82,117 82,120 L82,132 C82,135 78,138 74,138 L54,138 C50,138 46,135 46,132Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.75" />
+    <path android:pathData="M88,120 C88,117 92,114 96,114 L116,114 C120,114 124,117 124,120 L124,132 C124,135 120,138 116,138 L96,138 C92,138 88,135 88,132Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.75" />
+    <path android:pathData="M130,120 C130,117 134,114 138,114 L154,114 C158,114 162,117 162,120 L162,132 C162,135 158,138 154,138 L138,138 C134,138 130,135 130,132Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.75" />
+
+    <!-- Row 3 keys (1, 2, 3) -->
+    <path android:pathData="M46,142 C46,139 50,136 54,136 L74,136 C78,136 82,139 82,142 L82,154 C82,157 78,160 74,160 L54,160 C50,160 46,157 46,154Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.65" />
+    <path android:pathData="M88,142 C88,139 92,136 96,136 L116,136 C120,136 124,139 124,142 L124,154 C124,157 120,160 116,160 L96,160 C92,160 88,157 88,154Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.65" />
+    <path android:pathData="M130,142 C130,139 134,136 138,136 L154,136 C158,136 162,139 162,142 L162,154 C162,157 158,160 154,160 L138,160 C134,160 130,157 130,154Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.65" />
+
+    <!-- Row 4: "0" key (wide), "=" key (accent) -->
+    <path android:pathData="M46,164 C46,161 50,158 54,158 L116,158 C120,158 124,161 124,164 L124,176 C124,179 120,182 116,182 L54,182 C50,182 46,179 46,176Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.65" />
+    <!-- "=" equals key (green accent) -->
+    <path android:pathData="M130,164 C130,161 134,158 138,158 L154,158 C158,158 162,161 162,164 L162,176 C162,179 158,182 154,182 L138,182 C134,182 130,179 130,176Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="130"
+                android:startY="164"
+                android:endX="162"
+                android:endY="182"
+                android:startColor="#34C759"
+                android:endColor="#28A045" />
+        </aapt:attr>
+    </path>
+    <!-- "=" symbol on equals key -->
+    <path android:pathData="M137,168 L155,168 M137,174 L155,174"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- ===== RED STAR BADGE (top-right corner) ===== -->
+    <!-- Badge circle background -->
+    <path android:pathData="M152,24 C152,12 172,12 172,24 C172,36 152,36 152,24Z"
+        android:fillColor="#FF3B30" />
+    <!-- Star on badge -->
+    <path android:pathData="M162,16 L163.5,21 L169,21 L164.8,24 L166.5,29 L162,26.2 L157.5,29 L159.2,24 L155,21 L160.5,21Z"
+        android:fillColor="#FFFFFF" />
+
+</vector>
