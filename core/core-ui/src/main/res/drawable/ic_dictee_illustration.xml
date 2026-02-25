@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Dictée (Spelling Practice) feature illustration.
+    Style: clean flat card with blue left binding, bold red letter "A",
+    gold star reward badge, and light text lines — as seen in the reference.
+    200x200dp viewport.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Card drop shadow -->
+    <path android:pathData="M42,188 C42,186 68,184 100,184 C132,184 158,186 158,188 C158,192 132,194 100,194 C68,194 42,192 42,188Z"
+        android:fillColor="#1A1A2E"
+        android:fillAlpha="0.1" />
+
+    <!-- White card background -->
+    <path android:pathData="M34,18 C34,12 38,8 44,8 L156,8 C162,8 166,12 166,18 L166,182 C166,188 162,192 156,192 L44,192 C38,192 34,188 34,182Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Subtle card border -->
+    <path android:pathData="M34,18 C34,12 38,8 44,8 L156,8 C162,8 166,12 166,18 L166,182 C166,188 162,192 156,192 L44,192 C38,192 34,188 34,182Z"
+        android:strokeColor="#E8EEF8"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000" />
+
+    <!-- Blue left binding accent -->
+    <path android:pathData="M34,18 C34,12 38,8 44,8 L76,8 L76,192 L44,192 C38,192 34,188 34,182Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="34"
+                android:startY="100"
+                android:endX="76"
+                android:endY="100"
+                android:startColor="#4A90D9"
+                android:endColor="#2A70B9" />
+        </aapt:attr>
+    </path>
+
+    <!-- Binding inner highlight line -->
+    <path android:pathData="M72,8 L72,192"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.2" />
+
+    <!-- ===== LETTER "A" — large bold red, centered on white page ===== -->
+    <!-- Left leg of A (from top-center down to bottom-left) -->
+    <path android:pathData="M119,42 L96,134"
+        android:strokeColor="#FF6B4A"
+        android:strokeWidth="11"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <!-- Right leg of A (from top-center down to bottom-right) -->
+    <path android:pathData="M119,42 L142,134"
+        android:strokeColor="#FF6B4A"
+        android:strokeWidth="11"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <!-- Crossbar of A -->
+    <path android:pathData="M104,98 L134,98"
+        android:strokeColor="#FF6B4A"
+        android:strokeWidth="9"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- ===== GOLD STAR BADGE (upper right corner) ===== -->
+    <!-- Star badge backing circle -->
+    <path android:pathData="M152,36 C152,28 162,22 152,20 C142,20 138,28 148,36Z"
+        android:fillColor="#00000000" />
+    <!-- 5-pointed star -->
+    <path android:pathData="M152,24 L155,32.5 L164,32.5 L157,38 L159.5,46.5 L152,41.5 L144.5,46.5 L147,38 L140,32.5 L149,32.5Z"
+        android:fillColor="#FFD700" />
+    <!-- Star inner shine -->
+    <path android:pathData="M152,28 L154,33 L159,33 L155,36 L156.5,41 L152,38 L147.5,41 L149,36 L145,33 L150,33Z"
+        android:fillColor="#FFF0A0"
+        android:fillAlpha="0.5" />
+
+    <!-- ===== TEXT LINES (bottom of white page) ===== -->
+    <path android:pathData="M86,150 L158,150"
+        android:strokeColor="#4A90D9"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.3" />
+    <path android:pathData="M86,163 L150,163"
+        android:strokeColor="#4A90D9"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.25" />
+    <path android:pathData="M86,176 L144,176"
+        android:strokeColor="#4A90D9"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000"
+        android:strokeAlpha="0.2" />
+
+    <!-- ===== SMALL DOTS ON BLUE BINDING (decorative) ===== -->
+    <path android:pathData="M55,50 C55,48 57,48 57,50 C57,52 55,52 55,50Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4" />
+    <path android:pathData="M55,65 C55,63 57,63 57,65 C57,67 55,67 55,65Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.3" />
+    <path android:pathData="M55,80 C55,78 57,78 57,80 C57,82 55,82 55,80Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.25" />
+
+</vector>
