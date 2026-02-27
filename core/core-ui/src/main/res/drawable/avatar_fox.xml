@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="200dp"
+    android:viewportWidth="200"
+    android:viewportHeight="200">
+
+    <!-- Bushy tail with white tip -->
+    <path android:pathData="M38,140 C25,120 18,100 28,80 C38,60 55,65 60,80 C65,95 50,110 45,130 C42,140 40,148 38,140Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="40"
+                android:centerY="100"
+                android:gradientRadius="50"
+                android:startColor="#E07B39"
+                android:endColor="#C56A2E" />
+        </aapt:attr>
+    </path>
+    <path android:pathData="M28,80 C22,68 25,55 35,52 C42,50 45,58 38,65 C32,72 30,75 28,80Z"
+        android:fillColor="#F5F5F5" />
+
+    <!-- Body / torso -->
+    <path android:pathData="M60,105 C60,75 75,60 100,60 C125,60 140,75 140,105 C140,145 130,170 100,175 C70,170 60,145 60,105Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="110"
+                android:gradientRadius="70"
+                android:startColor="#E8944F"
+                android:endColor="#E07B39" />
+        </aapt:attr>
+    </path>
+
+    <!-- Belly patch -->
+    <path android:pathData="M78,110 C78,95 88,85 100,85 C112,85 122,95 122,110 C122,140 115,160 100,162 C85,160 78,140 78,110Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="115"
+                android:gradientRadius="50"
+                android:startColor="#F5DCC3"
+                android:endColor="#F5CBA7" />
+        </aapt:attr>
+    </path>
+
+    <!-- Head -->
+    <path android:pathData="M55,85 C55,55 72,30 100,30 C128,30 145,55 145,85 C145,110 130,130 100,130 C70,130 55,110 55,85Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="75"
+                android:gradientRadius="60"
+                android:startColor="#E8944F"
+                android:endColor="#E07B39" />
+        </aapt:attr>
+    </path>
+
+    <!-- Left ear -->
+    <path android:pathData="M60,65 L52,20 L82,50Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="55"
+                android:startY="20"
+                android:endX="75"
+                android:endY="55"
+                android:startColor="#E07B39"
+                android:endColor="#D06E30" />
+        </aapt:attr>
+    </path>
+    <!-- Left ear inner -->
+    <path android:pathData="M63,58 L58,30 L78,52Z"
+        android:fillColor="#F5CBA7" />
+
+    <!-- Right ear -->
+    <path android:pathData="M140,65 L148,20 L118,50Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="145"
+                android:startY="20"
+                android:endX="125"
+                android:endY="55"
+                android:startColor="#E07B39"
+                android:endColor="#D06E30" />
+        </aapt:attr>
+    </path>
+    <!-- Right ear inner -->
+    <path android:pathData="M137,58 L142,30 L122,52Z"
+        android:fillColor="#F5CBA7" />
+
+    <!-- Face patch (white muzzle area) -->
+    <path android:pathData="M75,85 C75,75 85,68 100,68 C115,68 125,75 125,85 C125,105 118,118 100,120 C82,118 75,105 75,85Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="100"
+                android:centerY="90"
+                android:gradientRadius="35"
+                android:startColor="#FFFFFF"
+                android:endColor="#F5CBA7" />
+        </aapt:attr>
+    </path>
+
+    <!-- Left eye -->
+    <path android:pathData="M80,78 C80,73 84,69 89,69 C94,69 98,73 98,78 C98,83 94,87 89,87 C84,87 80,83 80,78Z"
+        android:fillColor="#1A1A1A" />
+    <!-- Left eye highlight -->
+    <path android:pathData="M84,74 C84,72 86,70 88,70 C90,70 91,72 91,74 C91,76 90,77 88,77 C86,77 84,76 84,74Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Right eye -->
+    <path android:pathData="M102,78 C102,73 106,69 111,69 C116,69 120,73 120,78 C120,83 116,87 111,87 C106,87 102,83 102,78Z"
+        android:fillColor="#1A1A1A" />
+    <!-- Right eye highlight -->
+    <path android:pathData="M106,74 C106,72 108,70 110,70 C112,70 113,72 113,74 C113,76 112,77 110,77 C108,77 106,76 106,74Z"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Nose -->
+    <path android:pathData="M95,92 C95,89 97,87 100,87 C103,87 105,89 105,92 C105,95 103,97 100,97 C97,97 95,95 95,92Z"
+        android:fillColor="#1A1A1A" />
+    <!-- Nose highlight -->
+    <path android:pathData="M97,90 C97,89 98,88 99,88 C100,88 101,89 101,90 C101,91 100,91 99,91 C98,91 97,91 97,90Z"
+        android:fillColor="#4A4A4A" />
+
+    <!-- Smile -->
+    <path android:pathData="M90,100 C93,107 107,107 110,100"
+        android:strokeColor="#1A1A1A"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Left blush -->
+    <path android:pathData="M68,92 C68,88 73,84 78,84 C83,84 88,88 88,92 C88,96 83,100 78,100 C73,100 68,96 68,92Z"
+        android:fillColor="#33FF8A80" />
+
+    <!-- Right blush -->
+    <path android:pathData="M112,92 C112,88 117,84 122,84 C127,84 132,88 132,92 C132,96 127,100 122,100 C117,100 112,96 112,92Z"
+        android:fillColor="#33FF8A80" />
+
+    <!-- Feet -->
+    <path android:pathData="M78,168 C78,163 83,160 90,160 C97,160 100,163 100,168 C100,175 95,178 90,178 C83,178 78,175 78,168Z"
+        android:fillColor="#D06E30" />
+    <path android:pathData="M100,168 C100,163 103,160 110,160 C117,160 122,163 122,168 C122,175 117,178 110,178 C103,178 100,175 100,168Z"
+        android:fillColor="#D06E30" />
+
+</vector>
