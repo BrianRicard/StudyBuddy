@@ -1,7 +1,9 @@
 package com.studybuddy.feature.onboarding
 
+import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -23,6 +25,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -35,14 +39,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -61,6 +69,7 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import java.util.Locale
 
 /**
  * Entry-point composable for the Onboarding flow.
@@ -86,12 +95,21 @@ fun OnboardingScreen(
         }
     }
 
-    OnboardingContent(
-        state = state,
-        onIntent = viewModel::onIntent,
-        modifier = modifier,
-        snackbarHostState = snackbarHostState,
-    )
+    val localeOverride = remember(state.selectedLocale) {
+        val locale = Locale(state.selectedLocale)
+        Configuration(android.content.res.Resources.getSystem().configuration).apply {
+            setLocale(locale)
+        }
+    }
+
+    CompositionLocalProvider(LocalConfiguration provides localeOverride) {
+        OnboardingContent(
+            state = state,
+            onIntent = viewModel::onIntent,
+            modifier = modifier,
+            snackbarHostState = snackbarHostState,
+        )
+    }
 }
 
 @Composable
@@ -230,16 +248,16 @@ private fun WelcomeStep(
             .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-        // Wave emoji hero
-        Text(
-            text = "\uD83D\uDC4B",
-            fontSize = 72.sp,
-            textAlign = TextAlign.Center,
+        // Professor Goose greeting
+        Image(
+            painter = painterResource(CoreUiR.drawable.profgoose_hi),
+            contentDescription = stringResource(CoreUiR.string.onboarding_welcome_title),
+            modifier = Modifier.size(120.dp),
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = stringResource(CoreUiR.string.onboarding_welcome_title),
@@ -267,6 +285,8 @@ private fun WelcomeStep(
             supportingText = nameError?.let { error ->
                 { Text(text = error) }
             },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+            keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onNext() }),
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.fillMaxWidth(),
         )
@@ -319,10 +339,10 @@ private fun LanguageCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val flag = when (locale) {
-        SupportedLocale.FRENCH -> "\uD83C\uDDEB\uD83C\uDDF7"
-        SupportedLocale.ENGLISH -> "\uD83C\uDDEC\uD83C\uDDE7"
-        SupportedLocale.GERMAN -> "\uD83C\uDDE9\uD83C\uDDEA"
+    val flagRes = when (locale) {
+        SupportedLocale.FRENCH -> CoreUiR.drawable.ic_flag_fr
+        SupportedLocale.ENGLISH -> CoreUiR.drawable.ic_flag_gb
+        SupportedLocale.GERMAN -> CoreUiR.drawable.ic_flag_de
     }
 
     val borderColor by animateColorAsState(
@@ -359,10 +379,10 @@ private fun LanguageCard(
                 .padding(vertical = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                text = flag,
-                fontSize = 32.sp,
-                textAlign = TextAlign.Center,
+            Image(
+                painter = painterResource(flagRes),
+                contentDescription = locale.displayName,
+                modifier = Modifier.size(36.dp),
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
@@ -672,11 +692,11 @@ private fun VoiceStep(
     ) {
         Spacer(modifier = Modifier.height(32.dp))
 
-        // Speaker emoji hero
-        Text(
-            text = "\uD83D\uDD0A",
-            fontSize = 72.sp,
-            textAlign = TextAlign.Center,
+        // Speaker icon
+        Image(
+            painter = painterResource(CoreUiR.drawable.ic_speaker_tts),
+            contentDescription = stringResource(CoreUiR.string.onboarding_voice_setup),
+            modifier = Modifier.size(80.dp),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -754,10 +774,10 @@ private fun VoiceLanguageCard(
     locale: SupportedLocale,
     modifier: Modifier = Modifier,
 ) {
-    val flag = when (locale) {
-        SupportedLocale.FRENCH -> "\uD83C\uDDEB\uD83C\uDDF7"
-        SupportedLocale.ENGLISH -> "\uD83C\uDDEC\uD83C\uDDE7"
-        SupportedLocale.GERMAN -> "\uD83C\uDDE9\uD83C\uDDEA"
+    val flagRes = when (locale) {
+        SupportedLocale.FRENCH -> CoreUiR.drawable.ic_flag_fr
+        SupportedLocale.ENGLISH -> CoreUiR.drawable.ic_flag_gb
+        SupportedLocale.GERMAN -> CoreUiR.drawable.ic_flag_de
     }
 
     StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
@@ -772,9 +792,10 @@ private fun VoiceLanguageCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                Text(
-                    text = flag,
-                    fontSize = 28.sp,
+                Image(
+                    painter = painterResource(flagRes),
+                    contentDescription = locale.displayName,
+                    modifier = Modifier.size(32.dp),
                 )
                 Column {
                     Text(
@@ -827,7 +848,7 @@ private fun OnboardingWelcomePreview() {
             state = OnboardingState(
                 currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
-                selectedLocale = "fr",
+                selectedLocale = "en",
             ),
             onIntent = {},
         )
@@ -857,7 +878,7 @@ private fun OnboardingWelcomeErrorPreview() {
             state = OnboardingState(
                 currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
-                selectedLocale = "fr",
+                selectedLocale = "en",
                 nameError = "Please enter your name",
             ),
             onIntent = {},

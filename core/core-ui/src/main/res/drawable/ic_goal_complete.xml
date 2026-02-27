@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Party popper cone -->
+    <path
+        android:pathData="M8,42L14,28L22,36Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="10"
+                android:startY="38"
+                android:endX="38"
+                android:endY="10">
+                <item android:offset="0" android:color="#FFFF6B35"/>
+                <item android:offset="1" android:color="#FFFFD700"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M8,42L10,40L12,42Z"
+        android:fillColor="#E05A2B"/>
+    <!-- Popper rim -->
+    <path
+        android:pathData="M14,28C14,28 17,30 22,36"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFB347"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+    <!-- Confetti burst circles -->
+    <path
+        android:pathData="M28,16 A2,2 0 1,1 24,16 A2,2 0 1,1 28,16Z"
+        android:fillColor="#FF5A6E"/>
+    <path
+        android:pathData="M35.5,20 A1.5,1.5 0 1,1 32.5,20 A1.5,1.5 0 1,1 35.5,20Z"
+        android:fillColor="#4FC3F7"/>
+    <path
+        android:pathData="M21.5,12 A1.5,1.5 0 1,1 18.5,12 A1.5,1.5 0 1,1 21.5,12Z"
+        android:fillColor="#66BB6A"/>
+    <path
+        android:pathData="M40,14 A2,2 0 1,1 36,14 A2,2 0 1,1 40,14Z"
+        android:fillColor="#FFD700"/>
+    <path
+        android:pathData="M31.5,8 A1.5,1.5 0 1,1 28.5,8 A1.5,1.5 0 1,1 31.5,8Z"
+        android:fillColor="#AB47BC"/>
+    <!-- Star confetti -->
+    <path
+        android:pathData="M38,26L39,28L41,28L39.5,29.5L40,32L38,30.5L36,32L36.5,29.5L35,28L37,28Z"
+        android:fillColor="#FF5A6E"/>
+    <path
+        android:pathData="M14,8L15,10L17,10L15.5,11.5L16,14L14,12.5L12,14L12.5,11.5L11,10L13,10Z"
+        android:fillColor="#4FC3F7"/>
+    <!-- Streamers -->
+    <path
+        android:pathData="M18,26C22,22 26,24 30,18"
+        android:fillColor="#00000000"
+        android:strokeColor="#AB47BC"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M20,30C24,26 28,28 34,24"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFD700"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"/>
+</vector>

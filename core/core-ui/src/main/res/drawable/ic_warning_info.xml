@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Triangle body -->
+    <path
+        android:pathData="M21.2,7.5C22.5,5.2 25.5,5.2 26.8,7.5L43.3,36.5C44.6,38.8 43.1,41.5 40.5,41.5H7.5C4.9,41.5 3.4,38.8 4.7,36.5L21.2,7.5Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFD54F"/>
+                <item android:offset="1" android:color="#FFFFA000"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner triangle edge -->
+    <path
+        android:pathData="M22.6,10.5L8,38H40L25.4,10.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#F57F17"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.3"/>
+    <!-- Exclamation mark stem -->
+    <path
+        android:pathData="M22,19 A2,2 0 0,1 24,17h0 A2,2 0 0,1 26,19v9 A2,2 0 0,1 24,30h0 A2,2 0 0,1 22,28v-9z"
+        android:fillColor="#5D4037"/>
+    <!-- Exclamation mark dot -->
+    <path
+        android:pathData="M26.5,35 A2.5,2.5 0 1,1 21.5,35 A2.5,2.5 0 1,1 26.5,35Z"
+        android:fillColor="#5D4037"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M16,32L22,14"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.2"/>
+</vector>

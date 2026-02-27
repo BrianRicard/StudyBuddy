@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Notepad page -->
+    <path
+        android:pathData="M6,9 A3,3 0 0,1 9,6h22 A3,3 0 0,1 34,9v30 A3,3 0 0,1 31,42h-22 A3,3 0 0,1 6,39v-30z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="10"
+                android:startY="4"
+                android:endX="38"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFF9C4"/>
+                <item android:offset="1" android:color="#FFFFF176"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Page shadow edge -->
+    <path
+        android:pathData="M6,9 A3,3 0 0,1 9,6h22 A3,3 0 0,1 34,9v30 A3,3 0 0,1 31,42h-22 A3,3 0 0,1 6,39v-30z"
+        android:fillColor="#00000000"
+        android:strokeColor="#E0C74D"
+        android:strokeWidth="1"/>
+    <!-- Ruled lines -->
+    <path
+        android:pathData="M10,16L30,16"
+        android:fillColor="#00000000"
+        android:strokeColor="#D4C05E"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.5"/>
+    <path
+        android:pathData="M10,22L30,22"
+        android:fillColor="#00000000"
+        android:strokeColor="#D4C05E"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.5"/>
+    <path
+        android:pathData="M10,28L30,28"
+        android:fillColor="#00000000"
+        android:strokeColor="#D4C05E"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.5"/>
+    <path
+        android:pathData="M10,34L26,34"
+        android:fillColor="#00000000"
+        android:strokeColor="#D4C05E"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.5"/>
+    <!-- Writing scribble -->
+    <path
+        android:pathData="M11,16C14,15.5 18,16 22,15.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#78909C"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.5"/>
+    <path
+        android:pathData="M11,22C16,21.5 20,22 28,21.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#78909C"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.5"/>
+    <path
+        android:pathData="M11,28C15,27.5 19,28 25,27.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#78909C"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.5"/>
+    <!-- Pencil (transform rotate(-45 38 10) applied manually) -->
+    <!-- The pencil group is rotated -45 degrees around (38,10). I'll approximate the key shapes. -->
+    <group
+        android:pivotX="38"
+        android:pivotY="10"
+        android:rotation="-45">
+        <!-- Pencil body -->
+        <path
+            android:pathData="M34,5 A1,1 0 0,1 35,4h4 A1,1 0 0,1 40,5v27 A1,1 0 0,1 39,33h-4 A1,1 0 0,1 34,32v-27z">
+            <aapt:attr name="android:fillColor">
+                <gradient
+                    android:type="linear"
+                    android:startX="30"
+                    android:startY="4"
+                    android:endX="42"
+                    android:endY="20">
+                    <item android:offset="0" android:color="#FFFF7043"/>
+                    <item android:offset="1" android:color="#FFE64A19"/>
+                </gradient>
+            </aapt:attr>
+        </path>
+        <!-- Pencil wood/tip -->
+        <path
+            android:pathData="M34,32L37,38L40,32Z"
+            android:fillColor="#FFE0B2"/>
+        <path
+            android:pathData="M36,34L37,38L38,34Z"
+            android:fillColor="#455A64"/>
+        <!-- Pencil band -->
+        <path
+            android:pathData="M34,28h6v3h-6z"
+            android:fillColor="#FFC107"/>
+        <!-- Eraser -->
+        <path
+            android:pathData="M34,5 A1,1 0 0,1 35,4h4 A1,1 0 0,1 40,5v3h-6v-3z"
+            android:fillColor="#F48FB1"/>
+        <!-- Pencil highlight -->
+        <path
+            android:pathData="M35.5,8L35.5,26"
+            android:fillColor="#00000000"
+            android:strokeColor="#FFFFFF"
+            android:strokeWidth="0.8"
+            android:strokeAlpha="0.25"/>
+    </group>
+</vector>

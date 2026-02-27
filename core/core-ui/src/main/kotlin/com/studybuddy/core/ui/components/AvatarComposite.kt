@@ -137,7 +137,7 @@ private fun AvatarCompositeFullPreview() {
                 bodyId = "cat",
                 hatId = "hat_crown",
                 faceId = "face_shades",
-                outfitId = "outfit_scarf",
+                outfitId = "outfit_none",
                 petId = "pet_chick",
             ),
             size = 130.dp,
@@ -152,10 +152,10 @@ private fun AvatarCompositeMoosePreview() {
         AvatarComposite(
             config = AvatarConfig(
                 bodyId = "moose",
-                hatId = "hat_toque",
-                faceId = "face_none",
-                outfitId = "outfit_hockey_jersey",
-                petId = "pet_beaver",
+                hatId = "hat_wizard",
+                faceId = "face_monocle",
+                outfitId = "outfit_none",
+                petId = "pet_fish",
             ),
             size = 130.dp,
         )

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Circle background -->
+    <path
+        android:pathData="M44,24 A20,20 0 1,1 4,24 A20,20 0 1,1 44,24Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF90CAF9"/>
+                <item android:offset="1" android:color="#FF42A5F5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner ring -->
+    <path
+        android:pathData="M41,24 A17,17 0 1,1 7,24 A17,17 0 1,1 41,24Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.2"/>
+    <!-- Plus horizontal -->
+    <path
+        android:pathData="M14,24L34,24"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"/>
+    <!-- Plus vertical -->
+    <path
+        android:pathData="M24,14L24,34"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"/>
+    <!-- Highlight arc -->
+    <path
+        android:pathData="M14,14C18,10 22,8 28,8"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.25"/>
+</vector>
