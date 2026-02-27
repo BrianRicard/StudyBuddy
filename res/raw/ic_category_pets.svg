@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="paw_grad" x1="24" y1="6" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A1887F"/>
+      <stop offset="1" stop-color="#795548"/>
+    </linearGradient>
+  </defs>
+  <!-- Main pad -->
+  <path d="M24 44C24 44 12 36 12 28C12 22 17 20 20 22C22 23 24 26 24 26C24 26 26 23 28 22C31 20 36 22 36 28C36 36 24 44 24 44Z"
+        fill="url(#paw_grad)"/>
+  <!-- Toe pads -->
+  <ellipse cx="14" cy="16" rx="5" ry="6" fill="url(#paw_grad)" transform="rotate(-15 14 16)"/>
+  <ellipse cx="24" cy="10" rx="4.5" ry="6" fill="url(#paw_grad)"/>
+  <ellipse cx="34" cy="16" rx="5" ry="6" fill="url(#paw_grad)" transform="rotate(15 34 16)"/>
+  <!-- Highlights on pads -->
+  <ellipse cx="13" cy="14" rx="2" ry="2.5" fill="white" opacity="0.2" transform="rotate(-15 13 14)"/>
+  <ellipse cx="23" cy="8" rx="1.8" ry="2.5" fill="white" opacity="0.2"/>
+  <ellipse cx="33" cy="14" rx="2" ry="2.5" fill="white" opacity="0.2" transform="rotate(15 33 14)"/>
+  <!-- Main pad highlight -->
+  <path d="M20 28C22 26 24 27 24 27" stroke="white" stroke-width="1" opacity="0.2" stroke-linecap="round" fill="none"/>
+</svg>

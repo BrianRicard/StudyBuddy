@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <clipPath id="flag_clip_gb">
+      <rect x="4" y="10" width="40" height="28" rx="4"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#flag_clip_gb)">
+    <!-- Blue background -->
+    <rect x="4" y="10" width="40" height="28" fill="#012169"/>
+    <!-- White diagonals (St Andrew + St Patrick bg) -->
+    <path d="M4 10L44 38M44 10L4 38" stroke="white" stroke-width="6"/>
+    <!-- Red diagonals (St Patrick) -->
+    <path d="M4 10L24 24L44 10" stroke="white" stroke-width="0" fill="none"/>
+    <path d="M26 22.5L44 10" stroke="#C8102E" stroke-width="2.5"/>
+    <path d="M22 25.5L4 38" stroke="#C8102E" stroke-width="2.5"/>
+    <path d="M22 22.5L4 10" stroke="#C8102E" stroke-width="2.5"/>
+    <path d="M26 25.5L44 38" stroke="#C8102E" stroke-width="2.5"/>
+    <!-- White cross -->
+    <line x1="24" y1="10" x2="24" y2="38" stroke="white" stroke-width="8"/>
+    <line x1="4" y1="24" x2="44" y2="24" stroke="white" stroke-width="8"/>
+    <!-- Red cross (St George) -->
+    <line x1="24" y1="10" x2="24" y2="38" stroke="#C8102E" stroke-width="5"/>
+    <line x1="4" y1="24" x2="44" y2="24" stroke="#C8102E" stroke-width="5"/>
+  </g>
+  <!-- Rounded border -->
+  <rect x="4" y="10" width="40" height="28" rx="4" stroke="#00000010" stroke-width="1" fill="none"/>
+  <!-- Highlight -->
+  <rect x="4" y="10" width="40" height="4" rx="4" fill="white" opacity="0.1"/>
+</svg>

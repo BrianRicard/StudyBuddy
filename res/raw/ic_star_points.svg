@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="star_grad" x1="24" y1="4" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE066"/>
+      <stop offset="0.5" stop-color="#FFD700"/>
+      <stop offset="1" stop-color="#F0A500"/>
+    </linearGradient>
+    <linearGradient id="star_shadow" x1="24" y1="4" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#F0A500"/>
+      <stop offset="1" stop-color="#D4880F"/>
+    </linearGradient>
+  </defs>
+  <!-- Shadow/depth layer -->
+  <path d="M24 6L29.5 18.5L43 20L33 29.5L35.5 43L24 36.5L12.5 43L15 29.5L5 20L18.5 18.5Z"
+        fill="url(#star_shadow)" transform="translate(0.5, 0.5)"/>
+  <!-- Main star -->
+  <path d="M24 6L29.5 18.5L43 20L33 29.5L35.5 43L24 36.5L12.5 43L15 29.5L5 20L18.5 18.5Z"
+        fill="url(#star_grad)"/>
+  <!-- Highlight facet -->
+  <path d="M24 6L29.5 18.5L43 20L24 24Z" fill="white" opacity="0.25"/>
+  <path d="M24 6L18.5 18.5L5 20L24 24Z" fill="white" opacity="0.15"/>
+  <!-- Sparkle dot -->
+  <circle cx="19" cy="17" r="1.2" fill="white" opacity="0.6"/>
+</svg>

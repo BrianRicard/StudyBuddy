@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="gear_grad" x1="24" y1="2" x2="24" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#78909C"/>
+      <stop offset="1" stop-color="#455A64"/>
+    </linearGradient>
+  </defs>
+  <!-- Gear teeth + body as single path -->
+  <path d="M20.5 4H27.5L29 9.5C30.2 10 31.3 10.6 32.3 11.4L37.5 9.5L41 15.5L36.8 19C37 20 37 21 37 22V24C37 25 37 26 36.8 27L41 30.5L37.5 36.5L32.3 34.6C31.3 35.4 30.2 36 29 36.5L27.5 42H20.5L19 36.5C17.8 36 16.7 35.4 15.7 34.6L10.5 36.5L7 30.5L11.2 27C11 26 11 25 11 24V22C11 21 11 20 11.2 19L7 15.5L10.5 9.5L15.7 11.4C16.7 10.6 17.8 10 19 9.5L20.5 4Z"
+    fill="url(#gear_grad)"/>
+  <!-- Center hole -->
+  <circle cx="24" cy="23" r="7" fill="white" opacity="0.9"/>
+  <!-- Inner ring detail -->
+  <circle cx="24" cy="23" r="5" stroke="url(#gear_grad)" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <!-- Center dot -->
+  <circle cx="24" cy="23" r="2" fill="url(#gear_grad)" opacity="0.5"/>
+  <!-- Highlight -->
+  <path d="M17 8C19 6 22 5 24 5" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.25" fill="none"/>
+</svg>

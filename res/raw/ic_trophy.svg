@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="trophy_grad" x1="24" y1="4" x2="24" y2="34" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE066"/>
+      <stop offset="0.5" stop-color="#FFD700"/>
+      <stop offset="1" stop-color="#E6A800"/>
+    </linearGradient>
+    <linearGradient id="trophy_base" x1="24" y1="36" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#E6A800"/>
+      <stop offset="1" stop-color="#C28800"/>
+    </linearGradient>
+  </defs>
+  <!-- Left handle -->
+  <path d="M12 12C6 12 4 16 4 20C4 24 7 27 12 26" stroke="url(#trophy_grad)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Right handle -->
+  <path d="M36 12C42 12 44 16 44 20C44 24 41 27 36 26" stroke="url(#trophy_grad)" stroke-width="3" stroke-linecap="round" fill="none"/>
+  <!-- Cup body -->
+  <path d="M12 8H36V24C36 30.627 30.627 34 24 34C17.373 34 12 30.627 12 24V8Z" fill="url(#trophy_grad)"/>
+  <!-- Cup rim -->
+  <rect x="10" y="6" width="28" height="4" rx="2" fill="#FFE566"/>
+  <!-- Stem -->
+  <rect x="21" y="34" width="6" height="5" fill="#E6A800"/>
+  <!-- Base -->
+  <rect x="16" y="38" width="16" height="4" rx="2" fill="url(#trophy_base)"/>
+  <rect x="14" y="41" width="20" height="3" rx="1.5" fill="url(#trophy_base)"/>
+  <!-- Star on cup -->
+  <path d="M24 15L26 20L31 20.5L27 24L28 29L24 26.5L20 29L21 24L17 20.5L22 20Z" fill="white" opacity="0.35"/>
+  <!-- Highlight -->
+  <path d="M15 10C15 10 16 12 16 20" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.3" fill="none"/>
+</svg>

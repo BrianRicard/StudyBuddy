@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="lock_body" x1="24" y1="20" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFC107"/>
+      <stop offset="1" stop-color="#F9A825"/>
+    </linearGradient>
+    <linearGradient id="lock_shackle" x1="24" y1="4" x2="24" y2="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#78909C"/>
+      <stop offset="1" stop-color="#546E7A"/>
+    </linearGradient>
+  </defs>
+  <!-- Shackle (U-shaped top) -->
+  <path d="M14 22V16C14 10.477 18.477 6 24 6C29.523 6 34 10.477 34 16V22"
+    stroke="url(#lock_shackle)" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <!-- Lock body -->
+  <rect x="10" y="22" width="28" height="22" rx="4" fill="url(#lock_body)"/>
+  <!-- Keyhole circle -->
+  <circle cx="24" cy="32" r="3.5" fill="#F57F17"/>
+  <!-- Keyhole slot -->
+  <path d="M24 35L22 40H26L24 35Z" fill="#F57F17"/>
+  <!-- Body highlight -->
+  <path d="M14 24C14 24 15 23 20 23" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.3" fill="none"/>
+  <!-- Shackle highlight -->
+  <path d="M18 18V16C18 12.7 20.7 10 24 10" stroke="white" stroke-width="1" stroke-linecap="round" opacity="0.3" fill="none"/>
+</svg>

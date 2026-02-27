@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="tie_grad" x1="4" y1="16" x2="44" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EF5350"/>
+      <stop offset="1" stop-color="#C62828"/>
+    </linearGradient>
+  </defs>
+  <!-- Left bow -->
+  <path d="M24 24L6 14C4 13 2 14 2 16V32C2 34 4 35 6 34L24 24Z" fill="url(#tie_grad)"/>
+  <!-- Right bow -->
+  <path d="M24 24L42 14C44 13 46 14 46 16V32C46 34 44 35 42 34L24 24Z" fill="url(#tie_grad)"/>
+  <!-- Center knot -->
+  <circle cx="24" cy="24" r="4" fill="#B71C1C"/>
+  <circle cx="24" cy="24" r="3" fill="url(#tie_grad)"/>
+  <!-- Highlights -->
+  <path d="M6 16L18 22" stroke="white" stroke-width="0.8" opacity="0.25" fill="none"/>
+  <path d="M42 16L30 22" stroke="white" stroke-width="0.8" opacity="0.25" fill="none"/>
+  <!-- Polka dots on left bow -->
+  <circle cx="12" cy="20" r="1" fill="white" opacity="0.2"/>
+  <circle cx="10" cy="26" r="1" fill="white" opacity="0.2"/>
+  <circle cx="16" cy="24" r="1" fill="white" opacity="0.2"/>
+  <!-- Polka dots on right bow -->
+  <circle cx="36" cy="20" r="1" fill="white" opacity="0.2"/>
+  <circle cx="38" cy="26" r="1" fill="white" opacity="0.2"/>
+  <circle cx="32" cy="24" r="1" fill="white" opacity="0.2"/>
+</svg>

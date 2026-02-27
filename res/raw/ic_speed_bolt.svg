@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="bolt_grad" x1="20" y1="2" x2="28" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE566"/>
+      <stop offset="0.4" stop-color="#FFC107"/>
+      <stop offset="1" stop-color="#FF8F00"/>
+    </linearGradient>
+    <linearGradient id="bolt_edge" x1="20" y1="2" x2="28" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB300"/>
+      <stop offset="1" stop-color="#E65100"/>
+    </linearGradient>
+  </defs>
+  <!-- Shadow bolt -->
+  <path d="M28 2L12 26H22L18 46L38 20H27Z" fill="url(#bolt_edge)" transform="translate(0.8, 0.8)" opacity="0.3"/>
+  <!-- Main bolt -->
+  <path d="M28 2L12 26H22L18 46L38 20H27Z" fill="url(#bolt_grad)"/>
+  <!-- Highlight streak -->
+  <path d="M27 4L18 19H23L22 24" stroke="white" stroke-width="1.2" stroke-linecap="round" opacity="0.45" fill="none"/>
+  <!-- Sparkles -->
+  <circle cx="10" cy="18" r="1" fill="#FFE566" opacity="0.7"/>
+  <circle cx="38" cy="30" r="1.2" fill="#FFE566" opacity="0.6"/>
+  <circle cx="8" cy="32" r="0.8" fill="#FFE566" opacity="0.5"/>
+</svg>

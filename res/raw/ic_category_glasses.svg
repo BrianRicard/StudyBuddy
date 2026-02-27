@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="glass_grad" x1="4" y1="18" x2="44" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#42A5F5"/>
+      <stop offset="1" stop-color="#1E88E5"/>
+    </linearGradient>
+  </defs>
+  <!-- Left lens -->
+  <circle cx="16" cy="24" r="10" stroke="url(#glass_grad)" stroke-width="3" fill="#E3F2FD" fill-opacity="0.3"/>
+  <!-- Right lens -->
+  <circle cx="32" cy="24" r="10" stroke="url(#glass_grad)" stroke-width="3" fill="#E3F2FD" fill-opacity="0.3"/>
+  <!-- Bridge -->
+  <path d="M26 22C25 20 23 20 22 22" stroke="url(#glass_grad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Left arm -->
+  <path d="M6 22C4 20 2 18 2 16" stroke="url(#glass_grad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Right arm -->
+  <path d="M42 22C44 20 46 18 46 16" stroke="url(#glass_grad)" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  <!-- Lens highlights -->
+  <circle cx="12" cy="20" r="2" fill="white" opacity="0.4"/>
+  <circle cx="28" cy="20" r="2" fill="white" opacity="0.4"/>
+</svg>

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Black stripe -->
+  <path d="M4 14C4 11.79 5.79 10 8 10H40C42.21 10 44 11.79 44 14V19.33H4V14Z" fill="#000000"/>
+  <!-- Red stripe -->
+  <rect x="4" y="19.33" width="40" height="9.34" fill="#DD0000"/>
+  <!-- Gold stripe -->
+  <path d="M4 28.67H44V34C44 36.21 42.21 38 40 38H8C5.79 38 4 36.21 4 34V28.67Z" fill="#FFCC00"/>
+  <!-- Subtle border -->
+  <rect x="4" y="10" width="40" height="28" rx="4" stroke="#00000015" stroke-width="1" fill="none"/>
+  <!-- Highlight -->
+  <rect x="4" y="10" width="40" height="3.5" rx="4" fill="white" opacity="0.12"/>
+</svg>

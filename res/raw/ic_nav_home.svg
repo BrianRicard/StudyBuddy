@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="nav_home" x1="24" y1="4" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#42A5F5"/>
+      <stop offset="1" stop-color="#1E88E5"/>
+    </linearGradient>
+  </defs>
+  <!-- Roof -->
+  <path d="M4 22L24 6L44 22" stroke="url(#nav_home)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- House body -->
+  <path d="M10 20V38C10 39.1 10.9 40 12 40H20V30H28V40H36C37.1 40 38 39.1 38 38V20" stroke="url(#nav_home)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Door threshold fill -->
+  <rect x="20" y="30" width="8" height="10" fill="url(#nav_home)" opacity="0.15"/>
+  <!-- Chimney -->
+  <rect x="32" y="10" width="4" height="8" rx="1" stroke="url(#nav_home)" stroke-width="2" fill="none"/>
+</svg>

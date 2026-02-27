@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="flame_outer" x1="24" y1="44" x2="24" y2="4" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FF4500"/>
+      <stop offset="0.5" stop-color="#FF6B35"/>
+      <stop offset="1" stop-color="#FFB347"/>
+    </linearGradient>
+    <linearGradient id="flame_inner" x1="24" y1="40" x2="24" y2="20" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFD700"/>
+      <stop offset="1" stop-color="#FFEC80"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer flame -->
+  <path d="M24 4C24 4 12 18 12 28C12 34.627 17.373 40 24 40C30.627 40 36 34.627 36 28C36 18 24 4 24 4Z
+           M18 30C18 30 16 24 20 18C20 18 22 24 28 22C28 22 32 26 30 32C30 32 27 36 24 36C21 36 18 34 18 30Z"
+        fill="url(#flame_outer)" fill-rule="evenodd"/>
+  <!-- Inner bright core -->
+  <path d="M24 38C21.5 38 19 36 19 32.5C19 29 22 26 24 24C26 26 29 29 29 32.5C29 36 26.5 38 24 38Z"
+        fill="url(#flame_inner)"/>
+  <!-- Highlight dot -->
+  <circle cx="22" cy="30" r="1.5" fill="white" opacity="0.6"/>
+</svg>

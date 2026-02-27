@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <!-- Flag background with rounded corners -->
+  <rect x="4" y="10" width="40" height="28" rx="4" fill="#EEEEEE"/>
+  <!-- Blue stripe -->
+  <path d="M4 14C4 11.79 5.79 10 8 10H17.33V38H8C5.79 38 4 36.21 4 34V14Z" fill="#002395"/>
+  <!-- White stripe -->
+  <rect x="17.33" y="10" width="13.34" height="28" fill="white"/>
+  <!-- Red stripe -->
+  <path d="M30.67 10H40C42.21 10 44 11.79 44 14V34C44 36.21 42.21 38 40 38H30.67V10Z" fill="#ED2939"/>
+  <!-- Subtle border -->
+  <rect x="4" y="10" width="40" height="28" rx="4" stroke="#00000010" stroke-width="1" fill="none"/>
+  <!-- Highlight -->
+  <rect x="4" y="10" width="40" height="4" rx="4" fill="white" opacity="0.15"/>
+</svg>

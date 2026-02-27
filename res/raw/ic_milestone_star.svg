@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="glow_star" x1="24" y1="2" x2="24" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE566"/>
+      <stop offset="1" stop-color="#FF9F1C"/>
+    </linearGradient>
+    <radialGradient id="glow_bg" cx="24" cy="24" r="22" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF3B0" stop-opacity="0.5"/>
+      <stop offset="0.6" stop-color="#FFE066" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#FFD700" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <!-- Glow aura -->
+  <circle cx="24" cy="24" r="22" fill="url(#glow_bg)"/>
+  <!-- Outer rays -->
+  <line x1="24" y1="1" x2="24" y2="6" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="24" y1="42" x2="24" y2="47" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="1" y1="24" x2="6" y2="24" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="42" y1="24" x2="47" y2="24" stroke="#FFD700" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <line x1="7" y1="7" x2="10.5" y2="10.5" stroke="#FFD700" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+  <line x1="37.5" y1="37.5" x2="41" y2="41" stroke="#FFD700" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+  <line x1="41" y1="7" x2="37.5" y2="10.5" stroke="#FFD700" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+  <line x1="10.5" y1="37.5" x2="7" y2="41" stroke="#FFD700" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+  <!-- Main star -->
+  <path d="M24 8L28.5 18.5L40 20L31.5 28L33.5 39.5L24 34L14.5 39.5L16.5 28L8 20L19.5 18.5Z"
+        fill="url(#glow_star)"/>
+  <!-- Highlight -->
+  <path d="M24 8L28.5 18.5L40 20L24 23Z" fill="white" opacity="0.3"/>
+  <!-- Inner sparkle -->
+  <circle cx="21" cy="18" r="1" fill="white" opacity="0.7"/>
+  <circle cx="28" cy="25" r="0.8" fill="white" opacity="0.4"/>
+</svg>
