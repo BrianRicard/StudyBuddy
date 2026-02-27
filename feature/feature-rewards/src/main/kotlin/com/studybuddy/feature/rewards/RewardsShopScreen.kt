@@ -1,5 +1,7 @@
 package com.studybuddy.feature.rewards
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -52,6 +54,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -243,28 +246,38 @@ private fun RewardsTabBar(
                 selected = tab == selectedTab,
                 onClick = { onTabSelected(tab) },
                 text = {
-                    Text(
-                        text = "${tab.tabIcon} ${when (tab) {
-                            RewardsTab.AVATAR -> stringResource(CoreUiR.string.rewards_tab_avatar)
-                            RewardsTab.THEMES -> stringResource(CoreUiR.string.rewards_tab_themes)
-                            RewardsTab.EFFECTS -> stringResource(CoreUiR.string.rewards_tab_effects)
-                            RewardsTab.TITLES -> stringResource(CoreUiR.string.rewards_tab_titles)
-                        }}",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        Image(
+                            painter = painterResource(tab.tabIconRes),
+                            contentDescription = null,
+                            modifier = Modifier.size(18.dp),
+                        )
+                        Text(
+                            text = when (tab) {
+                                RewardsTab.AVATAR -> stringResource(CoreUiR.string.rewards_tab_avatar)
+                                RewardsTab.THEMES -> stringResource(CoreUiR.string.rewards_tab_themes)
+                                RewardsTab.EFFECTS -> stringResource(CoreUiR.string.rewards_tab_effects)
+                                RewardsTab.TITLES -> stringResource(CoreUiR.string.rewards_tab_titles)
+                            },
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 },
             )
         }
     }
 }
 
-private val RewardsTab.tabIcon: String
-    get() = when (this) {
-        RewardsTab.AVATAR -> "\uD83D\uDC64"
-        RewardsTab.THEMES -> "\uD83C\uDFA8"
-        RewardsTab.EFFECTS -> "\u2728"
-        RewardsTab.TITLES -> "\uD83C\uDFC5"
+private val RewardsTab.tabIconRes: Int
+    @DrawableRes get() = when (this) {
+        RewardsTab.AVATAR -> CoreUiR.drawable.ic_shop_characters
+        RewardsTab.THEMES -> CoreUiR.drawable.ic_shop_themes
+        RewardsTab.EFFECTS -> CoreUiR.drawable.ic_shop_effects
+        RewardsTab.TITLES -> CoreUiR.drawable.ic_trophy
     }
 
 // endregion
@@ -1008,7 +1021,7 @@ private fun RewardsShopAvatarTabPreview() {
         RewardsShopContent(
             state = RewardsShopState(
                 selectedTab = RewardsTab.AVATAR,
-                ownedItemIds = RewardCatalog.starterItemIds + setOf("hat_crown", "pet_hamster"),
+                ownedItemIds = RewardCatalog.starterItemIds + setOf("hat_crown", "pet_fish"),
                 starBalance = 320L,
                 activeTheme = "sunset",
                 isLoading = false,

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Shadow/depth layer -->
+    <path
+        android:pathData="M24.5,6.5L30,19L43.5,20.5L33.5,30L36,43.5L24.5,37L13,43.5L15.5,30L5.5,20.5L19,19Z"
+        android:fillAlpha="1">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFF0A500"/>
+                <item android:offset="1" android:color="#FFD4880F"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Main star -->
+    <path
+        android:pathData="M24,6L29.5,18.5L43,20L33,29.5L35.5,43L24,36.5L12.5,43L15,29.5L5,20L18.5,18.5Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFE066"/>
+                <item android:offset="0.5" android:color="#FFFFD700"/>
+                <item android:offset="1" android:color="#FFF0A500"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Highlight facet right -->
+    <path
+        android:pathData="M24,6L29.5,18.5L43,20L24,24Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.25"/>
+    <!-- Highlight facet left -->
+    <path
+        android:pathData="M24,6L18.5,18.5L5,20L24,24Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.15"/>
+    <!-- Sparkle dot -->
+    <path
+        android:pathData="M20.2,17 A1.2,1.2 0 1,1 17.8,17 A1.2,1.2 0 1,1 20.2,17Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.6"/>
+</vector>

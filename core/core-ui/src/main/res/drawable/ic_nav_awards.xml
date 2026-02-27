@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Left ribbon -->
+    <path
+        android:pathData="M18,30L10,46L16,40L22,46L20,32">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="14"
+                android:startY="28"
+                android:endX="14"
+                android:endY="46">
+                <item android:offset="0" android:color="#FFEF5350"/>
+                <item android:offset="1" android:color="#FFC62828"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Right ribbon -->
+    <path
+        android:pathData="M30,30L38,46L32,40L26,46L28,32">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="34"
+                android:startY="28"
+                android:endX="34"
+                android:endY="46">
+                <item android:offset="0" android:color="#FFEF5350"/>
+                <item android:offset="1" android:color="#FFC62828"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Medal circle -->
+    <path
+        android:pathData="M38,20 A14,14 0 1,1 10,20 A14,14 0 1,1 38,20Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="8"
+                android:endX="24"
+                android:endY="36">
+                <item android:offset="0" android:color="#FFFFE082"/>
+                <item android:offset="1" android:color="#FFFFB300"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner ring -->
+    <path
+        android:pathData="M34.5,20 A10.5,10.5 0 1,1 13.5,20 A10.5,10.5 0 1,1 34.5,20Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#F9A825"
+        android:strokeWidth="1.5"/>
+    <!-- Star on medal -->
+    <path
+        android:pathData="M24,11L26.5,16.5L32.5,17L28,21L29.2,27L24,24L18.8,27L20,21L15.5,17L21.5,16.5Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.4"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M16,12C18,9 21,8 24,7"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.35"/>
+</vector>

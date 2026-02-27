@@ -72,11 +72,11 @@ class RewardCatalogTest {
     }
 
     @Test
-    fun `toque is a free starter hat`() {
-        val toque = RewardCatalog.getItemById("hat_toque")
-        assertNotNull(toque)
-        assertEquals(0, toque!!.cost)
-        assertTrue(RewardCatalog.isStarterItem("hat_toque"))
+    fun `party hat is a free starter hat`() {
+        val party = RewardCatalog.getItemById("hat_party")
+        assertNotNull(party)
+        assertEquals(0, party!!.cost)
+        assertTrue(RewardCatalog.isStarterItem("hat_party"))
     }
 
     @Test
@@ -89,8 +89,8 @@ class RewardCatalogTest {
     @Test
     fun `isStarterItem returns false for premium items`() {
         assertFalse(RewardCatalog.isStarterItem("hat_crown"))
-        assertFalse(RewardCatalog.isStarterItem("pet_hamster"))
-        assertFalse(RewardCatalog.isStarterItem("outfit_cape"))
+        assertFalse(RewardCatalog.isStarterItem("pet_fish"))
+        assertFalse(RewardCatalog.isStarterItem("face_monocle"))
     }
 
     @Test
@@ -134,18 +134,9 @@ class RewardCatalogTest {
     }
 
     @Test
-    fun `new Canadian pets are in catalog`() {
-        assertNotNull(RewardCatalog.getItemById("pet_beaver"))
-        assertNotNull(RewardCatalog.getItemById("pet_loon"))
-        assertNotNull(RewardCatalog.getItemById("pet_polar_bear"))
-        assertNotNull(RewardCatalog.getItemById("pet_raccoon"))
-    }
-
-    @Test
-    fun `hockey jersey exists and has correct category`() {
-        val jersey = RewardCatalog.getItemById("outfit_hockey_jersey")
-        assertNotNull(jersey)
-        assertEquals(RewardCategory.OUTFIT, jersey!!.category)
+    fun `trimmed pets are in catalog`() {
+        assertNotNull(RewardCatalog.getItemById("pet_chick"))
+        assertNotNull(RewardCatalog.getItemById("pet_fish"))
     }
 
     @Test

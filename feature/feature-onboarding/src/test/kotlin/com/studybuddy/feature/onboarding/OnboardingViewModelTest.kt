@@ -63,7 +63,7 @@ class OnboardingViewModelTest {
 
         assertEquals(0, state.currentStep)
         assertEquals("", state.name)
-        assertEquals("fr", state.selectedLocale)
+        assertEquals("en", state.selectedLocale)
     }
 
     @Test

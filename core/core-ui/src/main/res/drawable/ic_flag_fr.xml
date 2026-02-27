@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Flag background -->
+    <path
+        android:pathData="M8,10h32 A4,4 0 0,1 44,14v24 A4,4 0 0,1 40,38h-32 A4,4 0 0,1 4,34v-24 A4,4 0 0,1 8,10z"
+        android:fillColor="#EEEEEE"/>
+    <!-- Blue stripe (left with rounded corners) -->
+    <path
+        android:pathData="M4,14C4,11.79 5.79,10 8,10H17.33V38H8C5.79,38 4,36.21 4,34V14Z"
+        android:fillColor="#002395"/>
+    <!-- White stripe (center) -->
+    <path
+        android:pathData="M17.33,10h13.34v28h-13.34z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Red stripe (right with rounded corners) -->
+    <path
+        android:pathData="M30.67,10H40C42.21,10 44,11.79 44,14V34C44,36.21 42.21,38 40,38H30.67V10Z"
+        android:fillColor="#ED2939"/>
+    <!-- Subtle border -->
+    <path
+        android:pathData="M8,10h32 A4,4 0 0,1 44,14v24 A4,4 0 0,1 40,38h-32 A4,4 0 0,1 4,34v-24 A4,4 0 0,1 8,10z"
+        android:fillColor="#00000000"
+        android:strokeColor="#10000000"
+        android:strokeWidth="1"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M4,10h40v4h-40z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.15"/>
+</vector>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Head -->
+    <path
+        android:pathData="M34,14 A10,10 0 1,1 14,14 A10,10 0 1,1 34,14Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF78909C"/>
+                <item android:offset="1" android:color="#FF546E7A"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Body -->
+    <path
+        android:pathData="M8,44C8,34 15,28 24,28C33,28 40,34 40,44">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF78909C"/>
+                <item android:offset="1" android:color="#FF546E7A"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Head highlight -->
+    <path
+        android:pathData="M23,11 A3,3 0 1,1 17,11 A3,3 0 1,1 23,11Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.15"/>
+    <!-- Shoulder highlight -->
+    <path
+        android:pathData="M14,34C18,30 22,29 24,28"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.15"/>
+</vector>

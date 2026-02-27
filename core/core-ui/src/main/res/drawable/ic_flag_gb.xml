@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Blue background -->
+    <path
+        android:pathData="M8,10h32 A4,4 0 0,1 44,14v24 A4,4 0 0,1 40,38h-32 A4,4 0 0,1 4,34v-24 A4,4 0 0,1 8,10z"
+        android:fillColor="#012169"/>
+    <!-- White diagonal top-left to bottom-right -->
+    <path
+        android:pathData="M4,10L44,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"/>
+    <!-- White diagonal top-right to bottom-left -->
+    <path
+        android:pathData="M44,10L4,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="6"/>
+    <!-- Red diagonal strokes (St Patrick) -->
+    <path
+        android:pathData="M26,22.5L44,10"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="2.5"/>
+    <path
+        android:pathData="M22,25.5L4,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="2.5"/>
+    <path
+        android:pathData="M22,22.5L4,10"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="2.5"/>
+    <path
+        android:pathData="M26,25.5L44,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="2.5"/>
+    <!-- White cross vertical -->
+    <path
+        android:pathData="M24,10L24,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"/>
+    <!-- White cross horizontal -->
+    <path
+        android:pathData="M4,24L44,24"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="8"/>
+    <!-- Red cross vertical (St George) -->
+    <path
+        android:pathData="M24,10L24,38"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="5"/>
+    <!-- Red cross horizontal (St George) -->
+    <path
+        android:pathData="M4,24L44,24"
+        android:fillColor="#00000000"
+        android:strokeColor="#C8102E"
+        android:strokeWidth="5"/>
+    <!-- Rounded border -->
+    <path
+        android:pathData="M8,10h32 A4,4 0 0,1 44,14v24 A4,4 0 0,1 40,38h-32 A4,4 0 0,1 4,34v-24 A4,4 0 0,1 8,10z"
+        android:fillColor="#00000000"
+        android:strokeColor="#10000000"
+        android:strokeWidth="1"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M4,10h40v4h-40z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.1"/>
+</vector>
