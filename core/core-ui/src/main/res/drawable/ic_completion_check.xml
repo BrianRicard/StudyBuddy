@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Circle background -->
+    <path
+        android:pathData="M44,24 A20,20 0 1,1 4,24 A20,20 0 1,1 44,24Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF66DE93"/>
+                <item android:offset="1" android:color="#FF2EAF5C"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner shadow ring -->
+    <path
+        android:pathData="M41,24 A17,17 0 1,1 7,24 A17,17 0 1,1 41,24Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.2"/>
+    <!-- Checkmark -->
+    <path
+        android:pathData="M14,24L21,31L34,17"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="3.5"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"/>
+    <!-- Highlight arc -->
+    <path
+        android:pathData="M14,14C18,10 22,8 28,8"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.3"/>
+</vector>

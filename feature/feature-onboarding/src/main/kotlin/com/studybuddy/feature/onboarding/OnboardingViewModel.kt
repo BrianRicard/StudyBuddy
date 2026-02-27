@@ -35,7 +35,7 @@ import kotlinx.datetime.Clock
 data class OnboardingState(
     val currentStep: Int = 0,
     val name: String = "",
-    val selectedLocale: String = "fr",
+    val selectedLocale: String = "en",
     val avatarConfig: AvatarConfig = AvatarConfig.default(),
     val isCompleting: Boolean = false,
     val nameError: String? = null,

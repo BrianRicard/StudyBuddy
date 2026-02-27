@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Left ear -->
+    <path
+        android:pathData="M10,20L6,6L18,16Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="10"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFB74D"/>
+                <item android:offset="1" android:color="#FFFB8C00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Right ear -->
+    <path
+        android:pathData="M38,20L42,6L30,16Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="10"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFB74D"/>
+                <item android:offset="1" android:color="#FFFB8C00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner ear pink -->
+    <path
+        android:pathData="M12,18L9,9L17,16Z"
+        android:fillColor="#FFCC80"/>
+    <path
+        android:pathData="M36,18L39,9L31,16Z"
+        android:fillColor="#FFCC80"/>
+    <!-- Head -->
+    <path
+        android:pathData="M40,28 A16,16 0 1,1 8,28 A16,16 0 1,1 40,28Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="10"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFB74D"/>
+                <item android:offset="1" android:color="#FFFB8C00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Little party hat -->
+    <path
+        android:pathData="M24,4L18,16H30Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="0"
+                android:endX="24"
+                android:endY="16">
+                <item android:offset="0" android:color="#FFCE93D8"/>
+                <item android:offset="1" android:color="#FFAB47BC"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Hat pompom -->
+    <path
+        android:pathData="M26.5,4 A2.5,2.5 0 1,1 21.5,4 A2.5,2.5 0 1,1 26.5,4Z"
+        android:fillColor="#F48FB1"/>
+    <!-- Hat stripes -->
+    <path
+        android:pathData="M21,12L27.5,12"
+        android:fillColor="#00000000"
+        android:strokeColor="#E1BEE7"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.6"/>
+    <path
+        android:pathData="M22.2,9L26.3,9"
+        android:fillColor="#00000000"
+        android:strokeColor="#E1BEE7"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.6"/>
+    <!-- Eyes - big friendly ovals -->
+    <path
+        android:pathData="M21.5,26 A3.5,4 0 1,1 14.5,26 A3.5,4 0 1,1 21.5,26Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M33.5,26 A3.5,4 0 1,1 26.5,26 A3.5,4 0 1,1 33.5,26Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Pupils -->
+    <path
+        android:pathData="M20.5,25 A2,2.5 0 1,1 16.5,25 A2,2.5 0 1,1 20.5,25Z"
+        android:fillColor="#4E342E"/>
+    <path
+        android:pathData="M32.5,25 A2,2.5 0 1,1 28.5,25 A2,2.5 0 1,1 32.5,25Z"
+        android:fillColor="#4E342E"/>
+    <!-- Eye sparkles -->
+    <path
+        android:pathData="M18,24 A1,1 0 1,1 16,24 A1,1 0 1,1 18,24Z"
+        android:fillColor="#FFFFFF"/>
+    <path
+        android:pathData="M30,24 A1,1 0 1,1 28,24 A1,1 0 1,1 30,24Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Nose -->
+    <path
+        android:pathData="M23,31L24,32.5L25,31Z"
+        android:fillColor="#F48FB1"/>
+    <!-- Mouth -->
+    <path
+        android:pathData="M20,33.5C22,35 26,35 28,33.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#E65100"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"/>
+    <!-- Mouth center line -->
+    <path
+        android:pathData="M24,32.5L24,33.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#E65100"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"/>
+    <!-- Whiskers left -->
+    <path
+        android:pathData="M4,28L14,30"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFCC80"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M4,32L14,32"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFCC80"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"/>
+    <!-- Whiskers right -->
+    <path
+        android:pathData="M44,28L34,30"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFCC80"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M44,32L34,32"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFCC80"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"/>
+    <!-- Cheek blush -->
+    <path
+        android:pathData="M16,32 A3,3 0 1,1 10,32 A3,3 0 1,1 16,32Z"
+        android:fillColor="#FFAB91"
+        android:fillAlpha="0.4"/>
+    <path
+        android:pathData="M38,32 A3,3 0 1,1 32,32 A3,3 0 1,1 38,32Z"
+        android:fillColor="#FFAB91"
+        android:fillAlpha="0.4"/>
+</vector>

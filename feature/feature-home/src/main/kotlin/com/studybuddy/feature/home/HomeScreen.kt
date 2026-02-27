@@ -27,7 +27,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -223,10 +222,9 @@ private fun HomeHeader(
                 .padding(horizontal = 12.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                imageVector = Icons.Default.Star,
+            Image(
+                painter = painterResource(CoreUiR.drawable.ic_star_points),
                 contentDescription = stringResource(CoreUiR.string.stars),
-                tint = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.size(18.dp),
             )
             Spacer(Modifier.width(4.dp))
@@ -255,7 +253,11 @@ private fun StreakBanner(
             modifier = Modifier.padding(16.dp),
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "\uD83D\uDD25", fontSize = 24.sp)
+                Image(
+                    painter = painterResource(CoreUiR.drawable.ic_streak_flame),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
+                )
                 Spacer(Modifier.width(8.dp))
                 Text(
                     text = if (dayStreak > 0) {
@@ -340,9 +342,12 @@ private fun DailyChallengeCard(
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    text = if (isComplete) "\uD83C\uDF89" else "\uD83C\uDFAF",
-                    fontSize = 20.sp,
+                Image(
+                    painter = painterResource(
+                        if (isComplete) CoreUiR.drawable.ic_goal_complete else CoreUiR.drawable.ic_target_challenge,
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.size(24.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
@@ -390,7 +395,6 @@ private fun ModeCardsGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ModeCard(
-                emoji = "\u270D\uFE0F",
                 title = stringResource(CoreUiR.string.mode_dictee),
                 subtitle = stringResource(CoreUiR.string.label_spelling_practice),
                 onClick = onDicteeClick,
@@ -400,7 +404,6 @@ private fun ModeCardsGrid(
                 animationDelay = 0,
             )
             ModeCard(
-                emoji = "\uD83E\uDDEE",
                 title = stringResource(CoreUiR.string.mode_math),
                 subtitle = stringResource(CoreUiR.string.label_mental_math),
                 onClick = onMathClick,
@@ -415,21 +418,21 @@ private fun ModeCardsGrid(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             ModeCard(
-                emoji = "\uD83D\uDCDC",
                 title = stringResource(CoreUiR.string.mode_poems),
                 subtitle = stringResource(CoreUiR.string.label_coming_soon),
                 onClick = {},
                 modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_poems_notepad,
                 isLocked = true,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 2,
             )
             ModeCard(
-                emoji = "\u2795",
                 title = stringResource(CoreUiR.string.mode_more),
                 subtitle = stringResource(CoreUiR.string.label_coming_soon),
                 onClick = {},
                 modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_more_plus,
                 isLocked = true,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 3,
@@ -440,7 +443,6 @@ private fun ModeCardsGrid(
 
 @Composable
 private fun ModeCard(
-    emoji: String,
     title: String,
     subtitle: String,
     onClick: () -> Unit,
@@ -489,8 +491,6 @@ private fun ModeCard(
                         contentDescription = title,
                         modifier = Modifier.size(48.dp),
                     )
-                } else {
-                    Text(text = emoji, fontSize = 36.sp)
                 }
                 Spacer(Modifier.height(4.dp))
                 Text(
@@ -535,7 +535,11 @@ private fun EmptyRecentActivity() {
                 .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = "\uD83C\uDF1F", fontSize = 32.sp)
+            Image(
+                painter = painterResource(CoreUiR.drawable.ic_milestone_star),
+                contentDescription = null,
+                modifier = Modifier.size(36.dp),
+            )
             Spacer(Modifier.height(8.dp))
             Text(
                 text = stringResource(CoreUiR.string.home_no_activity),
@@ -566,9 +570,16 @@ private fun RecentActivityRow(activity: RecentActivity) {
                 .padding(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(
-                text = if (activity.source == PointSource.DICTEE) "\u270D\uFE0F" else "\uD83E\uDDEE",
-                fontSize = 24.sp,
+            Image(
+                painter = painterResource(
+                    if (activity.source == PointSource.DICTEE) {
+                        CoreUiR.drawable.ic_dictee_illustration
+                    } else {
+                        CoreUiR.drawable.ic_math_illustration
+                    },
+                ),
+                contentDescription = null,
+                modifier = Modifier.size(28.dp),
             )
             Spacer(Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {

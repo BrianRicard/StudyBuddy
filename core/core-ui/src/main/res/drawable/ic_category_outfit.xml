@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Left bow -->
+    <path
+        android:pathData="M24,24L6,14C4,13 2,14 2,16V32C2,34 4,35 6,34L24,24Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="4"
+                android:startY="16"
+                android:endX="44"
+                android:endY="32">
+                <item android:offset="0" android:color="#FFEF5350"/>
+                <item android:offset="1" android:color="#FFC62828"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Right bow -->
+    <path
+        android:pathData="M24,24L42,14C44,13 46,14 46,16V32C46,34 44,35 42,34L24,24Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="4"
+                android:startY="16"
+                android:endX="44"
+                android:endY="32">
+                <item android:offset="0" android:color="#FFEF5350"/>
+                <item android:offset="1" android:color="#FFC62828"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Center knot outer -->
+    <path
+        android:pathData="M28,24 A4,4 0 1,1 20,24 A4,4 0 1,1 28,24Z"
+        android:fillColor="#B71C1C"/>
+    <!-- Center knot inner -->
+    <path
+        android:pathData="M27,24 A3,3 0 1,1 21,24 A3,3 0 1,1 27,24Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="4"
+                android:startY="16"
+                android:endX="44"
+                android:endY="32">
+                <item android:offset="0" android:color="#FFEF5350"/>
+                <item android:offset="1" android:color="#FFC62828"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Highlights -->
+    <path
+        android:pathData="M6,16L18,22"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.25"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M42,16L30,22"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.25"
+        android:fillColor="#00000000"/>
+    <!-- Polka dots on left bow -->
+    <path
+        android:pathData="M13,20 A1,1 0 1,1 11,20 A1,1 0 1,1 13,20Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+    <path
+        android:pathData="M11,26 A1,1 0 1,1 9,26 A1,1 0 1,1 11,26Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+    <path
+        android:pathData="M17,24 A1,1 0 1,1 15,24 A1,1 0 1,1 17,24Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+    <!-- Polka dots on right bow -->
+    <path
+        android:pathData="M37,20 A1,1 0 1,1 35,20 A1,1 0 1,1 37,20Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+    <path
+        android:pathData="M39,26 A1,1 0 1,1 37,26 A1,1 0 1,1 39,26Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+    <path
+        android:pathData="M33,24 A1,1 0 1,1 31,24 A1,1 0 1,1 33,24Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.2"/>
+</vector>

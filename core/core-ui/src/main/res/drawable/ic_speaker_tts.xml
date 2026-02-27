@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Speaker body -->
+    <path
+        android:pathData="M6,18H12L24,8V40L12,30H6C4.9,30 4,29.1 4,28V20C4,18.9 4.9,18 6,18Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="6"
+                android:startY="14"
+                android:endX="24"
+                android:endY="36">
+                <item android:offset="0" android:color="#FF7E57C2"/>
+                <item android:offset="1" android:color="#FF5C35A5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Highlight on speaker -->
+    <path
+        android:pathData="M6,18H10L12,16.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.8"
+        android:strokeAlpha="0.3"/>
+    <!-- Sound wave 1 (near) -->
+    <path
+        android:pathData="M28,18C30.5,20 30.5,28 28,30"
+        android:fillColor="#00000000"
+        android:strokeColor="#B39DDB"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Sound wave 2 (mid) -->
+    <path
+        android:pathData="M33,13C37.5,17 37.5,31 33,35"
+        android:fillColor="#00000000"
+        android:strokeColor="#B39DDB"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.7"/>
+    <!-- Sound wave 3 (far) -->
+    <path
+        android:pathData="M38,8C44,14 44,34 38,40"
+        android:fillColor="#00000000"
+        android:strokeColor="#B39DDB"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.4"/>
+</vector>

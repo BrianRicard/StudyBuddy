@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Roof -->
+    <path
+        android:pathData="M4,22L24,6L44,22"
+        android:fillColor="#00000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF42A5F5"/>
+                <item android:offset="1" android:color="#FF1E88E5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- House body -->
+    <path
+        android:pathData="M10,20V38C10,39.1 10.9,40 12,40H20V30H28V40H36C37.1,40 38,39.1 38,38V20"
+        android:fillColor="#00000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF42A5F5"/>
+                <item android:offset="1" android:color="#FF1E88E5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Door threshold fill -->
+    <path
+        android:pathData="M20,30h8v10h-8z"
+        android:fillAlpha="0.15">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FF42A5F5"/>
+                <item android:offset="1" android:color="#FF1E88E5"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

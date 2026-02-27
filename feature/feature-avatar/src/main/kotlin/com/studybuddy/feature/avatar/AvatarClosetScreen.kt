@@ -550,7 +550,7 @@ private fun AvatarClosetScreenPreview() {
                     bodyId = "unicorn",
                     hatId = "hat_crown",
                     faceId = "face_shades",
-                    outfitId = "outfit_cape",
+                    outfitId = "outfit_none",
                     petId = "pet_chick",
                 ),
                 selectedTab = AccessoryTab.HATS,

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Top button -->
+    <path
+        android:pathData="M21,3.5 A1.5,1.5 0 0,1 22.5,2h3 A1.5,1.5 0 0,1 27,3.5v1 A1.5,1.5 0 0,1 25.5,6h-3 A1.5,1.5 0 0,1 21,4.5v-1z"
+        android:fillColor="#90CAF9"/>
+    <!-- Side button -->
+    <path
+        android:pathData="M36,12L39,9"
+        android:fillColor="#00000000"
+        android:strokeColor="#90CAF9"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round"/>
+    <!-- Watch body -->
+    <path
+        android:pathData="M42,26 A18,18 0 1,1 6,26 A18,18 0 1,1 42,26Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="8"
+                android:endX="24"
+                android:endY="46">
+                <item android:offset="0" android:color="#FF42A5F5"/>
+                <item android:offset="1" android:color="#FF1565C0"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner face -->
+    <path
+        android:pathData="M39,26 A15,15 0 1,1 9,26 A15,15 0 1,1 39,26Z"
+        android:fillColor="#E3F2FD"
+        android:fillAlpha="0.15"/>
+    <path
+        android:pathData="M38.5,26 A14.5,14.5 0 1,1 9.5,26 A14.5,14.5 0 1,1 38.5,26Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="0.5"
+        android:strokeAlpha="0.3"/>
+    <!-- Tick marks -->
+    <path
+        android:pathData="M24,13L24,15.5"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8"/>
+    <path
+        android:pathData="M24,36.5L24,39"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8"/>
+    <path
+        android:pathData="M11,26L13.5,26"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8"/>
+    <path
+        android:pathData="M34.5,26L37,26"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.8"/>
+    <!-- Clock hands -->
+    <path
+        android:pathData="M24,26L24,16"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"/>
+    <path
+        android:pathData="M24,26L32,22"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round"/>
+    <!-- Center dot -->
+    <path
+        android:pathData="M26,26 A2,2 0 1,1 22,26 A2,2 0 1,1 26,26Z"
+        android:fillColor="#FFFFFF"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M15,16C18,12 21,11 26,10"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.3"/>
+</vector>

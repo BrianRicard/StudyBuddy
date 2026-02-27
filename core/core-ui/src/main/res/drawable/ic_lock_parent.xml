@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Shackle (U-shaped top) -->
+    <path
+        android:pathData="M14,22V16C14,10.477 18.477,6 24,6C29.523,6 34,10.477 34,16V22"
+        android:fillColor="#00000000"
+        android:strokeWidth="4"
+        android:strokeLineCap="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="4"
+                android:endX="24"
+                android:endY="22">
+                <item android:offset="0" android:color="#FF78909C"/>
+                <item android:offset="1" android:color="#FF546E7A"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Lock body -->
+    <path
+        android:pathData="M10,22h28v18 A4,4 0 0,1 34,44h-20 A4,4 0 0,1 10,40v-18z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="20"
+                android:endX="24"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFC107"/>
+                <item android:offset="1" android:color="#FFF9A825"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Keyhole circle -->
+    <path
+        android:pathData="M27.5,32 A3.5,3.5 0 1,1 20.5,32 A3.5,3.5 0 1,1 27.5,32Z"
+        android:fillColor="#F57F17"/>
+    <!-- Keyhole slot -->
+    <path
+        android:pathData="M24,35L22,40H26L24,35Z"
+        android:fillColor="#F57F17"/>
+    <!-- Body highlight -->
+    <path
+        android:pathData="M14,24C14,24 15,23 20,23"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.3"/>
+    <!-- Shackle highlight -->
+    <path
+        android:pathData="M18,18V16C18,12.7 20.7,10 24,10"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.3"/>
+</vector>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Outer flame -->
+    <path
+        android:pathData="M24,4C24,4 12,18 12,28C12,34.627 17.373,40 24,40C30.627,40 36,34.627 36,28C36,18 24,4 24,4Z M18,30C18,30 16,24 20,18C20,18 22,24 28,22C28,22 32,26 30,32C30,32 27,36 24,36C21,36 18,34 18,30Z"
+        android:fillType="evenOdd">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="44"
+                android:endX="24"
+                android:endY="4">
+                <item android:offset="0" android:color="#FFFF4500"/>
+                <item android:offset="0.5" android:color="#FFFF6B35"/>
+                <item android:offset="1" android:color="#FFFFB347"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner bright core -->
+    <path
+        android:pathData="M24,38C21.5,38 19,36 19,32.5C19,29 22,26 24,24C26,26 29,29 29,32.5C29,36 26.5,38 24,38Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="40"
+                android:endX="24"
+                android:endY="20">
+                <item android:offset="0" android:color="#FFFFD700"/>
+                <item android:offset="1" android:color="#FFFFEC80"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Highlight dot -->
+    <path
+        android:pathData="M23.5,30 A1.5,1.5 0 1,1 20.5,30 A1.5,1.5 0 1,1 23.5,30Z"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.6"/>
+</vector>

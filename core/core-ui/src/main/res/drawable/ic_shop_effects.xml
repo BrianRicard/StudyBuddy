@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Main 4-point sparkle -->
+    <path
+        android:pathData="M24,2L28,18L44,24L28,30L24,46L20,30L4,24L20,18Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="12"
+                android:startY="4"
+                android:endX="36"
+                android:endY="44">
+                <item android:offset="0" android:color="#FFFFD54F"/>
+                <item android:offset="0.5" android:color="#FFFFC107"/>
+                <item android:offset="1" android:color="#FFFF8F00"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Inner highlight -->
+    <path
+        android:pathData="M24,10L26,18L34,24L26,26"
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.25"/>
+    <!-- Small sparkle top-right -->
+    <path
+        android:pathData="M38,4L39.5,8.5L44,10L39.5,11.5L38,16L36.5,11.5L32,10L36.5,8.5Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="48"
+                android:endY="48">
+                <item android:offset="0" android:color="#FFCE93D8"/>
+                <item android:offset="1" android:color="#FFAB47BC"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Small sparkle bottom-left -->
+    <path
+        android:pathData="M10,34L11.5,37.5L15,39L11.5,40.5L10,44L8.5,40.5L5,39L8.5,37.5Z"
+        android:fillAlpha="0.7">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0"
+                android:startY="0"
+                android:endX="48"
+                android:endY="48">
+                <item android:offset="0" android:color="#FFCE93D8"/>
+                <item android:offset="1" android:color="#FFAB47BC"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Tiny dot sparkles -->
+    <path
+        android:pathData="M41.5,36 A1.5,1.5 0 1,1 38.5,36 A1.5,1.5 0 1,1 41.5,36Z"
+        android:fillColor="#FFD54F"
+        android:fillAlpha="0.6"/>
+    <path
+        android:pathData="M9.5,12 A1.5,1.5 0 1,1 6.5,12 A1.5,1.5 0 1,1 9.5,12Z"
+        android:fillColor="#CE93D8"
+        android:fillAlpha="0.5"/>
+</vector>

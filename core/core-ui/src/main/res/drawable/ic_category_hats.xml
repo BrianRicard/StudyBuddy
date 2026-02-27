@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Brim -->
+    <path
+        android:pathData="M44,34 A20,5 0 1,1 4,34 A20,5 0 1,1 44,34Z"
+        android:fillColor="#3949AB"/>
+    <!-- Hat body -->
+    <path
+        android:pathData="M14,34V14C14,10 18,6 24,6C30,6 34,10 34,14V34">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="6"
+                android:endX="24"
+                android:endY="38">
+                <item android:offset="0" android:color="#FF5C6BC0"/>
+                <item android:offset="1" android:color="#FF3949AB"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Band -->
+    <path
+        android:pathData="M14,28h20v4h-20z"
+        android:fillColor="#FF7043"/>
+    <!-- Band buckle -->
+    <path
+        android:pathData="M21,27h6v6h-6z"
+        android:fillColor="#00000000"
+        android:strokeColor="#FFD700"
+        android:strokeWidth="1.5"/>
+    <path
+        android:pathData="M23,28.5h2v3h-2z"
+        android:fillColor="#FFD700"/>
+    <!-- Highlight -->
+    <path
+        android:pathData="M18,10C20,8 22,7 24,7"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeLineCap="round"
+        android:strokeAlpha="0.3"
+        android:fillColor="#00000000"/>
+    <path
+        android:pathData="M17,14L17,26"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1"
+        android:strokeAlpha="0.15"
+        android:fillColor="#00000000"/>
+</vector>
