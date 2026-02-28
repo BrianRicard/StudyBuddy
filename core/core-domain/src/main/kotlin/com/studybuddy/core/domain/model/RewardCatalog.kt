@@ -5,17 +5,18 @@ object RewardCatalog {
     // ── Characters (bodies) ────────────────────────────────────────────────────
     // emoji field is kept as a text fallback; actual rendering uses CreatureCanvas.
     val characters = listOf(
-        // Original roster
+        // Free starter characters
+        CharacterBody("bunny", "Bunny", "\uD83D\uDC30"),
+        CharacterBody("squirrel", "Squirrel", "\uD83D\uDC3F\uFE0F"),
+        CharacterBody("dog", "Dog", "\uD83D\uDC36"),
+        // Purchasable characters
         CharacterBody("fox", "Fox", "\uD83E\uDD8A"),
         CharacterBody("cat", "Cat", "\uD83D\uDC31"),
         CharacterBody("unicorn", "Unicorn", "\uD83E\uDD84"),
         CharacterBody("panda", "Panda", "\uD83D\uDC3C"),
         CharacterBody("butterfly", "Butterfly", "\uD83E\uDD8B"),
-        CharacterBody("bunny", "Bunny", "\uD83D\uDC30"),
         CharacterBody("owl", "Owl", "\uD83E\uDD89"),
         CharacterBody("dragon", "Dragon", "\uD83D\uDC09"),
-        // New: Canadian & marine creatures
-        CharacterBody("dog", "Dog", "\uD83D\uDC36"),
         CharacterBody("bear", "Bear", "\uD83D\uDC3B"),
         CharacterBody("blue_monster", "Blue Monster", "\uD83D\uDC7E"),
         CharacterBody("shrimp", "Shrimp", "\uD83E\uDDE4"),
@@ -24,7 +25,30 @@ object RewardCatalog {
         CharacterBody("moose", "Moose", "\uD83E\uDEAB"),
         CharacterBody("canada_goose", "Canada Goose", "\uD83E\uDD9A"),
         CharacterBody("turkey", "Turkey", "\uD83E\uDD83"),
-        CharacterBody("squirrel", "Squirrel", "\uD83D\uDC3F\uFE0F"),
+    )
+
+    // ── Character purchase items ────────────────────────────────────────────────
+    // Maps each character to a RewardItem with a star cost.
+    // bunny, squirrel, dog are free starters; others cost stars to unlock.
+    val characterItems = listOf(
+        RewardItem("char_bunny", RewardCategory.CHARACTER, "Bunny", "\uD83D\uDC30", 0),
+        RewardItem("char_squirrel", RewardCategory.CHARACTER, "Squirrel", "\uD83D\uDC3F\uFE0F", 0),
+        RewardItem("char_dog", RewardCategory.CHARACTER, "Dog", "\uD83D\uDC36", 0),
+        RewardItem("char_fox", RewardCategory.CHARACTER, "Fox", "\uD83E\uDD8A", 50),
+        RewardItem("char_cat", RewardCategory.CHARACTER, "Cat", "\uD83D\uDC31", 50),
+        RewardItem("char_owl", RewardCategory.CHARACTER, "Owl", "\uD83E\uDD89", 60),
+        RewardItem("char_panda", RewardCategory.CHARACTER, "Panda", "\uD83D\uDC3C", 75),
+        RewardItem("char_butterfly", RewardCategory.CHARACTER, "Butterfly", "\uD83E\uDD8B", 75),
+        RewardItem("char_bear", RewardCategory.CHARACTER, "Bear", "\uD83D\uDC3B", 80),
+        RewardItem("char_unicorn", RewardCategory.CHARACTER, "Unicorn", "\uD83E\uDD84", 100),
+        RewardItem("char_dragon", RewardCategory.CHARACTER, "Dragon", "\uD83D\uDC09", 120),
+        RewardItem("char_blue_monster", RewardCategory.CHARACTER, "Blue Monster", "\uD83D\uDC7E", 80),
+        RewardItem("char_shrimp", RewardCategory.CHARACTER, "Shrimp", "\uD83E\uDDE4", 60),
+        RewardItem("char_shark", RewardCategory.CHARACTER, "Shark", "\uD83E\uDD88", 90),
+        RewardItem("char_octopus", RewardCategory.CHARACTER, "Octopus", "\uD83D\uDC19", 90),
+        RewardItem("char_moose", RewardCategory.CHARACTER, "Moose", "\uD83E\uDEAB", 100),
+        RewardItem("char_canada_goose", RewardCategory.CHARACTER, "Canada Goose", "\uD83E\uDD9A", 80),
+        RewardItem("char_turkey", RewardCategory.CHARACTER, "Turkey", "\uD83E\uDD83", 70),
     )
 
     // ── Hats ──────────────────────────────────────────────────────────────────
@@ -144,10 +168,11 @@ object RewardCatalog {
 
     /** All purchasable items across every category. */
     val allItems: List<RewardItem>
-        get() = avatarItems + themes + effects + sounds + titles
+        get() = characterItems + avatarItems + themes + effects + sounds + titles
 
     /** Items that come free for new players. */
     val starterItemIds = setOf(
+        "char_bunny", "char_squirrel", "char_dog",
         "hat_none", "hat_tophat", "hat_party",
         "face_none", "face_shades",
         "outfit_none",
@@ -156,6 +181,19 @@ object RewardCatalog {
         "effect_confetti",
         "sound_chime",
     )
+
+    /** Convert a character body ID (e.g. "fox") to its reward item ID (e.g. "char_fox"). */
+    fun characterRewardId(bodyId: String): String = "char_$bodyId"
+
+    /** Check if a character body is owned (free or purchased). */
+    fun isCharacterOwned(
+        bodyId: String,
+        ownedItemIds: Set<String>,
+    ): Boolean = characterRewardId(bodyId) in ownedItemIds
+
+    /** Get the RewardItem for a character by its body ID. */
+    fun getCharacterItem(bodyId: String): RewardItem? =
+        characterItems.firstOrNull { it.id == characterRewardId(bodyId) }
 
     fun getItemsByCategory(category: RewardCategory): List<RewardItem> = allItems.filter { it.category == category }
 

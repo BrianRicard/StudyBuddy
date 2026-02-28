@@ -87,10 +87,55 @@ class RewardCatalogTest {
     }
 
     @Test
+    fun `isStarterItem returns true for free starter characters`() {
+        assertTrue(RewardCatalog.isStarterItem("char_bunny"))
+        assertTrue(RewardCatalog.isStarterItem("char_squirrel"))
+        assertTrue(RewardCatalog.isStarterItem("char_dog"))
+    }
+
+    @Test
     fun `isStarterItem returns false for premium items`() {
         assertFalse(RewardCatalog.isStarterItem("hat_crown"))
         assertFalse(RewardCatalog.isStarterItem("pet_fish"))
         assertFalse(RewardCatalog.isStarterItem("face_monocle"))
+    }
+
+    @Test
+    fun `isStarterItem returns false for premium characters`() {
+        assertFalse(RewardCatalog.isStarterItem("char_unicorn"))
+        assertFalse(RewardCatalog.isStarterItem("char_dragon"))
+        assertFalse(RewardCatalog.isStarterItem("char_fox"))
+    }
+
+    @Test
+    fun `characterItems has one entry per character`() {
+        assertEquals(
+            RewardCatalog.characters.size,
+            RewardCatalog.characterItems.size,
+            "characterItems and characters lists must have the same size",
+        )
+    }
+
+    @Test
+    fun `getCharacterItem returns correct item for known body`() {
+        val item = RewardCatalog.getCharacterItem("unicorn")
+        assertNotNull(item)
+        assertEquals("char_unicorn", item!!.id)
+        assertEquals(RewardCategory.CHARACTER, item.category)
+        assertTrue(item.cost > 0)
+    }
+
+    @Test
+    fun `isCharacterOwned returns true for starter characters`() {
+        assertTrue(RewardCatalog.isCharacterOwned("bunny", RewardCatalog.starterItemIds))
+        assertTrue(RewardCatalog.isCharacterOwned("squirrel", RewardCatalog.starterItemIds))
+        assertTrue(RewardCatalog.isCharacterOwned("dog", RewardCatalog.starterItemIds))
+    }
+
+    @Test
+    fun `isCharacterOwned returns false for non-owned characters`() {
+        assertFalse(RewardCatalog.isCharacterOwned("dragon", RewardCatalog.starterItemIds))
+        assertFalse(RewardCatalog.isCharacterOwned("unicorn", RewardCatalog.starterItemIds))
     }
 
     @Test
