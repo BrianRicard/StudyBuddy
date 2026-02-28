@@ -48,6 +48,7 @@ import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -437,19 +438,36 @@ private fun CreateListDialog(
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(stringResource(CoreUiR.string.dictee_language), style = MaterialTheme.typography.labelMedium)
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 8.dp,
+                        alignment = Alignment.CenterHorizontally,
+                    ),
+                ) {
                     SupportedLocale.entries.forEach { locale ->
+                        val isSelected = language == locale.code
                         TextButton(
                             onClick = { onLanguageChange(locale.code) },
+                            modifier = Modifier.weight(1f),
                         ) {
-                            Text(
-                                text = "${languageFlag(locale.code)} ${locale.displayName}",
-                                color = if (language == locale.code) {
-                                    MaterialTheme.colorScheme.primary
-                                } else {
-                                    MaterialTheme.colorScheme.onSurfaceVariant
-                                },
-                            )
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Text(
+                                    text = languageFlag(locale.code),
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    text = locale.displayName,
+                                    color = if (isSelected) {
+                                        MaterialTheme.colorScheme.primary
+                                    } else {
+                                        MaterialTheme.colorScheme.onSurfaceVariant
+                                    },
+                                    style = MaterialTheme.typography.labelMedium,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
                         }
                     }
                 }
