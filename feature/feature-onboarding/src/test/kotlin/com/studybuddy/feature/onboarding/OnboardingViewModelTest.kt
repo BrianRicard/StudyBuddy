@@ -211,7 +211,7 @@ class OnboardingViewModelTest {
             assertTrue(effect is OnboardingEffect.NavigateToHome)
         }
 
-        coVerify { profileRepository.createProfile(any()) }
+        coVerify { profileRepository.updateProfile(any()) }
         coVerify { avatarRepository.saveAvatarConfig(any(), any()) }
         coVerify { settingsRepository.setAppLocale("fr") }
         coVerify { settingsRepository.setOnboardingComplete(true) }

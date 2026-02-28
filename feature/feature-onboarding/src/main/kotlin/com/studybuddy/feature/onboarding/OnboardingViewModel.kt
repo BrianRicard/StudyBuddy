@@ -2,6 +2,7 @@ package com.studybuddy.feature.onboarding
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.model.RewardCatalog
@@ -10,7 +11,6 @@ import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.UUID
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -166,7 +166,7 @@ class OnboardingViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val profileId = UUID.randomUUID().toString()
+                val profileId = AppConstants.DEFAULT_PROFILE_ID
                 val now = Clock.System.now()
 
                 val profile = Profile(
@@ -179,7 +179,7 @@ class OnboardingViewModel @Inject constructor(
                     updatedAt = now,
                 )
 
-                profileRepository.createProfile(profile)
+                profileRepository.updateProfile(profile)
 
                 avatarRepository.saveAvatarConfig(
                     profileId = profileId,
