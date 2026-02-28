@@ -11,15 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -29,8 +27,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -51,7 +47,6 @@ import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.ui.R as CoreUiR
-import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.CharacterPreview
 import com.studybuddy.core.ui.components.LoadingState
@@ -140,43 +135,20 @@ private fun AvatarClosetContent(
                     .padding(padding),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                // Large avatar preview with real-time config updates
+                // Large avatar preview
                 AvatarPreviewSection(
                     config = state.avatarConfig ?: AvatarConfig.default(),
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-                // Horizontal character selector (8 characters)
-                CharacterSelector(
+                // Character grid fills remaining space
+                CharacterGrid(
                     characters = RewardCatalog.characters,
                     selectedBodyId = state.avatarConfig?.bodyId ?: "",
+                    ownedItemIds = state.ownedItemIds,
                     onSelect = {
                         onIntent(AvatarClosetIntent.SelectCharacter(it))
-                    },
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                // 4 accessory category tabs
-                AccessoryTabBar(
-                    selectedTab = state.selectedTab,
-                    onTabSelected = {
-                        onIntent(AvatarClosetIntent.SelectTab(it))
-                    },
-                )
-
-                // 3-column items grid fills remaining space
-                ItemsGrid(
-                    items = getItemsForTab(state.selectedTab),
-                    ownedItemIds = state.ownedItemIds,
-                    equippedItemId = getEquippedIdForTab(
-                        tab = state.selectedTab,
-                        config = state.avatarConfig,
-                    ),
-                    onEquip = { onIntent(AvatarClosetIntent.EquipItem(it)) },
-                    onPurchase = {
-                        onIntent(AvatarClosetIntent.RequestPurchase(it))
                     },
                     modifier = Modifier.weight(1f),
                 )
@@ -184,7 +156,7 @@ private fun AvatarClosetContent(
         }
     }
 
-    // Purchase confirmation dialog shown when user taps an unowned item
+    // Purchase confirmation dialog
     state.showPurchaseDialog?.let { item ->
         PurchaseDialog(
             item = item,
@@ -217,24 +189,33 @@ private fun AvatarPreviewSection(
 
 // endregion
 
-// region Character Selector
+// region Character Grid
 
 @Composable
-private fun CharacterSelector(
+private fun CharacterGrid(
     characters: List<CharacterBody>,
     selectedBodyId: String,
+    ownedItemIds: Set<String>,
     onSelect: (String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    LazyRow(
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(GRID_COLUMN_COUNT),
         modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(horizontal = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(items = characters, key = { it.id }) { character ->
-            CharacterChip(
+            val isOwned = RewardCatalog.isCharacterOwned(character.id, ownedItemIds)
+            val isSelected = character.id == selectedBodyId
+            val charItem = RewardCatalog.getCharacterItem(character.id)
+
+            CharacterCard(
                 character = character,
-                isSelected = character.id == selectedBodyId,
+                isOwned = isOwned,
+                isSelected = isSelected,
+                cost = charItem?.cost ?: 0,
                 onClick = { onSelect(character.id) },
             )
         }
@@ -242,143 +223,28 @@ private fun CharacterSelector(
 }
 
 @Composable
-private fun CharacterChip(
+private fun CharacterCard(
     character: CharacterBody,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Card(
-        onClick = onClick,
-        modifier = modifier.width(72.dp),
-        shape = MaterialTheme.shapes.medium,
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            },
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 0.dp,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            CharacterPreview(
-                characterId = character.id,
-                size = 36.dp,
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = character.name,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-// endregion
-
-// region Accessory Tabs
-
-@Composable
-private fun AccessoryTabBar(
-    selectedTab: AccessoryTab,
-    onTabSelected: (AccessoryTab) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    TabRow(
-        selectedTabIndex = selectedTab.ordinal,
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        AccessoryTab.entries.forEach { tab ->
-            Tab(
-                selected = tab == selectedTab,
-                onClick = { onTabSelected(tab) },
-                text = {
-                    Text(
-                        text = "${tab.icon} ${stringResource(tab.labelResId)}",
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                },
-            )
-        }
-    }
-}
-
-// endregion
-
-// region Items Grid
-
-@Composable
-private fun ItemsGrid(
-    items: List<RewardItem>,
-    ownedItemIds: Set<String>,
-    equippedItemId: String?,
-    onEquip: (String) -> Unit,
-    onPurchase: (RewardItem) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(GRID_COLUMN_COUNT),
-        modifier = modifier.fillMaxWidth(),
-        contentPadding = PaddingValues(all = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        items(items = items, key = { it.id }) { item ->
-            val isOwned = item.id in ownedItemIds
-            val isEquipped = item.id == equippedItemId
-
-            ItemCard(
-                item = item,
-                isOwned = isOwned,
-                isEquipped = isEquipped,
-                onClick = {
-                    if (isOwned) {
-                        onEquip(item.id)
-                    } else {
-                        onPurchase(item)
-                    }
-                },
-            )
-        }
-    }
-}
-
-@Composable
-private fun ItemCard(
-    item: RewardItem,
     isOwned: Boolean,
-    isEquipped: Boolean,
+    isSelected: Boolean,
+    cost: Int,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Card(
         onClick = onClick,
-        modifier = modifier.aspectRatio(1f),
+        modifier = modifier.aspectRatio(0.85f),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = when {
-                isEquipped -> CorrectGreen.copy(alpha = 0.1f)
+                isSelected -> CorrectGreen.copy(alpha = 0.12f)
                 isOwned -> MaterialTheme.colorScheme.surface
-                else ->
-                    MaterialTheme.colorScheme.surfaceVariant
-                        .copy(alpha = 0.3f)
+                else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
             },
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = when {
-                isEquipped -> 4.dp
+                isSelected -> 4.dp
                 isOwned -> 1.dp
                 else -> 0.dp
             },
@@ -388,43 +254,57 @@ private fun ItemCard(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
-            // Icon + name centered in card
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                AccessoryPreview(
-                    itemId = item.id,
-                    size = 32.dp,
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(8.dp),
+            ) {
+                CharacterPreview(
+                    characterId = character.id,
+                    size = 48.dp,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = item.name,
-                    style = MaterialTheme.typography.labelSmall,
+                    text = character.name,
+                    style = MaterialTheme.typography.labelMedium,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(horizontal = 4.dp),
                 )
             }
 
-            // Equipped checkmark (top-end corner)
-            if (isEquipped) {
+            // Selected checkmark (top-end corner)
+            if (isSelected) {
                 Icon(
                     imageVector = Icons.Default.Check,
                     contentDescription = stringResource(CoreUiR.string.rewards_equipped),
                     tint = CorrectGreen,
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(4.dp)
+                        .padding(6.dp)
+                        .size(18.dp),
+                )
+            }
+
+            // Lock icon for unowned characters (top-start corner)
+            if (!isOwned) {
+                Icon(
+                    imageVector = Icons.Default.Lock,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(6.dp)
                         .size(16.dp),
                 )
             }
 
-            // Star cost badge for unowned items (bottom-end corner)
-            if (!isOwned && item.cost > 0) {
+            // Star cost badge for unowned characters (bottom-end corner)
+            if (!isOwned && cost > 0) {
                 CostBadge(
-                    cost = item.cost,
+                    cost = cost,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
-                        .padding(4.dp),
+                        .padding(6.dp),
                 )
             }
         }
@@ -512,31 +392,7 @@ private fun PurchaseDialog(
 
 // endregion
 
-// region Helper Functions
-
-private fun getItemsForTab(tab: AccessoryTab): List<RewardItem> = when (tab) {
-    AccessoryTab.HATS -> RewardCatalog.hats
-    AccessoryTab.FACE -> RewardCatalog.faceAccessories
-    AccessoryTab.OUTFIT -> RewardCatalog.outfits
-    AccessoryTab.PETS -> RewardCatalog.pets
-}
-
-private fun getEquippedIdForTab(
-    tab: AccessoryTab,
-    config: AvatarConfig?,
-): String? {
-    if (config == null) return null
-    return when (tab) {
-        AccessoryTab.HATS -> config.hatId
-        AccessoryTab.FACE -> config.faceId
-        AccessoryTab.OUTFIT -> config.outfitId
-        AccessoryTab.PETS -> config.petId
-    }
-}
-
 private const val GRID_COLUMN_COUNT = 3
-
-// endregion
 
 // region Previews
 
@@ -547,15 +403,13 @@ private fun AvatarClosetScreenPreview() {
         AvatarClosetContent(
             state = AvatarClosetState(
                 avatarConfig = AvatarConfig(
-                    bodyId = "unicorn",
-                    hatId = "hat_crown",
-                    faceId = "face_shades",
+                    bodyId = "bunny",
+                    hatId = "hat_none",
+                    faceId = "face_none",
                     outfitId = "outfit_none",
-                    petId = "pet_chick",
+                    petId = "pet_none",
                 ),
-                selectedTab = AccessoryTab.HATS,
-                ownedItemIds = RewardCatalog.starterItemIds +
-                    setOf("hat_crown"),
+                ownedItemIds = RewardCatalog.starterItemIds,
                 starBalance = 250L,
                 isLoading = false,
             ),
@@ -581,11 +435,11 @@ private fun PurchaseDialogPreview() {
     StudyBuddyTheme {
         PurchaseDialog(
             item = RewardItem(
-                id = "hat_wizard",
-                category = RewardCategory.HAT,
-                name = "Wizard",
-                icon = "\uD83E\uDDD9",
-                cost = 75,
+                id = "char_unicorn",
+                category = RewardCategory.CHARACTER,
+                name = "Unicorn",
+                icon = "\uD83E\uDD84",
+                cost = 100,
             ),
             errorMessage = null,
             onConfirm = {},
@@ -600,11 +454,11 @@ private fun PurchaseDialogErrorPreview() {
     StudyBuddyTheme {
         PurchaseDialog(
             item = RewardItem(
-                id = "hat_wizard",
-                category = RewardCategory.HAT,
-                name = "Wizard",
-                icon = "\uD83E\uDDD9",
-                cost = 75,
+                id = "char_dragon",
+                category = RewardCategory.CHARACTER,
+                name = "Dragon",
+                icon = "\uD83D\uDC09",
+                cost = 120,
             ),
             errorMessage = "You need 30 more stars!",
             onConfirm = {},

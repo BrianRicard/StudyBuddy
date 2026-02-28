@@ -41,7 +41,7 @@ class AvatarClosetViewModelTest {
     private val rewardsRepository: RewardsRepository = mockk()
 
     private val defaultConfig = AvatarConfig(
-        bodyId = "fox",
+        bodyId = "bunny",
         hatId = "hat_none",
         faceId = "face_none",
         outfitId = "outfit_none",
@@ -90,60 +90,45 @@ class AvatarClosetViewModelTest {
     }
 
     @Test
-    fun `select character updates avatar config bodyId`() = runTest {
+    fun `select owned character updates avatar config bodyId`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
+        // squirrel is a free starter character
+        viewModel.onIntent(AvatarClosetIntent.SelectCharacter("squirrel"))
+        advanceUntilIdle()
+
+        assertEquals("squirrel", viewModel.state.value.avatarConfig?.bodyId)
+        coVerify {
+            updateAvatar(
+                profileId = any(),
+                config = match { it.bodyId == "squirrel" },
+            )
+        }
+    }
+
+    @Test
+    fun `select unowned character shows purchase dialog`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // unicorn is not a starter character
         viewModel.onIntent(AvatarClosetIntent.SelectCharacter("unicorn"))
         advanceUntilIdle()
 
-        assertEquals("unicorn", viewModel.state.value.avatarConfig?.bodyId)
-        coVerify {
-            updateAvatar(
-                profileId = any(),
-                config = match { it.bodyId == "unicorn" },
-            )
-        }
+        assertNotNull(viewModel.state.value.showPurchaseDialog)
+        assertEquals("char_unicorn", viewModel.state.value.showPurchaseDialog?.id)
     }
 
     @Test
-    fun `select tab updates selected tab`() = runTest {
+    fun `select unowned character does not change bodyId`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(AvatarClosetIntent.SelectTab(AccessoryTab.PETS))
+        viewModel.onIntent(AvatarClosetIntent.SelectCharacter("dragon"))
         advanceUntilIdle()
 
-        assertEquals(AccessoryTab.PETS, viewModel.state.value.selectedTab)
-    }
-
-    @Test
-    fun `equip owned hat updates avatar config hatId`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        // hat_tophat is a starter item (owned)
-        viewModel.onIntent(AvatarClosetIntent.EquipItem("hat_tophat"))
-        advanceUntilIdle()
-
-        assertEquals("hat_tophat", viewModel.state.value.avatarConfig?.hatId)
-        coVerify {
-            updateAvatar(
-                profileId = any(),
-                config = match { it.hatId == "hat_tophat" },
-            )
-        }
-    }
-
-    @Test
-    fun `equip owned pet updates avatar config petId`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onIntent(AvatarClosetIntent.EquipItem("pet_chick"))
-        advanceUntilIdle()
-
-        assertEquals("pet_chick", viewModel.state.value.avatarConfig?.petId)
+        assertEquals("bunny", viewModel.state.value.avatarConfig?.bodyId)
     }
 
     @Test
@@ -151,12 +136,12 @@ class AvatarClosetViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        val crown = RewardCatalog.getItemById("hat_crown")!!
-        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(crown))
+        val unicorn = RewardCatalog.getCharacterItem("unicorn")!!
+        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(unicorn))
         advanceUntilIdle()
 
         assertNotNull(viewModel.state.value.showPurchaseDialog)
-        assertEquals("hat_crown", viewModel.state.value.showPurchaseDialog?.id)
+        assertEquals("char_unicorn", viewModel.state.value.showPurchaseDialog?.id)
     }
 
     @Test
@@ -164,8 +149,8 @@ class AvatarClosetViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        val crown = RewardCatalog.getItemById("hat_crown")!!
-        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(crown))
+        val unicorn = RewardCatalog.getCharacterItem("unicorn")!!
+        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(unicorn))
         advanceUntilIdle()
         assertNotNull(viewModel.state.value.showPurchaseDialog)
 
@@ -176,14 +161,14 @@ class AvatarClosetViewModelTest {
     }
 
     @Test
-    fun `confirm purchase success equips item and emits effect`() = runTest {
+    fun `confirm purchase success auto-equips character and emits effect`() = runTest {
         coEvery { purchaseItem(any(), any()) } returns PurchaseResult.Success
 
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        val crown = RewardCatalog.getItemById("hat_crown")!!
-        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(crown))
+        val dragon = RewardCatalog.getCharacterItem("dragon")!!
+        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(dragon))
         advanceUntilIdle()
 
         viewModel.effects.test {
@@ -192,11 +177,11 @@ class AvatarClosetViewModelTest {
 
             val effect = awaitItem()
             assertTrue(effect is AvatarClosetEffect.PurchaseSuccess)
-            assertEquals("Crown", (effect as AvatarClosetEffect.PurchaseSuccess).itemName)
+            assertEquals("Dragon", (effect as AvatarClosetEffect.PurchaseSuccess).itemName)
         }
 
-        // Item should be equipped
-        assertEquals("hat_crown", viewModel.state.value.avatarConfig?.hatId)
+        // Character should be auto-equipped
+        assertEquals("dragon", viewModel.state.value.avatarConfig?.bodyId)
         // Dialog should be dismissed
         assertNull(viewModel.state.value.showPurchaseDialog)
     }
@@ -208,8 +193,8 @@ class AvatarClosetViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        val crown = RewardCatalog.getItemById("hat_crown")!!
-        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(crown))
+        val dragon = RewardCatalog.getCharacterItem("dragon")!!
+        viewModel.onIntent(AvatarClosetIntent.RequestPurchase(dragon))
         advanceUntilIdle()
 
         viewModel.onIntent(AvatarClosetIntent.ConfirmPurchase)
@@ -221,11 +206,8 @@ class AvatarClosetViewModelTest {
         assertNotNull(viewModel.state.value.showPurchaseDialog)
     }
 
-    // --- Regression test: null config from use case (bug fix #17) ---
-
     @Test
     fun `init with null avatar config uses default and finishes loading`() = runTest {
-        // Simulate the use case returning null (no config saved yet)
         every { getAvatarConfig(any()) } returns flowOf(null)
         every { rewardsRepository.getOwnedRewards(any()) } returns flowOf(emptyList())
         every { getTotalPoints(any()) } returns flowOf(100L)
@@ -249,5 +231,26 @@ class AvatarClosetViewModelTest {
             "avatarConfig must be the default config when use case returns null",
         )
         assertEquals(100L, state.starBalance)
+    }
+
+    @Test
+    fun `free starter characters are selectable without purchase`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        listOf("bunny", "squirrel", "dog").forEach { bodyId ->
+            viewModel.onIntent(AvatarClosetIntent.SelectCharacter(bodyId))
+            advanceUntilIdle()
+
+            assertEquals(
+                bodyId,
+                viewModel.state.value.avatarConfig?.bodyId,
+                "Starter character $bodyId should be directly selectable",
+            )
+            assertNull(
+                viewModel.state.value.showPurchaseDialog,
+                "No purchase dialog for free character $bodyId",
+            )
+        }
     }
 }

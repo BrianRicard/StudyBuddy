@@ -10,7 +10,7 @@ data class AvatarConfig(
 ) {
     companion object {
         fun default() = AvatarConfig(
-            bodyId = "fox",
+            bodyId = "bunny",
             hatId = "none",
             faceId = "none",
             outfitId = "default",

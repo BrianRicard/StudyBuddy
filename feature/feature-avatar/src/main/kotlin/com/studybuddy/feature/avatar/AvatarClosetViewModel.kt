@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.RewardCatalog
-import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.usecase.avatar.GetAvatarConfigUseCase
@@ -30,7 +29,6 @@ import kotlinx.coroutines.launch
  */
 data class AvatarClosetState(
     val avatarConfig: AvatarConfig? = null,
-    val selectedTab: AccessoryTab = AccessoryTab.HATS,
     val ownedItemIds: Set<String> = emptySet(),
     val starBalance: Long = 0L,
     val showPurchaseDialog: RewardItem? = null,
@@ -39,22 +37,10 @@ data class AvatarClosetState(
 )
 
 /**
- * Accessory tab categories displayed in the Avatar Closet.
- */
-enum class AccessoryTab(val labelResId: Int, val icon: String) {
-    HATS(com.studybuddy.core.ui.R.string.avatar_hats, "\uD83C\uDFA9"),
-    FACE(com.studybuddy.core.ui.R.string.avatar_face, "\uD83D\uDD76\uFE0F"),
-    OUTFIT(com.studybuddy.core.ui.R.string.avatar_outfit, "\uD83D\uDC54"),
-    PETS(com.studybuddy.core.ui.R.string.avatar_pets, "\uD83D\uDC3E"),
-}
-
-/**
  * User actions dispatched to the Avatar Closet ViewModel.
  */
 sealed interface AvatarClosetIntent {
     data class SelectCharacter(val bodyId: String) : AvatarClosetIntent
-    data class SelectTab(val tab: AccessoryTab) : AvatarClosetIntent
-    data class EquipItem(val itemId: String) : AvatarClosetIntent
     data class RequestPurchase(val item: RewardItem) : AvatarClosetIntent
     data object ConfirmPurchase : AvatarClosetIntent
     data object DismissPurchaseDialog : AvatarClosetIntent
@@ -92,10 +78,6 @@ class AvatarClosetViewModel @Inject constructor(
     fun onIntent(intent: AvatarClosetIntent) {
         when (intent) {
             is AvatarClosetIntent.SelectCharacter -> selectCharacter(intent.bodyId)
-            is AvatarClosetIntent.SelectTab -> {
-                _state.update { it.copy(selectedTab = intent.tab) }
-            }
-            is AvatarClosetIntent.EquipItem -> equipItem(intent.itemId)
             is AvatarClosetIntent.RequestPurchase -> {
                 _state.update {
                     it.copy(showPurchaseDialog = intent.item, purchaseError = null)
@@ -141,17 +123,20 @@ class AvatarClosetViewModel @Inject constructor(
 
     private fun selectCharacter(bodyId: String) {
         val currentConfig = _state.value.avatarConfig ?: return
-        val updatedConfig = currentConfig.copy(bodyId = bodyId)
-        _state.update { it.copy(avatarConfig = updatedConfig) }
-        viewModelScope.launch {
-            updateAvatarUseCase(profileId = profileId, config = updatedConfig)
-        }
-    }
+        val ownedIds = _state.value.ownedItemIds
 
-    private fun equipItem(itemId: String) {
-        val currentConfig = _state.value.avatarConfig ?: return
-        val item = RewardCatalog.getItemById(itemId) ?: return
-        val updatedConfig = applyItemToConfig(config = currentConfig, item = item)
+        // Check if character is owned
+        if (!RewardCatalog.isCharacterOwned(bodyId, ownedIds)) {
+            // Not owned — show purchase dialog
+            val item = RewardCatalog.getCharacterItem(bodyId) ?: return
+            _state.update {
+                it.copy(showPurchaseDialog = item, purchaseError = null)
+            }
+            return
+        }
+
+        // Owned — equip the character
+        val updatedConfig = currentConfig.copy(bodyId = bodyId)
         _state.update { it.copy(avatarConfig = updatedConfig) }
         viewModelScope.launch {
             updateAvatarUseCase(profileId = profileId, config = updatedConfig)
@@ -163,22 +148,23 @@ class AvatarClosetViewModel @Inject constructor(
         viewModelScope.launch {
             when (val result = purchaseItemUseCase(profileId = profileId, item = item)) {
                 is PurchaseResult.Success -> {
-                    val currentConfig = _state.value.avatarConfig ?: return@launch
-                    val updatedConfig = applyItemToConfig(
-                        config = currentConfig,
-                        item = item,
-                    )
                     _state.update {
                         it.copy(
-                            avatarConfig = updatedConfig,
                             showPurchaseDialog = null,
                             purchaseError = null,
                         )
                     }
-                    updateAvatarUseCase(
-                        profileId = profileId,
-                        config = updatedConfig,
-                    )
+                    // If it's a character, auto-equip it
+                    if (item.id.startsWith("char_")) {
+                        val bodyId = item.id.removePrefix("char_")
+                        val currentConfig = _state.value.avatarConfig ?: return@launch
+                        val updatedConfig = currentConfig.copy(bodyId = bodyId)
+                        _state.update { it.copy(avatarConfig = updatedConfig) }
+                        updateAvatarUseCase(
+                            profileId = profileId,
+                            config = updatedConfig,
+                        )
+                    }
                     _effects.emit(AvatarClosetEffect.PurchaseSuccess(item.name))
                 }
                 is PurchaseResult.InsufficientPoints -> {
@@ -190,21 +176,5 @@ class AvatarClosetViewModel @Inject constructor(
                 }
             }
         }
-    }
-
-    /**
-     * Maps a reward item to the appropriate field in [AvatarConfig] based
-     * on its [RewardCategory]. Categories outside avatar accessories are
-     * ignored (themes, effects, sounds, titles are handled by Rewards Shop).
-     */
-    private fun applyItemToConfig(
-        config: AvatarConfig,
-        item: RewardItem,
-    ): AvatarConfig = when (item.category) {
-        RewardCategory.HAT -> config.copy(hatId = item.id)
-        RewardCategory.FACE -> config.copy(faceId = item.id)
-        RewardCategory.OUTFIT -> config.copy(outfitId = item.id)
-        RewardCategory.PET -> config.copy(petId = item.id)
-        else -> config
     }
 }

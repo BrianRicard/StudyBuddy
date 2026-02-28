@@ -10,6 +10,7 @@ data class RewardItem(
 )
 
 enum class RewardCategory {
+    CHARACTER,
     HAT,
     FACE,
     OUTFIT,

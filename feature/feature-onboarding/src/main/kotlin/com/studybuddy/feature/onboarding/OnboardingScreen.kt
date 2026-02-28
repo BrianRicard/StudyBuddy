@@ -444,8 +444,12 @@ private fun AvatarStep(
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        val starterCharacters = RewardCatalog.characters.filter {
+            RewardCatalog.isCharacterOwned(it.id, RewardCatalog.starterItemIds)
+        }
+
         LazyVerticalGrid(
-            columns = GridCells.Fixed(CHARACTER_GRID_COLUMNS),
+            columns = GridCells.Fixed(starterCharacters.size.coerceAtMost(CHARACTER_GRID_COLUMNS)),
             modifier = Modifier
                 .fillMaxWidth()
                 .height(CHARACTER_GRID_HEIGHT),
@@ -453,7 +457,7 @@ private fun AvatarStep(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             items(
-                items = RewardCatalog.characters,
+                items = starterCharacters,
                 key = { it.id },
             ) { character ->
                 CharacterCard(
