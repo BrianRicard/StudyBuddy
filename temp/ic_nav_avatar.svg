@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="cat_grad" x1="24" y1="10" x2="24" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB74D"/>
+      <stop offset="1" stop-color="#FB8C00"/>
+    </linearGradient>
+    <linearGradient id="hat_grad" x1="24" y1="0" x2="24" y2="16" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#CE93D8"/>
+      <stop offset="1" stop-color="#AB47BC"/>
+    </linearGradient>
+  </defs>
+  <!-- Left ear -->
+  <path d="M10 20L6 6L18 16Z" fill="url(#cat_grad)"/>
+  <!-- Right ear -->
+  <path d="M38 20L42 6L30 16Z" fill="url(#cat_grad)"/>
+  <!-- Inner ear pink -->
+  <path d="M12 18L9 9L17 16Z" fill="#FFCC80"/>
+  <path d="M36 18L39 9L31 16Z" fill="#FFCC80"/>
+  <!-- Head -->
+  <circle cx="24" cy="28" r="16" fill="url(#cat_grad)"/>
+  <!-- Little party hat -->
+  <path d="M24 4L18 16H30Z" fill="url(#hat_grad)"/>
+  <!-- Hat pompom -->
+  <circle cx="24" cy="4" r="2.5" fill="#F48FB1"/>
+  <!-- Hat stripes -->
+  <path d="M21 12L27.5 12" stroke="#E1BEE7" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+  <path d="M22.2 9L26.3 9" stroke="#E1BEE7" stroke-width="1" stroke-linecap="round" opacity="0.6"/>
+  <!-- Eyes - big friendly ovals -->
+  <ellipse cx="18" cy="26" rx="3.5" ry="4" fill="white"/>
+  <ellipse cx="30" cy="26" rx="3.5" ry="4" fill="white"/>
+  <!-- Pupils - looking slightly up (cute) -->
+  <ellipse cx="18.5" cy="25" rx="2" ry="2.5" fill="#4E342E"/>
+  <ellipse cx="30.5" cy="25" rx="2" ry="2.5" fill="#4E342E"/>
+  <!-- Eye sparkles -->
+  <circle cx="17" cy="24" r="1" fill="white"/>
+  <circle cx="29" cy="24" r="1" fill="white"/>
+  <!-- Nose -->
+  <path d="M23 31L24 32.5L25 31Z" fill="#F48FB1"/>
+  <!-- Mouth -->
+  <path d="M20 33.5C22 35 26 35 28 33.5" stroke="#E65100" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+  <!-- Mouth center line from nose -->
+  <line x1="24" y1="32.5" x2="24" y2="33.5" stroke="#E65100" stroke-width="1" stroke-linecap="round"/>
+  <!-- Whiskers left -->
+  <line x1="4" y1="28" x2="14" y2="30" stroke="#FFCC80" stroke-width="1" stroke-linecap="round"/>
+  <line x1="4" y1="32" x2="14" y2="32" stroke="#FFCC80" stroke-width="1" stroke-linecap="round"/>
+  <!-- Whiskers right -->
+  <line x1="44" y1="28" x2="34" y2="30" stroke="#FFCC80" stroke-width="1" stroke-linecap="round"/>
+  <line x1="44" y1="32" x2="34" y2="32" stroke="#FFCC80" stroke-width="1" stroke-linecap="round"/>
+  <!-- Cheek blush -->
+  <circle cx="13" cy="32" r="3" fill="#FFAB91" opacity="0.4"/>
+  <circle cx="35" cy="32" r="3" fill="#FFAB91" opacity="0.4"/>
+</svg>

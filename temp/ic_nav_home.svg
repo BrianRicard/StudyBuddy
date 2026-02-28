@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="48"
+   height="48"
+   viewBox="0 0 48 48"
+   fill="none"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="ic_nav_home.svg"
+   inkscape:version="1.4.2 (f4327f4, 2025-05-13)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview4"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="24.3125"
+     inkscape:cx="24"
+     inkscape:cy="24"
+     inkscape:window-width="3440"
+     inkscape:window-height="1369"
+     inkscape:window-x="1912"
+     inkscape:window-y="1072"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <defs
+     id="defs2">
+    <linearGradient
+       id="nav_home"
+       x1="24"
+       y1="4"
+       x2="24"
+       y2="44"
+       gradientUnits="userSpaceOnUse">
+      <stop
+         offset="0"
+         stop-color="#42A5F5"
+         id="stop1" />
+      <stop
+         offset="1"
+         stop-color="#1E88E5"
+         id="stop2" />
+    </linearGradient>
+  </defs>
+  <!-- Roof -->
+  <path
+     d="M4 22L24 6L44 22"
+     stroke="url(#nav_home)"
+     stroke-width="3"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     fill="none"
+     id="path2" />
+  <!-- House body -->
+  <path
+     d="M10 20V38C10 39.1 10.9 40 12 40H20V30H28V40H36C37.1 40 38 39.1 38 38V20"
+     stroke="url(#nav_home)"
+     stroke-width="3"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     fill="none"
+     id="path3" />
+  <!-- Door threshold fill -->
+  <rect
+     x="20"
+     y="30"
+     width="8"
+     height="10"
+     fill="url(#nav_home)"
+     opacity="0.15"
+     id="rect3" />
+  <!-- Chimney -->
+</svg>

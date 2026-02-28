@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="medal_grad" x1="24" y1="8" x2="24" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFE082"/>
+      <stop offset="1" stop-color="#FFB300"/>
+    </linearGradient>
+    <linearGradient id="ribbon_l" x1="14" y1="28" x2="14" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EF5350"/>
+      <stop offset="1" stop-color="#C62828"/>
+    </linearGradient>
+    <linearGradient id="ribbon_r" x1="34" y1="28" x2="34" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#EF5350"/>
+      <stop offset="1" stop-color="#C62828"/>
+    </linearGradient>
+  </defs>
+  <!-- Left ribbon -->
+  <path d="M18 30L10 46L16 40L22 46L20 32" fill="url(#ribbon_l)"/>
+  <!-- Right ribbon -->
+  <path d="M30 30L38 46L32 40L26 46L28 32" fill="url(#ribbon_r)"/>
+  <!-- Medal circle -->
+  <circle cx="24" cy="20" r="14" fill="url(#medal_grad)"/>
+  <!-- Inner ring -->
+  <circle cx="24" cy="20" r="10.5" stroke="#F9A825" stroke-width="1.5" fill="none"/>
+  <!-- Star on medal -->
+  <path d="M24 11L26.5 16.5L32.5 17L28 21L29.2 27L24 24L18.8 27L20 21L15.5 17L21.5 16.5Z" fill="white" opacity="0.4"/>
+  <!-- Highlight -->
+  <path d="M16 12C18 9 21 8 24 7" stroke="white" stroke-width="1.5" stroke-linecap="round" opacity="0.35" fill="none"/>
+</svg>
