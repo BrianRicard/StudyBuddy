@@ -164,19 +164,19 @@
 
 | Category | Pass | Fail | Skip | Notes |
 |----------|------|------|------|-------|
-| Navigation | | | | |
-| TTS Read Aloud | | | | |
-| Permission Flow | | | | |
-| Model Download | | | | |
-| Recording States | | | | |
-| Word Tap Behaviour | | | | |
-| Result Bottom Sheet | | | | |
-| Word Colouring | | | | |
-| Favourite Toggle | | | | |
-| Edge Cases | | | | |
-| Localization | | | | |
-| Smoke Test | | | | |
-| **TOTAL** | | | | |
+| Navigation | 6 | 0 | 0 | All steps pass |
+| TTS Read Aloud | 3 | 0 | 1 | Line advance is stub (no TTS wiring) |
+| Permission Flow | 4 | 0 | 0 | Deny→snackbar, grant→recording |
+| Model Download | 4 | 0 | 0 | Progress bar, 40MB, auto-dismiss |
+| Recording States | 3 | 0 | 2 | Processing/scoring too slow on emulator |
+| Word Tap Behaviour | 1 | 0 | 1 | Words not clickable during recording (by design) |
+| Result Bottom Sheet | 0 | 0 | 9 | Needs real device (scoring never completes on emulator) |
+| Word Colouring | 0 | 0 | 6 | Needs real device |
+| Favourite Toggle | 0 | 0 | 3 | Not tested yet |
+| Edge Cases | 0 | 0 | 6 | Needs real device |
+| Localization | 0 | 0 | 4 | Not tested yet |
+| Smoke Test | 0 | 0 | 4 | Not tested yet |
+| **TOTAL** | **21** | **0** | **36** | **Emulator run 2026-03-02** |
 
 ---
 
@@ -186,3 +186,5 @@
 - Real device testing with a child reading is needed for accuracy validation.
 - Model download requires internet; test on device with connectivity.
 - The TINY model (40MB) is used by default for fastest download + inference.
+- **Emulator performance**: whisper.cpp inference is extremely slow on x86_64 emulator (~10+ min for 1.4 sec audio). Real device with Tensor/ARM chip needed for scoring tests.
+- **Thread count fix**: Changed minimum threads from 1 to 2 (commit 134c02f).
