@@ -20,8 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -73,6 +73,8 @@ import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
+import com.studybuddy.core.ui.modifier.animateItemAppearance
+import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.theme.ArcticColorScheme
 import com.studybuddy.core.ui.theme.CandyColorScheme
 import com.studybuddy.core.ui.theme.CorrectGreen
@@ -325,11 +327,12 @@ private fun AvatarTabContent(
                     modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
                 )
             }
-            items(items = section.items, key = { it.id }) { item ->
+            itemsIndexed(items = section.items, key = { _, it -> it.id }) { index, item ->
                 AvatarItemCard(
                     item = item,
                     isOwned = item.id in ownedItemIds,
                     onPurchase = { onPurchase(item) },
+                    modifier = Modifier.animateItemAppearance(index),
                 )
             }
         }
@@ -346,8 +349,9 @@ private fun AvatarItemCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        onClick = { if (!isOwned && item.cost > 0) onPurchase() },
-        modifier = modifier.aspectRatio(0.85f),
+        modifier = modifier
+            .aspectRatio(0.85f)
+            .bounceClick { if (!isOwned && item.cost > 0) onPurchase() },
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = if (isOwned) {
@@ -406,7 +410,7 @@ private fun ThemesTabContent(
         contentPadding = PaddingValues(all = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = RewardCatalog.themes, key = { it.id }) { theme ->
+        itemsIndexed(items = RewardCatalog.themes, key = { _, it -> it.id }) { index, theme ->
             val themeId = theme.id.removePrefix("theme_")
             val isOwned = theme.id in ownedItemIds
             val isActive = themeId.equals(activeTheme, ignoreCase = true)
@@ -419,6 +423,7 @@ private fun ThemesTabContent(
                 isActive = isActive,
                 onActivate = { onActivate(themeId) },
                 onPurchase = { onPurchase(theme) },
+                modifier = Modifier.animateItemAppearance(index),
             )
         }
     }
@@ -591,9 +596,11 @@ private fun EffectsTabContent(
         // Celebrations grid rendered as pairs of rows inside the LazyColumn
         val celebrationItems = RewardCatalog.effects
         val chunkedCelebrations = celebrationItems.chunked(2)
-        items(items = chunkedCelebrations) { rowItems ->
+        itemsIndexed(items = chunkedCelebrations) { index, rowItems ->
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItemAppearance(index),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 rowItems.forEach { effect ->
@@ -621,11 +628,12 @@ private fun EffectsTabContent(
             )
         }
 
-        items(items = RewardCatalog.sounds, key = { it.id }) { sound ->
+        itemsIndexed(items = RewardCatalog.sounds, key = { _, it -> it.id }) { index, sound ->
             SoundCard(
                 item = sound,
                 isOwned = sound.id in ownedItemIds,
                 onPurchase = { onPurchase(sound) },
+                modifier = Modifier.animateItemAppearance(index),
             )
         }
     }
@@ -758,9 +766,9 @@ private fun TitlesTabContent(
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(all = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = RewardCatalog.titles, key = { it.id }) { title ->
+        itemsIndexed(items = RewardCatalog.titles, key = { _, it -> it.id }) { index, title ->
             val isUnlocked = title.id in ownedItemIds
             val isEquipped = title.id == equippedTitle
 
@@ -769,6 +777,7 @@ private fun TitlesTabContent(
                 isUnlocked = isUnlocked,
                 isEquipped = isEquipped,
                 onEquip = { onEquip(title.id) },
+                modifier = Modifier.animateItemAppearance(index),
             )
         }
     }
@@ -799,7 +808,7 @@ private fun TitleCard(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
+                .padding(horizontal = 16.dp, vertical = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

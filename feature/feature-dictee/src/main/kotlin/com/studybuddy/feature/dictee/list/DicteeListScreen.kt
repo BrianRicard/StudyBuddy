@@ -22,7 +22,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -70,6 +70,7 @@ import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyCard
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 
 @Composable
 fun DicteeListScreen(
@@ -203,7 +204,7 @@ private fun DicteeListContent(
                         bottom = if (state.isSelectMode) 100.dp else 80.dp,
                     ),
                 ) {
-                    items(state.lists, key = { it.id }) { list ->
+                    itemsIndexed(state.lists, key = { _, it -> it.id }) { index, list ->
                         val isSelected = list.id in state.selectedListIds
                         DicteeListItem(
                             list = list,
@@ -211,6 +212,7 @@ private fun DicteeListContent(
                             isSelected = isSelected,
                             onTap = { onIntent(DicteeListIntent.OpenList(list.id)) },
                             onDelete = { onIntent(DicteeListIntent.DeleteList(list.id)) },
+                            modifier = Modifier.animateItemAppearance(index),
                         )
                     }
                 }
@@ -251,6 +253,7 @@ private fun DicteeListItem(
     isSelected: Boolean,
     onTap: () -> Unit,
     onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val borderColor by animateColorAsState(
         targetValue = if (isSelected) MaterialTheme.colorScheme.primary else Color.Transparent,
@@ -261,7 +264,7 @@ private fun DicteeListItem(
         // In select mode: no swipe-to-dismiss, show checkbox overlay
         StudyBuddyCard(
             onClick = onTap,
-            modifier = Modifier.border(
+            modifier = modifier.border(
                 width = 2.dp,
                 color = borderColor,
                 shape = MaterialTheme.shapes.medium,
@@ -298,6 +301,7 @@ private fun DicteeListItem(
 
         SwipeToDismissBox(
             state = dismissState,
+            modifier = modifier,
             backgroundContent = {
                 val color by animateColorAsState(
                     targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {

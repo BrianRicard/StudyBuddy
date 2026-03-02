@@ -2,13 +2,23 @@ package com.studybuddy.core.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.studybuddy.core.ui.R
 
-// Using system default fonts as placeholders; replace with Nunito/DM Sans font files
-val HeadingFontFamily = FontFamily.Default
-val BodyFontFamily = FontFamily.Default
+val HeadingFontFamily = FontFamily(
+    Font(R.font.nunito, FontWeight.Normal),
+    Font(R.font.nunito, FontWeight.Medium),
+    Font(R.font.nunito, FontWeight.SemiBold),
+    Font(R.font.nunito, FontWeight.Bold),
+)
+
+val BodyFontFamily = FontFamily(
+    Font(R.font.dmsans, FontWeight.Normal),
+    Font(R.font.dmsans, FontWeight.Medium),
+)
 
 val StudyBuddyTypography = Typography(
     displayLarge = TextStyle(
@@ -82,6 +92,7 @@ val StudyBuddyTypography = Typography(
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp,
+        letterSpacing = 0.1.sp,
     ),
     labelMedium = TextStyle(
         fontFamily = BodyFontFamily,

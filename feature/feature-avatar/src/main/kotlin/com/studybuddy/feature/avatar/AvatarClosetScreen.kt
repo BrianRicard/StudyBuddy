@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -53,6 +54,8 @@ import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
+import com.studybuddy.core.ui.modifier.animateItemAppearance
+import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
@@ -203,10 +206,10 @@ private fun CharacterGrid(
         columns = GridCells.Fixed(GRID_COLUMN_COUNT),
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(items = characters, key = { it.id }) { character ->
+        itemsIndexed(items = characters, key = { _, item -> item.id }) { index, character ->
             val isOwned = RewardCatalog.isCharacterOwned(character.id, ownedItemIds)
             val isSelected = character.id == selectedBodyId
             val charItem = RewardCatalog.getCharacterItem(character.id)
@@ -217,6 +220,7 @@ private fun CharacterGrid(
                 isSelected = isSelected,
                 cost = charItem?.cost ?: 0,
                 onClick = { onSelect(character.id) },
+                modifier = Modifier.animateItemAppearance(index),
             )
         }
     }
@@ -232,8 +236,9 @@ private fun CharacterCard(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        onClick = onClick,
-        modifier = modifier.aspectRatio(0.85f),
+        modifier = modifier
+            .aspectRatio(0.85f)
+            .bounceClick(onClick),
         shape = MaterialTheme.shapes.medium,
         colors = CardDefaults.cardColors(
             containerColor = when {

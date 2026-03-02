@@ -52,6 +52,7 @@ import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 @Composable
@@ -196,19 +197,25 @@ private fun BackupExportContent(
 
             // region Backup Section
             item {
-                SectionHeader(title = stringResource(CoreUiR.string.backup_section))
+                SectionHeader(
+                    title = stringResource(CoreUiR.string.backup_section),
+                    modifier = Modifier.animateItemAppearance(0),
+                )
             }
 
             item {
                 BackupStatusCard(
                     lastBackupDate = state.lastBackupDate,
                     isBackingUp = state.isBackingUp,
+                    modifier = Modifier.animateItemAppearance(1),
                 )
             }
 
             item {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .animateItemAppearance(2),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     StudyBuddyButton(
@@ -240,7 +247,10 @@ private fun BackupExportContent(
 
             // region Export Section
             item {
-                SectionHeader(title = stringResource(CoreUiR.string.backup_export))
+                SectionHeader(
+                    title = stringResource(CoreUiR.string.backup_export),
+                    modifier = Modifier.animateItemAppearance(3),
+                )
             }
 
             item {
@@ -252,6 +262,7 @@ private fun BackupExportContent(
                         state.exportFormat == ExportFormat.PDF,
                     enabled = !state.isExporting,
                     onClick = { onIntent(BackupExportIntent.ExportPdf) },
+                    modifier = Modifier.animateItemAppearance(4),
                 )
             }
 
@@ -264,6 +275,7 @@ private fun BackupExportContent(
                         state.exportFormat == ExportFormat.JSON,
                     enabled = !state.isExporting,
                     onClick = { onIntent(BackupExportIntent.ExportJson) },
+                    modifier = Modifier.animateItemAppearance(5),
                 )
             }
 
@@ -276,13 +288,17 @@ private fun BackupExportContent(
                         state.exportFormat == ExportFormat.CSV,
                     enabled = !state.isExporting,
                     onClick = { onIntent(BackupExportIntent.ExportCsv) },
+                    modifier = Modifier.animateItemAppearance(6),
                 )
             }
             // endregion
 
             // region Import Section
             item {
-                SectionHeader(title = stringResource(CoreUiR.string.backup_import))
+                SectionHeader(
+                    title = stringResource(CoreUiR.string.backup_import),
+                    modifier = Modifier.animateItemAppearance(7),
+                )
             }
 
             item {
@@ -293,13 +309,17 @@ private fun BackupExportContent(
                     isExporting = state.isImporting,
                     enabled = !state.isImporting,
                     onClick = onOpenCsvPicker,
+                    modifier = Modifier.animateItemAppearance(8),
                 )
             }
             // endregion
 
             // region Auto-Backup Section
             item {
-                SectionHeader(title = stringResource(CoreUiR.string.backup_auto))
+                SectionHeader(
+                    title = stringResource(CoreUiR.string.backup_auto),
+                    modifier = Modifier.animateItemAppearance(9),
+                )
             }
 
             item {
@@ -312,6 +332,7 @@ private fun BackupExportContent(
                     onFrequencyChanged = { frequency ->
                         onIntent(BackupExportIntent.SetAutoBackupFrequency(frequency))
                     },
+                    modifier = Modifier.animateItemAppearance(10),
                 )
             }
             // endregion
