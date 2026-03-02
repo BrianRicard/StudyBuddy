@@ -32,6 +32,7 @@
     <string name="mode_more">Mehr</string>
     <string name="label_spelling_practice">Rechtschreibübung</string>
     <string name="label_mental_math">Kopfrechenübungen</string>
+    <string name="label_reading_poems">Gedichte lesen und vortragen</string>
     <string name="label_coming_soon">Bald verfügbar</string>
     <string name="time_just_now">Gerade eben</string>
     <string name="time_minutes_ago">Vor %d Min.</string>

@@ -65,6 +65,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToDictee: () -> Unit = {},
     onNavigateToMath: () -> Unit = {},
+    onNavigateToPoems: () -> Unit = {},
     onNavigateToAvatar: () -> Unit = {},
     onNavigateToStats: () -> Unit = {},
     onNavigateToRewards: () -> Unit = {},
@@ -77,6 +78,7 @@ fun HomeScreen(
             when (effect) {
                 HomeEffect.OpenDictee -> onNavigateToDictee()
                 HomeEffect.OpenMath -> onNavigateToMath()
+                HomeEffect.OpenPoems -> onNavigateToPoems()
                 HomeEffect.OpenAvatar -> onNavigateToAvatar()
                 HomeEffect.OpenStats -> onNavigateToStats()
                 HomeEffect.OpenRewards -> onNavigateToRewards()
@@ -139,6 +141,7 @@ fun HomeScreen(
                 ModeCardsGrid(
                     onDicteeClick = { viewModel.onIntent(HomeIntent.NavigateToDictee) },
                     onMathClick = { viewModel.onIntent(HomeIntent.NavigateToMath) },
+                    onPoemsClick = { viewModel.onIntent(HomeIntent.NavigateToPoems) },
                     modifier = Modifier.animateItemAppearance(3),
                 )
             }
@@ -391,6 +394,7 @@ private fun DailyChallengeCard(
 private fun ModeCardsGrid(
     onDicteeClick: () -> Unit,
     onMathClick: () -> Unit,
+    onPoemsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "modeCardBob")
@@ -425,11 +429,10 @@ private fun ModeCardsGrid(
         ) {
             ModeCard(
                 title = stringResource(CoreUiR.string.mode_poems),
-                subtitle = stringResource(CoreUiR.string.label_coming_soon),
-                onClick = {},
+                subtitle = stringResource(CoreUiR.string.label_reading_poems),
+                onClick = onPoemsClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_poems_notepad,
-                isLocked = true,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 2,
             )

@@ -161,6 +161,18 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `navigate to poems emits OpenPoems effect`() = runTest {
+        setupDefaultMocks()
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(HomeIntent.NavigateToPoems)
+            assertEquals(HomeEffect.OpenPoems, awaitItem())
+        }
+    }
+
+    @Test
     fun `navigate to avatar emits OpenAvatar effect`() = runTest {
         setupDefaultMocks()
         val viewModel = createViewModel()

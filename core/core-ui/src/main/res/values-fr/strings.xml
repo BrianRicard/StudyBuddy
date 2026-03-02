@@ -32,6 +32,7 @@
     <string name="mode_more">Plus</string>
     <string name="label_spelling_practice">Pratique d\'orthographe</string>
     <string name="label_mental_math">Exercices de calcul</string>
+    <string name="label_reading_poems">Lire et réciter des poèmes</string>
     <string name="label_coming_soon">Bientôt disponible</string>
     <string name="time_just_now">À l\'instant</string>
     <string name="time_minutes_ago">Il y a %d min</string>
