@@ -119,7 +119,12 @@ private fun SettingsContent(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 // -- General Section --
-                item { SectionHeader(title = stringResource(CoreUiR.string.settings_general), modifier = Modifier.animateItemAppearance(0)) }
+                item {
+                    SectionHeader(
+                        title = stringResource(CoreUiR.string.settings_general),
+                        modifier = Modifier.animateItemAppearance(0),
+                    )
+                }
                 item {
                     LanguageSettingRow(
                         currentLocale = state.locale,

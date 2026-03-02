@@ -68,13 +68,13 @@ import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.ui.R as CoreUiR
-import com.studybuddy.core.ui.modifier.animateItemAppearance
-import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
+import com.studybuddy.core.ui.modifier.animateItemAppearance
+import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.theme.ArcticColorScheme
 import com.studybuddy.core.ui.theme.CandyColorScheme
 import com.studybuddy.core.ui.theme.CorrectGreen

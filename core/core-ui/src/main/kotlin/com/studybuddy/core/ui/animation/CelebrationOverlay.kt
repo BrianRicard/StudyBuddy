@@ -18,12 +18,12 @@ import kotlin.random.Random
 
 private const val PARTICLE_COUNT = 60
 private val ConfettiColors = listOf(
-    Color(0xFFFF6B6B), // Red
-    Color(0xFFFFD93D), // Yellow
-    Color(0xFF6BCB77), // Green
-    Color(0xFF4D96FF), // Blue
-    Color(0xFFFF6BD6), // Pink
-    Color(0xFFAB46D2), // Purple
+    Color(0xFFFF6B6B),
+    Color(0xFFFFD93D),
+    Color(0xFF6BCB77),
+    Color(0xFF4D96FF),
+    Color(0xFFFF6BD6),
+    Color(0xFFAB46D2),
 )
 
 private data class ConfettiParticle(

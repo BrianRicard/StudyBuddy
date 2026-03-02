@@ -54,10 +54,10 @@ import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
-import com.studybuddy.core.ui.theme.CorrectGreen
-import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.modifier.bounceClick
+import com.studybuddy.core.ui.theme.CorrectGreen
+import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 /**

@@ -48,8 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.LoadingState
-import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.components.StudyBuddyCard
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StreakOrange
