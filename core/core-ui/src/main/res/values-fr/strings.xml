@@ -395,6 +395,18 @@
     <string name="poems_title">Poèmes</string>
     <string name="poems_mode">Mode Poèmes</string>
     <string name="poems_coming_soon_desc">Bientôt disponible ! Entraîne-toi à lire et réciter\nde beaux poèmes en français, anglais et allemand.</string>
+    <string name="poems_tab_browse">Parcourir</string>
+    <string name="poems_tab_favourites">Favoris</string>
+    <string name="poems_favourite">Favori</string>
+    <string name="poems_no_favourites">Pas encore de favoris.\nAppuie sur le cœur d\'un poème pour le sauvegarder ici.</string>
+    <string name="poems_no_poems">Aucun poème disponible.\nEssaie une autre langue ou vérifie ta connexion.</string>
+    <string name="poems_read_aloud">Lire à voix haute</string>
+    <string name="poems_stop_reading">Arrêter la lecture</string>
+    <string name="poems_reading_score">Score de lecture</string>
+    <string name="poems_score_excellent">Excellent ! Tu lis magnifiquement !</string>
+    <string name="poems_score_good">Bien joué ! Continue à t\'entraîner !</string>
+    <string name="poems_score_keep_trying">Bel effort ! Réessaie !</string>
+    <string name="poems_score_practice_more">Continue à t\'entraîner, tu vas t\'améliorer !</string>
 
     <!-- Encouragement messages -->
     <string name="encourage_1">Bravo !</string>

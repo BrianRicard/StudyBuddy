@@ -395,6 +395,18 @@
     <string name="poems_title">Poems</string>
     <string name="poems_mode">Poems Mode</string>
     <string name="poems_coming_soon_desc">Coming soon! Practice reading and reciting\nbeautiful poems in French, English, and German.</string>
+    <string name="poems_tab_browse">Browse</string>
+    <string name="poems_tab_favourites">Favourites</string>
+    <string name="poems_favourite">Favourite</string>
+    <string name="poems_no_favourites">No favourites yet.\nTap the heart on a poem to save it here.</string>
+    <string name="poems_no_poems">No poems available.\nTry a different language or check your connection.</string>
+    <string name="poems_read_aloud">Read aloud</string>
+    <string name="poems_stop_reading">Stop reading</string>
+    <string name="poems_reading_score">Reading Score</string>
+    <string name="poems_score_excellent">Excellent! You read beautifully!</string>
+    <string name="poems_score_good">Good job! Keep practising!</string>
+    <string name="poems_score_keep_trying">Nice effort! Try again!</string>
+    <string name="poems_score_practice_more">Keep practising, you\'ll get better!</string>
 
     <!-- Encouragement messages -->
     <string name="encourage_1">Great job!</string>

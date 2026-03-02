@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.datetime)
     implementation(libs.work.runtime.ktx)
+    implementation(libs.bundles.ktor)
 
     androidTestImplementation(libs.android.test.runner)
     androidTestImplementation(libs.android.test.ext.junit)

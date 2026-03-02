@@ -395,6 +395,18 @@
     <string name="poems_title">Gedichte</string>
     <string name="poems_mode">Gedichte-Modus</string>
     <string name="poems_coming_soon_desc">Bald verfügbar! Übe das Lesen und Vortragen\nschöner Gedichte auf Französisch, Englisch und Deutsch.</string>
+    <string name="poems_tab_browse">Durchsuchen</string>
+    <string name="poems_tab_favourites">Favoriten</string>
+    <string name="poems_favourite">Favorit</string>
+    <string name="poems_no_favourites">Noch keine Favoriten.\nTippe auf das Herz eines Gedichts, um es hier zu speichern.</string>
+    <string name="poems_no_poems">Keine Gedichte verfügbar.\nVersuche eine andere Sprache oder prüfe deine Verbindung.</string>
+    <string name="poems_read_aloud">Vorlesen</string>
+    <string name="poems_stop_reading">Vorlesen stoppen</string>
+    <string name="poems_reading_score">Lese-Ergebnis</string>
+    <string name="poems_score_excellent">Ausgezeichnet! Du liest wunderbar!</string>
+    <string name="poems_score_good">Gut gemacht! Übe weiter!</string>
+    <string name="poems_score_keep_trying">Guter Versuch! Probiere es nochmal!</string>
+    <string name="poems_score_practice_more">Übe weiter, du wirst besser!</string>
 
     <!-- Encouragement messages -->
     <string name="encourage_1">Toll gemacht!</string>

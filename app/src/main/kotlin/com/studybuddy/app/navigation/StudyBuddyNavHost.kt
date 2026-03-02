@@ -22,6 +22,7 @@ import com.studybuddy.feature.math.play.MathPlayScreen
 import com.studybuddy.feature.math.results.MathResultsScreen
 import com.studybuddy.feature.math.setup.MathSetupScreen
 import com.studybuddy.feature.onboarding.OnboardingScreen
+import com.studybuddy.feature.poems.PoemDetailScreen
 import com.studybuddy.feature.poems.PoemsScreen
 import com.studybuddy.feature.rewards.RewardsShopScreen
 import com.studybuddy.feature.settings.SettingsScreen
@@ -263,9 +264,21 @@ fun StudyBuddyNavHost(
             )
         }
 
-        // Poems (coming soon)
+        // Poems
         composable(route = StudyBuddyRoutes.POEMS) {
             PoemsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDetail = { poemId ->
+                    navController.navigate(StudyBuddyRoutes.poemDetail(poemId))
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.POEM_DETAIL,
+            arguments = listOf(navArgument("poemId") { type = NavType.StringType }),
+        ) {
+            PoemDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
