@@ -95,6 +95,7 @@ data class HomeState(
 sealed interface HomeIntent {
     data object NavigateToDictee : HomeIntent
     data object NavigateToMath : HomeIntent
+    data object NavigateToPoems : HomeIntent
     data object NavigateToAvatar : HomeIntent
     data object NavigateToStats : HomeIntent
     data object NavigateToRewards : HomeIntent
@@ -107,6 +108,7 @@ sealed interface HomeIntent {
 sealed interface HomeEffect {
     data object OpenDictee : HomeEffect
     data object OpenMath : HomeEffect
+    data object OpenPoems : HomeEffect
     data object OpenAvatar : HomeEffect
     data object OpenStats : HomeEffect
     data object OpenRewards : HomeEffect
@@ -137,6 +139,7 @@ class HomeViewModel @Inject constructor(
             when (intent) {
                 HomeIntent.NavigateToDictee -> _effects.emit(HomeEffect.OpenDictee)
                 HomeIntent.NavigateToMath -> _effects.emit(HomeEffect.OpenMath)
+                HomeIntent.NavigateToPoems -> _effects.emit(HomeEffect.OpenPoems)
                 HomeIntent.NavigateToAvatar -> _effects.emit(HomeEffect.OpenAvatar)
                 HomeIntent.NavigateToStats -> _effects.emit(HomeEffect.OpenStats)
                 HomeIntent.NavigateToRewards -> _effects.emit(HomeEffect.OpenRewards)

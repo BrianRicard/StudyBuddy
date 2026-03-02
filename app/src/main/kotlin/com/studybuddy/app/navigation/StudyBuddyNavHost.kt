@@ -94,6 +94,9 @@ fun StudyBuddyNavHost(
                 onNavigateToMath = {
                     navController.navigate(StudyBuddyRoutes.MATH_SETUP)
                 },
+                onNavigateToPoems = {
+                    navController.navigate(StudyBuddyRoutes.POEMS)
+                },
                 onNavigateToAvatar = {
                     navController.navigate(StudyBuddyRoutes.AVATAR)
                 },
