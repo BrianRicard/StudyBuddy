@@ -19,8 +19,10 @@ fun CorrectAnswerAnimation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val reducedMotion = isReducedMotionEnabled()
+
     val scale by animateFloatAsState(
-        targetValue = if (isCorrect) 1.1f else 1f,
+        targetValue = if (!reducedMotion && isCorrect) 1.1f else 1f,
         animationSpec = spring(dampingRatio = 0.3f),
         label = "correctScale",
     )

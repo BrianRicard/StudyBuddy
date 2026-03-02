@@ -16,10 +16,11 @@ fun IncorrectAnimation(
     modifier: Modifier = Modifier,
     content: @Composable () -> Unit,
 ) {
+    val reducedMotion = isReducedMotionEnabled()
     val shakeOffset = remember { Animatable(0f) }
 
     LaunchedEffect(trigger) {
-        if (trigger) {
+        if (trigger && !reducedMotion) {
             repeat(3) {
                 shakeOffset.animateTo(10f, animationSpec = spring(stiffness = 5000f))
                 shakeOffset.animateTo(-10f, animationSpec = spring(stiffness = 5000f))

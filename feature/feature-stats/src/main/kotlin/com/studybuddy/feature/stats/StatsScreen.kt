@@ -46,7 +46,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.LoadingState
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.PointsGold
@@ -113,12 +115,18 @@ internal fun StatsContent(
 
                 // 1. Summary row: 3 stat cards side by side
                 item {
-                    SummaryRow(state = state)
+                    SummaryRow(
+                        state = state,
+                        modifier = Modifier.animateItemAppearance(0),
+                    )
                 }
 
                 // 2. Weekly chart section
                 item {
-                    WeeklyChartSection(weeklyData = state.weeklyData)
+                    WeeklyChartSection(
+                        weeklyData = state.weeklyData,
+                        modifier = Modifier.animateItemAppearance(1),
+                    )
                 }
 
                 // 3. Trends section
@@ -128,6 +136,7 @@ internal fun StatsContent(
                         dicteeAccuracyTrend = state.dicteeAccuracyTrend,
                         mathAvgSpeed = state.mathAvgSpeed,
                         mathSpeedTrend = state.mathSpeedTrend,
+                        modifier = Modifier.animateItemAppearance(2),
                     )
                 }
 
@@ -256,6 +265,7 @@ internal fun WeeklyChart(
     modifier: Modifier = Modifier,
 ) {
     val maxPoints = (weeklyData.maxOfOrNull { it.points } ?: 0).coerceAtLeast(1)
+    val reducedMotion = isReducedMotionEnabled()
 
     var animationTriggered by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) { animationTriggered = true }
@@ -267,8 +277,10 @@ internal fun WeeklyChart(
             0f
         }
         animateFloatAsState(
-            targetValue = if (animationTriggered) targetFraction else 0f,
-            animationSpec = tween(durationMillis = ANIMATION_DURATION_MS),
+            targetValue = if (animationTriggered || reducedMotion) targetFraction else 0f,
+            animationSpec = tween(
+                durationMillis = if (reducedMotion) 0 else ANIMATION_DURATION_MS,
+            ),
             label = "bar-${dayData.dayOfWeek}",
         )
     }

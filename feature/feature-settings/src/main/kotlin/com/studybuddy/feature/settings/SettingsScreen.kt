@@ -54,6 +54,7 @@ import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 /**
@@ -118,11 +119,12 @@ private fun SettingsContent(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 // -- General Section --
-                item { SectionHeader(title = stringResource(CoreUiR.string.settings_general)) }
+                item { SectionHeader(title = stringResource(CoreUiR.string.settings_general), modifier = Modifier.animateItemAppearance(0)) }
                 item {
                     LanguageSettingRow(
                         currentLocale = state.locale,
                         onLocaleSelected = { onIntent(SettingsIntent.SetLocale(it)) },
+                        modifier = Modifier.animateItemAppearance(1),
                     )
                 }
                 item {
@@ -130,35 +132,43 @@ private fun SettingsContent(
                         label = stringResource(CoreUiR.string.settings_sound),
                         isChecked = state.isSoundEnabled,
                         onToggle = { onIntent(SettingsIntent.ToggleSound) },
+                        modifier = Modifier.animateItemAppearance(2),
                     )
                 }
                 // -- Learning Section --
                 item {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    SectionHeader(title = stringResource(CoreUiR.string.settings_learning))
+                    Column(modifier = Modifier.animateItemAppearance(3)) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SectionHeader(title = stringResource(CoreUiR.string.settings_learning))
+                    }
                 }
                 item {
                     DailyGoalSettingRow(
                         currentGoal = state.dailyGoal,
                         onGoalSelected = { onIntent(SettingsIntent.SetDailyGoal(it)) },
+                        modifier = Modifier.animateItemAppearance(4),
                     )
                 }
                 item {
                     AccentModeSettingRow(
                         isStrict = state.isAccentStrict,
                         onToggle = { onIntent(SettingsIntent.ToggleAccentStrict) },
+                        modifier = Modifier.animateItemAppearance(5),
                     )
                 }
 
                 // -- Parent Zone Section --
                 item {
-                    Spacer(modifier = Modifier.height(12.dp))
-                    SectionHeader(title = stringResource(CoreUiR.string.settings_parent_zone_section))
+                    Column(modifier = Modifier.animateItemAppearance(6)) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SectionHeader(title = stringResource(CoreUiR.string.settings_parent_zone_section))
+                    }
                 }
                 item {
                     ParentZoneLockRow(
                         isUnlocked = state.showParentZone,
                         onClick = { onIntent(SettingsIntent.OpenParentZone) },
+                        modifier = Modifier.animateItemAppearance(7),
                     )
                 }
                 if (state.showParentZone) {
@@ -166,29 +176,33 @@ private fun SettingsContent(
                         NavigationSettingRow(
                             label = stringResource(CoreUiR.string.settings_progress_stats),
                             onClick = { onIntent(SettingsIntent.NavigateToStats) },
+                            modifier = Modifier.animateItemAppearance(8),
                         )
                     }
                     item {
                         NavigationSettingRow(
                             label = stringResource(CoreUiR.string.settings_backup_export),
                             onClick = { onIntent(SettingsIntent.NavigateToBackup) },
+                            modifier = Modifier.animateItemAppearance(9),
                         )
                     }
                     item {
                         DisabledSettingRow(
                             label = stringResource(CoreUiR.string.settings_cloud_sync),
                             subtitle = stringResource(CoreUiR.string.settings_coming_soon),
+                            modifier = Modifier.animateItemAppearance(10),
                         )
                     }
                     item {
                         ResetSettingRow(
                             onClick = { onIntent(SettingsIntent.RequestReset) },
+                            modifier = Modifier.animateItemAppearance(11),
                         )
                     }
                 }
 
                 // Bottom spacer for scroll padding
-                item { Spacer(modifier = Modifier.height(24.dp)) }
+                item { Spacer(modifier = Modifier.animateItemAppearance(12).height(24.dp)) }
             }
         }
     }

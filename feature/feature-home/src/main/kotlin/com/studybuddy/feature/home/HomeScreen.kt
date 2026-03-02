@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -51,11 +50,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.AvatarComposite
+import com.studybuddy.core.ui.components.LoadingState
+import com.studybuddy.core.ui.modifier.animateItemAppearance
+import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 @Composable
@@ -84,14 +86,9 @@ fun HomeScreen(
     }
 
     if (state.isLoading) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center,
-        ) {
-            CircularProgressIndicator()
-        }
+        LoadingState(
+            modifier = Modifier.background(MaterialTheme.colorScheme.background),
+        )
         return
     }
 
@@ -113,6 +110,7 @@ fun HomeScreen(
                     state = state,
                     onAvatarClick = { viewModel.onIntent(HomeIntent.NavigateToAvatar) },
                     onStarsClick = { viewModel.onIntent(HomeIntent.NavigateToStats) },
+                    modifier = Modifier.animateItemAppearance(0),
                 )
             }
 
@@ -121,6 +119,7 @@ fun HomeScreen(
                 StreakBanner(
                     dayStreak = state.dayStreak,
                     weekDots = state.weekDots,
+                    modifier = Modifier.animateItemAppearance(1),
                 )
             }
 
@@ -131,6 +130,7 @@ fun HomeScreen(
                     dailyGoal = state.dailyGoal,
                     progress = state.dailyProgress,
                     isComplete = state.isDailyGoalReached,
+                    modifier = Modifier.animateItemAppearance(2),
                 )
             }
 
@@ -139,6 +139,7 @@ fun HomeScreen(
                 ModeCardsGrid(
                     onDicteeClick = { viewModel.onIntent(HomeIntent.NavigateToDictee) },
                     onMathClick = { viewModel.onIntent(HomeIntent.NavigateToMath) },
+                    modifier = Modifier.animateItemAppearance(3),
                 )
             }
 
@@ -148,6 +149,7 @@ fun HomeScreen(
                     text = stringResource(CoreUiR.string.recent_activity),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.animateItemAppearance(4),
                 )
             }
             if (state.recentActivities.isNotEmpty()) {
@@ -170,9 +172,10 @@ private fun HomeHeader(
     state: HomeState,
     onAvatarClick: () -> Unit,
     onStarsClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // Avatar
@@ -242,9 +245,10 @@ private fun HomeHeader(
 private fun StreakBanner(
     dayStreak: Int,
     weekDots: List<Boolean>,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
         ),
@@ -306,7 +310,7 @@ private fun StreakBanner(
                                 Text(
                                     text = "\u2713",
                                     color = MaterialTheme.colorScheme.onPrimary,
-                                    fontSize = 14.sp,
+                                    style = MaterialTheme.typography.bodyMedium,
                                     fontWeight = FontWeight.Bold,
                                 )
                             }
@@ -329,9 +333,10 @@ private fun DailyChallengeCard(
     dailyGoal: Int,
     progress: Float,
     isComplete: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
             containerColor = if (isComplete) {
                 MaterialTheme.colorScheme.tertiaryContainer
@@ -386,10 +391,11 @@ private fun DailyChallengeCard(
 private fun ModeCardsGrid(
     onDicteeClick: () -> Unit,
     onMathClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "modeCardBob")
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -452,9 +458,10 @@ private fun ModeCard(
     infiniteTransition: InfiniteTransition,
     animationDelay: Int = 0,
 ) {
+    val reducedMotion = isReducedMotionEnabled()
     val bobOffset by infiniteTransition.animateFloat(
         initialValue = 0f,
-        targetValue = BOB_AMPLITUDE,
+        targetValue = if (reducedMotion) 0f else BOB_AMPLITUDE,
         animationSpec = infiniteRepeatable(
             animation = tween(durationMillis = BOB_DURATION, delayMillis = animationDelay),
             repeatMode = RepeatMode.Reverse,
@@ -466,7 +473,7 @@ private fun ModeCard(
         modifier = modifier
             .height(MODE_CARD_HEIGHT)
             .graphicsLayer { translationY = bobOffset }
-            .clickable(enabled = !isLocked, onClick = onClick),
+            .then(if (!isLocked) Modifier.bounceClick(onClick) else Modifier),
         colors = CardDefaults.cardColors(
             containerColor = if (isLocked) {
                 MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)

@@ -19,13 +19,19 @@ fun PointsFlyUp(
     modifier: Modifier = Modifier,
     onAnimationEnd: () -> Unit = {},
 ) {
+    val reducedMotion = isReducedMotionEnabled()
     val offsetY = remember { Animatable(0f) }
     val alpha = remember { Animatable(1f) }
 
     LaunchedEffect(points) {
-        offsetY.animateTo(-80f, animationSpec = tween(durationMillis = 800))
-        alpha.animateTo(0f, animationSpec = tween(durationMillis = 300))
-        onAnimationEnd()
+        if (reducedMotion) {
+            kotlinx.coroutines.delay(800)
+            onAnimationEnd()
+        } else {
+            offsetY.animateTo(-80f, animationSpec = tween(durationMillis = 800))
+            alpha.animateTo(0f, animationSpec = tween(durationMillis = 300))
+            onAnimationEnd()
+        }
     }
 
     Text(

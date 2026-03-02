@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
+import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
@@ -166,12 +167,13 @@ private fun DicteeWordEntryContent(
                             ),
                             verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
-                            items(state.words, key = { it.id }) { word ->
+                            itemsIndexed(state.words, key = { _, word -> word.id }) { index, word ->
                                 WordItem(
                                     word = word,
                                     isEditMode = state.isEditMode,
                                     onPlay = { onIntent(DicteeWordEntryIntent.PlayWord(word.word)) },
                                     onDelete = { onIntent(DicteeWordEntryIntent.DeleteWord(word.id)) },
+                                    modifier = Modifier.animateItemAppearance(index),
                                 )
                             }
                         }
@@ -229,8 +231,9 @@ private fun WordItem(
     isEditMode: Boolean,
     onPlay: () -> Unit,
     onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    StudyBuddyCard {
+    StudyBuddyCard(modifier = modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
