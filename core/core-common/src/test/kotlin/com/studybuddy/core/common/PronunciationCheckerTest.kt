@@ -120,4 +120,47 @@ class PronunciationCheckerTest {
         assertEquals(1.0f, result.overallScore, 0.01f)
         assertTrue(result.passed)
     }
+
+    // --- similarity() tests ---
+
+    @Test
+    fun `similarity returns 1 for identical words`() {
+        assertEquals(1.0f, PronunciationChecker.similarity("hello", "hello"), 0.01f)
+    }
+
+    @Test
+    fun `similarity is accent-insensitive`() {
+        assertEquals(1.0f, PronunciationChecker.similarity("café", "cafe"), 0.01f)
+    }
+
+    @Test
+    fun `similarity is case-insensitive`() {
+        assertEquals(1.0f, PronunciationChecker.similarity("Hello", "hello"), 0.01f)
+    }
+
+    @Test
+    fun `similarity strips punctuation`() {
+        assertEquals(1.0f, PronunciationChecker.similarity("world!", "world"), 0.01f)
+    }
+
+    @Test
+    fun `similarity returns low score for unrelated words`() {
+        val score = PronunciationChecker.similarity("abcdef", "xyz")
+        assertTrue(score < 0.3f, "Expected low similarity, got $score")
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "chat, sha, 0.33",
+        "bonjour, bonjur, 0.85",
+        "Gipfeln, gipfln, 0.85",
+    )
+    fun `similarity scores for partial matches`(
+        a: String,
+        b: String,
+        minExpected: Float,
+    ) {
+        val score = PronunciationChecker.similarity(a, b)
+        assertTrue(score >= minExpected, "Expected >= $minExpected for '$a' vs '$b', got $score")
+    }
 }

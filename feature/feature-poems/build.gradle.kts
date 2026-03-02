@@ -12,4 +12,5 @@ dependencies {
     implementation(project(":core:core-ui"))
     implementation(project(":shared:shared-points"))
     implementation(project(":shared:shared-tts"))
+    implementation(project(":shared:shared-whisper"))
 }

@@ -409,6 +409,24 @@
     <string name="poems_score_keep_trying">Bel effort ! Réessaie !</string>
     <string name="poems_score_practice_more">Continue à t\'entraîner, tu vas t\'améliorer !</string>
 
+    <!-- Poems: Recording & Speech Recognition -->
+    <string name="poems_start_recording">Commencer l\'enregistrement</string>
+    <string name="poems_stop_recording">Arrêter l\'enregistrement</string>
+    <string name="poems_processing">Voyons comment tu as lu…</string>
+    <string name="poems_processing_failed">Quelque chose n\'a pas marché. Réessaie !</string>
+    <string name="poems_mic_turn_off_first">Éteins d\'abord le micro !</string>
+    <string name="poems_mic_permission_rationale">Le micro est nécessaire pour t\'entendre lire.</string>
+    <string name="poems_downloading_model">Téléchargement du modèle vocal…</string>
+    <string name="poems_model_download_failed">Échec du téléchargement. Vérifie ta connexion et réessaie.</string>
+    <string name="poems_result_title">Comment tu as fait ?</string>
+    <string name="poems_legend_correct">Super !</string>
+    <string name="poems_legend_incorrect">À revoir</string>
+    <string name="poems_legend_unclear">Pas compris</string>
+    <string name="poems_legend_skipped">Pas atteint</string>
+    <string name="poems_words_to_practise">Mots à travailler</string>
+    <string name="poems_tap_word_to_hear">Appuie sur un mot pour l\'écouter</string>
+    <string name="poems_try_again">Réessayer</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Bravo !</string>
     <string name="encourage_2">Tu es génial !</string>

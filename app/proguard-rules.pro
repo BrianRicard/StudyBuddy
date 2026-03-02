@@ -18,6 +18,10 @@
 # SLF4J (transitive dependency from Ktor) — no runtime binding needed
 -dontwarn org.slf4j.**
 
+# Whisper JNI native methods
+-keepclasseswithmembernames class * { native <methods>; }
+-keep class com.studybuddy.shared.whisper.** { *; }
+
 # Firebase Crashlytics
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception

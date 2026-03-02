@@ -409,6 +409,24 @@
     <string name="poems_score_keep_trying">Guter Versuch! Probiere es nochmal!</string>
     <string name="poems_score_practice_more">Übe weiter, du wirst besser!</string>
 
+    <!-- Poems: Recording & Speech Recognition -->
+    <string name="poems_start_recording">Aufnahme starten</string>
+    <string name="poems_stop_recording">Aufnahme stoppen</string>
+    <string name="poems_processing">Mal schauen, wie du gelesen hast…</string>
+    <string name="poems_processing_failed">Etwas hat nicht geklappt. Versuch es nochmal!</string>
+    <string name="poems_mic_turn_off_first">Schalte zuerst das Mikrofon aus!</string>
+    <string name="poems_mic_permission_rationale">Zugang zum Mikrofon wird benötigt, um dich lesen zu hören.</string>
+    <string name="poems_downloading_model">Sprachmodell wird heruntergeladen…</string>
+    <string name="poems_model_download_failed">Download fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.</string>
+    <string name="poems_result_title">Wie hast du abgeschnitten?</string>
+    <string name="poems_legend_correct">Toll!</string>
+    <string name="poems_legend_incorrect">Nochmal üben</string>
+    <string name="poems_legend_unclear">Nicht verstanden</string>
+    <string name="poems_legend_skipped">Nicht erreicht</string>
+    <string name="poems_words_to_practise">Wörter zum Üben</string>
+    <string name="poems_tap_word_to_hear">Tippe auf ein Wort, um es zu hören</string>
+    <string name="poems_try_again">Nochmal versuchen</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Toll gemacht!</string>
     <string name="encourage_2">Du bist großartig!</string>

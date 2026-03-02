@@ -68,6 +68,25 @@ object PronunciationChecker {
     /** Minimum overall score for a line to be considered passing. */
     const val LINE_PASS_THRESHOLD = 0.80f
 
+    /**
+     * Computes the similarity between two words after normalization.
+     *
+     * Both strings are lowercased, accent-stripped, and punctuation-removed
+     * before comparison. Returns a value in [0.0, 1.0] where 1.0 is identical.
+     *
+     * @param a First word (e.g., expected from poem text).
+     * @param b Second word (e.g., recognized by speech-to-text).
+     * @return Similarity score in [0.0, 1.0].
+     */
+    fun similarity(
+        a: String,
+        b: String,
+    ): Float {
+        val normA = normalizeForComparison(a)
+        val normB = normalizeForComparison(b)
+        return scoreWord(normA, normB)
+    }
+
     /** Minimum per-word score to classify as [WordStatus.CORRECT]. */
     private const val WORD_CORRECT_THRESHOLD = 0.85f
 

@@ -53,5 +53,10 @@ secrets.properties
 .DS_Store
 Thumbs.db
 
+# NDK / CMake build artifacts
+.cxx/
+**/.cxx/
+.kotlin/
+
 # Kotlin
 *.kotlin_module

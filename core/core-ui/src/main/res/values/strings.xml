@@ -409,6 +409,24 @@
     <string name="poems_score_keep_trying">Nice effort! Try again!</string>
     <string name="poems_score_practice_more">Keep practising, you\'ll get better!</string>
 
+    <!-- Poems: Recording & Speech Recognition -->
+    <string name="poems_start_recording">Start recording</string>
+    <string name="poems_stop_recording">Stop recording</string>
+    <string name="poems_processing">Let me check how you did…</string>
+    <string name="poems_processing_failed">Something went wrong. Try again!</string>
+    <string name="poems_mic_turn_off_first">Turn off the microphone first!</string>
+    <string name="poems_mic_permission_rationale">Microphone access is needed to hear you read.</string>
+    <string name="poems_downloading_model">Downloading speech model…</string>
+    <string name="poems_model_download_failed">Download failed. Check your connection and try again.</string>
+    <string name="poems_result_title">How did you do?</string>
+    <string name="poems_legend_correct">Great!</string>
+    <string name="poems_legend_incorrect">Try again</string>
+    <string name="poems_legend_unclear">Didn\'t catch that</string>
+    <string name="poems_legend_skipped">Not reached</string>
+    <string name="poems_words_to_practise">Words to practise</string>
+    <string name="poems_tap_word_to_hear">Tap a word to hear it</string>
+    <string name="poems_try_again">Try Again</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Great job!</string>
     <string name="encourage_2">You\'re doing amazing!</string>
