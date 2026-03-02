@@ -3,13 +3,22 @@ package com.studybuddy.app
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BarChart
+import androidx.compose.material.icons.filled.CrueltyFree
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.BarChart
+import androidx.compose.material.icons.outlined.CrueltyFree
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -18,9 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -114,15 +124,35 @@ class MainActivity : AppCompatActivity() {
 private data class BottomNavItem(
     val route: String,
     @StringRes val labelResId: Int,
-    @DrawableRes val iconResId: Int,
+    val selectedIcon: ImageVector,
+    val unselectedIcon: ImageVector,
 )
 
 private val BOTTOM_NAV_ITEMS = listOf(
-    BottomNavItem(StudyBuddyRoutes.HOME, CoreUiR.string.nav_home, CoreUiR.drawable.ic_nav_home),
-    BottomNavItem(StudyBuddyRoutes.STATS, CoreUiR.string.nav_stats, CoreUiR.drawable.ic_nav_stats),
-    BottomNavItem(StudyBuddyRoutes.REWARDS, CoreUiR.string.nav_rewards, CoreUiR.drawable.ic_nav_awards),
-    BottomNavItem(StudyBuddyRoutes.AVATAR, CoreUiR.string.nav_avatar, CoreUiR.drawable.ic_nav_avatar),
-    BottomNavItem(StudyBuddyRoutes.SETTINGS, CoreUiR.string.nav_settings, CoreUiR.drawable.ic_nav_settings),
+    BottomNavItem(
+        route = StudyBuddyRoutes.HOME,
+        labelResId = CoreUiR.string.nav_home,
+        selectedIcon = Icons.Filled.Home,
+        unselectedIcon = Icons.Outlined.Home,
+    ),
+    BottomNavItem(
+        route = StudyBuddyRoutes.STATS,
+        labelResId = CoreUiR.string.nav_stats,
+        selectedIcon = Icons.Filled.BarChart,
+        unselectedIcon = Icons.Outlined.BarChart,
+    ),
+    BottomNavItem(
+        route = StudyBuddyRoutes.AVATAR,
+        labelResId = CoreUiR.string.nav_avatar,
+        selectedIcon = Icons.Filled.CrueltyFree,
+        unselectedIcon = Icons.Outlined.CrueltyFree,
+    ),
+    BottomNavItem(
+        route = StudyBuddyRoutes.SETTINGS,
+        labelResId = CoreUiR.string.nav_settings,
+        selectedIcon = Icons.Filled.Settings,
+        unselectedIcon = Icons.Outlined.Settings,
+    ),
 )
 
 private val BOTTOM_NAV_ROUTES = BOTTOM_NAV_ITEMS.map { it.route }.toSet()
@@ -134,13 +164,19 @@ private fun StudyBuddyBottomNav(navController: NavHostController) {
 
     NavigationBar {
         BOTTOM_NAV_ITEMS.forEach { item ->
-            val isSelected = currentDestination?.hierarchy?.any { it.route == item.route } == true
+            val isSelected = currentDestination?.hierarchy?.any {
+                it.route == item.route
+            } == true
             NavigationBarItem(
                 icon = {
                     Icon(
-                        painter = painterResource(item.iconResId),
+                        imageVector = if (isSelected) {
+                            item.selectedIcon
+                        } else {
+                            item.unselectedIcon
+                        },
                         contentDescription = stringResource(item.labelResId),
-                        tint = Color.Unspecified,
+                        modifier = Modifier.size(24.dp),
                     )
                 },
                 label = null,

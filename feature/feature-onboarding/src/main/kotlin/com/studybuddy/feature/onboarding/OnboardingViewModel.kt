@@ -23,12 +23,12 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 /**
- * UI state for the 3-step onboarding flow.
+ * UI state for the 2-step onboarding flow.
  *
- * @property currentStep The active pager index (0 = Welcome, 1 = Avatar, 2 = Voice).
+ * @property currentStep The active pager index (0 = Welcome, 1 = Voice).
  * @property name The name entered by the child.
  * @property selectedLocale The chosen app language code ("fr", "en", or "de").
- * @property avatarConfig The avatar being built during onboarding.
+ * @property avatarConfig The avatar configuration (uses defaults).
  * @property isCompleting True while the final save sequence is running.
  * @property nameError Validation message shown when the name field is empty.
  */
@@ -224,8 +224,7 @@ class OnboardingViewModel @Inject constructor(
 
     companion object {
         const val STEP_WELCOME = 0
-        const val STEP_AVATAR = 1
-        const val STEP_VOICE = 2
-        const val TOTAL_STEPS = 3
+        const val STEP_VOICE = 1
+        const val TOTAL_STEPS = 2
     }
 }

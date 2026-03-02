@@ -236,7 +236,7 @@ fun StudyBuddyNavHost(
             )
         }
 
-        // Rewards Shop
+        // TODO: Rewards Shop — removed from bottom nav; re-enable when ready
         composable(route = StudyBuddyRoutes.REWARDS) {
             RewardsShopScreen(
                 onNavigateBack = { navController.popBackStack() },
