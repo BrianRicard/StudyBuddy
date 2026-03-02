@@ -155,7 +155,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `next step from step 1 advances to step 2`() = runTest {
+    fun `next step from step 1 stays at step 1 (final step)`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
@@ -166,7 +166,7 @@ class OnboardingViewModelTest {
         viewModel.onIntent(OnboardingIntent.NextStep)
         advanceUntilIdle()
 
-        assertEquals(2, viewModel.state.value.currentStep)
+        assertEquals(1, viewModel.state.value.currentStep)
     }
 
     @Test
@@ -249,7 +249,7 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `nextStep visits all 3 steps in order 0 then 1 then 2`() = runTest {
+    fun `nextStep visits all 2 steps in order 0 then 1`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
@@ -261,37 +261,29 @@ class OnboardingViewModelTest {
         advanceUntilIdle()
         assertEquals(1, viewModel.state.value.currentStep)
 
-        // Step 1 -> 2
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-        assertEquals(2, viewModel.state.value.currentStep)
-
-        // Verify we visited all 3 steps: 0, 1, 2
-        // Step 2 is the final step (STEP_VOICE), nextStep should NOT advance further
+        // Step 1 is the final step (STEP_VOICE), nextStep should NOT advance further
         viewModel.onIntent(OnboardingIntent.NextStep)
         advanceUntilIdle()
         assertEquals(
-            2,
+            1,
             viewModel.state.value.currentStep,
-            "nextStep() at final step (2) must not advance beyond it",
+            "nextStep() at final step (1) must not advance beyond it",
         )
     }
 
     @Test
-    fun `nextStep does not skip from step 0 to step 2`() = runTest {
+    fun `nextStep from step 0 caps at step 1`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
         advanceUntilIdle()
 
-        // Call nextStep twice rapidly
+        // Call nextStep twice rapidly — should cap at step 1 (final step)
         viewModel.onIntent(OnboardingIntent.NextStep)
         viewModel.onIntent(OnboardingIntent.NextStep)
         advanceUntilIdle()
 
-        // After two nextStep calls from step 0, we should be at step 2
-        // The key check: intermediate state at step 1 existed (not skipped 0->2)
-        assertEquals(2, viewModel.state.value.currentStep)
+        assertEquals(1, viewModel.state.value.currentStep)
     }
 
     @Test

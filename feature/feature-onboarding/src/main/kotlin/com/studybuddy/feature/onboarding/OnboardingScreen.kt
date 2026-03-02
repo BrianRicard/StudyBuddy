@@ -16,12 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -56,16 +50,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.locale.SupportedLocale
-import com.studybuddy.core.domain.model.AvatarConfig
-import com.studybuddy.core.domain.model.CharacterBody
-import com.studybuddy.core.domain.model.RewardCatalog
-import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.ui.R as CoreUiR
-import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
@@ -170,20 +158,6 @@ private fun OnboardingContent(
                         onLocaleSelect = {
                             onIntent(OnboardingIntent.SelectLocale(it))
                         },
-                        onNext = { onIntent(OnboardingIntent.NextStep) },
-                    )
-                    OnboardingViewModel.STEP_AVATAR -> AvatarStep(
-                        avatarConfig = state.avatarConfig,
-                        onSelectCharacter = {
-                            onIntent(OnboardingIntent.SelectCharacter(it))
-                        },
-                        onSelectHat = {
-                            onIntent(OnboardingIntent.SelectHat(it))
-                        },
-                        onSelectFace = {
-                            onIntent(OnboardingIntent.SelectFace(it))
-                        },
-                        onBack = { onIntent(OnboardingIntent.PreviousStep) },
                         onNext = { onIntent(OnboardingIntent.NextStep) },
                     )
                     OnboardingViewModel.STEP_VOICE -> VoiceStep(
@@ -400,287 +374,7 @@ private fun LanguageCard(
 
 // endregion
 
-// region Step 2 — Choose Your Buddy
-
-@Composable
-private fun AvatarStep(
-    avatarConfig: AvatarConfig,
-    onSelectCharacter: (String) -> Unit,
-    onSelectHat: (String) -> Unit,
-    onSelectFace: (String) -> Unit,
-    onBack: () -> Unit,
-    onNext: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_choose_buddy),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Live avatar preview
-        AvatarComposite(
-            config = avatarConfig,
-            size = 120.dp,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Character grid — 4 columns, 8 characters
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_pick_character),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.align(Alignment.Start),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        val starterCharacters = RewardCatalog.characters.filter {
-            RewardCatalog.isCharacterOwned(it.id, RewardCatalog.starterItemIds)
-        }
-
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(starterCharacters.size.coerceAtMost(CHARACTER_GRID_COLUMNS)),
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(CHARACTER_GRID_HEIGHT),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            items(
-                items = starterCharacters,
-                key = { it.id },
-            ) { character ->
-                CharacterCard(
-                    character = character,
-                    isSelected = character.id == avatarConfig.bodyId,
-                    onClick = { onSelectCharacter(character.id) },
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Free hats row
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_pick_hat),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.align(Alignment.Start),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val freeHats = RewardCatalog.hats.filter { it.cost == 0 }
-            items(items = freeHats, key = { it.id }) { hat ->
-                AccessoryChip(
-                    item = hat,
-                    isSelected = hat.id == avatarConfig.hatId,
-                    onClick = { onSelectHat(hat.id) },
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Free face accessories row
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_pick_face),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.align(Alignment.Start),
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val freeFaces = RewardCatalog.faceAccessories.filter { it.cost == 0 }
-            items(items = freeFaces, key = { it.id }) { face ->
-                AccessoryChip(
-                    item = face,
-                    isSelected = face.id == avatarConfig.faceId,
-                    onClick = { onSelectFace(face.id) },
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Info banner
-        Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = MaterialTheme.shapes.medium,
-            color = MaterialTheme.colorScheme.tertiaryContainer,
-        ) {
-            Text(
-                text = stringResource(CoreUiR.string.onboarding_earn_stars),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 10.dp,
-                ),
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Back + Next buttons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            StudyBuddyOutlinedButton(
-                text = stringResource(CoreUiR.string.onboarding_back),
-                onClick = onBack,
-                modifier = Modifier.weight(1f),
-            )
-            StudyBuddyButton(
-                text = stringResource(CoreUiR.string.onboarding_next),
-                onClick = onNext,
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
-@Composable
-private fun CharacterCard(
-    character: CharacterBody,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.outlineVariant
-        },
-        label = "char-border-${character.id}",
-    )
-
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = if (isSelected) 2.dp else 1.dp,
-            color = borderColor,
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            },
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = character.emoji,
-                fontSize = 28.sp,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = character.name,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-@Composable
-private fun AccessoryChip(
-    item: RewardItem,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.outlineVariant
-        },
-        label = "accessory-border-${item.id}",
-    )
-
-    Card(
-        onClick = onClick,
-        modifier = modifier.width(72.dp),
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = if (isSelected) 2.dp else 1.dp,
-            color = borderColor,
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            },
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = if (item.icon.isNotEmpty()) item.icon else "\u2796",
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
-    }
-}
-
-// endregion
-
-// region Step 3 — Voice Setup
+// region Step 2 — Voice Setup
 
 @Composable
 private fun VoiceStep(
@@ -837,13 +531,6 @@ private fun VoiceLanguageCard(
 
 // endregion
 
-// region Constants
-
-private const val CHARACTER_GRID_COLUMNS = 4
-private val CHARACTER_GRID_HEIGHT = 170.dp
-
-// endregion
-
 // region Previews
 
 @Preview(showBackground = true)
@@ -886,27 +573,6 @@ private fun OnboardingWelcomeErrorPreview() {
                 name = "",
                 selectedLocale = "en",
                 nameError = "Please enter your name",
-            ),
-            onIntent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun OnboardingAvatarPreview() {
-    StudyBuddyTheme {
-        OnboardingContent(
-            state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_AVATAR,
-                name = "Sophie",
-                avatarConfig = AvatarConfig(
-                    bodyId = "unicorn",
-                    hatId = "hat_tophat",
-                    faceId = "face_shades",
-                    outfitId = "default",
-                    petId = "none",
-                ),
             ),
             onIntent = {},
         )
