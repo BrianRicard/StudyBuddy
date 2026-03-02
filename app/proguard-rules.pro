@@ -15,6 +15,9 @@
     *** Companion;
 }
 
+# SLF4J (transitive dependency from Ktor) — no runtime binding needed
+-dontwarn org.slf4j.**
+
 # Firebase Crashlytics
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
