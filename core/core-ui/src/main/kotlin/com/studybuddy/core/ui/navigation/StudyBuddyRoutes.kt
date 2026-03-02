@@ -24,6 +24,9 @@ object StudyBuddyRoutes {
     const val SETTINGS = "settings"
     const val BACKUP = "backup"
     const val POEMS = "poems"
+    const val POEM_DETAIL = "poems/detail/{poemId}"
+
+    fun poemDetail(poemId: String) = "poems/detail/$poemId"
     const val ONBOARDING = "onboarding"
 
     fun dicteeWords(listId: String) = "dictee/words/$listId"

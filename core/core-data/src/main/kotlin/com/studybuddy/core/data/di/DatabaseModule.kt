@@ -79,6 +79,9 @@ object DatabaseModule {
     fun provideVoicePackDao(db: StudyBuddyDatabase) = db.voicePackDao()
 
     @Provides
+    fun providePoemDao(db: StudyBuddyDatabase) = db.poemDao()
+
+    @Provides
     @Singleton
     fun provideWorkManager(@ApplicationContext context: Context): WorkManager = WorkManager.getInstance(context)
 }

@@ -1,0 +1,150 @@
+[
+  {
+    "title": "Erlkönig",
+    "author": "Johann Wolfgang von Goethe",
+    "lines": [
+      "Wer reitet so spät durch Nacht und Wind?",
+      "Es ist der Vater mit seinem Kind;",
+      "Er hat den Knaben wohl in dem Arm,",
+      "Er fasst ihn sicher, er hält ihn warm.",
+      "\"Mein Sohn, was birgst du so bang dein Gesicht?\"",
+      "\"Siehst, Vater, du den Erlkönig nicht?",
+      "Den Erlenkönig mit Kron' und Schweif?\"",
+      "\"Mein Sohn, es ist ein Nebelstreif.\""
+    ],
+    "tags": ["klassisch", "ballade", "natur"]
+  },
+  {
+    "title": "Der Panther",
+    "author": "Rainer Maria Rilke",
+    "lines": [
+      "Sein Blick ist vom Vorübergehn der Stäbe",
+      "so müd geworden, dass er nichts mehr hält.",
+      "Ihm ist, als ob es tausend Stäbe gäbe",
+      "und hinter tausend Stäben keine Welt.",
+      "Der weiche Gang geschmeidig starker Schritte,",
+      "der sich im allerkleinsten Kreise dreht,",
+      "ist wie ein Tanz von Kraft um eine Mitte,",
+      "in der betäubt ein großer Wille steht."
+    ],
+    "tags": ["klassisch", "tier", "modern"]
+  },
+  {
+    "title": "Wandrers Nachtlied",
+    "author": "Johann Wolfgang von Goethe",
+    "lines": [
+      "Über allen Gipfeln",
+      "Ist Ruh,",
+      "In allen Wipfeln",
+      "Spürest du",
+      "Kaum einen Hauch;",
+      "Die Vögelein schweigen im Walde.",
+      "Warte nur, balde",
+      "Ruhest du auch."
+    ],
+    "tags": ["klassisch", "natur", "kurz"]
+  },
+  {
+    "title": "Das Hexeneinmaleins",
+    "author": "Johann Wolfgang von Goethe",
+    "lines": [
+      "Du musst verstehn!",
+      "Aus Eins mach Zehn,",
+      "Und Zwei lass gehn,",
+      "Und Drei mach gleich,",
+      "So bist du reich.",
+      "Verlier die Vier!",
+      "Aus Fünf und Sechs,",
+      "So sagt die Hex,",
+      "Mach Sieben und Acht,",
+      "So ist's vollbracht."
+    ],
+    "tags": ["klassisch", "kinder", "spaß"]
+  },
+  {
+    "title": "Die Lorelei",
+    "author": "Heinrich Heine",
+    "lines": [
+      "Ich weiß nicht, was soll es bedeuten,",
+      "Dass ich so traurig bin;",
+      "Ein Märchen aus alten Zeiten,",
+      "Das kommt mir nicht aus dem Sinn.",
+      "Die Luft ist kühl und es dunkelt,",
+      "Und ruhig fließt der Rhein;",
+      "Der Gipfel des Berges funkelt",
+      "Im Abendsonnenschein."
+    ],
+    "tags": ["klassisch", "ballade", "natur"]
+  },
+  {
+    "title": "Abendlied",
+    "author": "Matthias Claudius",
+    "lines": [
+      "Der Mond ist aufgegangen,",
+      "Die goldnen Sternlein prangen",
+      "Am Himmel hell und klar;",
+      "Der Wald steht schwarz und schweiget,",
+      "Und aus den Wiesen steiget",
+      "Der weiße Nebel wunderbar."
+    ],
+    "tags": ["klassisch", "natur", "abend"]
+  },
+  {
+    "title": "Knecht Ruprecht",
+    "author": "Theodor Storm",
+    "lines": [
+      "Von drauß vom Walde komm ich her;",
+      "Ich muss euch sagen, es weihnachtet sehr!",
+      "Allüberall auf den Tannenspitzen",
+      "Sah ich goldene Lichtlein sitzen;",
+      "Und droben aus dem Himmelstor",
+      "Sah mit großen Augen das Christkind hervor."
+    ],
+    "tags": ["kinder", "weihnachten", "klassisch"]
+  },
+  {
+    "title": "Frühling",
+    "author": "Heinrich Heine",
+    "lines": [
+      "Leise zieht durch mein Gemüt",
+      "Liebliches Geläute.",
+      "Klinge, kleines Frühlingslied,",
+      "Kling hinaus ins Weite.",
+      "Kling hinaus bis an das Haus,",
+      "Wo die Blumen sprießen.",
+      "Wenn du eine Rose schaust,",
+      "Sag, ich lass sie grüßen."
+    ],
+    "tags": ["klassisch", "natur", "frühling"]
+  },
+  {
+    "title": "Der Zauberlehrling",
+    "author": "Johann Wolfgang von Goethe",
+    "lines": [
+      "Hat der alte Hexenmeister",
+      "Sich doch einmal wegbegeben!",
+      "Und nun sollen seine Geister",
+      "Auch nach meinem Willen leben.",
+      "Seine Wort und Werke",
+      "Merkt ich und den Brauch,",
+      "Und mit Geistesstärke",
+      "Tu ich Wunder auch."
+    ],
+    "tags": ["klassisch", "kinder", "magie"]
+  },
+  {
+    "title": "Wiegenlied",
+    "author": "Johannes Brahms",
+    "lines": [
+      "Guten Abend, gut' Nacht,",
+      "Mit Rosen bedacht,",
+      "Mit Näglein besteckt,",
+      "Schlupf unter die Deck':",
+      "Morgen früh, wenn Gott will,",
+      "Wirst du wieder geweckt,",
+      "Morgen früh, wenn Gott will,",
+      "Wirst du wieder geweckt."
+    ],
+    "tags": ["kinder", "abend", "lied"]
+  }
+]
