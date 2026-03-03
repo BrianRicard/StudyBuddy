@@ -381,8 +381,9 @@
     <string name="dictee_imported_count">Imported %d words</string>
     <string name="dictee_import_no_words">No words found in file</string>
     <string name="dictee_import_error">Import failed</string>
-    <string name="dictee_recognition_error">Couldn\'t read that. Try again or switch to keyboard.</string>
+    <string name="dictee_recognition_error">Couldn\'t read that — try writing a bit bigger!</string>
     <string name="dictee_handwriting_unavailable">Handwriting not available. Switch to keyboard to type.</string>
+    <string name="dictee_handwriting_practice_mode">Writing practice mode — spell check will be ready soon!</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">%s operator, selected</string>

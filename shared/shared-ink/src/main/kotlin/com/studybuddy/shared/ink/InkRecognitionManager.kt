@@ -32,6 +32,27 @@ class InkRecognitionManager @Inject constructor() {
         currentLanguageTag = languageTag
     }
 
+    /**
+     * Ensures the ink recognition model is downloaded and ready.
+     * Returns true if the model is available, false otherwise.
+     * Attempts to download the model if it is not yet available.
+     */
+    suspend fun ensureModelReady(languageTag: String): Boolean {
+        if (isModelDownloaded(languageTag)) return true
+        return try {
+            val modelIdentifier =
+                DigitalInkRecognitionModelIdentifier.fromLanguageTag(languageTag) ?: return false
+            val model = DigitalInkRecognitionModel.builder(modelIdentifier).build()
+            suspendCancellableCoroutine { continuation ->
+                modelManager.download(model, DownloadConditions.Builder().build())
+                    .addOnSuccessListener { continuation.resume(true) }
+                    .addOnFailureListener { continuation.resume(false) }
+            }
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     suspend fun recognize(ink: Ink): Result<String> {
         val activeRecognizer = recognizer
             ?: return Result.failure(IllegalStateException("Recognizer not initialized"))

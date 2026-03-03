@@ -381,8 +381,9 @@
     <string name="dictee_imported_count">%d Wörter importiert</string>
     <string name="dictee_import_no_words">Keine Wörter in Datei gefunden</string>
     <string name="dictee_import_error">Import fehlgeschlagen</string>
-    <string name="dictee_recognition_error">Nicht lesbar. Versuche es erneut oder wechsle zur Tastatur.</string>
+    <string name="dictee_recognition_error">Nicht lesbar — versuche etwas größer zu schreiben!</string>
     <string name="dictee_handwriting_unavailable">Handschrift nicht verfügbar. Wechsle zur Tastatur.</string>
+    <string name="dictee_handwriting_practice_mode">Schreibübungsmodus — Rechtschreibprüfung wird bald bereit sein!</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">%s Operator, ausgewählt</string>
