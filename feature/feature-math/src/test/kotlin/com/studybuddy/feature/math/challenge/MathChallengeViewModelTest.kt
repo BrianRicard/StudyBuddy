@@ -226,6 +226,34 @@ class MathChallengeViewModelTest {
     }
 
     @Test
+    fun `wrong answer breaks streak`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+
+        advanceTimeBy(spawnTimeMs)
+        assertTrue(vm.state.value.equations.isNotEmpty())
+
+        // Solve one correctly to build streak
+        vm.onIntent(MathChallengeIntent.DigitEntered(8))
+        vm.onIntent(MathChallengeIntent.Submit)
+        advanceTimeBy(MathChallengeViewModel.TICK_MS)
+        assertEquals(1, vm.state.value.streak)
+
+        // Wait for another equation
+        advanceTimeBy(respawnTimeMs)
+        assertTrue(vm.state.value.equations.isNotEmpty())
+
+        // Wrong answer breaks streak
+        vm.onIntent(MathChallengeIntent.DigitEntered(9))
+        vm.onIntent(MathChallengeIntent.DigitEntered(9))
+        vm.onIntent(MathChallengeIntent.Submit)
+
+        assertEquals(0, vm.state.value.streak)
+        assertEquals(0, vm.state.value.consecutiveCorrect)
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
     fun `bomb clears all equations`() = runTest(testDispatcher) {
         val vm = createViewModel()
 
@@ -361,6 +389,138 @@ class MathChallengeViewModelTest {
         assertEquals(MathChallengeState.INITIAL_LIVES, vm.state.value.lives)
         assertEquals(MathChallengeState.INITIAL_BOMBS, vm.state.value.bombs)
         assertFalse(vm.state.value.isGameOver)
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `spawned equations have valid xOffset`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+
+        advanceTimeBy(spawnTimeMs)
+        assertTrue(vm.state.value.equations.isNotEmpty())
+
+        for (eq in vm.state.value.equations) {
+            assertTrue(
+                eq.xOffset >= MathChallengeViewModel.X_MARGIN,
+                "xOffset ${eq.xOffset} below margin",
+            )
+            assertTrue(
+                eq.xOffset <= MathChallengeViewModel.X_MARGIN + MathChallengeViewModel.X_RANGE,
+                "xOffset ${eq.xOffset} above max",
+            )
+        }
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `spawned equations start above visible area`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+
+        // Catch equations right after spawn before they fall far
+        advanceTimeBy(spawnTimeMs)
+        assertTrue(vm.state.value.equations.isNotEmpty())
+
+        for (eq in vm.state.value.equations) {
+            // Equation may have moved a few ticks but should still be near top
+            assertTrue(
+                eq.yProgress < 0.3f,
+                "equation yProgress ${eq.yProgress} too far down at spawn",
+            )
+        }
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `calculateScore includes level bonus`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+        val eq = FallingEquation(id = 0, problem = createProblem(), yProgress = 0.3f)
+
+        val scoreL1 = vm.calculateScore(eq, level = 1, multiplier = 1.0f)
+        val scoreL5 = vm.calculateScore(eq, level = 5, multiplier = 1.0f)
+
+        // Level 5 should score higher due to level bonus (+3 per level)
+        assertEquals(
+            (MathChallengeViewModel.LEVEL_SCORE_BONUS * 4),
+            scoreL5 - scoreL1,
+        )
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `calculateScore includes proximity bonus`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+        val eqSafe = FallingEquation(id = 0, problem = createProblem(), yProgress = 0.3f)
+        val eqMid = FallingEquation(id = 1, problem = createProblem(), yProgress = 0.55f)
+        val eqDanger = FallingEquation(id = 2, problem = createProblem(), yProgress = 0.75f)
+
+        val scoreSafe = vm.calculateScore(eqSafe, level = 1, multiplier = 1.0f)
+        val scoreMid = vm.calculateScore(eqMid, level = 1, multiplier = 1.0f)
+        val scoreDanger = vm.calculateScore(eqDanger, level = 1, multiplier = 1.0f)
+
+        assertTrue(scoreDanger > scoreMid, "danger zone should score more than mid")
+        assertTrue(scoreMid > scoreSafe, "mid zone should score more than safe")
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `calculateScore caps multiplier at 1_5x`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+        val eq = FallingEquation(id = 0, problem = createProblem(), yProgress = 0.3f)
+
+        val scoreCapped = vm.calculateScore(eq, level = 1, multiplier = 1.5f)
+        val scoreHighMult = vm.calculateScore(eq, level = 1, multiplier = 3.0f)
+
+        // Both should be the same because multiplier caps at 1.5x
+        assertEquals(scoreCapped, scoreHighMult)
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `missed equation costs a life and breaks streak`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+
+        advanceTimeBy(spawnTimeMs)
+        assertTrue(vm.state.value.equations.isNotEmpty())
+
+        // Solve one to build streak
+        vm.onIntent(MathChallengeIntent.DigitEntered(8))
+        vm.onIntent(MathChallengeIntent.Submit)
+        advanceTimeBy(MathChallengeViewModel.TICK_MS)
+        assertEquals(1, vm.state.value.streak)
+        val livesAfterSolve = vm.state.value.lives
+
+        // Wait for another equation to spawn, then let it fall off screen
+        // Spawn wait: ~3000ms (60 ticks), fall from -0.12 to 1.0: ~18700ms (374 ticks)
+        // Total ~22000ms, use 25000 for safety margin
+        advanceTimeBy(25_000L)
+
+        assertTrue(
+            vm.state.value.lives < livesAfterSolve,
+            "lives should decrease when equation is missed",
+        )
+        assertEquals(0, vm.state.value.streak, "streak should reset when equation is missed")
+
+        vm.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `game over when all lives lost`() = runTest(testDispatcher) {
+        val vm = createViewModel()
+
+        // Let equations fall off the bottom repeatedly until game over
+        // Each miss costs 1 life. Start with INITIAL_LIVES (3).
+        // Let enough time pass for many equations to spawn and miss.
+        val longWait = 120_000L
+        advanceTimeBy(longWait)
+
+        assertTrue(vm.state.value.isGameOver, "game should be over after losing all lives")
+        assertEquals(0, vm.state.value.lives)
 
         vm.viewModelScope.cancel()
     }
