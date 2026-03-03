@@ -250,6 +250,7 @@
     <string name="rewards_buy_item">Kaufen ⭐ %d</string>
     <string name="rewards_active">Aktiv</string>
     <string name="rewards_activate">Aktivieren</string>
+    <string name="rewards_characters_section">\uD83D\uDC3E Charaktere</string>
     <string name="rewards_hats_section">\uD83C\uDFA9 Hüte</string>
     <string name="rewards_face_section">\uD83D\uDD76\uFE0F Gesicht</string>
     <string name="rewards_outfits_section">\uD83D\uDC54 Outfits</string>

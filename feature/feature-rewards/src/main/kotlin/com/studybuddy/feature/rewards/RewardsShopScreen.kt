@@ -64,6 +64,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.domain.model.AvatarTier
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
@@ -198,6 +199,8 @@ private fun RewardsShopContent(
                     when (RewardsTab.entries[page]) {
                         RewardsTab.AVATAR -> AvatarTabContent(
                             ownedItemIds = state.ownedItemIds,
+                            selectedTier = state.selectedTier,
+                            onSelectTier = { onIntent(RewardsShopIntent.SelectTier(it)) },
                             onPurchase = { onIntent(RewardsShopIntent.RequestPurchase(it)) },
                         )
                         RewardsTab.THEMES -> ThemesTabContent(
@@ -289,27 +292,41 @@ private val RewardsTab.tabIconRes: Int
 @Composable
 private fun AvatarTabContent(
     ownedItemIds: Set<String>,
+    selectedTier: AvatarTier?,
+    onSelectTier: (AvatarTier?) -> Unit,
     onPurchase: (RewardItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    fun filterByTier(items: List<RewardItem>): List<RewardItem> =
+        if (selectedTier == null) items else items.filter { it.tier == selectedTier }
+
+    val characterItems = filterByTier(
+        RewardCatalog.characterItems.filterNot { it.cost == 0 && it.tier == AvatarTier.STARTER },
+    )
     val sections = listOf(
         AvatarSection(
+            title = stringResource(CoreUiR.string.rewards_characters_section),
+            items = characterItems,
+        ),
+        AvatarSection(
             title = stringResource(CoreUiR.string.rewards_hats_section),
-            items = RewardCatalog.hats.filterNot { it.id.endsWith("_none") },
+            items = filterByTier(RewardCatalog.hats.filterNot { it.id.endsWith("_none") }),
         ),
         AvatarSection(
             title = stringResource(CoreUiR.string.rewards_face_section),
-            items = RewardCatalog.faceAccessories.filterNot { it.id.endsWith("_none") },
+            items = filterByTier(
+                RewardCatalog.faceAccessories.filterNot { it.id.endsWith("_none") },
+            ),
         ),
         AvatarSection(
             title = stringResource(CoreUiR.string.rewards_outfits_section),
-            items = RewardCatalog.outfits.filterNot { it.id.endsWith("_none") },
+            items = filterByTier(RewardCatalog.outfits.filterNot { it.id.endsWith("_none") }),
         ),
         AvatarSection(
             title = stringResource(CoreUiR.string.rewards_pets_section),
-            items = RewardCatalog.pets.filterNot { it.id.endsWith("_none") },
+            items = filterByTier(RewardCatalog.pets.filterNot { it.id.endsWith("_none") }),
         ),
-    )
+    ).filter { it.items.isNotEmpty() }
 
     LazyVerticalGrid(
         columns = GridCells.Fixed(3),
@@ -318,6 +335,12 @@ private fun AvatarTabContent(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            TierFilterRow(
+                selectedTier = selectedTier,
+                onSelectTier = onSelectTier,
+            )
+        }
         sections.forEach { section ->
             item(span = { GridItemSpan(maxLineSpan) }) {
                 Text(
@@ -348,6 +371,7 @@ private fun AvatarItemCard(
     onPurchase: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val tierColor = tierColor(item.tier)
     Card(
         modifier = modifier
             .aspectRatio(0.85f)
@@ -371,10 +395,18 @@ private fun AvatarItemCard(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            AccessoryPreview(
-                itemId = item.id,
-                size = 32.dp,
-            )
+            if (item.category == RewardCategory.CHARACTER) {
+                Text(
+                    text = item.icon,
+                    fontSize = 28.sp,
+                    textAlign = TextAlign.Center,
+                )
+            } else {
+                AccessoryPreview(
+                    itemId = item.id,
+                    size = 32.dp,
+                )
+            }
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = item.name,
@@ -383,7 +415,11 @@ private fun AvatarItemCard(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            Spacer(modifier = Modifier.height(4.dp))
+            Spacer(modifier = Modifier.height(2.dp))
+            if (item.tier != AvatarTier.STARTER && !isOwned) {
+                TierBadge(tier = item.tier)
+                Spacer(modifier = Modifier.height(2.dp))
+            }
             if (isOwned) {
                 OwnedBadge()
             } else if (item.cost > 0) {
@@ -391,6 +427,89 @@ private fun AvatarItemCard(
             }
         }
     }
+}
+
+@Composable
+private fun TierFilterRow(
+    selectedTier: AvatarTier?,
+    onSelectTier: (AvatarTier?) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        FilterChipItem(
+            label = "All",
+            selected = selectedTier == null,
+            onClick = { onSelectTier(null) },
+        )
+        AvatarTier.entries.forEach { tier ->
+            FilterChipItem(
+                label = tier.label,
+                selected = selectedTier == tier,
+                color = tierColor(tier),
+                onClick = { onSelectTier(tier) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun FilterChipItem(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.primary,
+) {
+    Surface(
+        modifier = modifier.bounceClick(onClick = onClick),
+        shape = RoundedCornerShape(16.dp),
+        color = if (selected) color.copy(alpha = 0.2f) else Color.Transparent,
+        border = androidx.compose.foundation.BorderStroke(
+            width = 1.dp,
+            color = if (selected) color else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+        ),
+    ) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = if (selected) color else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+        )
+    }
+}
+
+@Composable
+private fun TierBadge(
+    tier: AvatarTier,
+    modifier: Modifier = Modifier,
+) {
+    val color = tierColor(tier)
+    Surface(
+        modifier = modifier,
+        shape = RoundedCornerShape(4.dp),
+        color = color.copy(alpha = 0.15f),
+    ) {
+        Text(
+            text = tier.label,
+            style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.sp),
+            color = color,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 1.dp),
+        )
+    }
+}
+
+@Composable
+private fun tierColor(tier: AvatarTier): Color = when (tier) {
+    AvatarTier.STARTER -> CorrectGreen
+    AvatarTier.COMMON -> Color(0xFF5B8DEF)
+    AvatarTier.RARE -> Color(0xFF9B59B6)
+    AvatarTier.EPIC -> Color(0xFFE67E22)
+    AvatarTier.LEGENDARY -> Color(0xFFE74C3C)
 }
 
 // endregion
@@ -494,10 +613,16 @@ private fun ThemeCard(
                         text = stringResource(CoreUiR.string.rewards_activate),
                         onClick = onActivate,
                     )
-                    else -> StudyBuddyButton(
-                        text = "\u2B50 ${theme.cost}",
-                        onClick = onPurchase,
-                    )
+                    else -> Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                    ) {
+                        TierBadge(tier = theme.tier)
+                        StudyBuddyButton(
+                            text = "\u2B50 ${theme.cost}",
+                            onClick = onPurchase,
+                        )
+                    }
                 }
             }
         }
@@ -687,10 +812,14 @@ private fun EffectCard(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(4.dp))
             if (isOwned) {
                 OwnedBadge()
             } else {
+                if (item.tier != AvatarTier.STARTER) {
+                    TierBadge(tier = item.tier)
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
                 CostChip(cost = item.cost)
             }
         }
@@ -985,6 +1114,10 @@ private fun PurchaseConfirmDialog(
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                 )
+                if (item.tier != AvatarTier.STARTER) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    TierBadge(tier = item.tier)
+                }
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(
                     text = stringResource(CoreUiR.string.rewards_cost_message, item.cost),

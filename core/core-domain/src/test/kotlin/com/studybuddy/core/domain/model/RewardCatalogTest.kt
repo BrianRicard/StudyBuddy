@@ -195,4 +195,94 @@ class RewardCatalogTest {
         assertNotNull(RewardCatalog.getItemById("title_true_north"))
         assertNotNull(RewardCatalog.getItemById("title_mix_master"))
     }
+
+    // ── Tier pricing tests ──────────────────────────────────────────────────
+
+    @Test
+    fun `all items have a tier assigned`() {
+        RewardCatalog.allItems.forEach { item ->
+            assertNotNull(item.tier, "Item ${item.id} should have a tier")
+        }
+    }
+
+    @Test
+    fun `item costs fall within their tier range`() {
+        RewardCatalog.allItems.filter { it.cost > 0 }.forEach { item ->
+            val tier = item.tier
+            assertTrue(
+                item.cost in tier.minCost..tier.maxCost,
+                "Item ${item.id} costs ${item.cost} but tier ${tier.label} range is ${tier.minCost}-${tier.maxCost}",
+            )
+        }
+    }
+
+    @Test
+    fun `free items are starter tier`() {
+        RewardCatalog.allItems.filter { it.cost == 0 }.forEach { item ->
+            assertEquals(
+                AvatarTier.STARTER,
+                item.tier,
+                "Free item ${item.id} should be STARTER tier",
+            )
+        }
+    }
+
+    @Test
+    fun `dragon is legendary tier`() {
+        val dragon = RewardCatalog.getItemById("char_dragon")
+        assertNotNull(dragon)
+        assertEquals(AvatarTier.LEGENDARY, dragon!!.tier)
+        assertTrue(dragon.cost >= AvatarTier.LEGENDARY.minCost)
+    }
+
+    @Test
+    fun `unicorn is epic tier`() {
+        val unicorn = RewardCatalog.getItemById("char_unicorn")
+        assertNotNull(unicorn)
+        assertEquals(AvatarTier.EPIC, unicorn!!.tier)
+    }
+
+    @Test
+    fun `galaxy theme is epic tier`() {
+        val galaxy = RewardCatalog.getItemById("theme_galaxy")
+        assertNotNull(galaxy)
+        assertEquals(AvatarTier.EPIC, galaxy!!.tier)
+    }
+
+    @Test
+    fun `getItemsByTier returns only items of that tier`() {
+        AvatarTier.entries.forEach { tier ->
+            val items = RewardCatalog.getItemsByTier(tier)
+            items.forEach { item ->
+                assertEquals(
+                    tier,
+                    item.tier,
+                    "Item ${item.id} returned by getItemsByTier(${tier.label}) has wrong tier",
+                )
+            }
+        }
+    }
+
+    @Test
+    fun `each tier has at least one item`() {
+        AvatarTier.entries.forEach { tier ->
+            assertTrue(
+                RewardCatalog.getItemsByTier(tier).isNotEmpty(),
+                "Tier ${tier.label} should have at least one item",
+            )
+        }
+    }
+
+    @Test
+    fun `character prices increase across tiers`() {
+        val chars = RewardCatalog.characterItems.filter { it.cost > 0 }
+        val commonMax = chars.filter { it.tier == AvatarTier.COMMON }.maxOf { it.cost }
+        val rareMin = chars.filter { it.tier == AvatarTier.RARE }.minOf { it.cost }
+        val epicMin = chars.filter { it.tier == AvatarTier.EPIC }.minOf { it.cost }
+        val legendaryMin = chars.filter { it.tier == AvatarTier.LEGENDARY }.minOf { it.cost }
+
+        assertTrue(rareMin > commonMax, "Rare min ($rareMin) should exceed Common max ($commonMax)")
+        assertTrue(epicMin > rareMin, "Epic min ($epicMin) should exceed Rare min ($rareMin)")
+        assertTrue(legendaryMin > epicMin, "Legendary min ($legendaryMin) should exceed Epic min ($epicMin)")
+    }
 }
