@@ -3,6 +3,7 @@ package com.studybuddy.feature.poems
 import app.cash.turbine.test
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PoemSource
+import com.studybuddy.core.domain.usecase.poem.DeleteUserPoemUseCase
 import com.studybuddy.core.domain.usecase.poem.GetFavouritePoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetUserPoemsUseCase
@@ -35,6 +36,7 @@ class PoemsViewModelTest {
     private val getUserPoemsUseCase: GetUserPoemsUseCase = mockk()
     private val refreshPoemsUseCase: RefreshPoemsUseCase = mockk()
     private val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
+    private val deleteUserPoemUseCase: DeleteUserPoemUseCase = mockk()
 
     private val testPoems = listOf(
         Poem(
@@ -55,6 +57,7 @@ class PoemsViewModelTest {
         every { getUserPoemsUseCase(any()) } returns flowOf(emptyList())
         coEvery { refreshPoemsUseCase(any()) } returns Unit
         coEvery { toggleFavouriteUseCase(any(), any(), any()) } returns Unit
+        coEvery { deleteUserPoemUseCase(any()) } returns Unit
     }
 
     @AfterEach
@@ -68,6 +71,7 @@ class PoemsViewModelTest {
         getUserPoemsUseCase = getUserPoemsUseCase,
         refreshPoemsUseCase = refreshPoemsUseCase,
         toggleFavouriteUseCase = toggleFavouriteUseCase,
+        deleteUserPoemUseCase = deleteUserPoemUseCase,
     )
 
     @Test

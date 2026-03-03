@@ -444,6 +444,8 @@
     <string name="poems_import_failed">Datei konnte nicht importiert werden. Prüfe das Format und versuche es erneut.</string>
     <string name="poems_no_my_poems">Noch keine Gedichte.\nTippe auf +, um eins zu erstellen oder zu importieren!</string>
     <string name="poems_or_import">Oder aus einer Datei importieren</string>
+    <string name="poems_delete">Gedicht löschen</string>
+    <string name="poems_deleted">Gedicht gelöscht</string>
 
     <!-- Encouragement messages -->
     <string name="encourage_1">Toll gemacht!</string>

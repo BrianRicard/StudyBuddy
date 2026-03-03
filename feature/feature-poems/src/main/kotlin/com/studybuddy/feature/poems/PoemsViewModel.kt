@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.Poem
+import com.studybuddy.core.domain.usecase.poem.DeleteUserPoemUseCase
 import com.studybuddy.core.domain.usecase.poem.GetFavouritePoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetUserPoemsUseCase
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -48,6 +50,7 @@ sealed interface PoemsIntent {
     data class SelectTab(val tab: PoemsTab) : PoemsIntent
     data class OpenPoem(val poemId: String) : PoemsIntent
     data class ToggleFavourite(val poem: Poem) : PoemsIntent
+    data class DeletePoem(val poem: Poem) : PoemsIntent
 }
 
 sealed interface PoemsEffect {
@@ -61,6 +64,7 @@ class PoemsViewModel @Inject constructor(
     private val getUserPoemsUseCase: GetUserPoemsUseCase,
     private val refreshPoemsUseCase: RefreshPoemsUseCase,
     private val toggleFavouriteUseCase: ToggleFavouriteUseCase,
+    private val deleteUserPoemUseCase: DeleteUserPoemUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(PoemsState())
@@ -86,6 +90,7 @@ class PoemsViewModel @Inject constructor(
                 }
             }
             is PoemsIntent.ToggleFavourite -> toggleFavourite(intent.poem)
+            is PoemsIntent.DeletePoem -> deletePoem(intent.poem)
         }
     }
 
@@ -98,14 +103,18 @@ class PoemsViewModel @Inject constructor(
                 // Offline — use cached poems
             }
 
-            getPoemsUseCase(state.value.selectedLanguage).collect { poems ->
-                _state.update { it.copy(poems = poems, isLoading = false) }
-            }
-        }
-
-        viewModelScope.launch {
-            getFavouritePoemsUseCase(profileId).collect { favs ->
-                _state.update { it.copy(favourites = favs) }
+            // Combine browse poems with favourites so heart icons reflect reality
+            combine(
+                getPoemsUseCase(state.value.selectedLanguage),
+                getFavouritePoemsUseCase(profileId),
+            ) { poems, favs ->
+                val favIds = favs.map { it.id }.toSet()
+                val markedPoems = poems.map { it.copy(isFavourite = it.id in favIds) }
+                markedPoems to favs
+            }.collect { (markedPoems, favs) ->
+                _state.update {
+                    it.copy(poems = markedPoems, favourites = favs, isLoading = false)
+                }
             }
         }
 
@@ -125,8 +134,16 @@ class PoemsViewModel @Inject constructor(
                 // Offline
             }
 
-            getPoemsUseCase(language).collect { poems ->
-                _state.update { it.copy(poems = poems, isLoading = false) }
+            combine(
+                getPoemsUseCase(language),
+                getFavouritePoemsUseCase(profileId),
+            ) { poems, favs ->
+                val favIds = favs.map { it.id }.toSet()
+                poems.map { it.copy(isFavourite = it.id in favIds) } to favs
+            }.collect { (markedPoems, favs) ->
+                _state.update {
+                    it.copy(poems = markedPoems, favourites = favs, isLoading = false)
+                }
             }
         }
     }
@@ -134,6 +151,12 @@ class PoemsViewModel @Inject constructor(
     private fun toggleFavourite(poem: Poem) {
         viewModelScope.launch {
             toggleFavouriteUseCase(poem.id, poem.source.name, profileId)
+        }
+    }
+
+    private fun deletePoem(poem: Poem) {
+        viewModelScope.launch {
+            deleteUserPoemUseCase(poem.id)
         }
     }
 }
