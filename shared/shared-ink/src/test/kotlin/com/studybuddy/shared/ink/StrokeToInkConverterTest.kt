@@ -12,6 +12,13 @@ class StrokeToInkConverterTest {
         assertEquals(10f, point.x)
         assertEquals(20f, point.y)
         assertEquals(1000L, point.timestamp)
+        assertEquals(1f, point.pressure) // default pressure
+    }
+
+    @Test
+    fun `StrokePoint stores pressure for stylus input`() {
+        val point = StrokePoint(10f, 20f, 1000L, pressure = 0.7f)
+        assertEquals(0.7f, point.pressure)
     }
 
     @Test

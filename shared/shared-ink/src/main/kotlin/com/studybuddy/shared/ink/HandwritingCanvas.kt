@@ -7,7 +7,6 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -44,12 +44,11 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.mlkit.vision.digitalink.Ink
-
-data class StrokePoint(val x: Float, val y: Float, val timestamp: Long)
 
 /**
  * Guide line styles mimicking notebook/cahier paper.
@@ -70,12 +69,18 @@ private val HandwritingStrokeColor = Color(0xFF1A237E)
 private val HandwritingGuideColor = Color(0xFFD0D0D0)
 private val HandwritingCanvasBg = Color(0xFFFFF8E1)
 private val CorrectTextColor = Color(0xFF2E7D32)
+private val StylusHoverColor = Color(0xFF1A237E)
+
+// Base stroke width for finger input
+private const val BASE_STROKE_WIDTH_DP = 5f
 
 /**
  * Enhanced handwriting canvas with notebook guide lines, smooth Bezier strokes,
- * undo support, and live recognition preview.
+ * undo support, live recognition preview, stylus support with pressure sensitivity,
+ * palm rejection, and normalized coordinates for rotation survival.
  *
- * @param modifier Modifier for the overall component.
+ * @param modifier Modifier for the overall component. Pass height via modifier;
+ *   the canvas uses [heightIn] with a 200dp floor so callers can expand it on tablets.
  * @param guideLineStyle Style of guide lines to display.
  * @param recognizedText Live ML Kit recognition preview text (empty = no preview).
  * @param referenceWord Reference word to compare against for green checkmark.
@@ -93,8 +98,11 @@ fun HandwritingCanvas(
     onClear: () -> Unit,
     onUndo: ((Ink?) -> Unit)? = null,
 ) {
-    val strokes = remember { mutableStateListOf<List<StrokePoint>>() }
-    var currentStroke by remember { mutableStateOf<List<StrokePoint>>(emptyList()) }
+    // Store strokes as normalized coordinates — survive rotation
+    val normalizedStrokes = remember { mutableStateListOf<List<NormalizedStrokePoint>>() }
+    var currentStrokePixels by remember { mutableStateOf<List<StrokePoint>>(emptyList()) }
+    var canvasSize by remember { mutableStateOf(Size.Zero) }
+    var hoverPosition by remember { mutableStateOf<Offset?>(null) }
     val canvasShape = RoundedCornerShape(16.dp)
 
     Column(modifier = modifier) {
@@ -102,7 +110,8 @@ fun HandwritingCanvas(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .weight(1f, fill = false)
+                .heightIn(min = 200.dp)
                 .clip(canvasShape)
                 .background(color = HandwritingCanvasBg)
                 .border(
@@ -110,48 +119,116 @@ fun HandwritingCanvas(
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = canvasShape,
                 )
+                // Stylus hover detection
                 .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            currentStroke = listOf(
-                                StrokePoint(offset.x, offset.y, System.currentTimeMillis()),
-                            )
-                        },
-                        onDrag = { change, _ ->
-                            change.consume()
-                            currentStroke = currentStroke + StrokePoint(
-                                change.position.x,
-                                change.position.y,
-                                System.currentTimeMillis(),
-                            )
-                        },
-                        onDragEnd = {
-                            if (currentStroke.isNotEmpty()) {
-                                strokes.add(currentStroke)
-                                currentStroke = emptyList()
-                                onInkReady(buildInk(strokes))
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val stylusChange = event.changes.firstOrNull {
+                                it.type == PointerType.Stylus && !it.pressed
                             }
-                        },
-                    )
+                            hoverPosition = stylusChange?.position
+                        }
+                    }
+                }
+                // Drawing input with stylus pressure support and palm rejection
+                .pointerInput(Unit) {
+                    awaitPointerEventScope {
+                        while (true) {
+                            val down = awaitPointerEvent()
+                            val firstChange = down.changes.firstOrNull { it.pressed } ?: continue
+
+                            val isStylus = firstChange.type == PointerType.Stylus
+                            val pressure = if (isStylus) firstChange.pressure else 1f
+
+                            currentStrokePixels = listOf(
+                                StrokePoint(
+                                    x = firstChange.position.x,
+                                    y = firstChange.position.y,
+                                    timestamp = System.currentTimeMillis(),
+                                    pressure = pressure,
+                                ),
+                            )
+                            firstChange.consume()
+                            hoverPosition = null
+
+                            var cancelled = false
+
+                            // Track drag
+                            while (true) {
+                                val moveEvent = awaitPointerEvent()
+                                val change = moveEvent.changes.firstOrNull() ?: break
+
+                                if (!change.pressed) {
+                                    // Pointer up
+                                    change.consume()
+                                    break
+                                }
+
+                                // Palm rejection: if pointer type changed (system sends cancel)
+                                // or if we detect a touch while using stylus
+                                if (isStylus && change.type != PointerType.Stylus) {
+                                    cancelled = true
+                                    change.consume()
+                                    break
+                                }
+
+                                val movePressure = if (isStylus) change.pressure else 1f
+                                currentStrokePixels = currentStrokePixels + StrokePoint(
+                                    x = change.position.x,
+                                    y = change.position.y,
+                                    timestamp = System.currentTimeMillis(),
+                                    pressure = movePressure,
+                                )
+                                change.consume()
+                            }
+
+                            // Finish stroke
+                            if (!cancelled && currentStrokePixels.isNotEmpty() &&
+                                canvasSize.width > 0 && canvasSize.height > 0
+                            ) {
+                                val normalized = currentStrokePixels.map {
+                                    it.normalize(canvasSize.width, canvasSize.height)
+                                }
+                                normalizedStrokes.add(normalized)
+                                currentStrokePixels = emptyList()
+                                onInkReady(
+                                    buildInk(normalizedStrokes, canvasSize.width, canvasSize.height),
+                                )
+                            } else {
+                                // Cancelled (palm rejection) — discard
+                                currentStrokePixels = emptyList()
+                            }
+                        }
+                    }
                 },
         ) {
             Canvas(modifier = Modifier.matchParentSize()) {
-                // 1. Draw guide lines
+                canvasSize = size
+
+                // 1. Draw guide lines (multi-line when tall enough)
                 drawGuideLines(guideLineStyle, size)
 
-                // 2. Draw completed strokes with smooth Bezier curves
-                val strokeStyle = Stroke(
-                    width = 5.dp.toPx(),
-                    cap = StrokeCap.Round,
-                    join = StrokeJoin.Round,
-                )
-                for (stroke in strokes) {
-                    drawSmoothPath(stroke, HandwritingStrokeColor, strokeStyle)
+                // 2. Draw completed strokes — denormalize from stored normalized coords
+                for (normalizedStroke in normalizedStrokes) {
+                    val pixelPoints = normalizedStroke.map {
+                        it.denormalize(size.width, size.height)
+                    }
+                    drawSmoothPath(pixelPoints, HandwritingStrokeColor)
                 }
 
                 // 3. Draw current in-progress stroke
-                if (currentStroke.size >= 2) {
-                    drawSmoothPath(currentStroke, HandwritingStrokeColor, strokeStyle)
+                if (currentStrokePixels.size >= 2) {
+                    drawSmoothPath(currentStrokePixels, HandwritingStrokeColor)
+                }
+
+                // 4. Stylus hover cursor
+                hoverPosition?.let { pos ->
+                    drawCircle(
+                        color = StylusHoverColor.copy(alpha = 0.3f),
+                        radius = 8.dp.toPx(),
+                        center = pos,
+                    )
                 }
             }
         }
@@ -176,20 +253,26 @@ fun HandwritingCanvas(
             if (onUndo != null) {
                 IconButton(
                     onClick = {
-                        if (strokes.isNotEmpty()) {
-                            strokes.removeAt(strokes.lastIndex)
-                            currentStroke = emptyList()
-                            val ink = if (strokes.isNotEmpty()) buildInk(strokes) else null
+                        if (normalizedStrokes.isNotEmpty()) {
+                            normalizedStrokes.removeAt(normalizedStrokes.lastIndex)
+                            currentStrokePixels = emptyList()
+                            val ink = if (normalizedStrokes.isNotEmpty() &&
+                                canvasSize.width > 0 && canvasSize.height > 0
+                            ) {
+                                buildInk(normalizedStrokes, canvasSize.width, canvasSize.height)
+                            } else {
+                                null
+                            }
                             onUndo(ink)
                         }
                     },
-                    enabled = strokes.isNotEmpty(),
+                    enabled = normalizedStrokes.isNotEmpty(),
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.Undo,
                         contentDescription = "Undo",
-                        tint = if (strokes.isNotEmpty()) {
+                        tint = if (normalizedStrokes.isNotEmpty()) {
                             MaterialTheme.colorScheme.onSurfaceVariant
                         } else {
                             MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
@@ -203,17 +286,17 @@ fun HandwritingCanvas(
             // Clear button
             IconButton(
                 onClick = {
-                    strokes.clear()
-                    currentStroke = emptyList()
+                    normalizedStrokes.clear()
+                    currentStrokePixels = emptyList()
                     onClear()
                 },
-                enabled = strokes.isNotEmpty(),
+                enabled = normalizedStrokes.isNotEmpty(),
                 modifier = Modifier.size(48.dp),
             ) {
                 Icon(
                     imageVector = Icons.Filled.Delete,
                     contentDescription = "Clear",
-                    tint = if (strokes.isNotEmpty()) {
+                    tint = if (normalizedStrokes.isNotEmpty()) {
                         MaterialTheme.colorScheme.error
                     } else {
                         MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.3f)
@@ -274,6 +357,7 @@ private fun HandwritingPreviewLabel(
 
 /**
  * Draw guide lines mimicking notebook/cahier paper.
+ * When the canvas is tall enough (>250dp), repeats the 3-line pattern for multiple lines.
  */
 private fun DrawScope.drawGuideLines(
     style: GuideLineStyle,
@@ -284,33 +368,42 @@ private fun DrawScope.drawGuideLines(
 
     when (style) {
         GuideLineStyle.NOTEBOOK -> {
-            val baseline = canvasSize.height * 0.70f
-            val midline = canvasSize.height * 0.45f
-            val topline = canvasSize.height * 0.20f
+            // Line set height: the space needed for one top/mid/baseline group
+            val lineSetHeight = canvasSize.height * 0.50f
+            val lineCount = (canvasSize.height / lineSetHeight).toInt().coerceIn(1, 4)
 
-            // Baseline — solid, slightly darker
-            drawLine(
-                guideColor.copy(alpha = 0.6f),
-                Offset(0f, baseline),
-                Offset(canvasSize.width, baseline),
-                strokeWidth = 2f,
-            )
-            // Midline — dashed
-            drawLine(
-                guideColor.copy(alpha = 0.4f),
-                Offset(0f, midline),
-                Offset(canvasSize.width, midline),
-                strokeWidth = 1f,
-                pathEffect = dashedEffect,
-            )
-            // Top line — dashed
-            drawLine(
-                guideColor.copy(alpha = 0.4f),
-                Offset(0f, topline),
-                Offset(canvasSize.width, topline),
-                strokeWidth = 1f,
-                pathEffect = dashedEffect,
-            )
+            for (i in 0 until lineCount) {
+                val setTop = i * (canvasSize.height / lineCount)
+                val setHeight = canvasSize.height / lineCount
+
+                val topline = setTop + setHeight * 0.20f
+                val midline = setTop + setHeight * 0.45f
+                val baseline = setTop + setHeight * 0.70f
+
+                // Baseline — solid, slightly darker
+                drawLine(
+                    guideColor.copy(alpha = 0.6f),
+                    Offset(0f, baseline),
+                    Offset(canvasSize.width, baseline),
+                    strokeWidth = 2f,
+                )
+                // Midline — dashed
+                drawLine(
+                    guideColor.copy(alpha = 0.4f),
+                    Offset(0f, midline),
+                    Offset(canvasSize.width, midline),
+                    strokeWidth = 1f,
+                    pathEffect = dashedEffect,
+                )
+                // Top line — dashed
+                drawLine(
+                    guideColor.copy(alpha = 0.4f),
+                    Offset(0f, topline),
+                    Offset(canvasSize.width, topline),
+                    strokeWidth = 1f,
+                    pathEffect = dashedEffect,
+                )
+            }
         }
         GuideLineStyle.SINGLE_LINE -> {
             val baseline = canvasSize.height * 0.70f
@@ -327,39 +420,58 @@ private fun DrawScope.drawGuideLines(
 
 /**
  * Draw a smooth path through stroke points using quadratic Bezier interpolation.
- * Makes finger strokes look clean and pencil-like rather than jagged.
+ * Supports pressure-sensitive stroke width for stylus input.
  */
 private fun DrawScope.drawSmoothPath(
     points: List<StrokePoint>,
     color: Color,
-    strokeStyle: Stroke,
 ) {
     if (points.size < 2) return
-    val path = Path().apply {
-        moveTo(points.first().x, points.first().y)
-        for (i in 1 until points.size) {
-            val midX = (points[i - 1].x + points[i].x) / 2f
-            val midY = (points[i - 1].y + points[i].y) / 2f
-            quadraticTo(
-                points[i - 1].x,
-                points[i - 1].y,
-                midX,
-                midY,
-            )
-        }
-        lineTo(points.last().x, points.last().y)
-    }
-    drawPath(path, color, style = strokeStyle)
-}
 
-internal fun buildInk(strokes: List<List<StrokePoint>>): Ink {
-    val inkBuilder = Ink.builder()
-    for (stroke in strokes) {
-        val strokeBuilder = Ink.Stroke.builder()
-        for (point in stroke) {
-            strokeBuilder.addPoint(Ink.Point.create(point.x, point.y, point.timestamp))
+    val baseWidth = BASE_STROKE_WIDTH_DP.dp.toPx()
+    val hasVaryingPressure = points.any { it.pressure != 1f }
+
+    if (!hasVaryingPressure) {
+        // Constant-width path (finger input)
+        val strokeStyle = Stroke(
+            width = baseWidth,
+            cap = StrokeCap.Round,
+            join = StrokeJoin.Round,
+        )
+        val path = Path().apply {
+            moveTo(points.first().x, points.first().y)
+            for (i in 1 until points.size) {
+                val midX = (points[i - 1].x + points[i].x) / 2f
+                val midY = (points[i - 1].y + points[i].y) / 2f
+                quadraticTo(
+                    points[i - 1].x,
+                    points[i - 1].y,
+                    midX,
+                    midY,
+                )
+            }
+            lineTo(points.last().x, points.last().y)
         }
-        inkBuilder.addStroke(strokeBuilder.build())
+        drawPath(path, color, style = strokeStyle)
+    } else {
+        // Pressure-sensitive: draw segment-by-segment with varying width
+        for (i in 1 until points.size) {
+            val prev = points[i - 1]
+            val curr = points[i]
+            val avgPressure = (prev.pressure + curr.pressure) / 2f
+            val width = baseWidth * (0.4f + avgPressure * 1.2f)
+
+            val segmentStyle = Stroke(
+                width = width,
+                cap = StrokeCap.Round,
+                join = StrokeJoin.Round,
+            )
+
+            val segment = Path().apply {
+                moveTo(prev.x, prev.y)
+                lineTo(curr.x, curr.y)
+            }
+            drawPath(segment, color, style = segmentStyle)
+        }
     }
-    return inkBuilder.build()
 }
