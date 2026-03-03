@@ -14,6 +14,10 @@ import androidx.navigation.navArgument
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.feature.avatar.AvatarClosetScreen
 import com.studybuddy.feature.backup.BackupExportScreen
+import com.studybuddy.feature.dictee.add.AddDicteeScreen
+import com.studybuddy.feature.dictee.list.DicteeListScreen
+import com.studybuddy.feature.dictee.practice.DicteePracticeScreen
+import com.studybuddy.feature.dictee.words.DicteeWordEntryScreen
 import com.studybuddy.feature.home.HomeScreen
 import com.studybuddy.feature.math.challenge.MathChallengeScreen
 import com.studybuddy.feature.math.play.MathPlayScreen
@@ -87,35 +91,51 @@ fun StudyBuddyNavHost(
         ) {
             HomeScreen(
                 onNavigateToDictee = {
-                    navController.navigate(StudyBuddyRoutes.DICTEE_LISTS)
+                    navController.navigate(StudyBuddyRoutes.DICTEE_LISTS) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToMath = {
-                    navController.navigate(StudyBuddyRoutes.MATH_SETUP)
+                    navController.navigate(StudyBuddyRoutes.MATH_SETUP) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToMathChallenge = {
-                    navController.navigate(StudyBuddyRoutes.MATH_CHALLENGE)
+                    navController.navigate(StudyBuddyRoutes.MATH_CHALLENGE) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToPoems = {
-                    navController.navigate(StudyBuddyRoutes.POEMS)
+                    navController.navigate(StudyBuddyRoutes.POEMS) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToAvatar = {
-                    navController.navigate(StudyBuddyRoutes.AVATAR)
+                    navController.navigate(StudyBuddyRoutes.AVATAR) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToStats = {
-                    navController.navigate(StudyBuddyRoutes.STATS)
+                    navController.navigate(StudyBuddyRoutes.STATS) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToRewards = {
-                    navController.navigate(StudyBuddyRoutes.REWARDS)
+                    navController.navigate(StudyBuddyRoutes.REWARDS) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToSettings = {
-                    navController.navigate(StudyBuddyRoutes.SETTINGS)
+                    navController.navigate(StudyBuddyRoutes.SETTINGS) {
+                        launchSingleTop = true
+                    }
                 },
             )
         }
 
         // Dictée flow
         composable(route = StudyBuddyRoutes.DICTEE_LISTS) {
-            com.studybuddy.feature.dictee.list.DicteeListScreen(
+            DicteeListScreen(
                 onNavigateToWords = { listId ->
                     navController.navigate(StudyBuddyRoutes.dicteeWords(listId))
                 },
@@ -133,7 +153,7 @@ fun StudyBuddyNavHost(
         }
 
         composable(route = StudyBuddyRoutes.DICTEE_ADD) {
-            com.studybuddy.feature.dictee.add.AddDicteeScreen(
+            AddDicteeScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
@@ -142,7 +162,7 @@ fun StudyBuddyNavHost(
             route = StudyBuddyRoutes.DICTEE_EDIT,
             arguments = listOf(navArgument("setId") { type = NavType.StringType }),
         ) {
-            com.studybuddy.feature.dictee.add.AddDicteeScreen(
+            AddDicteeScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
@@ -151,7 +171,7 @@ fun StudyBuddyNavHost(
             route = StudyBuddyRoutes.DICTEE_WORDS,
             arguments = listOf(navArgument("listId") { type = NavType.StringType }),
         ) {
-            com.studybuddy.feature.dictee.words.DicteeWordEntryScreen(
+            DicteeWordEntryScreen(
                 onNavigateToPractice = { listId ->
                     navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
                 },
@@ -163,7 +183,7 @@ fun StudyBuddyNavHost(
             route = StudyBuddyRoutes.DICTEE_PRACTICE,
             arguments = listOf(navArgument("listId") { type = NavType.StringType }),
         ) {
-            com.studybuddy.feature.dictee.practice.DicteePracticeScreen(
+            DicteePracticeScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
@@ -172,7 +192,7 @@ fun StudyBuddyNavHost(
             route = StudyBuddyRoutes.DICTEE_CHALLENGE,
             arguments = listOf(navArgument("listIds") { type = NavType.StringType }),
         ) {
-            com.studybuddy.feature.dictee.practice.DicteePracticeScreen(
+            DicteePracticeScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }
@@ -273,7 +293,7 @@ fun StudyBuddyNavHost(
             )
         }
 
-        // TODO: Rewards Shop — removed from bottom nav; re-enable when ready
+        // Rewards Shop
         composable(route = StudyBuddyRoutes.REWARDS) {
             RewardsShopScreen(
                 onNavigateBack = { navController.popBackStack() },
