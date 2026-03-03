@@ -2,10 +2,22 @@
 <resources>
     <!-- Navigation -->
     <string name="nav_home">Startseite</string>
+    <string name="nav_poems">Gedichte</string>
+    <string name="nav_dictee">Diktat</string>
+    <string name="nav_speed_math">Rechnen</string>
+    <string name="nav_challenge">Herausforderung</string>
     <string name="nav_stats">Statistik</string>
     <string name="nav_rewards">Belohnungen</string>
     <string name="nav_avatar">Avatar</string>
     <string name="nav_settings">Einstellungen</string>
+    <string name="nav_section_learn">LERNEN</string>
+    <string name="nav_section_more">MEHR</string>
+
+    <!-- Session Exit -->
+    <string name="session_exit_title">Aktivität verlassen?</string>
+    <string name="session_exit_message">Du bist mitten im Üben! Dein Fortschritt wird nicht gespeichert.</string>
+    <string name="session_exit_leave">Verlassen</string>
+    <string name="session_exit_stay">Weitermachen!</string>
 
     <!-- Home Screen -->
     <string name="greeting_morning">Guten Morgen</string>
