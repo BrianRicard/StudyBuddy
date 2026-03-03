@@ -492,4 +492,9 @@
     <string name="dictee_undo_stroke">Rückgängig</string>
     <string name="dictee_ink_preview">Erkannt: %s</string>
     <string name="dictee_slow_replay">Langsame Wiedergabe</string>
+
+    <!-- Shared list interactions -->
+    <string name="section_favorites">Favoriten</string>
+    <string name="search_placeholder_dictees">Diktate suchen…</string>
+    <string name="search_placeholder_poems">Gedichte suchen…</string>
 </resources>
