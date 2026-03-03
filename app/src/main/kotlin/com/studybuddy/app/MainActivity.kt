@@ -6,9 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.BarChart
@@ -20,9 +17,9 @@ import androidx.compose.material.icons.outlined.CrueltyFree
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
+import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -38,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.core.os.LocaleListCompat
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.studybuddy.app.navigation.StudyBuddyNavHost
@@ -111,25 +107,59 @@ class MainActivity : AppCompatActivity() {
 
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentRoute = navBackStackEntry?.destination?.route
+                val currentDestination = navBackStackEntry?.destination
+                val currentRoute = currentDestination?.route
 
-                val showBottomBar = currentRoute in BOTTOM_NAV_ROUTES
+                val showNav = currentRoute in BOTTOM_NAV_ROUTES
 
-                Scaffold(
-                    bottomBar = {
-                        AnimatedVisibility(
-                            visible = showBottomBar,
-                            enter = slideInVertically { it },
-                            exit = slideOutVertically { it },
-                        ) {
-                            StudyBuddyBottomNav(navController = navController)
+                // Hide navigation entirely on non-nav screens (onboarding, dictée practice, etc.)
+                val navSuiteType = if (showNav) {
+                    when (layoutType) {
+                        LayoutType.COMPACT -> NavigationSuiteType.NavigationBar
+                        LayoutType.MEDIUM,
+                        LayoutType.EXPANDED -> NavigationSuiteType.NavigationRail
+                    }
+                } else {
+                    NavigationSuiteType.None
+                }
+
+                NavigationSuiteScaffold(
+                    layoutType = navSuiteType,
+                    navigationSuiteItems = {
+                        BOTTOM_NAV_ITEMS.forEach { navItem ->
+                            val isSelected = currentDestination?.hierarchy?.any {
+                                it.route == navItem.route
+                            } == true
+                            item(
+                                icon = {
+                                    Icon(
+                                        imageVector = if (isSelected) {
+                                            navItem.selectedIcon
+                                        } else {
+                                            navItem.unselectedIcon
+                                        },
+                                        contentDescription = stringResource(navItem.labelResId),
+                                        modifier = Modifier.size(24.dp),
+                                    )
+                                },
+                                label = { Text(stringResource(navItem.labelResId)) },
+                                selected = isSelected,
+                                onClick = {
+                                    navController.navigate(navItem.route) {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                            )
                         }
                     },
-                ) { padding ->
+                ) {
                     StudyBuddyNavHost(
                         navController = navController,
                         startDestination = startDestination,
-                        contentPadding = padding,
                     )
                 }
             }
@@ -173,41 +203,3 @@ private val BOTTOM_NAV_ITEMS = listOf(
 )
 
 private val BOTTOM_NAV_ROUTES = BOTTOM_NAV_ITEMS.map { it.route }.toSet()
-
-@Composable
-private fun StudyBuddyBottomNav(navController: NavHostController) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
-
-    NavigationBar {
-        BOTTOM_NAV_ITEMS.forEach { item ->
-            val isSelected = currentDestination?.hierarchy?.any {
-                it.route == item.route
-            } == true
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        imageVector = if (isSelected) {
-                            item.selectedIcon
-                        } else {
-                            item.unselectedIcon
-                        },
-                        contentDescription = stringResource(item.labelResId),
-                        modifier = Modifier.size(24.dp),
-                    )
-                },
-                label = null,
-                selected = isSelected,
-                onClick = {
-                    navController.navigate(item.route) {
-                        popUpTo(navController.graph.findStartDestination().id) {
-                            saveState = true
-                        }
-                        launchSingleTop = true
-                        restoreState = true
-                    }
-                },
-            )
-        }
-    }
-}
