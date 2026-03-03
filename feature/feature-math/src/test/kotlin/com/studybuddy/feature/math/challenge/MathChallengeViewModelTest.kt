@@ -63,7 +63,11 @@ class MathChallengeViewModelTest {
         Dispatchers.resetMain()
     }
 
-    private fun createViewModel(): MathChallengeViewModel = MathChallengeViewModel(generateProblem, awardPoints)
+    private fun createViewModel(): MathChallengeViewModel = MathChallengeViewModel(
+        generateProblem,
+        awardPoints,
+        com.studybuddy.shared.points.RewardCalculator(),
+    )
 
     /** Time needed for the first equation to spawn (initial delay + spawn interval ticks). */
     private val spawnTimeMs: Long

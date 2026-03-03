@@ -96,6 +96,7 @@ class MathPlayViewModelTest {
             checkAnswer = checkAnswer,
             saveMathSession = saveMathSession,
             awardPoints = awardPoints,
+            rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
             savedStateHandle = savedStateHandle,
         ).also { lastViewModel = it }
     }
@@ -422,13 +423,12 @@ class MathPlayViewModelTest {
     }
 
     @Test
-    fun `completeSession awards correct total points without inflation`() = runTest {
-        // Regression: ensure the total points awarded match what PointsCalculator computes,
-        // without being inflated by an extra streak multiplier in AwardPointsUseCase.
-        // With 2 correct answers and bestStreak=2:
-        //   calculateMathPoints(correctCount=2, streak=2) = 2*5 + 0 (streak<5) = 10
-        //   awardPoints(basePoints=10, streak=0) => applyMultiplier(10, 0) = 10*1.0 = 10
-        val expectedScore = 10
+    fun `completeSession awards points via RewardCalculator`() = runTest {
+        // RewardCalculator computes session points based on difficulty factors.
+        // With 2 correct out of 2, PLUS only, range 1-12, timer 15s:
+        //   base=2, timeFactor=1.8, opFactor=0.8, rangeFactor=1.0
+        //   diffMult=1.44, accMult=1.5, raw=floor(2*1.44*1.5)=4, volumeBonus=0, total=4
+        val expectedScore = 4
         coEvery {
             awardPoints(
                 profileId = any(),
@@ -460,7 +460,7 @@ class MathPlayViewModelTest {
         assertTrue(state.isComplete)
         assertEquals(expectedScore, state.pointsAwarded)
 
-        // Verify the exact call: basePoints should be the calculated score, streak must be 0
+        // Verify the exact call: streak must be 0 to avoid double multiplier
         coVerify {
             awardPoints(
                 profileId = any(),

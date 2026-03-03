@@ -90,6 +90,7 @@ class DicteePracticeViewModelTest {
             dicteeRepository = dicteeRepository,
             settingsRepository = settingsRepository,
             awardPointsUseCase = awardPointsUseCase,
+            rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
             ttsManager = ttsManager,
             inkRecognitionManager = inkRecognitionManager,
         )
@@ -121,7 +122,7 @@ class DicteePracticeViewModelTest {
         assertTrue(state.feedback!!.isCorrect)
         assertEquals(5, state.feedback!!.starRating)
         assertEquals(1, state.streak)
-        assertTrue(state.sessionScore > 0)
+        // sessionScore is set at session end, not per-word
         assertEquals(DicteeSessionState.SCORED, state.sessionState)
     }
 
@@ -266,22 +267,27 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
-    fun `correct answer awards points via use case`() = runTest {
+    fun `session end awards points via use case`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
-        advanceUntilIdle()
-        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
-        advanceUntilIdle()
+        // Complete all 3 words to trigger session-end reward
+        repeat(3) {
+            viewModel.onIntent(DicteePracticeIntent.UpdateInput(testWords[it].word))
+            advanceUntilIdle()
+            viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+            advanceUntilIdle()
+            viewModel.onIntent(DicteePracticeIntent.NextWord)
+            advanceUntilIdle()
+        }
 
         coVerify {
             awardPointsUseCase(
                 profileId = any(),
-                basePoints = 10,
-                streak = 1,
+                basePoints = any(),
+                streak = 0,
                 source = PointSource.DICTEE,
-                reason = any(),
+                reason = match { it.contains("correct") },
             )
         }
     }

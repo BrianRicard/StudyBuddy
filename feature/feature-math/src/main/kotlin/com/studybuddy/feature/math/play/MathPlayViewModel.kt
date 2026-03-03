@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
-import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.MathProblem
@@ -15,7 +14,8 @@ import com.studybuddy.core.domain.usecase.math.CheckAnswerUseCase
 import com.studybuddy.core.domain.usecase.math.GenerateProblemUseCase
 import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
-import com.studybuddy.shared.points.PointsCalculator
+import com.studybuddy.shared.points.RewardCalculator
+import com.studybuddy.shared.points.RewardInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -73,6 +73,7 @@ class MathPlayViewModel @Inject constructor(
     private val checkAnswer: CheckAnswerUseCase,
     private val saveMathSession: SaveMathSessionUseCase,
     private val awardPoints: AwardPointsUseCase,
+    private val rewardCalculator: RewardCalculator,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
@@ -191,7 +192,6 @@ class MathPlayViewModel @Inject constructor(
             val newStreak = if (isCorrect) currentState.streak + 1 else 0
             val newCorrectCount = if (isCorrect) currentState.correctCount + 1 else currentState.correctCount
             val newBestStreak = maxOf(currentState.bestStreak, newStreak)
-            val scoreIncrease = if (isCorrect) PointValues.MATH_CORRECT else 0
             val newResponseTimes = currentState.responseTimesMs + responseTimeMs
 
             _state.update {
@@ -200,7 +200,6 @@ class MathPlayViewModel @Inject constructor(
                     streak = newStreak,
                     correctCount = newCorrectCount,
                     bestStreak = newBestStreak,
-                    sessionScore = it.sessionScore + scoreIncrease,
                     responseTimesMs = newResponseTimes,
                     showCelebration = isCorrect && isStreakMilestone(newStreak),
                 )
@@ -297,16 +296,24 @@ class MathPlayViewModel @Inject constructor(
 
         viewModelScope.launch {
             try {
-                val finalScore = PointsCalculator.calculateMathPoints(
-                    correctCount = correctCount,
-                    streak = bestStreak,
-                )
-
                 val avgResponseMs = if (responseTimes.isNotEmpty()) {
                     responseTimes.average().toLong()
                 } else {
                     0L
                 }
+
+                val timerSeconds = (timerMs / 1000).toInt()
+                val reward = rewardCalculator.calculate(
+                    RewardInput.SpeedMathReward(
+                        correctAnswers = correctCount,
+                        totalProblems = totalProblems,
+                        timeLimitSeconds = if (timerSeconds > 0) timerSeconds else null,
+                        operators = operators,
+                        numberRangeMin = numberRange.first,
+                        numberRangeMax = numberRange.last,
+                        averageResponseTimeMs = avgResponseMs,
+                    ),
+                )
 
                 val session = MathSession(
                     id = UUID.randomUUID().toString(),
@@ -322,11 +329,9 @@ class MathPlayViewModel @Inject constructor(
                 )
                 saveMathSession(session)
 
-                // Pass streak = 0: calculateMathPoints already includes streak bonuses,
-                // so we must not apply the streak multiplier again via AwardPointsUseCase.
                 val awarded = awardPoints(
                     profileId = profileId,
-                    basePoints = finalScore,
+                    basePoints = reward.totalPoints,
                     streak = 0,
                     source = PointSource.MATH,
                     reason = "Math session: $correctCount/$totalProblems correct",
@@ -337,6 +342,7 @@ class MathPlayViewModel @Inject constructor(
                         isComplete = true,
                         problemsCompleted = totalProblems,
                         pointsAwarded = awarded,
+                        sessionScore = reward.totalPoints,
                         feedback = null,
                     )
                 }

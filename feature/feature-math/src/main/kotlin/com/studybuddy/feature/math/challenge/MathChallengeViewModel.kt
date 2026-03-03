@@ -9,6 +9,8 @@ import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.usecase.math.GenerateProblemUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.points.RewardCalculator
+import com.studybuddy.shared.points.RewardInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -85,6 +87,7 @@ sealed interface MathChallengeEffect {
 class MathChallengeViewModel @Inject constructor(
     private val generateProblem: GenerateProblemUseCase,
     private val awardPoints: AwardPointsUseCase,
+    private val rewardCalculator: RewardCalculator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(MathChallengeState())
@@ -96,6 +99,7 @@ class MathChallengeViewModel @Inject constructor(
     private var gameLoopJob: Job? = null
     private var nextEquationId = 0
     private var ticksSinceLastSpawn = 0
+    private var gameStartTimeMs = System.currentTimeMillis()
 
     init {
         startGame()
@@ -306,11 +310,21 @@ class MathChallengeViewModel @Inject constructor(
         gameLoopJob?.cancel()
         viewModelScope.launch {
             val current = _state.value
+            val timeSurvived = System.currentTimeMillis() - gameStartTimeMs
 
             try {
+                val reward = rewardCalculator.calculate(
+                    RewardInput.MathChallengeReward(
+                        score = current.score,
+                        solvedCount = current.equationsSolved,
+                        timeSurvivedMs = timeSurvived,
+                        highestLevel = current.level,
+                        longestStreak = current.bestStreak,
+                    ),
+                )
                 awardPoints(
                     profileId = AppConstants.DEFAULT_PROFILE_ID,
-                    basePoints = current.score,
+                    basePoints = reward.totalPoints,
                     streak = 0,
                     source = PointSource.MATH,
                     reason = "Math Challenge: ${current.equationsSolved} solved, level ${current.level}",
@@ -327,6 +341,7 @@ class MathChallengeViewModel @Inject constructor(
     private fun restartGame() {
         nextEquationId = 0
         ticksSinceLastSpawn = 0
+        gameStartTimeMs = System.currentTimeMillis()
         _state.value = MathChallengeState()
         startGame()
     }

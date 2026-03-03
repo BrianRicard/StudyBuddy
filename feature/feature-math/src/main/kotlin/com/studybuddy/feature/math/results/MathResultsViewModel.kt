@@ -2,7 +2,6 @@ package com.studybuddy.feature.math.results
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.studybuddy.shared.points.PointsCalculator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,8 +82,9 @@ class MathResultsViewModel @Inject constructor(
             0f
         }
 
-        val streakBonus = PointsCalculator.calculateStreakBonus(bestStreak)
-        val totalPoints = sessionScore + streakBonus
+        // sessionScore already includes all bonuses from RewardCalculator
+        val streakBonus = 0
+        val totalPoints = sessionScore
         val starRating = calculateStarRating(accuracy)
 
         val badges = buildList {

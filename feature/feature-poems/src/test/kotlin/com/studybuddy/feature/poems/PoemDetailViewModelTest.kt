@@ -84,6 +84,7 @@ class PoemDetailViewModelTest {
             modelDownloadManager = modelDownloadManager,
             ttsManager = ttsManager,
             awardPointsUseCase = awardPointsUseCase,
+            rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
         )
     }
 
