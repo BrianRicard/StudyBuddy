@@ -2,10 +2,22 @@
 <resources>
     <!-- Navigation -->
     <string name="nav_home">Accueil</string>
+    <string name="nav_poems">Poèmes</string>
+    <string name="nav_dictee">Dictée</string>
+    <string name="nav_speed_math">Calcul</string>
+    <string name="nav_challenge">Défi</string>
     <string name="nav_stats">Stats</string>
     <string name="nav_rewards">Récompenses</string>
     <string name="nav_avatar">Avatar</string>
     <string name="nav_settings">Paramètres</string>
+    <string name="nav_section_learn">APPRENDRE</string>
+    <string name="nav_section_more">PLUS</string>
+
+    <!-- Session Exit -->
+    <string name="session_exit_title">Quitter l\'activité ?</string>
+    <string name="session_exit_message">Tu es en pleine pratique ! Ta progression ne sera pas sauvegardée.</string>
+    <string name="session_exit_leave">Quitter</string>
+    <string name="session_exit_stay">Continuer !</string>
 
     <!-- Home Screen -->
     <string name="greeting_morning">Bonjour</string>
