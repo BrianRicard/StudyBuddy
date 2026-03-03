@@ -5,6 +5,7 @@ import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PoemSource
 import com.studybuddy.core.domain.usecase.poem.GetFavouritePoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetPoemsUseCase
+import com.studybuddy.core.domain.usecase.poem.GetUserPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.RefreshPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
 import io.mockk.coEvery
@@ -31,6 +32,7 @@ class PoemsViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val getPoemsUseCase: GetPoemsUseCase = mockk()
     private val getFavouritePoemsUseCase: GetFavouritePoemsUseCase = mockk()
+    private val getUserPoemsUseCase: GetUserPoemsUseCase = mockk()
     private val refreshPoemsUseCase: RefreshPoemsUseCase = mockk()
     private val toggleFavouriteUseCase: ToggleFavouriteUseCase = mockk()
 
@@ -50,6 +52,7 @@ class PoemsViewModelTest {
         Dispatchers.setMain(testDispatcher)
         every { getPoemsUseCase("en") } returns flowOf(testPoems)
         every { getFavouritePoemsUseCase(any()) } returns flowOf(emptyList())
+        every { getUserPoemsUseCase(any()) } returns flowOf(emptyList())
         coEvery { refreshPoemsUseCase(any()) } returns Unit
         coEvery { toggleFavouriteUseCase(any(), any(), any()) } returns Unit
     }
@@ -62,6 +65,7 @@ class PoemsViewModelTest {
     private fun createViewModel() = PoemsViewModel(
         getPoemsUseCase = getPoemsUseCase,
         getFavouritePoemsUseCase = getFavouritePoemsUseCase,
+        getUserPoemsUseCase = getUserPoemsUseCase,
         refreshPoemsUseCase = refreshPoemsUseCase,
         toggleFavouriteUseCase = toggleFavouriteUseCase,
     )

@@ -73,16 +73,17 @@ class LocalPoemRepository @Inject constructor(
         val now = System.currentTimeMillis()
         dao.deleteExpiredCache(now - CACHE_DURATION_MS)
 
-        // Seed bundled poems if not yet cached
-        val bundledCount = dao.getCachedBundledPoemCount(language)
-        if (bundledCount == 0) {
-            val bundled = when (language) {
-                "fr" -> bundledLoader.loadFrenchPoems()
-                "de" -> bundledLoader.loadGermanPoems()
-                else -> emptyList()
-            }
-            if (bundled.isNotEmpty()) {
-                val entities = bundled.map { poem ->
+        // Seed bundled poems — insert any that are not yet cached
+        val bundled = when (language) {
+            "fr" -> bundledLoader.loadFrenchPoems()
+            "de" -> bundledLoader.loadGermanPoems()
+            else -> emptyList()
+        }
+        if (bundled.isNotEmpty()) {
+            val existingTitles = dao.getCachedBundledPoemTitles(language).toSet()
+            val newPoems = bundled.filter { it.title !in existingTitles }
+            if (newPoems.isNotEmpty()) {
+                val entities = newPoems.map { poem ->
                     CachedPoemEntity(
                         id = UUID.randomUUID().toString(),
                         title = poem.title,

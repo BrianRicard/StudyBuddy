@@ -1,5 +1,6 @@
 plugins {
     id("studybuddy.android.feature")
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -13,4 +14,5 @@ dependencies {
     implementation(project(":shared:shared-points"))
     implementation(project(":shared:shared-tts"))
     implementation(project(":shared:shared-whisper"))
+    implementation(libs.kotlinx.serialization.json)
 }

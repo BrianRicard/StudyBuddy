@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.ReadingSession
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
@@ -15,6 +16,8 @@ import com.studybuddy.feature.poems.detail.PoemScore
 import com.studybuddy.feature.poems.detail.PoemScorer
 import com.studybuddy.feature.poems.detail.WordInfo
 import com.studybuddy.feature.poems.detail.WordState
+import com.studybuddy.shared.tts.TtsManager
+import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
 import com.studybuddy.shared.whisper.ModelDownloadManager
 import com.studybuddy.shared.whisper.WhisperEngine
@@ -30,6 +33,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -88,9 +92,6 @@ sealed interface PoemDetailIntent {
 }
 
 sealed interface PoemDetailEffect {
-    data class SpeakLine(val text: String, val language: String) : PoemDetailEffect
-    data object StopSpeaking : PoemDetailEffect
-    data class SpeakWord(val text: String, val language: String) : PoemDetailEffect
     data object RequestAudioPermission : PoemDetailEffect
     data class ShowSnackbar(@StringRes val messageResId: Int) : PoemDetailEffect
 }
@@ -104,6 +105,7 @@ class PoemDetailViewModel @Inject constructor(
     private val whisperEngine: WhisperEngine,
     private val audioRecorder: AudioRecorder,
     private val modelDownloadManager: ModelDownloadManager,
+    private val ttsManager: TtsManager,
 ) : ViewModel() {
 
     private val poemId: String = checkNotNull(savedStateHandle["poemId"])
@@ -117,6 +119,7 @@ class PoemDetailViewModel @Inject constructor(
 
     private var recordingJob: Job? = null
     private var amplitudeJob: Job? = null
+    private var readAloudJob: Job? = null
 
     init {
         loadPoem()
@@ -128,7 +131,7 @@ class PoemDetailViewModel @Inject constructor(
             is PoemDetailIntent.ToggleFavourite -> toggleFavourite()
             is PoemDetailIntent.StartReadAloud -> startReadAloud()
             is PoemDetailIntent.StopReadAloud -> stopReadAloud()
-            is PoemDetailIntent.AdvanceReadLine -> advanceReadLine(intent.lineIndex)
+            is PoemDetailIntent.AdvanceReadLine -> { /* Line advancement handled internally */ }
             is PoemDetailIntent.FinishReading -> finishReading(intent.score, intent.durationSeconds)
             is PoemDetailIntent.StartRecording -> startRecording()
             is PoemDetailIntent.StopRecording -> stopRecording()
@@ -191,29 +194,27 @@ class PoemDetailViewModel @Inject constructor(
         val poem = _state.value.poem ?: return
         if (_state.value.recordingState == RecordingState.RECORDING) return
         _state.update { it.copy(isReadingAloud = true, currentReadLine = 0) }
-        viewModelScope.launch {
-            _effects.emit(PoemDetailEffect.SpeakLine(poem.lines.first(), poem.language))
+        readAloudJob?.cancel()
+        readAloudJob = viewModelScope.launch {
+            val locale = SupportedLocale.fromCode(poem.language).javaLocale
+            for (lineIdx in poem.lines.indices) {
+                if (!isActive) break
+                _state.update { it.copy(currentReadLine = lineIdx) }
+                ttsManager.speak(poem.lines[lineIdx], locale)
+                // Wait for TTS to finish this line
+                delay(SPEECH_SETTLE_MS)
+                ttsManager.state.first { it == TtsState.Ready || it is TtsState.Error }
+            }
+            if (isActive) {
+                _state.update { it.copy(isReadingAloud = false, currentReadLine = -1) }
+            }
         }
     }
 
     private fun stopReadAloud() {
+        readAloudJob?.cancel()
+        ttsManager.stop()
         _state.update { it.copy(isReadingAloud = false, currentReadLine = -1) }
-        viewModelScope.launch {
-            _effects.emit(PoemDetailEffect.StopSpeaking)
-        }
-    }
-
-    private fun advanceReadLine(lineIndex: Int) {
-        val poem = _state.value.poem ?: return
-        val nextLine = lineIndex + 1
-        if (nextLine < poem.lines.size) {
-            _state.update { it.copy(currentReadLine = nextLine) }
-            viewModelScope.launch {
-                _effects.emit(PoemDetailEffect.SpeakLine(poem.lines[nextLine], poem.language))
-            }
-        } else {
-            _state.update { it.copy(isReadingAloud = false, currentReadLine = -1) }
-        }
     }
 
     private fun finishReading(
@@ -368,9 +369,8 @@ class PoemDetailViewModel @Inject constructor(
 
         val word = _state.value.words.getOrNull(globalIndex) ?: return
         val poem = _state.value.poem ?: return
-        viewModelScope.launch {
-            _effects.emit(PoemDetailEffect.SpeakWord(word.text, poem.language))
-        }
+        val locale = SupportedLocale.fromCode(poem.language).javaLocale
+        ttsManager.speak(word.text, locale)
     }
 
     private fun dismissResultSheet() {
@@ -406,8 +406,10 @@ class PoemDetailViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        readAloudJob?.cancel()
         recordingJob?.cancel()
         amplitudeJob?.cancel()
+        ttsManager.stop()
         audioRecorder.release()
         whisperEngine.release()
     }
@@ -415,5 +417,6 @@ class PoemDetailViewModel @Inject constructor(
     companion object {
         private val WHITESPACE_REGEX = Regex("\\s+")
         private const val AMPLITUDE_UPDATE_MS = 100L
+        private const val SPEECH_SETTLE_MS = 100L
     }
 }

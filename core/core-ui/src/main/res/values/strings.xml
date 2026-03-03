@@ -427,6 +427,24 @@
     <string name="poems_tap_word_to_hear">Tap a word to hear it</string>
     <string name="poems_try_again">Try Again</string>
 
+    <!-- Poems: Create & Import -->
+    <string name="poems_create">Create Poem</string>
+    <string name="poems_tab_my_poems">My Poems</string>
+    <string name="poems_title_label">Title</string>
+    <string name="poems_author_label">Author</string>
+    <string name="poems_author_hint">Optional</string>
+    <string name="poems_body_label">Poem</string>
+    <string name="poems_body_hint">Write your poem here, one line per verse…</string>
+    <string name="poems_language">Language</string>
+    <string name="poems_import_txt">Import .txt</string>
+    <string name="poems_import_json">Import .json</string>
+    <string name="poems_save">Save Poem</string>
+    <string name="poems_saved">Poem saved!</string>
+    <string name="poems_import_count">%d poem(s) imported!</string>
+    <string name="poems_import_failed">Could not import file. Check the format and try again.</string>
+    <string name="poems_no_my_poems">No poems yet.\nTap + to create or import one!</string>
+    <string name="poems_or_import">Or import from a file</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Great job!</string>
     <string name="encourage_2">You\'re doing amazing!</string>

@@ -1,5 +1,30 @@
 [
   {
+    "title": "À chacun son sport",
+    "author": "François Gravel",
+    "lines": [
+      "Il y a un lac dans les environs ?",
+      "Faites de l'aviron !",
+      "Si le lac est gelé,",
+      "Vive le hockey !",
+      "Le lac fond ?",
+      "Jouez sur le gazon !",
+      "S'il y a trop d'eau,",
+      "Faites du pédalo !",
+      "Si vous êtes petit,",
+      "Évitez le rugby !",
+      "Soyez plutôt jockey,",
+      "Pour moi, c'est OK !",
+      "Vous préférez l'escrime ?",
+      "Ce n'est pas un crime.",
+      "Vous aimez les chevaux ?",
+      "Que dites-vous du polo ?",
+      "Et pour tout casser,",
+      "Pratiquez le karaté !"
+    ],
+    "tags": ["enfant", "sport", "humour"]
+  },
+  {
     "title": "Le Corbeau et le Renard",
     "author": "Jean de La Fontaine",
     "lines": [

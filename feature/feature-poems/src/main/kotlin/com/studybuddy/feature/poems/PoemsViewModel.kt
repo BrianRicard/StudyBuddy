@@ -6,6 +6,7 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.usecase.poem.GetFavouritePoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.GetPoemsUseCase
+import com.studybuddy.core.domain.usecase.poem.GetUserPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.RefreshPoemsUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 data class PoemsState(
     val poems: List<Poem> = emptyList(),
     val favourites: List<Poem> = emptyList(),
+    val userPoems: List<Poem> = emptyList(),
     val isLoading: Boolean = true,
     val selectedLanguage: String = "en",
     val selectedTab: PoemsTab = PoemsTab.BROWSE,
@@ -30,12 +32,14 @@ data class PoemsState(
         get() = when (selectedTab) {
             PoemsTab.BROWSE -> poems
             PoemsTab.FAVOURITES -> favourites
+            PoemsTab.MY_POEMS -> userPoems
         }
 }
 
 enum class PoemsTab {
     BROWSE,
     FAVOURITES,
+    MY_POEMS,
 }
 
 sealed interface PoemsIntent {
@@ -54,6 +58,7 @@ sealed interface PoemsEffect {
 class PoemsViewModel @Inject constructor(
     private val getPoemsUseCase: GetPoemsUseCase,
     private val getFavouritePoemsUseCase: GetFavouritePoemsUseCase,
+    private val getUserPoemsUseCase: GetUserPoemsUseCase,
     private val refreshPoemsUseCase: RefreshPoemsUseCase,
     private val toggleFavouriteUseCase: ToggleFavouriteUseCase,
 ) : ViewModel() {
@@ -101,6 +106,12 @@ class PoemsViewModel @Inject constructor(
         viewModelScope.launch {
             getFavouritePoemsUseCase(profileId).collect { favs ->
                 _state.update { it.copy(favourites = favs) }
+            }
+        }
+
+        viewModelScope.launch {
+            getUserPoemsUseCase(profileId).collect { userPoems ->
+                _state.update { it.copy(userPoems = userPoems) }
             }
         }
     }
