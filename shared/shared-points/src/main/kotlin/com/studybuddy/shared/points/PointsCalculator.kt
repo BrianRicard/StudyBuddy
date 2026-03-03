@@ -13,6 +13,7 @@ object PointsCalculator {
         val perWord = when (inputMode) {
             InputMode.KEYBOARD -> PointValues.DICTEE_CORRECT_TYPED
             InputMode.HANDWRITING -> PointValues.DICTEE_CORRECT_HANDWRITTEN
+            InputMode.LETTER_TILES -> PointValues.DICTEE_CORRECT_TYPED
         }
         val wordPoints = correctWords * perWord
         val perfectBonus = if (correctWords == totalWords && totalWords > 0) {

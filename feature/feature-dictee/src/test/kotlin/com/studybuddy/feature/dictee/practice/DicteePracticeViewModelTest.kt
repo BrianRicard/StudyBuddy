@@ -5,12 +5,10 @@ import app.cash.turbine.test
 import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
-import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.InputMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
-import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
@@ -34,6 +32,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.datetime.Instant
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -47,7 +46,6 @@ class DicteePracticeViewModelTest {
     private val dicteeRepository: DicteeRepository = mockk(relaxed = true)
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val ttsManager: TtsManager = mockk(relaxed = true)
-    private val checkSpellingUseCase = CheckSpellingUseCase()
     private val getPracticeWordsUseCase: GetPracticeWordsUseCase = mockk()
     private val getMixedPracticeWordsUseCase: GetMixedPracticeWordsUseCase = mockk(relaxed = true)
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
@@ -89,7 +87,6 @@ class DicteePracticeViewModelTest {
             savedStateHandle = savedStateHandle,
             getPracticeWordsUseCase = getPracticeWordsUseCase,
             getMixedPracticeWordsUseCase = getMixedPracticeWordsUseCase,
-            checkSpellingUseCase = checkSpellingUseCase,
             dicteeRepository = dicteeRepository,
             settingsRepository = settingsRepository,
             awardPointsUseCase = awardPointsUseCase,
@@ -110,7 +107,7 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
-    fun `submit correct answer sets feedback to Correct and increments streak`() = runTest {
+    fun `submit correct answer sets feedback with high star rating and increments streak`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -120,13 +117,16 @@ class DicteePracticeViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertTrue(state.feedback is Feedback.Correct)
+        assertNotNull(state.feedback)
+        assertTrue(state.feedback!!.isCorrect)
+        assertEquals(5, state.feedback!!.starRating)
         assertEquals(1, state.streak)
         assertTrue(state.sessionScore > 0)
+        assertEquals(DicteeSessionState.SCORED, state.sessionState)
     }
 
     @Test
-    fun `submit incorrect answer sets feedback to Incorrect and resets streak`() = runTest {
+    fun `submit incorrect answer sets feedback with low star rating and resets streak`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -148,24 +148,41 @@ class DicteePracticeViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertTrue(state.feedback is Feedback.Incorrect)
+        assertNotNull(state.feedback)
+        assertTrue(!state.feedback!!.isCorrect)
         assertEquals(0, state.streak)
     }
 
     @Test
-    fun `toggle input mode switches between keyboard and handwriting`() = runTest {
+    fun `switch input mode changes mode and clears input`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
 
-        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.HANDWRITING))
         advanceUntilIdle()
         assertEquals(InputMode.HANDWRITING, viewModel.state.value.inputMode)
+        assertEquals("", viewModel.state.value.userInput)
 
-        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.KEYBOARD))
         advanceUntilIdle()
         assertEquals(InputMode.KEYBOARD, viewModel.state.value.inputMode)
+    }
+
+    @Test
+    fun `switch to letter tiles mode populates tiles and answer slots`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.LETTER_TILES))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(InputMode.LETTER_TILES, state.inputMode)
+        assertTrue(state.letterTiles.isNotEmpty())
+        assertEquals(6, state.answerSlots.size) // "maison" has 6 letters
+        assertTrue(state.answerSlots.all { it == null }) // All slots empty initially
     }
 
     @Test
@@ -184,6 +201,7 @@ class DicteePracticeViewModelTest {
         assertEquals(1, state.currentIndex)
         assertEquals("", state.userInput)
         assertNull(state.feedback)
+        assertEquals(DicteeSessionState.IDLE, state.sessionState)
     }
 
     @Test
@@ -226,7 +244,7 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
-    fun `retry word clears input and feedback`() = runTest {
+    fun `retry word clears input and feedback and drops last session result`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -235,12 +253,16 @@ class DicteePracticeViewModelTest {
         viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
         advanceUntilIdle()
 
+        assertEquals(1, viewModel.state.value.sessionResults.size)
+
         viewModel.onIntent(DicteePracticeIntent.RetryWord)
         advanceUntilIdle()
 
         val state = viewModel.state.value
         assertEquals("", state.userInput)
         assertNull(state.feedback)
+        assertEquals(0, state.sessionResults.size)
+        assertEquals(DicteeSessionState.IDLE, state.sessionState)
     }
 
     @Test
@@ -256,7 +278,6 @@ class DicteePracticeViewModelTest {
         coVerify {
             awardPointsUseCase(
                 profileId = any(),
-                // DICTEE_CORRECT_TYPED
                 basePoints = 10,
                 streak = 1,
                 source = PointSource.DICTEE,
@@ -293,6 +314,7 @@ class DicteePracticeViewModelTest {
         val state = viewModel.state.value
         assertEquals("maison", state.recognizedText)
         assertEquals("maison", state.userInput)
+        assertEquals(DicteeSessionState.HANDWRITING, state.sessionState)
     }
 
     @Test
@@ -343,7 +365,7 @@ class DicteePracticeViewModelTest {
     }
 
     @Test
-    fun `toggle input mode clears user input`() = runTest {
+    fun `switch input mode clears user input`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -351,7 +373,7 @@ class DicteePracticeViewModelTest {
         advanceUntilIdle()
         assertEquals("partial", viewModel.state.value.userInput)
 
-        viewModel.onIntent(DicteePracticeIntent.ToggleInputMode)
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.HANDWRITING))
         advanceUntilIdle()
 
         assertEquals("", viewModel.state.value.userInput)
@@ -376,5 +398,108 @@ class DicteePracticeViewModelTest {
         val state = viewModel.state.value
         assertEquals("", state.userInput)
         assertNull(state.recognizedText)
+    }
+
+    @Test
+    fun `skip word adds a skipped result and advances`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.SkipWord)
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.currentIndex)
+        assertEquals(1, state.sessionResults.size)
+        assertTrue(!state.sessionResults.first().isCorrect)
+        assertEquals(0, state.streak)
+    }
+
+    @Test
+    fun `check answer transitions through CHECKING state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+
+        // After dispatching but before delay completes, state should be CHECKING
+        testDispatcher.scheduler.advanceTimeBy(100)
+        assertEquals(DicteeSessionState.CHECKING, viewModel.state.value.sessionState)
+
+        // After delay, should be SCORED
+        advanceUntilIdle()
+        assertEquals(DicteeSessionState.SCORED, viewModel.state.value.sessionState)
+    }
+
+    @Test
+    fun `session results accumulate across words`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Answer first word correctly
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("maison"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.sessionResults.size)
+
+        // Move to next and answer incorrectly
+        viewModel.onIntent(DicteePracticeIntent.NextWord)
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.UpdateInput("wrong"))
+        advanceUntilIdle()
+        viewModel.onIntent(DicteePracticeIntent.CheckAnswer)
+        advanceUntilIdle()
+        assertEquals(2, viewModel.state.value.sessionResults.size)
+
+        val results = viewModel.state.value.sessionResults
+        assertTrue(results[0].isCorrect)
+        assertTrue(!results[1].isCorrect)
+    }
+
+    @Test
+    fun `tap tile places letter in first empty slot`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Switch to letter tiles mode
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.LETTER_TILES))
+        advanceUntilIdle()
+
+        val tilesBeforeTap = viewModel.state.value.letterTiles
+        assertTrue(tilesBeforeTap.isNotEmpty())
+
+        // Tap first tile
+        viewModel.onIntent(DicteePracticeIntent.TapTile(0))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertTrue(state.letterTiles[0].isUsed)
+        assertEquals(state.letterTiles[0].letter, state.answerSlots[0])
+        assertEquals(DicteeSessionState.TYPING, state.sessionState)
+    }
+
+    @Test
+    fun `remove from slot returns tile to available`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DicteePracticeIntent.SwitchInputMode(InputMode.LETTER_TILES))
+        advanceUntilIdle()
+
+        // Tap a tile to place it
+        viewModel.onIntent(DicteePracticeIntent.TapTile(0))
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.letterTiles[0].isUsed)
+
+        // Remove from slot
+        viewModel.onIntent(DicteePracticeIntent.RemoveFromSlot(0))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertNull(state.answerSlots[0])
     }
 }

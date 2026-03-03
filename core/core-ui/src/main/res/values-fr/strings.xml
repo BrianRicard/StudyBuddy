@@ -461,4 +461,33 @@
     <string name="encourage_wrong_3">Continue d\'essayer !</string>
     <string name="encourage_wrong_4">Si proche !</string>
     <string name="encourage_wrong_5">N\'abandonne pas !</string>
+
+    <!-- Dictée redesign: scoring & feedback -->
+    <string name="dictee_score_5_stars">Parfait ! Tu es un champion de l\'orthographe !</string>
+    <string name="dictee_score_4_stars">Presque parfait ! Juste une petite lettre !</string>
+    <string name="dictee_score_3_stars">Bien essayé ! Tu t\'améliores !</string>
+    <string name="dictee_score_2_stars">Continue, tu vas y arriver !</string>
+    <string name="dictee_score_1_star">Bon effort ! Regarde bien le mot et réessaie !</string>
+    <string name="dictee_processing">Voyons ton orthographe…</string>
+    <string name="dictee_result_title">Comment as-tu écrit ?</string>
+    <string name="dictee_tap_to_listen">Appuie pour écouter le mot</string>
+    <string name="dictee_tap_to_replay">Appuie pour réécouter</string>
+    <string name="dictee_listening">J\'écoute…</string>
+    <string name="dictee_legend_correct">Correct</string>
+    <string name="dictee_legend_accent">Presque (accent)</string>
+    <string name="dictee_legend_wrong">Mauvaise lettre</string>
+    <string name="dictee_legend_missing">Lettre manquante</string>
+    <string name="dictee_letter_tiles">Tuiles</string>
+    <string name="dictee_word_of">Mot %1$d de %2$d</string>
+    <string name="dictee_skip">Passer</string>
+    <string name="dictee_session_complete">Bravo !</string>
+    <string name="dictee_session_finished">Tu as terminé la dictée « %s » !</string>
+    <string name="dictee_words_to_practice">Mots à travailler :</string>
+    <string name="dictee_handwriting_tip">Essaie de les écrire à la main — ça aide ton cerveau à retenir !</string>
+    <string name="dictee_practice_missed">Réviser les mots ratés</string>
+    <string name="dictee_next_dictee">Dictée suivante</string>
+    <string name="dictee_clear">Effacer</string>
+    <string name="dictee_undo_stroke">Annuler</string>
+    <string name="dictee_ink_preview">Reconnu : %s</string>
+    <string name="dictee_slow_replay">Lecture lente</string>
 </resources>
