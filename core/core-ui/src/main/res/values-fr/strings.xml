@@ -381,8 +381,9 @@
     <string name="dictee_imported_count">%d mots importés</string>
     <string name="dictee_import_no_words">Aucun mot trouvé dans le fichier</string>
     <string name="dictee_import_error">Échec de l\'importation</string>
-    <string name="dictee_recognition_error">Impossible de lire. Réessaie ou passe au clavier.</string>
+    <string name="dictee_recognition_error">Impossible de lire — essaie d\'écrire un peu plus gros !</string>
     <string name="dictee_handwriting_unavailable">Écriture non disponible. Passe au clavier pour taper.</string>
+    <string name="dictee_handwriting_practice_mode">Mode écriture — la vérification sera bientôt prête !</string>
 
     <!-- Math operator accessibility -->
     <string name="math_operator_selected">Opérateur %s, sélectionné</string>

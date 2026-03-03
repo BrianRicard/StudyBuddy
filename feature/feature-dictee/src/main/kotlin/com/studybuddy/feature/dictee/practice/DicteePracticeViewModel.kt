@@ -130,13 +130,26 @@ class DicteePracticeViewModel @Inject constructor(
                     }
                 }
             }.onFailure {
+                // Recognition failed — canvas still works for practice.
+                // Try to download model in the background for next attempt.
                 _state.update {
                     it.copy(
                         recognitionPending = false,
-                        recognitionErrorResId = com.studybuddy.core.ui.R.string.dictee_handwriting_unavailable,
+                        isInkModelReady = false,
                     )
                 }
+                ensureInkModelReady(listLanguage)
             }
+        }
+    }
+
+    private fun ensureInkModelReady(languageTag: String) {
+        viewModelScope.launch {
+            val ready = inkRecognitionManager.ensureModelReady(languageTag)
+            if (ready) {
+                inkRecognitionManager.initialize(languageTag)
+            }
+            _state.update { it.copy(isInkModelReady = ready) }
         }
     }
 
@@ -160,6 +173,9 @@ class DicteePracticeViewModel @Inject constructor(
 
         val words = getPracticeWordsUseCase(id).first()
         _state.update { it.copy(words = words) }
+
+        // Check model readiness in background — canvas works regardless
+        ensureInkModelReady(list.language)
     }
 
     private suspend fun loadChallengeSession() {
@@ -238,6 +254,9 @@ class DicteePracticeViewModel @Inject constructor(
             } else {
                 newState.copy(letterTiles = emptyList(), answerSlots = emptyList())
             }
+        }
+        if (mode == InputMode.HANDWRITING && !_state.value.isInkModelReady) {
+            ensureInkModelReady(listLanguage)
         }
     }
 

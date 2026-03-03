@@ -36,6 +36,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
@@ -630,6 +631,9 @@ private fun InputSection(
 
 @Composable
 private fun HandwritingStatus(state: DicteePracticeState) {
+    val infoBannerColor = Color(0xFFF57C00)
+    val infoBannerBg = Color(0xFFFFF3E0)
+
     if (state.recognitionPending) {
         Text(
             text = stringResource(CoreUiR.string.dictee_recognizing),
@@ -638,11 +642,43 @@ private fun HandwritingStatus(state: DicteePracticeState) {
             modifier = Modifier.padding(top = 8.dp),
         )
     }
+    // Show soft info banner when model is not ready (not a blocking error)
+    if (
+        !state.isInkModelReady &&
+        state.inputMode == InputMode.HANDWRITING &&
+        !state.recognitionPending
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp)
+                .background(
+                    color = infoBannerBg,
+                    shape = RoundedCornerShape(8.dp),
+                )
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                Icons.Filled.Info,
+                contentDescription = null,
+                tint = infoBannerColor,
+                modifier = Modifier.size(16.dp),
+            )
+            Spacer(Modifier.width(8.dp))
+            Text(
+                text = stringResource(CoreUiR.string.dictee_handwriting_practice_mode),
+                style = MaterialTheme.typography.bodySmall,
+                color = infoBannerColor,
+            )
+        }
+    }
+    // Show recognition-specific error (e.g. "couldn't read that") as a softer message
     state.recognitionErrorResId?.let { errorResId ->
         Text(
             text = stringResource(errorResId),
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.error,
+            color = infoBannerColor,
             modifier = Modifier.padding(top = 8.dp),
         )
     }

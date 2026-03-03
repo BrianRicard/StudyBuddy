@@ -49,6 +49,7 @@ data class DicteePracticeState(
     val recognizedText: String? = null,
     val recognitionPending: Boolean = false,
     @StringRes val recognitionErrorResId: Int? = null,
+    val isInkModelReady: Boolean = false,
 
     // Letter tile-specific
     val letterTiles: List<LetterTile> = emptyList(),
