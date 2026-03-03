@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
@@ -27,6 +29,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +58,7 @@ import com.studybuddy.core.ui.theme.StudyBuddyTheme
 fun PoemsScreen(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
+    onNavigateToCreate: () -> Unit,
     viewModel: PoemsViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -71,6 +75,7 @@ fun PoemsScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
+        onNavigateToCreate = onNavigateToCreate,
     )
 }
 
@@ -80,6 +85,7 @@ private fun PoemsContent(
     state: PoemsState,
     onIntent: (PoemsIntent) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToCreate: () -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -95,6 +101,14 @@ private fun PoemsContent(
                     }
                 },
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onNavigateToCreate) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(CoreUiR.string.poems_create),
+                )
+            }
         },
     ) { padding ->
         Column(
@@ -115,6 +129,11 @@ private fun PoemsContent(
                     onClick = { onIntent(PoemsIntent.SelectTab(PoemsTab.FAVOURITES)) },
                     text = { Text(stringResource(CoreUiR.string.poems_tab_favourites)) },
                 )
+                Tab(
+                    selected = state.selectedTab == PoemsTab.MY_POEMS,
+                    onClick = { onIntent(PoemsIntent.SelectTab(PoemsTab.MY_POEMS)) },
+                    text = { Text(stringResource(CoreUiR.string.poems_tab_my_poems)) },
+                )
             }
 
             AnimatedVisibility(visible = state.selectedTab == PoemsTab.BROWSE) {
@@ -125,7 +144,7 @@ private fun PoemsContent(
             }
 
             when {
-                state.isLoading -> {
+                state.isLoading && state.selectedTab == PoemsTab.BROWSE -> {
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
@@ -134,9 +153,7 @@ private fun PoemsContent(
                     }
                 }
                 state.displayPoems.isEmpty() -> {
-                    EmptyPoemsState(
-                        isFavourites = state.selectedTab == PoemsTab.FAVOURITES,
-                    )
+                    EmptyPoemsState(tab = state.selectedTab)
                 }
                 else -> {
                     PoemsList(
@@ -268,7 +285,7 @@ private fun PoemCard(
 }
 
 @Composable
-private fun EmptyPoemsState(isFavourites: Boolean) {
+private fun EmptyPoemsState(tab: PoemsTab) {
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
@@ -277,10 +294,10 @@ private fun EmptyPoemsState(isFavourites: Boolean) {
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Icon(
-                imageVector = if (isFavourites) {
-                    Icons.Filled.FavoriteBorder
-                } else {
-                    Icons.Filled.FavoriteBorder
+                imageVector = when (tab) {
+                    PoemsTab.MY_POEMS -> Icons.Default.Edit
+                    PoemsTab.FAVOURITES -> Icons.Filled.FavoriteBorder
+                    PoemsTab.BROWSE -> Icons.Filled.FavoriteBorder
                 },
                 contentDescription = null,
                 modifier = Modifier.size(64.dp),
@@ -289,10 +306,10 @@ private fun EmptyPoemsState(isFavourites: Boolean) {
             Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = stringResource(
-                    if (isFavourites) {
-                        CoreUiR.string.poems_no_favourites
-                    } else {
-                        CoreUiR.string.poems_no_poems
+                    when (tab) {
+                        PoemsTab.MY_POEMS -> CoreUiR.string.poems_no_my_poems
+                        PoemsTab.FAVOURITES -> CoreUiR.string.poems_no_favourites
+                        PoemsTab.BROWSE -> CoreUiR.string.poems_no_poems
                     },
                 ),
                 style = MaterialTheme.typography.bodyLarge,
@@ -331,6 +348,7 @@ private fun PoemsScreenPreview() {
             ),
             onIntent = {},
             onNavigateBack = {},
+            onNavigateToCreate = {},
         )
     }
 }

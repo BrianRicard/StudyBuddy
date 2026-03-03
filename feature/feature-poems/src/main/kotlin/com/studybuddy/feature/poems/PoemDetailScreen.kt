@@ -93,15 +93,6 @@ fun PoemDetailScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is PoemDetailEffect.SpeakLine -> {
-                    // TTS handled by parent or injected manager
-                }
-                is PoemDetailEffect.StopSpeaking -> {
-                    // TTS stop
-                }
-                is PoemDetailEffect.SpeakWord -> {
-                    // TTS speak single word
-                }
                 is PoemDetailEffect.RequestAudioPermission -> {
                     permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
                 }

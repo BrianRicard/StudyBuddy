@@ -24,6 +24,7 @@ import com.studybuddy.feature.math.setup.MathSetupScreen
 import com.studybuddy.feature.onboarding.OnboardingScreen
 import com.studybuddy.feature.poems.PoemDetailScreen
 import com.studybuddy.feature.poems.PoemsScreen
+import com.studybuddy.feature.poems.create.PoemCreateScreen
 import com.studybuddy.feature.rewards.RewardsShopScreen
 import com.studybuddy.feature.settings.SettingsScreen
 import com.studybuddy.feature.stats.StatsScreen
@@ -274,6 +275,15 @@ fun StudyBuddyNavHost(
                 onNavigateToDetail = { poemId ->
                     navController.navigate(StudyBuddyRoutes.poemDetail(poemId))
                 },
+                onNavigateToCreate = {
+                    navController.navigate(StudyBuddyRoutes.POEM_CREATE)
+                },
+            )
+        }
+
+        composable(route = StudyBuddyRoutes.POEM_CREATE) {
+            PoemCreateScreen(
+                onNavigateBack = { navController.popBackStack() },
             )
         }
 

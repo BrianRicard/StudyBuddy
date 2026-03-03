@@ -37,6 +37,9 @@ interface PoemDao {
     @Query("SELECT COUNT(*) FROM cached_poems WHERE source = 'BUNDLED' AND language = :language")
     suspend fun getCachedBundledPoemCount(language: String): Int
 
+    @Query("SELECT title FROM cached_poems WHERE source = 'BUNDLED' AND language = :language")
+    suspend fun getCachedBundledPoemTitles(language: String): List<String>
+
     @Query("SELECT * FROM user_poems WHERE profileId = :profileId ORDER BY createdAt DESC")
     fun getUserPoems(profileId: String): Flow<List<UserPoemEntity>>
 

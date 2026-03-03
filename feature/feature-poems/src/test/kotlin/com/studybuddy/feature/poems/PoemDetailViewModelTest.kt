@@ -7,6 +7,8 @@ import com.studybuddy.core.domain.model.PoemSource
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
 import com.studybuddy.core.domain.usecase.poem.SaveReadingSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
+import com.studybuddy.shared.tts.TtsManager
+import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
 import com.studybuddy.shared.whisper.ModelDownloadManager
 import com.studybuddy.shared.whisper.WhisperEngine
@@ -40,6 +42,7 @@ class PoemDetailViewModelTest {
     private val whisperEngine: WhisperEngine = mockk(relaxed = true)
     private val audioRecorder: AudioRecorder = mockk(relaxed = true)
     private val modelDownloadManager: ModelDownloadManager = mockk(relaxed = true)
+    private val ttsManager: TtsManager = mockk(relaxed = true)
 
     private val testPoem = Poem(
         id = "poem-1",
@@ -59,6 +62,7 @@ class PoemDetailViewModelTest {
         every { modelDownloadManager.getModelPath(any()) } returns null
         every { whisperEngine.isInitialized } returns false
         coEvery { modelDownloadManager.downloadModel(any(), any()) } returns Result.failure(Exception("test"))
+        every { ttsManager.state } returns kotlinx.coroutines.flow.MutableStateFlow(TtsState.Ready)
     }
 
     @AfterEach
@@ -76,6 +80,7 @@ class PoemDetailViewModelTest {
             whisperEngine = whisperEngine,
             audioRecorder = audioRecorder,
             modelDownloadManager = modelDownloadManager,
+            ttsManager = ttsManager,
         )
     }
 
@@ -124,20 +129,15 @@ class PoemDetailViewModelTest {
     }
 
     @Test
-    fun `start read aloud sets state and emits SpeakLine`() = runTest {
+    fun `start read aloud calls ttsManager for each line`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.effects.test {
-            viewModel.onIntent(PoemDetailIntent.StartReadAloud)
-            val state = viewModel.state.value
-            assertTrue(state.isReadingAloud)
-            assertEquals(0, state.currentReadLine)
+        viewModel.onIntent(PoemDetailIntent.StartReadAloud)
+        advanceUntilIdle()
 
-            val effect = awaitItem()
-            assertTrue(effect is PoemDetailEffect.SpeakLine)
-            assertEquals("The cat sat", (effect as PoemDetailEffect.SpeakLine).text)
-        }
+        coVerify { ttsManager.speak("The cat sat", any()) }
+        coVerify { ttsManager.speak("on the mat", any()) }
     }
 
     @Test
@@ -186,20 +186,16 @@ class PoemDetailViewModelTest {
     }
 
     @Test
-    fun `tap word while not recording emits SpeakWord not snackbar`() = runTest {
-        // When not recording (default state), tapping a word should emit SpeakWord
+    fun `tap word while not recording calls ttsManager`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         assertEquals(RecordingState.IDLE, viewModel.state.value.recordingState)
 
-        viewModel.effects.test {
-            viewModel.onIntent(PoemDetailIntent.TapWord(2))
-            val effect = awaitItem()
-            assertTrue(effect is PoemDetailEffect.SpeakWord)
-            assertEquals("sat", (effect as PoemDetailEffect.SpeakWord).text)
-            assertEquals("en", effect.language)
-        }
+        viewModel.onIntent(PoemDetailIntent.TapWord(2))
+        advanceUntilIdle()
+
+        coVerify { ttsManager.speak("sat", any()) }
     }
 
     @Test

@@ -25,6 +25,7 @@ object StudyBuddyRoutes {
     const val BACKUP = "backup"
     const val POEMS = "poems"
     const val POEM_DETAIL = "poems/detail/{poemId}"
+    const val POEM_CREATE = "poems/create"
 
     fun poemDetail(poemId: String) = "poems/detail/$poemId"
     const val ONBOARDING = "onboarding"

@@ -427,6 +427,24 @@
     <string name="poems_tap_word_to_hear">Tippe auf ein Wort, um es zu hören</string>
     <string name="poems_try_again">Nochmal versuchen</string>
 
+    <!-- Poems: Create & Import -->
+    <string name="poems_create">Gedicht erstellen</string>
+    <string name="poems_tab_my_poems">Meine Gedichte</string>
+    <string name="poems_title_label">Titel</string>
+    <string name="poems_author_label">Autor</string>
+    <string name="poems_author_hint">Optional</string>
+    <string name="poems_body_label">Gedicht</string>
+    <string name="poems_body_hint">Schreibe dein Gedicht hier, eine Zeile pro Vers…</string>
+    <string name="poems_language">Sprache</string>
+    <string name="poems_import_txt">.txt importieren</string>
+    <string name="poems_import_json">.json importieren</string>
+    <string name="poems_save">Gedicht speichern</string>
+    <string name="poems_saved">Gedicht gespeichert!</string>
+    <string name="poems_import_count">%d Gedicht(e) importiert!</string>
+    <string name="poems_import_failed">Datei konnte nicht importiert werden. Prüfe das Format und versuche es erneut.</string>
+    <string name="poems_no_my_poems">Noch keine Gedichte.\nTippe auf +, um eins zu erstellen oder zu importieren!</string>
+    <string name="poems_or_import">Oder aus einer Datei importieren</string>
+
     <!-- Encouragement messages -->
     <string name="encourage_1">Toll gemacht!</string>
     <string name="encourage_2">Du bist großartig!</string>
