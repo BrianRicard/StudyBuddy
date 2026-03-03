@@ -499,6 +499,23 @@
     <string name="search_placeholder_dictees">Diktate suchen…</string>
     <string name="search_placeholder_poems">Gedichte suchen…</string>
 
+    <!-- Math Challenge -->
+    <string name="mode_math_challenge">Mathe-Challenge</string>
+    <string name="label_falling_equations">Fallende Gleichungen</string>
+    <string name="challenge_score_value">%d Pkt.</string>
+    <string name="challenge_level">Level %d</string>
+    <string name="challenge_multiplier">×%.1f</string>
+    <string name="challenge_use_bomb">Bombe einsetzen</string>
+    <string name="challenge_bombs">\uD83D\uDCA3 %d</string>
+    <string name="challenge_get_ready">Mach dich bereit…</string>
+    <string name="challenge_game_over">Spiel vorbei</string>
+    <string name="challenge_solved">Gelöst</string>
+    <string name="challenge_level_reached">Level</string>
+    <string name="challenge_msg_amazing">Unglaublich! Du bist ein Mathe-Champion!</string>
+    <string name="challenge_msg_great">Toll gemacht! Das war super!</string>
+    <string name="challenge_msg_good">Gut gemacht! Übe weiter!</string>
+    <string name="challenge_msg_try_again">Guter Versuch! Beim nächsten Mal wird es noch besser!</string>
+
     <!-- Dictée Add/Edit Screen -->
     <string name="dictee_edit_list">Wortliste bearbeiten</string>
     <string name="dictee_save_list">Änderungen speichern</string>

@@ -15,6 +15,7 @@ import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.feature.avatar.AvatarClosetScreen
 import com.studybuddy.feature.backup.BackupExportScreen
 import com.studybuddy.feature.home.HomeScreen
+import com.studybuddy.feature.math.challenge.MathChallengeScreen
 import com.studybuddy.feature.math.play.MathPlayScreen
 import com.studybuddy.feature.math.results.MathResultsScreen
 import com.studybuddy.feature.math.setup.MathSetupScreen
@@ -90,6 +91,9 @@ fun StudyBuddyNavHost(
                 },
                 onNavigateToMath = {
                     navController.navigate(StudyBuddyRoutes.MATH_SETUP)
+                },
+                onNavigateToMathChallenge = {
+                    navController.navigate(StudyBuddyRoutes.MATH_CHALLENGE)
                 },
                 onNavigateToPoems = {
                     navController.navigate(StudyBuddyRoutes.POEMS)
@@ -243,6 +247,18 @@ fun StudyBuddyNavHost(
                     }
                 },
                 onHome = {
+                    navController.navigate(StudyBuddyRoutes.HOME) {
+                        popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
+                    }
+                },
+            )
+        }
+
+        // Math Challenge
+        composable(route = StudyBuddyRoutes.MATH_CHALLENGE) {
+            MathChallengeScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateHome = {
                     navController.navigate(StudyBuddyRoutes.HOME) {
                         popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
                     }
