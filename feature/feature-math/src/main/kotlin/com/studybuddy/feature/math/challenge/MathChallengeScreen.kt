@@ -38,6 +38,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -98,13 +100,11 @@ internal fun MathChallengeContent(
             // Top bar
             ChallengeTopBar(
                 lives = state.lives,
-                bombs = state.bombs,
                 score = state.score,
                 level = state.level,
                 streak = state.streak,
                 multiplier = state.multiplier,
                 onPause = { onIntent(MathChallengeIntent.Pause) },
-                onBomb = { onIntent(MathChallengeIntent.UseBomb) },
             )
 
             // Game area
@@ -128,8 +128,12 @@ internal fun MathChallengeContent(
                 }
             }
 
-            // Answer display
-            AnswerField(userAnswer = state.userAnswer)
+            // Answer display + bomb button
+            AnswerInputRow(
+                userAnswer = state.userAnswer,
+                bombCount = state.bombs,
+                onBomb = { onIntent(MathChallengeIntent.UseBomb) },
+            )
 
             // Number pad
             ChallengeNumberPad(
@@ -167,13 +171,11 @@ internal fun MathChallengeContent(
 @Composable
 private fun ChallengeTopBar(
     lives: Int,
-    bombs: Int,
     score: Int,
     level: Int,
     streak: Int,
     multiplier: Float,
     onPause: () -> Unit,
-    onBomb: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -182,21 +184,13 @@ private fun ChallengeTopBar(
             .padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        // Lives (hearts)
+        // Lives (hearts) — show up to MAX_LIVES slots
         Row(verticalAlignment = Alignment.CenterVertically) {
-            repeat(lives) {
+            repeat(MathChallengeViewModel.MAX_LIVES) { index ->
                 Icon(
-                    imageVector = Icons.Default.Favorite,
+                    imageVector = if (index < lives) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
                     contentDescription = null,
-                    tint = IncorrectRed,
-                    modifier = Modifier.size(20.dp),
-                )
-            }
-            repeat((MathChallengeState.INITIAL_LIVES - lives).coerceAtLeast(0)) {
-                Icon(
-                    imageVector = Icons.Default.FavoriteBorder,
-                    contentDescription = null,
-                    tint = IncorrectRed.copy(alpha = EMPTY_HEART_ALPHA),
+                    tint = if (index < lives) IncorrectRed else IncorrectRed.copy(alpha = EMPTY_HEART_ALPHA),
                     modifier = Modifier.size(20.dp),
                 )
             }
@@ -232,34 +226,13 @@ private fun ChallengeTopBar(
             }
         }
 
-        Spacer(modifier = Modifier.width(8.dp))
-
-        // Bomb button
-        val bombDesc = stringResource(CoreUiR.string.challenge_use_bomb)
-        Box(
-            modifier = Modifier
-                .clip(RoundedCornerShape(12.dp))
-                .background(
-                    if (bombs > 0) {
-                        MaterialTheme.colorScheme.errorContainer
-                    } else {
-                        MaterialTheme.colorScheme.surfaceVariant
-                    },
-                )
-                .clickable(enabled = bombs > 0) { onBomb() }
-                .padding(horizontal = 10.dp, vertical = 6.dp)
-                .semantics { contentDescription = bombDesc },
-        ) {
+        // Streak fire indicator
+        if (streak >= MathChallengeState.STREAK_1_5X) {
             Text(
-                text = stringResource(CoreUiR.string.challenge_bombs, bombs),
-                style = MaterialTheme.typography.labelMedium,
-                fontWeight = FontWeight.Bold,
-                color = if (bombs > 0) {
-                    MaterialTheme.colorScheme.onErrorContainer
-                } else {
-                    MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = DISABLED_ALPHA)
-                },
+                text = "\uD83D\uDD25$streak",
+                style = MaterialTheme.typography.labelLarge,
             )
+            Spacer(modifier = Modifier.width(8.dp))
         }
 
         // Pause
@@ -278,14 +251,14 @@ private fun GameArea(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    var areaWidthPx = 0f
-    var areaHeightPx = 0f
+    val areaWidthPx = remember { mutableFloatStateOf(0f) }
+    val areaHeightPx = remember { mutableFloatStateOf(0f) }
 
     Box(
         modifier = modifier
             .onSizeChanged { size ->
-                areaWidthPx = size.width.toFloat()
-                areaHeightPx = size.height.toFloat()
+                areaWidthPx.floatValue = size.width.toFloat()
+                areaHeightPx.floatValue = size.height.toFloat()
             }
             .drawBehind {
                 // Danger zone indicator at bottom
@@ -301,23 +274,18 @@ private fun GameArea(
     ) {
         equations.forEach { equation ->
             val cardWidth = if (equation.isRainbow) RAINBOW_CARD_WIDTH else CARD_WIDTH
-            val maxXOffset = with(density) { (areaWidthPx - cardWidth.toPx()).coerceAtLeast(0f) }
+            val widthPx = areaWidthPx.floatValue
+            val heightPx = areaHeightPx.floatValue
+            val cardWidthPx = with(density) { cardWidth.toPx() }
+            val cardHeightPx = with(density) { CARD_HEIGHT.toPx() }
 
-            val xOffset = if (equation.isRainbow) {
-                (equation.xProgress * maxXOffset).roundToInt()
-            } else {
-                // Use equation id to deterministically place cards horizontally
-                val fraction = (equation.id % HORIZONTAL_SLOTS).toFloat() / HORIZONTAL_SLOTS
-                (fraction * maxXOffset).roundToInt()
-            }
-
-            val yOffset = with(density) {
-                (equation.yProgress * (areaHeightPx - CARD_HEIGHT.toPx())).roundToInt()
-            }
+            val maxXOffset = (widthPx - cardWidthPx).coerceAtLeast(0f)
+            val xPixel = (equation.xOffset * maxXOffset).roundToInt()
+            val yPixel = (equation.yProgress * (heightPx - cardHeightPx)).roundToInt()
 
             EquationCard(
                 equation = equation,
-                modifier = Modifier.offset { IntOffset(xOffset, yOffset) },
+                modifier = Modifier.offset { IntOffset(xPixel, yPixel) },
             )
         }
 
@@ -378,17 +346,33 @@ private fun EquationCard(
             )
         }
     } else {
+        val dangerAlpha = when {
+            equation.yProgress >= DANGER_ZONE_START -> DANGER_CARD_MAX_ALPHA
+            equation.yProgress >= DANGER_CARD_THRESHOLD -> {
+                val t = (equation.yProgress - DANGER_CARD_THRESHOLD) /
+                    (DANGER_ZONE_START - DANGER_CARD_THRESHOLD)
+                t * DANGER_CARD_MAX_ALPHA
+            }
+            else -> 0f
+        }
         ElevatedCard(
             modifier = modifier.size(width = CARD_WIDTH, height = CARD_HEIGHT),
         ) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(IncorrectRed.copy(alpha = dangerAlpha)),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
                     text = "${equation.problem.displayString} = ?",
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
+                    color = if (dangerAlpha > DANGER_TEXT_THRESHOLD) {
+                        Color.White
+                    } else {
+                        Color.Unspecified
+                    },
                 )
             }
         }
@@ -396,30 +380,73 @@ private fun EquationCard(
 }
 
 @Composable
-private fun AnswerField(
+private fun AnswerInputRow(
     userAnswer: String,
+    bombCount: Int,
+    onBomb: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .height(ANSWER_HEIGHT)
-            .clip(RoundedCornerShape(12.dp))
-            .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = ANSWER_BG_ALPHA)),
-        contentAlignment = Alignment.Center,
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text(
-            text = userAnswer.ifEmpty { "_" },
-            style = MaterialTheme.typography.headlineLarge,
-            fontWeight = FontWeight.Bold,
-            color = if (userAnswer.isNotEmpty()) {
-                MaterialTheme.colorScheme.onSurface
-            } else {
-                MaterialTheme.colorScheme.onSurfaceVariant
-            },
-            textAlign = TextAlign.Center,
-        )
+        // Answer display
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .height(ANSWER_HEIGHT)
+                .clip(RoundedCornerShape(12.dp))
+                .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = ANSWER_BG_ALPHA)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = userAnswer.ifEmpty { "_" },
+                style = MaterialTheme.typography.headlineLarge,
+                fontWeight = FontWeight.Bold,
+                color = if (userAnswer.isNotEmpty()) {
+                    MaterialTheme.colorScheme.onSurface
+                } else {
+                    MaterialTheme.colorScheme.onSurfaceVariant
+                },
+                textAlign = TextAlign.Center,
+            )
+        }
+
+        // Bomb button with count badge
+        Box(
+            modifier = Modifier
+                .size(ANSWER_HEIGHT)
+                .clip(RoundedCornerShape(12.dp))
+                .background(
+                    if (bombCount > 0) {
+                        MaterialTheme.colorScheme.errorContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = DISABLED_ALPHA)
+                    },
+                )
+                .clickable(enabled = bombCount > 0, onClick = onBomb),
+            contentAlignment = Alignment.Center,
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "\uD83D\uDCA3",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                Text(
+                    text = bombCount.toString(),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = if (bombCount > 0) {
+                        MaterialTheme.colorScheme.onErrorContainer
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -699,7 +726,6 @@ private val RAINBOW_CARD_WIDTH = 160.dp
 private val ANSWER_HEIGHT = 56.dp
 private val NUMPAD_SIZE = 64.dp
 private val NUMPAD_ICON_SIZE = 24.dp
-private const val HORIZONTAL_SLOTS = 5
 private const val BOMB_FLASH_ALPHA = 0.6f
 private const val EMPTY_HEART_ALPHA = 0.3f
 private const val DISABLED_ALPHA = 0.4f
@@ -711,6 +737,9 @@ private const val HINT_ALPHA = 0.5f
 private const val RAINBOW_ANIM_MS = 2000
 private const val RAINBOW_COLOR_ALPHA = 0.8f
 private const val RAINBOW_GRADIENT_SCALE = 300f
+private const val DANGER_CARD_THRESHOLD = 0.60f
+private const val DANGER_CARD_MAX_ALPHA = 0.5f
+private const val DANGER_TEXT_THRESHOLD = 0.25f
 private const val TIER_AMAZING = 30
 private const val TIER_GREAT = 15
 private const val TIER_GOOD = 5
@@ -726,16 +755,19 @@ private fun MathChallengePreview() {
                         id = 0,
                         problem = MathProblem(3, 5, Operator.PLUS, 8),
                         yProgress = 0.2f,
+                        xOffset = 0.15f,
                     ),
                     FallingEquation(
                         id = 1,
                         problem = MathProblem(7, 2, Operator.MINUS, 5),
                         yProgress = 0.5f,
+                        xOffset = 0.55f,
                     ),
                     FallingEquation(
                         id = 2,
                         problem = MathProblem(4, 6, Operator.MULTIPLY, 24),
                         yProgress = 0.1f,
+                        xOffset = 0.35f,
                         isRainbow = true,
                     ),
                 ),

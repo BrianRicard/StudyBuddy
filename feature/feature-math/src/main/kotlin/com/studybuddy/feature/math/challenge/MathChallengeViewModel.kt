@@ -13,6 +13,8 @@ import com.studybuddy.shared.points.RewardCalculator
 import com.studybuddy.shared.points.RewardInput
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.math.abs
+import kotlin.random.Random
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +31,7 @@ data class FallingEquation(
     val problem: MathProblem,
     val yProgress: Float = 0f,
     val isRainbow: Boolean = false,
-    val xProgress: Float = 0f,
+    val xOffset: Float = 0.5f,
 )
 
 data class MathChallengeState(
@@ -143,14 +145,13 @@ class MathChallengeViewModel @Inject constructor(
                 // Move equations
                 val fallSpeed = fallSpeedForLevel(level)
                 val updated = _state.value.equations.map { eq ->
-                    if (eq.isRainbow) {
-                        eq.copy(
-                            yProgress = eq.yProgress + fallSpeed * RAINBOW_SPEED_FACTOR,
-                            xProgress = (eq.xProgress + RAINBOW_X_SPEED).coerceAtMost(1f),
-                        )
+                    val speed = if (eq.isRainbow) fallSpeed * RAINBOW_SPEED_FACTOR else fallSpeed
+                    val newX = if (eq.isRainbow) {
+                        (eq.xOffset + RAINBOW_X_SPEED).coerceAtMost(1f - X_MARGIN)
                     } else {
-                        eq.copy(yProgress = eq.yProgress + fallSpeed)
+                        eq.xOffset
                     }
+                    eq.copy(yProgress = eq.yProgress + speed, xOffset = newX)
                 }
 
                 val missed = updated.filter { it.yProgress >= 1f }
@@ -191,13 +192,34 @@ class MathChallengeViewModel @Inject constructor(
             currentStreak = _state.value.streak,
         )
 
+        val xOffset = avoidHorizontalOverlap(
+            proposed = Random.nextFloat() * X_RANGE + X_MARGIN,
+            existing = _state.value.equations,
+        )
+
         val equation = FallingEquation(
             id = nextEquationId++,
             problem = problem,
             isRainbow = isRainbow,
+            yProgress = SPAWN_Y,
+            xOffset = xOffset,
         )
 
         _state.update { it.copy(equations = it.equations + equation) }
+    }
+
+    private fun avoidHorizontalOverlap(
+        proposed: Float,
+        existing: List<FallingEquation>,
+    ): Float {
+        val nearTop = existing.filter { it.yProgress < OVERLAP_CHECK_Y }
+        var x = proposed
+        var attempts = 0
+        while (attempts < OVERLAP_MAX_ATTEMPTS && nearTop.any { abs(it.xOffset - x) < MIN_X_GAP }) {
+            x = Random.nextFloat() * X_RANGE + X_MARGIN
+            attempts++
+        }
+        return x
     }
 
     private fun handleDigit(digit: Int) {
@@ -231,6 +253,14 @@ class MathChallengeViewModel @Inject constructor(
 
             if (match != null) {
                 solveEquation(match)
+            } else {
+                // Wrong answer — break streak
+                _state.update {
+                    it.copy(
+                        streak = 0,
+                        consecutiveCorrect = 0,
+                    )
+                }
             }
         }
 
@@ -245,8 +275,7 @@ class MathChallengeViewModel @Inject constructor(
             val newConsecutive = current.consecutiveCorrect + 1
             val newSolved = current.equationsSolved + 1
 
-            val rainbowMult = if (equation.isRainbow) RAINBOW_SCORE_MULTIPLIER else 1
-            val points = (BASE_POINTS_PER_SOLVE * rainbowMult * current.multiplier).toInt()
+            val points = calculateScore(equation, current.level, current.multiplier)
 
             // Life regen after 5 consecutive correct
             var newLives = current.lives
@@ -346,6 +375,31 @@ class MathChallengeViewModel @Inject constructor(
         startGame()
     }
 
+    internal fun calculateScore(
+        equation: FallingEquation,
+        level: Int,
+        multiplier: Float,
+    ): Int {
+        var base = BASE_POINTS_PER_SOLVE
+
+        // Difficulty bonus: +3 per level
+        base += level * LEVEL_SCORE_BONUS
+
+        // Proximity bonus: solving near the bottom is worth more
+        base += when {
+            equation.yProgress >= PROXIMITY_HIGH -> PROXIMITY_HIGH_BONUS
+            equation.yProgress >= PROXIMITY_MID -> PROXIMITY_MID_BONUS
+            else -> 0
+        }
+
+        // Rainbow multiplier
+        val rainbowMult = if (equation.isRainbow) RAINBOW_SCORE_MULTIPLIER else 1
+
+        // Streak multiplier (capped at 1.5x instead of 3x to avoid inflation)
+        val cappedMultiplier = multiplier.coerceAtMost(MAX_SCORE_MULTIPLIER)
+        return (base * rainbowMult * cappedMultiplier).toInt()
+    }
+
     // --- Difficulty scaling ---
 
     internal fun operatorsForLevel(level: Int): Set<Operator> = when {
@@ -394,6 +448,12 @@ class MathChallengeViewModel @Inject constructor(
         const val EQUATIONS_PER_LEVEL = 10
         const val MAX_ANSWER_LENGTH = 6
         const val BASE_POINTS_PER_SOLVE = 10
+        const val LEVEL_SCORE_BONUS = 3
+        const val PROXIMITY_HIGH = 0.70f
+        const val PROXIMITY_MID = 0.50f
+        const val PROXIMITY_HIGH_BONUS = 10
+        const val PROXIMITY_MID_BONUS = 5
+        const val MAX_SCORE_MULTIPLIER = 1.5f
         const val RAINBOW_SCORE_MULTIPLIER = 3
         const val RAINBOW_SPEED_FACTOR = 0.7f
         const val RAINBOW_X_SPEED = 0.002f
@@ -412,5 +472,13 @@ class MathChallengeViewModel @Inject constructor(
         const val STREAK_MILESTONE_5 = 5
         const val STREAK_MILESTONE_10 = 10
         const val STREAK_MILESTONE_20 = 20
+
+        // Spawning position constants
+        const val SPAWN_Y = -0.12f
+        const val X_MARGIN = 0.10f
+        const val X_RANGE = 0.80f
+        const val MIN_X_GAP = 0.18f
+        const val OVERLAP_CHECK_Y = 0.15f
+        const val OVERLAP_MAX_ATTEMPTS = 5
     }
 }
