@@ -8,12 +8,10 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeWord
-import com.studybuddy.core.domain.model.Feedback
 import com.studybuddy.core.domain.model.InputMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
-import com.studybuddy.core.domain.usecase.dictee.CheckSpellingUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
@@ -22,6 +20,7 @@ import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -37,7 +36,6 @@ class DicteePracticeViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getPracticeWordsUseCase: GetPracticeWordsUseCase,
     private val getMixedPracticeWordsUseCase: GetMixedPracticeWordsUseCase,
-    private val checkSpellingUseCase: CheckSpellingUseCase,
     private val dicteeRepository: DicteeRepository,
     private val settingsRepository: SettingsRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
@@ -62,13 +60,15 @@ class DicteePracticeViewModel @Inject constructor(
     val effects: SharedFlow<DicteePracticeEffect> = _effects.asSharedFlow()
 
     private val profileId = AppConstants.DEFAULT_PROFILE_ID
-    private var correctInSession = 0
 
-    /** Maps listId → language code for multi-language challenge sessions. */
+    /** Maps listId -> language code for multi-language challenge sessions. */
     private var listLanguageMap: Map<String, String> = emptyMap()
 
     /** Fallback language for single-list sessions. */
     private var listLanguage = "fr"
+
+    /** Accent strictness setting. */
+    private var isAccentStrict = false
 
     init {
         loadPractice()
@@ -80,19 +80,36 @@ class DicteePracticeViewModel @Inject constructor(
             is DicteePracticeIntent.PlayWord -> playCurrentWord(TtsManager.SPEED_NORMAL)
             is DicteePracticeIntent.PlayWordSlow -> playCurrentWord(TtsManager.SPEED_SLOW)
             is DicteePracticeIntent.UpdateInput -> {
-                _state.update { it.copy(userInput = intent.text) }
+                _state.update {
+                    it.copy(
+                        userInput = intent.text,
+                        sessionState = when (it.inputMode) {
+                            InputMode.HANDWRITING -> DicteeSessionState.HANDWRITING
+                            else -> DicteeSessionState.TYPING
+                        },
+                    )
+                }
             }
-            is DicteePracticeIntent.ToggleInputMode -> toggleInputMode()
+            is DicteePracticeIntent.SwitchInputMode -> switchInputMode(intent.mode)
             is DicteePracticeIntent.ShowHint -> {
                 _state.update { it.copy(hintVisible = true) }
             }
             is DicteePracticeIntent.CheckAnswer -> checkAnswer()
             is DicteePracticeIntent.NextWord -> nextWord()
             is DicteePracticeIntent.RetryWord -> retryWord()
+            is DicteePracticeIntent.SkipWord -> skipWord()
             is DicteePracticeIntent.HandwritingRecognized -> {
-                _state.update { it.copy(recognizedText = intent.text, userInput = intent.text) }
+                _state.update {
+                    it.copy(
+                        recognizedText = intent.text,
+                        userInput = intent.text,
+                        sessionState = DicteeSessionState.HANDWRITING,
+                    )
+                }
             }
             is DicteePracticeIntent.RecognizeInk -> recognizeInk(intent.ink)
+            is DicteePracticeIntent.TapTile -> tapTile(intent.tileIndex)
+            is DicteePracticeIntent.RemoveFromSlot -> removeFromSlot(intent.slotIndex)
         }
     }
 
@@ -125,6 +142,7 @@ class DicteePracticeViewModel @Inject constructor(
 
     private fun loadPractice() {
         viewModelScope.launch {
+            isAccentStrict = settingsRepository.isAccentStrict().first()
             if (isChallengeMode) {
                 loadChallengeSession()
             } else {
@@ -142,14 +160,9 @@ class DicteePracticeViewModel @Inject constructor(
 
         val words = getPracticeWordsUseCase(id).first()
         _state.update { it.copy(words = words) }
-
-        if (words.isNotEmpty()) {
-            playCurrentWord(TtsManager.SPEED_NORMAL)
-        }
     }
 
     private suspend fun loadChallengeSession() {
-        // Build language map so TTS speaks each word in the correct language
         val lists = allListIds.mapNotNull { dicteeRepository.getList(it).first() }
         listLanguageMap = lists.associate { it.id to it.language }
 
@@ -161,16 +174,32 @@ class DicteePracticeViewModel @Inject constructor(
 
         val words = getMixedPracticeWordsUseCase(allListIds).first()
         _state.update { it.copy(words = words) }
-
-        if (words.isNotEmpty()) {
-            playCurrentWord(TtsManager.SPEED_NORMAL)
-        }
     }
 
     private fun observeTtsState() {
         viewModelScope.launch {
             ttsManager.state.collect { ttsState ->
-                _state.update { it.copy(isPlaying = ttsState is TtsState.Speaking) }
+                val wasPlaying = _state.value.isPlaying
+                val isNowPlaying = ttsState is TtsState.Speaking
+                _state.update {
+                    it.copy(
+                        isPlaying = isNowPlaying,
+                        sessionState = when {
+                            isNowPlaying -> DicteeSessionState.LISTENING
+                            wasPlaying && !isNowPlaying &&
+                                it.sessionState == DicteeSessionState.LISTENING -> {
+                                // Audio finished, return to idle (input now enabled)
+                                if (it.feedback != null) {
+                                    DicteeSessionState.SCORED
+                                } else {
+                                    DicteeSessionState.IDLE
+                                }
+                            }
+                            else -> it.sessionState
+                        },
+                        hasListenedAtLeastOnce = it.hasListenedAtLeastOnce || isNowPlaying,
+                    )
+                }
             }
         }
     }
@@ -183,20 +212,98 @@ class DicteePracticeViewModel @Inject constructor(
             listLanguage
         }
         val locale = SupportedLocale.fromCode(langCode).javaLocale
+        _state.update {
+            it.copy(
+                replayCount = it.replayCount + 1,
+            )
+        }
         ttsManager.speak(word.word, locale, speed)
     }
 
-    private fun toggleInputMode() {
+    private fun switchInputMode(mode: InputMode) {
         _state.update { currentState ->
-            val newMode = when (currentState.inputMode) {
-                InputMode.KEYBOARD -> InputMode.HANDWRITING
-                InputMode.HANDWRITING -> InputMode.KEYBOARD
-            }
-            currentState.copy(
-                inputMode = newMode,
+            val newState = currentState.copy(
+                inputMode = mode,
                 userInput = "",
                 recognizedText = null,
                 recognitionErrorResId = null,
+                sessionState = if (currentState.hasListenedAtLeastOnce) {
+                    DicteeSessionState.IDLE
+                } else {
+                    currentState.sessionState
+                },
+            )
+            if (mode == InputMode.LETTER_TILES) {
+                setupLetterTiles(newState)
+            } else {
+                newState.copy(letterTiles = emptyList(), answerSlots = emptyList())
+            }
+        }
+    }
+
+    private fun setupLetterTiles(state: DicteePracticeState): DicteePracticeState {
+        val word = state.currentWord ?: return state
+        val letters = word.word.lowercase().toList()
+        // Add 2-3 distractor letters
+        val distractors = generateDistractors(letters, count = minOf(3, letters.size / 2 + 1))
+        val allLetters = (letters + distractors).shuffled()
+        val tiles = allLetters.mapIndexed { index, letter ->
+            LetterTile(letter = letter, originalIndex = index)
+        }
+        val slots = List<Char?>(word.word.length) { null }
+        return state.copy(letterTiles = tiles, answerSlots = slots)
+    }
+
+    private fun generateDistractors(
+        wordLetters: List<Char>,
+        count: Int,
+    ): List<Char> {
+        val alphabet = ('a'..'z').toList()
+        val available = alphabet - wordLetters.toSet()
+        return available.shuffled().take(count)
+    }
+
+    private fun tapTile(tileIndex: Int) {
+        _state.update { currentState ->
+            val tiles = currentState.letterTiles.toMutableList()
+            val slots = currentState.answerSlots.toMutableList()
+            if (tileIndex >= tiles.size || tiles[tileIndex].isUsed) return@update currentState
+
+            val firstEmptySlot = slots.indexOfFirst { it == null }
+            if (firstEmptySlot < 0) return@update currentState
+
+            tiles[tileIndex] = tiles[tileIndex].copy(isUsed = true)
+            slots[firstEmptySlot] = tiles[tileIndex].letter
+
+            val userInput = slots.filterNotNull().joinToString("")
+            currentState.copy(
+                letterTiles = tiles,
+                answerSlots = slots,
+                userInput = userInput,
+                sessionState = DicteeSessionState.TYPING,
+            )
+        }
+    }
+
+    private fun removeFromSlot(slotIndex: Int) {
+        _state.update { currentState ->
+            val tiles = currentState.letterTiles.toMutableList()
+            val slots = currentState.answerSlots.toMutableList()
+            val removedChar = slots[slotIndex] ?: return@update currentState
+
+            slots[slotIndex] = null
+
+            // Find and un-use the first matching tile
+            val tileIdx = tiles.indexOfFirst { it.isUsed && it.letter == removedChar }
+            if (tileIdx >= 0) {
+                tiles[tileIdx] = tiles[tileIdx].copy(isUsed = false)
+            }
+
+            val userInput = slots.filterNotNull().joinToString("")
+            currentState.copy(
+                letterTiles = tiles,
+                answerSlots = slots,
+                userInput = userInput,
             )
         }
     }
@@ -207,28 +314,46 @@ class DicteePracticeViewModel @Inject constructor(
         val input = currentState.userInput.trim()
         if (input.isBlank()) return
 
-        viewModelScope.launch {
-            val accentStrict = settingsRepository.isAccentStrict().first()
-            val feedback = checkSpellingUseCase(input, word.word, accentStrict)
+        _state.update { it.copy(sessionState = DicteeSessionState.CHECKING) }
 
-            when (feedback) {
-                is Feedback.Correct -> handleCorrect(word)
-                is Feedback.Incorrect -> handleIncorrect(word)
-                is Feedback.TimeUp -> { /* Not applicable to dictée */ }
+        viewModelScope.launch {
+            // Artificial delay to match poems rhythm (the scoring is instant)
+            delay(CHECKING_DELAY_MS)
+
+            val score = DicteeScorer.scoreWord(
+                referenceWord = word.word,
+                childAnswer = input,
+                language = getCurrentLanguage(word),
+                inputMode = currentState.inputMode,
+            )
+
+            if (score.isCorrect) {
+                handleCorrect(word, score)
+            } else {
+                handleIncorrect(word, score)
             }
 
-            _state.update { it.copy(feedback = feedback) }
+            _state.update {
+                it.copy(
+                    feedback = score,
+                    sessionState = DicteeSessionState.SCORED,
+                    sessionResults = it.sessionResults + score,
+                )
+            }
         }
     }
 
-    private suspend fun handleCorrect(word: DicteeWord) {
+    private suspend fun handleCorrect(
+        word: DicteeWord,
+        score: DicteeWordScore,
+    ) {
         val currentState = _state.value
         val newStreak = currentState.streak + 1
-        correctInSession++
 
         val basePoints = when (currentState.inputMode) {
             InputMode.KEYBOARD -> PointValues.DICTEE_CORRECT_TYPED
             InputMode.HANDWRITING -> PointValues.DICTEE_CORRECT_HANDWRITTEN
+            InputMode.LETTER_TILES -> PointValues.DICTEE_CORRECT_TYPED
         }
 
         val awarded = awardPointsUseCase(
@@ -251,7 +376,10 @@ class DicteePracticeViewModel @Inject constructor(
         _effects.emit(DicteePracticeEffect.ShowPoints(awarded))
     }
 
-    private suspend fun handleIncorrect(word: DicteeWord) {
+    private suspend fun handleIncorrect(
+        word: DicteeWord,
+        score: DicteeWordScore,
+    ) {
         val updatedWord = word.copy(
             attempts = word.attempts + 1,
             lastAttemptAt = kotlinx.datetime.Clock.System.now(),
@@ -266,7 +394,9 @@ class DicteePracticeViewModel @Inject constructor(
 
         if (nextIndex >= currentState.words.size) {
             viewModelScope.launch {
-                if (correctInSession == currentState.words.size && currentState.words.isNotEmpty()) {
+                val perfectSession = currentState.sessionResults.all { it.isCorrect } &&
+                    currentState.sessionResults.isNotEmpty()
+                if (perfectSession) {
                     val bonusPoints = awardPointsUseCase(
                         profileId = profileId,
                         basePoints = PointValues.DICTEE_PERFECT_LIST,
@@ -276,7 +406,13 @@ class DicteePracticeViewModel @Inject constructor(
                     )
                     _state.update { it.copy(sessionScore = it.sessionScore + bonusPoints) }
                 }
-                _state.update { it.copy(currentIndex = nextIndex, feedback = null) }
+                _state.update {
+                    it.copy(
+                        currentIndex = nextIndex,
+                        feedback = null,
+                        sessionState = DicteeSessionState.IDLE,
+                    )
+                }
                 _effects.emit(DicteePracticeEffect.NavigateToResults)
             }
         } else {
@@ -288,16 +424,79 @@ class DicteePracticeViewModel @Inject constructor(
                     hintVisible = false,
                     recognizedText = null,
                     recognitionErrorResId = null,
+                    hasListenedAtLeastOnce = false,
+                    replayCount = 0,
+                    sessionState = DicteeSessionState.IDLE,
+                    letterTiles = emptyList(),
+                    answerSlots = emptyList(),
                 )
             }
-            playCurrentWord(TtsManager.SPEED_NORMAL)
+            // Setup letter tiles if that mode is active
+            if (_state.value.inputMode == InputMode.LETTER_TILES) {
+                _state.update { setupLetterTiles(it) }
+            }
         }
     }
 
     private fun retryWord() {
         _state.update {
-            it.copy(userInput = "", feedback = null, recognizedText = null, recognitionErrorResId = null)
+            var newState = it.copy(
+                userInput = "",
+                feedback = null,
+                recognizedText = null,
+                recognitionErrorResId = null,
+                sessionState = DicteeSessionState.IDLE,
+                // Remove the last result since we're retrying
+                sessionResults = if (it.sessionResults.isNotEmpty()) {
+                    it.sessionResults.dropLast(1)
+                } else {
+                    it.sessionResults
+                },
+            )
+            if (it.inputMode == InputMode.LETTER_TILES) {
+                newState = setupLetterTiles(newState)
+            }
+            newState
         }
         playCurrentWord(TtsManager.SPEED_NORMAL)
+    }
+
+    private fun skipWord() {
+        val word = _state.value.currentWord ?: return
+        val skipScore = DicteeWordScore(
+            referenceWord = word.word,
+            childAnswer = "",
+            scoredLetters = word.word.map { char ->
+                ScoredLetter(
+                    character = null,
+                    referenceCharacter = char,
+                    status = LetterStatus.MISSING,
+                )
+            },
+            similarity = 0f,
+            starRating = 1,
+            isCorrect = false,
+            encouragementResId = DicteeScorer.encouragementForStars(1),
+            inputMode = _state.value.inputMode,
+        )
+        _state.update {
+            it.copy(
+                sessionResults = it.sessionResults + skipScore,
+                streak = 0,
+            )
+        }
+        nextWord()
+    }
+
+    private fun getCurrentLanguage(word: DicteeWord): String {
+        return if (isChallengeMode) {
+            listLanguageMap[word.listId] ?: "fr"
+        } else {
+            listLanguage
+        }
+    }
+
+    companion object {
+        private const val CHECKING_DELAY_MS = 600L
     }
 }

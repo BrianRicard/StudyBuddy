@@ -461,4 +461,33 @@
     <string name="encourage_wrong_3">Keep trying, you\'ll get it!</string>
     <string name="encourage_wrong_4">So close!</string>
     <string name="encourage_wrong_5">Don\'t give up!</string>
+
+    <!-- Dictée redesign: scoring & feedback -->
+    <string name="dictee_score_5_stars">Perfect spelling! You\'re a word wizard!</string>
+    <string name="dictee_score_4_stars">So close! Just one tiny letter!</string>
+    <string name="dictee_score_3_stars">Good try! You\'re getting better!</string>
+    <string name="dictee_score_2_stars">Keep going, you\'ll get it!</string>
+    <string name="dictee_score_1_star">Nice effort! Look closely and try again!</string>
+    <string name="dictee_processing">Let me check your spelling…</string>
+    <string name="dictee_result_title">How did you spell?</string>
+    <string name="dictee_tap_to_listen">Tap to hear the word</string>
+    <string name="dictee_tap_to_replay">Tap to hear again</string>
+    <string name="dictee_listening">Listening…</string>
+    <string name="dictee_legend_correct">Correct</string>
+    <string name="dictee_legend_accent">Close (accent)</string>
+    <string name="dictee_legend_wrong">Wrong letter</string>
+    <string name="dictee_legend_missing">Missing letter</string>
+    <string name="dictee_letter_tiles">Tiles</string>
+    <string name="dictee_word_of">Word %1$d of %2$d</string>
+    <string name="dictee_skip">Skip</string>
+    <string name="dictee_session_complete">Well done!</string>
+    <string name="dictee_session_finished">You finished the dictée \"%s\"!</string>
+    <string name="dictee_words_to_practice">Words to practice:</string>
+    <string name="dictee_handwriting_tip">Try writing them by hand — it helps your brain remember!</string>
+    <string name="dictee_practice_missed">Practice missed words</string>
+    <string name="dictee_next_dictee">Next dictée</string>
+    <string name="dictee_clear">Clear</string>
+    <string name="dictee_undo_stroke">Undo</string>
+    <string name="dictee_ink_preview">Recognized: %s</string>
+    <string name="dictee_slow_replay">Slow replay</string>
 </resources>
