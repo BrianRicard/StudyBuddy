@@ -26,8 +26,11 @@ object StudyBuddyRoutes {
     const val POEMS = "poems"
     const val POEM_DETAIL = "poems/detail/{poemId}"
     const val POEM_CREATE = "poems/create"
+    const val DICTEE_ADD = "dictee/add"
+    const val DICTEE_EDIT = "dictee/edit/{setId}"
 
     fun poemDetail(poemId: String) = "poems/detail/$poemId"
+    fun dicteeEdit(setId: String) = "dictee/edit/$setId"
     const val ONBOARDING = "onboarding"
 
     fun dicteeWords(listId: String) = "dictee/words/$listId"
