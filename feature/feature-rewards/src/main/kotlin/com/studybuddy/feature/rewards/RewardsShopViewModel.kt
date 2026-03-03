@@ -3,6 +3,7 @@ package com.studybuddy.feature.rewards
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.domain.model.AvatarTier
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.domain.repository.RewardsRepository
@@ -36,6 +37,7 @@ enum class RewardsTab {
  */
 data class RewardsShopState(
     val selectedTab: RewardsTab = RewardsTab.AVATAR,
+    val selectedTier: AvatarTier? = null,
     val ownedItemIds: Set<String> = emptySet(),
     val starBalance: Long = 0L,
     val activeTheme: String = "sunset",
@@ -50,6 +52,7 @@ data class RewardsShopState(
  */
 sealed interface RewardsShopIntent {
     data class SelectTab(val tab: RewardsTab) : RewardsShopIntent
+    data class SelectTier(val tier: AvatarTier?) : RewardsShopIntent
     data class RequestPurchase(val item: RewardItem) : RewardsShopIntent
     data object ConfirmPurchase : RewardsShopIntent
     data object DismissDialog : RewardsShopIntent
@@ -90,6 +93,7 @@ class RewardsShopViewModel @Inject constructor(
     fun onIntent(intent: RewardsShopIntent) {
         when (intent) {
             is RewardsShopIntent.SelectTab -> handleSelectTab(intent.tab)
+            is RewardsShopIntent.SelectTier -> handleSelectTier(intent.tier)
             is RewardsShopIntent.RequestPurchase -> handleRequestPurchase(intent.item)
             is RewardsShopIntent.ConfirmPurchase -> handleConfirmPurchase()
             is RewardsShopIntent.DismissDialog -> handleDismissDialog()
@@ -124,7 +128,11 @@ class RewardsShopViewModel @Inject constructor(
     }
 
     private fun handleSelectTab(tab: RewardsTab) {
-        _state.update { it.copy(selectedTab = tab) }
+        _state.update { it.copy(selectedTab = tab, selectedTier = null) }
+    }
+
+    private fun handleSelectTier(tier: AvatarTier?) {
+        _state.update { it.copy(selectedTier = tier) }
     }
 
     private fun handleRequestPurchase(item: RewardItem) {
