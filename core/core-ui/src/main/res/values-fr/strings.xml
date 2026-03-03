@@ -498,4 +498,18 @@
     <string name="section_favorites">Favoris</string>
     <string name="search_placeholder_dictees">Rechercher des dictées…</string>
     <string name="search_placeholder_poems">Rechercher des poèmes…</string>
+
+    <!-- Dictée Add/Edit Screen -->
+    <string name="dictee_edit_list">Modifier la liste</string>
+    <string name="dictee_save_list">Enregistrer</string>
+    <string name="dictee_list_saved">Liste enregistrée !</string>
+    <string name="dictee_list_updated">Liste mise à jour !</string>
+    <string name="dictee_or_import">Ou importer des mots depuis un fichier</string>
+    <string name="dictee_import_txt">Importer .txt</string>
+    <string name="dictee_import_csv">Importer .csv</string>
+    <string name="dictee_import_json">Importer .json</string>
+    <string name="dictee_word_entry_hint">Écris un mot…</string>
+    <string name="dictee_delete_list_title">Supprimer cette liste ?</string>
+    <string name="dictee_delete_list_message">Tous les mots de cette liste seront aussi supprimés.</string>
+    <string name="dictee_cancel">Annuler</string>
 </resources>

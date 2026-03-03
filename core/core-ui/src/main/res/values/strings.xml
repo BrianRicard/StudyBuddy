@@ -493,8 +493,23 @@
     <string name="dictee_undo_stroke">Undo</string>
     <string name="dictee_ink_preview">Recognized: %s</string>
     <string name="dictee_slow_replay">Slow replay</string>
+
     <!-- Shared list interactions -->
     <string name="section_favorites">Favorites</string>
     <string name="search_placeholder_dictees">Search dictees…</string>
     <string name="search_placeholder_poems">Search poems…</string>
+
+    <!-- Dictée Add/Edit Screen -->
+    <string name="dictee_edit_list">Edit Word List</string>
+    <string name="dictee_save_list">Save Changes</string>
+    <string name="dictee_list_saved">List saved!</string>
+    <string name="dictee_list_updated">List updated!</string>
+    <string name="dictee_or_import">Or import words from a file</string>
+    <string name="dictee_import_txt">Import .txt</string>
+    <string name="dictee_import_csv">Import .csv</string>
+    <string name="dictee_import_json">Import .json</string>
+    <string name="dictee_word_entry_hint">Type a word…</string>
+    <string name="dictee_delete_list_title">Delete this list?</string>
+    <string name="dictee_delete_list_message">All words in this list will be deleted too.</string>
+    <string name="dictee_cancel">Cancel</string>
 </resources>
