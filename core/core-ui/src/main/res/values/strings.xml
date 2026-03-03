@@ -208,6 +208,14 @@
     <string name="math_smart_mode">Smart Mode</string>
     <string name="math_smart_mode_desc">Adaptive difficulty adjusts problems based on your performance. Get more right and the challenge increases!</string>
     <string name="math_time_per_problem">Time per Problem</string>
+    <string name="math_operators_hint">+ and − are on by default. At least one must be selected.</string>
+    <string name="math_custom">Custom</string>
+    <string name="math_range_min">Min</string>
+    <string name="math_range_max">Max</string>
+    <string name="math_custom_range_tip">Use the text fields for numbers above 200</string>
+    <string name="math_time_limit">Time Limit</string>
+    <string name="math_preview">Preview</string>
+    <string name="math_progress">%d of %d</string>
 
     <!-- Math Results -->
     <string name="math_great_job">Great Job!</string>
@@ -220,6 +228,16 @@
     <string name="math_streak_bonus">Streak bonus</string>
     <string name="math_total">Total</string>
     <string name="math_badges_unlocked">Badges Unlocked!</string>
+    <string name="math_result_5_stars">Perfect!</string>
+    <string name="math_result_4_stars">Great Job!</string>
+    <string name="math_result_3_stars">Well Done!</string>
+    <string name="math_result_2_stars">Good Try!</string>
+    <string name="math_result_1_star">Nice Effort!</string>
+    <string name="math_encourage_5_stars">You\'re a math genius! Every answer was spot on!</string>
+    <string name="math_encourage_4_stars">Almost perfect! You really know your numbers!</string>
+    <string name="math_encourage_3_stars">Good work! Keep practising and you\'ll get even better!</string>
+    <string name="math_encourage_2_stars">Keep going! Every practice makes you stronger!</string>
+    <string name="math_encourage_1_star">Nice effort! Try again and you\'ll improve!</string>
 
     <!-- Avatar additions -->
     <string name="avatar_get_item">Get %s?</string>

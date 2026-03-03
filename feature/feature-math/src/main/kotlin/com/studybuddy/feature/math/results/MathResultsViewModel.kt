@@ -10,6 +10,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+data class ProblemResult(
+    val displayString: String,
+    val childAnswer: Int,
+    val correctAnswer: Int,
+    val isCorrect: Boolean,
+)
+
 data class MathResultsState(
     val totalProblems: Int = 0,
     val correctCount: Int = 0,
@@ -19,6 +26,7 @@ data class MathResultsState(
     val streakBonus: Int = 0,
     val totalPoints: Int = 0,
     val accuracy: Float = 0f,
+    val starRating: Int = 1,
     val badges: List<String> = emptyList(),
 )
 
@@ -77,6 +85,7 @@ class MathResultsViewModel @Inject constructor(
 
         val streakBonus = PointsCalculator.calculateStreakBonus(bestStreak)
         val totalPoints = sessionScore + streakBonus
+        val starRating = calculateStarRating(accuracy)
 
         val badges = buildList {
             if (avgResponseMs in 1 until SPEED_DEMON_THRESHOLD_MS) {
@@ -97,6 +106,7 @@ class MathResultsViewModel @Inject constructor(
                 streakBonus = streakBonus,
                 totalPoints = totalPoints,
                 accuracy = accuracy,
+                starRating = starRating,
                 badges = badges,
             )
         }
@@ -108,5 +118,13 @@ class MathResultsViewModel @Inject constructor(
 
         const val BADGE_SPEED_DEMON = "Speed Demon"
         const val BADGE_STREAK_MASTER = "Streak Master"
+
+        fun calculateStarRating(accuracy: Float): Int = when {
+            accuracy >= 0.95f -> 5
+            accuracy >= 0.80f -> 4
+            accuracy >= 0.60f -> 3
+            accuracy >= 0.35f -> 2
+            else -> 1
+        }
     }
 }

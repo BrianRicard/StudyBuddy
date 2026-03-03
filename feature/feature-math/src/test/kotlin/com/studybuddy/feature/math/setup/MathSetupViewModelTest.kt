@@ -39,11 +39,12 @@ class MathSetupViewModelTest {
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertEquals(setOf(Operator.PLUS), state.selectedOperators)
+        assertEquals(setOf(Operator.PLUS, Operator.MINUS), state.selectedOperators)
         assertEquals(AppConstants.MIN_NUMBER_RANGE, state.numberRangeMin)
-        assertEquals(12, state.numberRangeMax)
-        assertEquals(AppConstants.DEFAULT_TIMER_SECONDS, state.timerSeconds)
-        assertEquals(AppConstants.DEFAULT_PROBLEM_COUNT, state.problemCount)
+        assertEquals(MathSetupState.DEFAULT_RANGE_MAX, state.numberRangeMax)
+        assertEquals(MathSetupState.DEFAULT_TIMER_SECONDS, state.timerSeconds)
+        assertEquals(MathSetupState.DEFAULT_PROBLEM_COUNT, state.problemCount)
+        assertFalse(state.isCustomRange)
     }
 
     @Test
@@ -51,13 +52,14 @@ class MathSetupViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.MINUS))
+        viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.MULTIPLY))
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertTrue(Operator.MINUS in state.selectedOperators)
+        assertTrue(Operator.MULTIPLY in state.selectedOperators)
         assertTrue(Operator.PLUS in state.selectedOperators)
-        assertEquals(2, state.selectedOperators.size)
+        assertTrue(Operator.MINUS in state.selectedOperators)
+        assertEquals(3, state.selectedOperators.size)
     }
 
     @Test
@@ -65,12 +67,7 @@ class MathSetupViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Add MINUS first
-        viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.MINUS))
-        advanceUntilIdle()
-        assertEquals(2, viewModel.state.value.selectedOperators.size)
-
-        // Remove PLUS
+        // Remove PLUS (MINUS still selected)
         viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.PLUS))
         advanceUntilIdle()
 
@@ -85,12 +82,17 @@ class MathSetupViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Try to remove the only selected operator
+        // Remove PLUS first
         viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.PLUS))
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.selectedOperators.size)
+
+        // Try to remove the last operator (MINUS)
+        viewModel.onIntent(MathSetupIntent.ToggleOperator(Operator.MINUS))
         advanceUntilIdle()
 
         val state = viewModel.state.value
-        assertTrue(Operator.PLUS in state.selectedOperators)
+        assertTrue(Operator.MINUS in state.selectedOperators)
         assertEquals(1, state.selectedOperators.size)
     }
 
@@ -106,37 +108,66 @@ class MathSetupViewModelTest {
     }
 
     @Test
-    fun `set range min clamps to max`() = runTest {
+    fun `set range min clamps to max minus one`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Try to set min above the current max (12)
-        viewModel.onIntent(MathSetupIntent.SetRangeMin(15))
+        // Try to set min above the current max (20)
+        viewModel.onIntent(MathSetupIntent.SetRangeMin(25))
         advanceUntilIdle()
 
-        assertEquals(12, viewModel.state.value.numberRangeMin)
+        assertEquals(19, viewModel.state.value.numberRangeMin)
     }
 
     @Test
-    fun `set range max updates state`() = runTest {
+    fun `set range max updates state with no hard upper limit`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(MathSetupIntent.SetRangeMax(15))
+        viewModel.onIntent(MathSetupIntent.SetRangeMax(500))
         advanceUntilIdle()
 
-        assertEquals(15, viewModel.state.value.numberRangeMax)
+        assertEquals(500, viewModel.state.value.numberRangeMax)
     }
 
     @Test
-    fun `set range max clamps to max setup range`() = runTest {
+    fun `set range max clamps to min plus one`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(MathSetupIntent.SetRangeMax(100))
+        viewModel.onIntent(MathSetupIntent.SetRangeMax(0))
         advanceUntilIdle()
 
-        assertEquals(MathSetupViewModel.MAX_SETUP_RANGE, viewModel.state.value.numberRangeMax)
+        assertEquals(2, viewModel.state.value.numberRangeMax)
+    }
+
+    @Test
+    fun `select range preset updates range and clears custom`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(MathSetupIntent.SelectCustomRange)
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.isCustomRange)
+
+        viewModel.onIntent(MathSetupIntent.SelectRangePreset(1, 50))
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.numberRangeMin)
+        assertEquals(50, state.numberRangeMax)
+        assertFalse(state.isCustomRange)
+    }
+
+    @Test
+    fun `select custom range enables custom mode`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(MathSetupIntent.SelectCustomRange)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.isCustomRange)
     }
 
     @Test

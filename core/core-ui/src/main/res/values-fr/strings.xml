@@ -208,6 +208,14 @@
     <string name="math_smart_mode">Mode intelligent</string>
     <string name="math_smart_mode_desc">La difficulté s\'adapte à tes performances. Plus tu réussis, plus le défi augmente !</string>
     <string name="math_time_per_problem">Temps par problème</string>
+    <string name="math_operators_hint">+ et − sont activés par défaut. Au moins un doit être sélectionné.</string>
+    <string name="math_custom">Personnalisé</string>
+    <string name="math_range_min">Min</string>
+    <string name="math_range_max">Max</string>
+    <string name="math_custom_range_tip">Utilise les champs texte pour les nombres au-dessus de 200</string>
+    <string name="math_time_limit">Limite de temps</string>
+    <string name="math_preview">Aperçu</string>
+    <string name="math_progress">%d sur %d</string>
 
     <!-- Math Results -->
     <string name="math_great_job">Bravo !</string>
@@ -220,6 +228,16 @@
     <string name="math_streak_bonus">Bonus de série</string>
     <string name="math_total">Total</string>
     <string name="math_badges_unlocked">Badges débloqués !</string>
+    <string name="math_result_5_stars">Parfait !</string>
+    <string name="math_result_4_stars">Bravo !</string>
+    <string name="math_result_3_stars">Bien joué !</string>
+    <string name="math_result_2_stars">Bon essai !</string>
+    <string name="math_result_1_star">Bel effort !</string>
+    <string name="math_encourage_5_stars">Tu es un génie des maths ! Chaque réponse était juste !</string>
+    <string name="math_encourage_4_stars">Presque parfait ! Tu connais vraiment bien tes chiffres !</string>
+    <string name="math_encourage_3_stars">Bon travail ! Continue à t\'entraîner et tu seras encore meilleur !</string>
+    <string name="math_encourage_2_stars">Continue ! Chaque entraînement te rend plus fort !</string>
+    <string name="math_encourage_1_star">Bel effort ! Réessaie et tu vas progresser !</string>
 
     <!-- Avatar additions -->
     <string name="avatar_get_item">Obtenir %s ?</string>

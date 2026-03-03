@@ -1,6 +1,9 @@
 package com.studybuddy.feature.math.results
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -11,21 +14,29 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +52,9 @@ import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StreakOrange
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import kotlinx.coroutines.delay
+
+private val StarGold = Color(0xFFFFC107)
+private val StarEmpty = Color(0xFFE0E0E0)
 
 @Composable
 fun MathResultsScreen(
@@ -95,10 +109,29 @@ internal fun MathResultsContent(
     ) {
         Spacer(modifier = Modifier.height(8.dp))
 
+        // Encouragement title
         Text(
-            text = stringResource(CoreUiR.string.math_great_job),
+            text = encouragementTitle(state.starRating),
             style = MaterialTheme.typography.displayMedium,
             color = MaterialTheme.colorScheme.primary,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Animated star rating
+        AnimatedStarRating(
+            stars = state.starRating,
+            visible = visible,
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Encouragement message
+        Text(
+            text = encouragementMessage(state.starRating),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
 
@@ -140,6 +173,51 @@ internal fun MathResultsContent(
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+private fun AnimatedStarRating(
+    stars: Int,
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    // Stagger the appearance of each star
+    var animatedStarCount by remember { mutableIntStateOf(0) }
+
+    LaunchedEffect(visible) {
+        if (visible) {
+            for (i in 1..stars) {
+                delay(STAR_STAGGER_DELAY_MS)
+                animatedStarCount = i
+            }
+        }
+    }
+
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        repeat(MAX_STARS) { index ->
+            val isFilled = index < animatedStarCount
+            val scale by animateFloatAsState(
+                targetValue = if (isFilled) 1f else 0.8f,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                    stiffness = Spring.StiffnessLow,
+                ),
+                label = "starScale$index",
+            )
+            Icon(
+                imageVector = if (isFilled) Icons.Filled.Star else Icons.Outlined.StarOutline,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(STAR_SIZE.dp)
+                    .scale(scale),
+                tint = if (isFilled) StarGold else StarEmpty,
+            )
+        }
     }
 }
 
@@ -218,9 +296,7 @@ private fun SummaryStatCard(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = LABEL_ALPHA,
-                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = LABEL_ALPHA),
             )
         }
     }
@@ -262,9 +338,7 @@ private fun PointsBreakdownCard(
             Spacer(modifier = Modifier.height(12.dp))
 
             HorizontalDivider(
-                color = MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = DIVIDER_ALPHA,
-                ),
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = DIVIDER_ALPHA),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
@@ -295,7 +369,7 @@ private fun PointsBreakdownCard(
 private fun PointsRow(
     label: String,
     value: String,
-    color: androidx.compose.ui.graphics.Color,
+    color: Color,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -306,9 +380,7 @@ private fun PointsRow(
         Text(
             text = label,
             style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onSurface.copy(
-                alpha = LABEL_ALPHA,
-            ),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = LABEL_ALPHA),
         )
         Text(
             text = value,
@@ -389,6 +461,24 @@ private fun ActionButtons(
     }
 }
 
+@Composable
+private fun encouragementTitle(stars: Int): String = when (stars) {
+    5 -> stringResource(CoreUiR.string.math_result_5_stars)
+    4 -> stringResource(CoreUiR.string.math_result_4_stars)
+    3 -> stringResource(CoreUiR.string.math_result_3_stars)
+    2 -> stringResource(CoreUiR.string.math_result_2_stars)
+    else -> stringResource(CoreUiR.string.math_result_1_star)
+}
+
+@Composable
+private fun encouragementMessage(stars: Int): String = when (stars) {
+    5 -> stringResource(CoreUiR.string.math_encourage_5_stars)
+    4 -> stringResource(CoreUiR.string.math_encourage_4_stars)
+    3 -> stringResource(CoreUiR.string.math_encourage_3_stars)
+    2 -> stringResource(CoreUiR.string.math_encourage_2_stars)
+    else -> stringResource(CoreUiR.string.math_encourage_1_star)
+}
+
 private fun badgeIcon(badge: String): String = when (badge) {
     MathResultsViewModel.BADGE_SPEED_DEMON -> "\u26A1"
     MathResultsViewModel.BADGE_STREAK_MASTER -> "\uD83D\uDD25"
@@ -401,6 +491,9 @@ private fun formatResponseTime(ms: Long): String {
 }
 
 private const val ANIMATION_DELAY_MS = 150L
+private const val STAR_STAGGER_DELAY_MS = 150L
+private const val STAR_SIZE = 40
+private const val MAX_STARS = 5
 private const val PERCENTAGE_MULTIPLIER = 100
 private const val MS_PER_SECOND = 1000
 private const val LABEL_ALPHA = 0.7f
@@ -420,6 +513,7 @@ private fun MathResultsContentPreview() {
                 streakBonus = 75,
                 totalPoints = 165,
                 accuracy = 0.9f,
+                starRating = 4,
                 badges = listOf("Streak Master"),
             ),
             onHome = {},
@@ -442,6 +536,7 @@ private fun MathResultsContentNoBadgesPreview() {
                 streakBonus = 0,
                 totalPoints = 30,
                 accuracy = 0.6f,
+                starRating = 3,
                 badges = emptyList(),
             ),
             onHome = {},

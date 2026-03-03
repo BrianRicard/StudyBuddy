@@ -167,4 +167,52 @@ class MathResultsViewModelTest {
         val state = viewModel.state.value
         assertEquals(state.sessionScore + state.streakBonus, state.totalPoints)
     }
+
+    @Test
+    fun `star rating is 5 for 95 percent accuracy or above`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 19)
+        advanceUntilIdle()
+
+        assertEquals(5, viewModel.state.value.starRating)
+    }
+
+    @Test
+    fun `star rating is 4 for 80 to 94 percent accuracy`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 17)
+        advanceUntilIdle()
+
+        assertEquals(4, viewModel.state.value.starRating)
+    }
+
+    @Test
+    fun `star rating is 3 for 60 to 79 percent accuracy`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 13)
+        advanceUntilIdle()
+
+        assertEquals(3, viewModel.state.value.starRating)
+    }
+
+    @Test
+    fun `star rating is 2 for 35 to 59 percent accuracy`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 8)
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.state.value.starRating)
+    }
+
+    @Test
+    fun `star rating is 1 for below 35 percent accuracy`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 3)
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.state.value.starRating)
+    }
+
+    @Test
+    fun `star rating is never zero`() = runTest {
+        val viewModel = createViewModel(totalProblems = 20, correctCount = 0)
+        advanceUntilIdle()
+
+        assertEquals(1, viewModel.state.value.starRating)
+    }
 }
