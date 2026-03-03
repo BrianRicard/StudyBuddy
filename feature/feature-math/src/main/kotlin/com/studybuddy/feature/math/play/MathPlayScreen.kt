@@ -2,6 +2,7 @@ package com.studybuddy.feature.math.play
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -30,6 +31,8 @@ import androidx.compose.material.icons.automirrored.filled.Backspace
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -42,6 +45,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -61,6 +65,9 @@ import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.IncorrectRed
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.core.ui.theme.TimeoutAmber
+
+private val FeedbackGreenBg = Color(0xFFC8E6C9)
+private val FeedbackOrangeBg = Color(0xFFFFE0B2)
 
 @Composable
 fun MathPlayScreen(
@@ -110,7 +117,11 @@ internal fun MathPlayContent(
     onIntent: (MathPlayIntent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background),
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -142,13 +153,13 @@ internal fun MathPlayContent(
 
             Spacer(modifier = Modifier.weight(1f))
 
-            // Problem display
-            ProblemDisplay(
+            // Problem display inside a card
+            EquationCard(
                 problem = state.currentProblem,
                 feedback = state.feedback,
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // Answer display
             AnswerDisplay(
@@ -156,12 +167,12 @@ internal fun MathPlayContent(
                 feedback = state.feedback,
             )
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Feedback message
             FeedbackMessage(feedback = state.feedback)
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             // Number pad
             NumberPad(
@@ -206,7 +217,7 @@ private fun TopBar(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
-            text = "$problemsCompleted / $totalProblems",
+            text = stringResource(CoreUiR.string.math_progress, problemsCompleted, totalProblems),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -263,7 +274,7 @@ private fun TimerBar(
 
     val timerColor = when {
         fraction <= TIMER_CRITICAL_THRESHOLD -> IncorrectRed
-        fraction <= TIMER_WARNING_THRESHOLD -> MaterialTheme.colorScheme.tertiary
+        fraction <= TIMER_WARNING_THRESHOLD -> TimeoutAmber
         else -> MaterialTheme.colorScheme.primary
     }
 
@@ -293,34 +304,58 @@ private fun TimerBar(
 }
 
 @Composable
-private fun ProblemDisplay(
+private fun EquationCard(
     problem: MathProblem?,
     feedback: Feedback?,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedContent(
-        targetState = problem,
-        transitionSpec = {
-            (slideInVertically { -it } + fadeIn()) togetherWith
-                (slideOutVertically { it } + fadeOut())
+    val cardColor by animateColorAsState(
+        targetValue = when (feedback) {
+            is Feedback.Correct -> FeedbackGreenBg
+            is Feedback.Incorrect -> FeedbackOrangeBg
+            is Feedback.TimeUp -> FeedbackOrangeBg
+            null -> MaterialTheme.colorScheme.surface
         },
-        label = "problem",
-        modifier = modifier,
-    ) { currentProblem ->
-        if (currentProblem != null) {
-            Text(
-                text = currentProblem.displayString,
-                style = MaterialTheme.typography.displayLarge.copy(
-                    fontSize = PROBLEM_FONT_SIZE.sp,
-                ),
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier.semantics {
-                    contentDescription =
-                        "${currentProblem.operandA} ${currentProblem.operator.symbol} ${currentProblem.operandB}"
-                },
-            )
+        animationSpec = tween(durationMillis = FEEDBACK_COLOR_ANIM_MS),
+        label = "cardColor",
+    )
+
+    ElevatedCard(
+        modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 2.dp),
+        colors = CardDefaults.elevatedCardColors(containerColor = cardColor),
+    ) {
+        AnimatedContent(
+            targetState = problem,
+            transitionSpec = {
+                (slideInVertically { -it } + fadeIn()) togetherWith
+                    (slideOutVertically { it } + fadeOut())
+            },
+            label = "problem",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 32.dp, horizontal = 16.dp),
+        ) { currentProblem ->
+            if (currentProblem != null) {
+                Text(
+                    text = currentProblem.displayString,
+                    style = MaterialTheme.typography.displayLarge.copy(
+                        fontSize = PROBLEM_FONT_SIZE.sp,
+                    ),
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .semantics {
+                            contentDescription =
+                                "${currentProblem.operandA} " +
+                                "${currentProblem.operator.symbol} " +
+                                "${currentProblem.operandB}"
+                        },
+                )
+            }
         }
     }
 }
@@ -333,7 +368,7 @@ private fun AnswerDisplay(
 ) {
     val answerColor = when (feedback) {
         is Feedback.Correct -> CorrectGreen
-        is Feedback.Incorrect -> IncorrectRed
+        is Feedback.Incorrect -> TimeoutAmber
         is Feedback.TimeUp -> TimeoutAmber
         null -> MaterialTheme.colorScheme.onSurface
     }
@@ -381,14 +416,17 @@ private fun FeedbackMessage(
             stringResource(CoreUiR.string.encourage_7),
             stringResource(CoreUiR.string.encourage_8),
         ).random()
-        is Feedback.Incorrect -> stringResource(CoreUiR.string.math_answer_was, feedback.correctAnswer)
+        is Feedback.Incorrect -> stringResource(
+            CoreUiR.string.math_answer_was,
+            feedback.correctAnswer,
+        )
         is Feedback.TimeUp -> stringResource(CoreUiR.string.math_times_up)
         null -> ""
     }
 
     val color = when (feedback) {
         is Feedback.Correct -> CorrectGreen
-        is Feedback.Incorrect -> IncorrectRed
+        is Feedback.Incorrect -> TimeoutAmber
         is Feedback.TimeUp -> TimeoutAmber
         null -> MaterialTheme.colorScheme.onSurface
     }
@@ -422,18 +460,15 @@ private fun NumberPad(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Row 1: 1 2 3
         NumberPadRow(digits = listOf(1, 2, 3), onDigit = onDigit, enabled = enabled)
-        // Row 2: 4 5 6
         NumberPadRow(digits = listOf(4, 5, 6), onDigit = onDigit, enabled = enabled)
-        // Row 3: 7 8 9
         NumberPadRow(digits = listOf(7, 8, 9), onDigit = onDigit, enabled = enabled)
+
         // Row 4: backspace 0 submit
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         ) {
-            // Backspace
             val backspaceDesc = stringResource(CoreUiR.string.math_backspace)
             Box(
                 modifier = Modifier
@@ -452,10 +487,8 @@ private fun NumberPad(
                 )
             }
 
-            // 0
             NumPadButton(digit = 0, onClick = { onDigit(0) }, enabled = enabled)
 
-            // Submit
             val submitDesc = stringResource(CoreUiR.string.math_submit_answer)
             Box(
                 modifier = Modifier
@@ -577,6 +610,7 @@ private fun CelebrationOverlay(
 
 private const val PROGRESS_ANIM_MS = 300
 private const val TIMER_ANIM_MS = 100
+private const val FEEDBACK_COLOR_ANIM_MS = 300
 private const val TIMER_CRITICAL_THRESHOLD = 0.2f
 private const val TIMER_WARNING_THRESHOLD = 0.5f
 private const val TIMER_TRACK_ALPHA = 0.2f
