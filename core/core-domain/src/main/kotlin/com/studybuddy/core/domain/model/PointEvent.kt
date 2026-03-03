@@ -14,6 +14,7 @@ data class PointEvent(
 enum class PointSource {
     DICTEE,
     MATH,
+    POEMS,
     DAILY_LOGIN,
     CHALLENGE,
     PURCHASE,

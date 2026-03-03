@@ -7,6 +7,7 @@ import com.studybuddy.core.domain.model.PoemSource
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
 import com.studybuddy.core.domain.usecase.poem.SaveReadingSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
+import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
@@ -43,6 +44,7 @@ class PoemDetailViewModelTest {
     private val audioRecorder: AudioRecorder = mockk(relaxed = true)
     private val modelDownloadManager: ModelDownloadManager = mockk(relaxed = true)
     private val ttsManager: TtsManager = mockk(relaxed = true)
+    private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
 
     private val testPoem = Poem(
         id = "poem-1",
@@ -81,6 +83,7 @@ class PoemDetailViewModelTest {
             audioRecorder = audioRecorder,
             modelDownloadManager = modelDownloadManager,
             ttsManager = ttsManager,
+            awardPointsUseCase = awardPointsUseCase,
         )
     }
 

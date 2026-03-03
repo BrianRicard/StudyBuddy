@@ -16,6 +16,11 @@ object PointValues {
     const val MATH_STREAK_10 = 75
     const val MATH_STREAK_20 = 150
 
+    // Poems
+    const val POEM_READ_ALOUD = 10
+    const val POEM_RECITED = 15
+    const val POEM_GREAT_RECITATION = 25
+
     // General
     const val DAILY_LOGIN = 10
     const val FIRST_SESSION_OF_DAY = 20
