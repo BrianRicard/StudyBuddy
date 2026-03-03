@@ -5,9 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.common.constants.AppConstants
-import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeWord
+import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.InputMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
@@ -16,6 +16,8 @@ import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.points.RewardCalculator
+import com.studybuddy.shared.points.RewardInput
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,6 +41,7 @@ class DicteePracticeViewModel @Inject constructor(
     private val dicteeRepository: DicteeRepository,
     private val settingsRepository: SettingsRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val rewardCalculator: RewardCalculator,
     private val ttsManager: TtsManager,
     private val inkRecognitionManager: InkRecognitionManager,
 ) : ViewModel() {
@@ -369,20 +372,6 @@ class DicteePracticeViewModel @Inject constructor(
         val currentState = _state.value
         val newStreak = currentState.streak + 1
 
-        val basePoints = when (currentState.inputMode) {
-            InputMode.KEYBOARD -> PointValues.DICTEE_CORRECT_TYPED
-            InputMode.HANDWRITING -> PointValues.DICTEE_CORRECT_HANDWRITTEN
-            InputMode.LETTER_TILES -> PointValues.DICTEE_CORRECT_TYPED
-        }
-
-        val awarded = awardPointsUseCase(
-            profileId = profileId,
-            basePoints = basePoints,
-            streak = newStreak,
-            source = PointSource.DICTEE,
-            reason = "Dictée: ${word.word}",
-        )
-
         val updatedWord = word.copy(
             attempts = word.attempts + 1,
             correctCount = word.correctCount + 1,
@@ -391,8 +380,7 @@ class DicteePracticeViewModel @Inject constructor(
         )
         dicteeRepository.updateWord(updatedWord)
 
-        _state.update { it.copy(streak = newStreak, sessionScore = it.sessionScore + awarded) }
-        _effects.emit(DicteePracticeEffect.ShowPoints(awarded))
+        _state.update { it.copy(streak = newStreak) }
     }
 
     private suspend fun handleIncorrect(
@@ -413,23 +401,39 @@ class DicteePracticeViewModel @Inject constructor(
 
         if (nextIndex >= currentState.words.size) {
             viewModelScope.launch {
-                val perfectSession = currentState.sessionResults.all { it.isCorrect } &&
-                    currentState.sessionResults.isNotEmpty()
-                if (perfectSession) {
-                    val bonusPoints = awardPointsUseCase(
-                        profileId = profileId,
-                        basePoints = PointValues.DICTEE_PERFECT_LIST,
-                        streak = 0,
-                        source = PointSource.DICTEE,
-                        reason = "Perfect session: ${currentState.listTitle}",
-                    )
-                    _state.update { it.copy(sessionScore = it.sessionScore + bonusPoints) }
+                // Award points for the full session via RewardCalculator
+                val correctCount = currentState.sessionResults.count { it.isCorrect }
+                val totalWords = currentState.sessionResults.size
+                val avgSimilarity = if (currentState.sessionResults.isNotEmpty()) {
+                    currentState.sessionResults.map { it.similarity }.average().toFloat()
+                } else {
+                    0f
                 }
+
+                val reward = rewardCalculator.calculate(
+                    RewardInput.DicteeReward(
+                        correctWords = correctCount,
+                        totalWords = totalWords,
+                        inputMode = currentState.inputMode,
+                        difficulty = Difficulty.MEDIUM,
+                        averageSimilarity = avgSimilarity,
+                    ),
+                )
+
+                val awarded = awardPointsUseCase(
+                    profileId = profileId,
+                    basePoints = reward.totalPoints,
+                    streak = 0,
+                    source = PointSource.DICTEE,
+                    reason = "Dictée session: $correctCount/$totalWords correct",
+                )
+
                 _state.update {
                     it.copy(
                         currentIndex = nextIndex,
                         feedback = null,
                         sessionState = DicteeSessionState.IDLE,
+                        sessionScore = awarded,
                     )
                 }
                 _effects.emit(DicteePracticeEffect.NavigateToResults)

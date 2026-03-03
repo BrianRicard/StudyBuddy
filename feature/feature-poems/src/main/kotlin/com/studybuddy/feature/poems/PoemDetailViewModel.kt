@@ -5,7 +5,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
-import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PointSource
@@ -19,6 +18,8 @@ import com.studybuddy.feature.poems.detail.PoemScorer
 import com.studybuddy.feature.poems.detail.WordInfo
 import com.studybuddy.feature.poems.detail.WordState
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.points.RewardCalculator
+import com.studybuddy.shared.points.RewardInput
 import com.studybuddy.shared.tts.TtsManager
 import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
@@ -110,6 +111,7 @@ class PoemDetailViewModel @Inject constructor(
     private val modelDownloadManager: ModelDownloadManager,
     private val ttsManager: TtsManager,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val rewardCalculator: RewardCalculator,
 ) : ViewModel() {
 
     private val poemId: String = checkNotNull(savedStateHandle["poemId"])
@@ -239,9 +241,20 @@ class PoemDetailViewModel @Inject constructor(
                 createdAt = Clock.System.now(),
             )
             saveReadingSessionUseCase(session)
+            val wordCount = poem.lines.joinToString(" ")
+                .split(WHITESPACE_REGEX).count { it.isNotBlank() }
+            val reward = rewardCalculator.calculate(
+                RewardInput.PoemReward(
+                    starRating = 3,
+                    accuracy = score,
+                    completeness = 1.0f,
+                    wordCount = wordCount,
+                    language = poem.language,
+                ),
+            )
             awardPointsUseCase(
                 profileId = profileId,
-                basePoints = PointValues.POEM_READ_ALOUD,
+                basePoints = reward.totalPoints,
                 streak = 0,
                 source = PointSource.POEMS,
                 reason = "Poem read aloud: ${poem.title}",
@@ -364,15 +377,20 @@ class PoemDetailViewModel @Inject constructor(
                 )
                 saveReadingSessionUseCase(session)
 
-                // Award points based on accuracy
-                val basePoints = if (poemScore.overallAccuracy >= GREAT_RECITATION_THRESHOLD) {
-                    PointValues.POEM_GREAT_RECITATION
-                } else {
-                    PointValues.POEM_RECITED
-                }
+                // Award points via RewardCalculator
+                val wordCount = _state.value.words.size
+                val reward = rewardCalculator.calculate(
+                    RewardInput.PoemReward(
+                        starRating = poemScore.starRating,
+                        accuracy = poemScore.overallAccuracy,
+                        completeness = poemScore.completeness,
+                        wordCount = wordCount,
+                        language = poem.language,
+                    ),
+                )
                 awardPointsUseCase(
                     profileId = profileId,
-                    basePoints = basePoints,
+                    basePoints = reward.totalPoints,
                     streak = 0,
                     source = PointSource.POEMS,
                     reason = "Poem recited: ${poem.title}",
@@ -443,6 +461,5 @@ class PoemDetailViewModel @Inject constructor(
         private val WHITESPACE_REGEX = Regex("\\s+")
         private const val AMPLITUDE_UPDATE_MS = 100L
         private const val SPEECH_SETTLE_MS = 100L
-        private const val GREAT_RECITATION_THRESHOLD = 0.8f
     }
 }
