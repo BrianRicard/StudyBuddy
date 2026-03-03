@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.appcompat)
     implementation(libs.navigation.compose)
     implementation(libs.core.ktx)
+    implementation(libs.material3.adaptive.navigation.suite)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)
