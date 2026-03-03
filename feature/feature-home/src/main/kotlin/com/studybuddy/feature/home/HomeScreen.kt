@@ -65,6 +65,7 @@ fun HomeScreen(
     viewModel: HomeViewModel = hiltViewModel(),
     onNavigateToDictee: () -> Unit = {},
     onNavigateToMath: () -> Unit = {},
+    onNavigateToMathChallenge: () -> Unit = {},
     onNavigateToPoems: () -> Unit = {},
     onNavigateToAvatar: () -> Unit = {},
     onNavigateToStats: () -> Unit = {},
@@ -78,6 +79,7 @@ fun HomeScreen(
             when (effect) {
                 HomeEffect.OpenDictee -> onNavigateToDictee()
                 HomeEffect.OpenMath -> onNavigateToMath()
+                HomeEffect.OpenMathChallenge -> onNavigateToMathChallenge()
                 HomeEffect.OpenPoems -> onNavigateToPoems()
                 HomeEffect.OpenAvatar -> onNavigateToAvatar()
                 HomeEffect.OpenStats -> onNavigateToStats()
@@ -141,6 +143,7 @@ fun HomeScreen(
                 ModeCardsGrid(
                     onDicteeClick = { viewModel.onIntent(HomeIntent.NavigateToDictee) },
                     onMathClick = { viewModel.onIntent(HomeIntent.NavigateToMath) },
+                    onMathChallengeClick = { viewModel.onIntent(HomeIntent.NavigateToMathChallenge) },
                     onPoemsClick = { viewModel.onIntent(HomeIntent.NavigateToPoems) },
                     modifier = Modifier.animateItemAppearance(3),
                 )
@@ -394,6 +397,7 @@ private fun DailyChallengeCard(
 private fun ModeCardsGrid(
     onDicteeClick: () -> Unit,
     onMathClick: () -> Unit,
+    onMathChallengeClick: () -> Unit,
     onPoemsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -437,12 +441,11 @@ private fun ModeCardsGrid(
                 animationDelay = BOB_ANIMATION_DELAY * 2,
             )
             ModeCard(
-                title = stringResource(CoreUiR.string.mode_more),
-                subtitle = stringResource(CoreUiR.string.label_coming_soon),
-                onClick = {},
+                title = stringResource(CoreUiR.string.mode_math_challenge),
+                subtitle = stringResource(CoreUiR.string.label_falling_equations),
+                onClick = onMathChallengeClick,
                 modifier = Modifier.weight(1f),
-                iconRes = CoreUiR.drawable.ic_more_plus,
-                isLocked = true,
+                iconRes = CoreUiR.drawable.ic_target_challenge,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 3,
             )
