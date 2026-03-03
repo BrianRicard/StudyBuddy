@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,6 +26,9 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -76,6 +80,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.InputMode
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
+import com.studybuddy.core.ui.adaptive.ContentConstraint
+import com.studybuddy.core.ui.adaptive.LayoutType
+import com.studybuddy.core.ui.adaptive.LocalLayoutType
+import com.studybuddy.core.ui.adaptive.TwoPaneLayout
 import com.studybuddy.core.ui.animation.CelebrationOverlay
 import com.studybuddy.core.ui.animation.PointsFlyUp
 import com.studybuddy.core.ui.components.PointsBadge
@@ -92,11 +101,9 @@ private val WrongBg = Color(0xFFFFCDD2)
 private val MissingUnderline = Color(0xFFEF5350)
 private val ExtraText = Color(0xFF757575)
 private val StarGold = Color(0xFFFFB300)
-private val WarmCream = Color(0xFFFFF8E1)
 
 // Action button colors — indigo/blue for dictée (red is for poems mic)
 private val DicteeAction = Color(0xFF5C6BC0)
-private val DicteeActionLight = Color(0xFFC5CAE9)
 
 @Composable
 fun DicteePracticeScreen(
@@ -158,10 +165,21 @@ private fun DicteePracticeContent(
                     onNavigateBack = onNavigateBack,
                 )
             } else {
-                PracticeWordContent(
-                    state = state,
-                    onIntent = onIntent,
-                )
+                val layoutType = LocalLayoutType.current
+                when (layoutType) {
+                    LayoutType.COMPACT -> PracticeWordCompact(
+                        state = state,
+                        onIntent = onIntent,
+                    )
+                    LayoutType.MEDIUM -> PracticeWordMedium(
+                        state = state,
+                        onIntent = onIntent,
+                    )
+                    LayoutType.EXPANDED -> PracticeWordExpanded(
+                        state = state,
+                        onIntent = onIntent,
+                    )
+                }
             }
 
             // Celebration overlay for correct answers
@@ -197,8 +215,10 @@ private fun DicteePracticeContent(
     }
 }
 
+// region COMPACT layout — unchanged
+
 @Composable
-private fun PracticeWordContent(
+private fun PracticeWordCompact(
     state: DicteePracticeState,
     onIntent: (DicteePracticeIntent) -> Unit,
 ) {
@@ -209,72 +229,25 @@ private fun PracticeWordContent(
             .padding(horizontal = 20.dp, vertical = 8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Progress indicator
-        StudyBuddyProgressBar(
-            progress = state.progress,
-            modifier = Modifier.fillMaxWidth(),
-        )
-        Text(
-            text = stringResource(
-                CoreUiR.string.dictee_word_of,
-                state.currentIndex + 1,
-                state.totalWords,
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 4.dp),
-        )
+        ProgressSection(state = state)
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Speaker button with pulse animation
         SpeakerButton(
             isPlaying = state.isPlaying,
             hasListenedOnce = state.hasListenedAtLeastOnce,
             onClick = { onIntent(DicteePracticeIntent.PlayWord) },
         )
 
-        // Slow replay button
-        if (state.hasListenedAtLeastOnce) {
-            Spacer(modifier = Modifier.height(8.dp))
-            OutlinedButton(
-                onClick = { onIntent(DicteePracticeIntent.PlayWordSlow) },
-                enabled = !state.isPlaying,
-            ) {
-                Text(stringResource(CoreUiR.string.dictee_slow_replay))
-            }
-        }
+        SlowReplayAndHint(state = state, onIntent = onIntent)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Hint
-        AnimatedVisibility(visible = state.hintVisible) {
-            val word = state.currentWord
-            if (word != null) {
-                val maskedWord = "${word.word.first()}" + "_".repeat(word.word.length - 1)
-                Text(
-                    text = stringResource(CoreUiR.string.dictee_hint_format, maskedWord, word.word.length),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-        }
-
-        if (!state.hintVisible && state.feedback == null && state.hasListenedAtLeastOnce) {
-            OutlinedButton(onClick = { onIntent(DicteePracticeIntent.ShowHint) }) {
-                Text(stringResource(CoreUiR.string.dictee_show_hint))
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Processing overlay
         if (state.sessionState == DicteeSessionState.CHECKING) {
             ProcessingOverlay()
             return
         }
 
-        // Scored state — show letter feedback + stars
         if (state.sessionState == DicteeSessionState.SCORED && state.feedback != null) {
             ScoredContent(
                 score = state.feedback,
@@ -284,108 +257,225 @@ private fun PracticeWordContent(
             return
         }
 
-        // Input mode selector
-        if (state.hasListenedAtLeastOnce) {
-            InputModeSelector(
-                currentMode = state.inputMode,
-                onModeSelected = { onIntent(DicteePracticeIntent.SwitchInputMode(it)) },
-                enabled = state.feedback == null,
+        InputSection(state = state, onIntent = onIntent)
+    }
+}
+
+// endregion
+
+// region MEDIUM layout — constrained width, larger speaker button
+
+@Composable
+private fun PracticeWordMedium(
+    state: DicteePracticeState,
+    onIntent: (DicteePracticeIntent) -> Unit,
+) {
+    ContentConstraint(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 20.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            ProgressSection(state = state)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            SpeakerButton(
+                isPlaying = state.isPlaying,
+                hasListenedOnce = state.hasListenedAtLeastOnce,
+                onClick = { onIntent(DicteePracticeIntent.PlayWord) },
+                buttonSize = AdaptiveDimensDefaults.current().speakerButtonSize,
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
-
-            // Input area — dimmed if haven't listened yet
-            val inputAlpha = if (state.isInputEnabled) 1f else 0.5f
-            Box(modifier = Modifier.alpha(inputAlpha)) {
-                when (state.inputMode) {
-                    InputMode.KEYBOARD -> KeyboardInput(
-                        value = state.userInput,
-                        enabled = state.isInputEnabled,
-                        onValueChange = { onIntent(DicteePracticeIntent.UpdateInput(it)) },
-                        onDone = {
-                            if (state.userInput.isNotBlank()) {
-                                onIntent(DicteePracticeIntent.CheckAnswer)
-                            }
-                        },
-                    )
-                    InputMode.LETTER_TILES -> LetterTileInput(
-                        answerSlots = state.answerSlots,
-                        tiles = state.letterTiles,
-                        enabled = state.isInputEnabled,
-                        onTapTile = { onIntent(DicteePracticeIntent.TapTile(it)) },
-                        onRemoveFromSlot = { onIntent(DicteePracticeIntent.RemoveFromSlot(it)) },
-                    )
-                    InputMode.HANDWRITING -> {
-                        HandwritingCanvas(
-                            modifier = Modifier.fillMaxWidth(),
-                            recognizedText = state.recognizedText ?: "",
-                            referenceWord = state.currentWord?.word ?: "",
-                            onInkReady = { ink ->
-                                onIntent(DicteePracticeIntent.RecognizeInk(ink))
-                            },
-                            onClear = { onIntent(DicteePracticeIntent.UpdateInput("")) },
-                            onUndo = { ink ->
-                                if (ink != null) {
-                                    onIntent(DicteePracticeIntent.RecognizeInk(ink))
-                                } else {
-                                    onIntent(DicteePracticeIntent.UpdateInput(""))
-                                }
-                            },
-                        )
-                        if (state.recognitionPending) {
-                            Text(
-                                text = stringResource(CoreUiR.string.dictee_recognizing),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 8.dp),
-                            )
-                        }
-                        state.recognitionErrorResId?.let { errorResId ->
-                            Text(
-                                text = stringResource(errorResId),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.error,
-                                modifier = Modifier.padding(top = 8.dp),
-                            )
-                        }
-                    }
-                }
-            }
+            SlowReplayAndHint(state = state, onIntent = onIntent)
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Check + Skip buttons
-            if (state.feedback == null) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Button(
-                        onClick = { onIntent(DicteePracticeIntent.CheckAnswer) },
-                        modifier = Modifier.weight(1f),
-                        enabled = state.userInput.isNotBlank() && state.isInputEnabled,
-                    ) {
-                        Text(stringResource(CoreUiR.string.dictee_check))
-                    }
-                    OutlinedButton(
-                        onClick = { onIntent(DicteePracticeIntent.SkipWord) },
-                        modifier = Modifier.weight(0.5f),
-                    ) {
-                        Text(stringResource(CoreUiR.string.dictee_skip))
-                    }
-                }
+            if (state.sessionState == DicteeSessionState.CHECKING) {
+                ProcessingOverlay()
+                return@Column
             }
+
+            if (state.sessionState == DicteeSessionState.SCORED && state.feedback != null) {
+                ScoredContent(
+                    score = state.feedback,
+                    onRetry = { onIntent(DicteePracticeIntent.RetryWord) },
+                    onNext = { onIntent(DicteePracticeIntent.NextWord) },
+                )
+                return@Column
+            }
+
+            InputSection(
+                state = state,
+                onIntent = onIntent,
+                canvasHeight = AdaptiveDimensDefaults.current().canvasHeight,
+            )
         }
     }
 }
 
-// ── Speaker Button with Pulse Animation ──
+// endregion
+
+// region EXPANDED layout — two-pane: audio/scoring left, input right
+
+@Composable
+private fun PracticeWordExpanded(
+    state: DicteePracticeState,
+    onIntent: (DicteePracticeIntent) -> Unit,
+) {
+    val dimens = AdaptiveDimensDefaults.current()
+
+    TwoPaneLayout(
+        leftWeight = 0.35f,
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+        leftPane = {
+            // Left pane: progress, speaker, hint, scored content
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                ProgressSection(state = state)
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                SpeakerButton(
+                    isPlaying = state.isPlaying,
+                    hasListenedOnce = state.hasListenedAtLeastOnce,
+                    onClick = { onIntent(DicteePracticeIntent.PlayWord) },
+                    buttonSize = dimens.speakerButtonSize,
+                )
+
+                SlowReplayAndHint(state = state, onIntent = onIntent)
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                if (state.sessionState == DicteeSessionState.CHECKING) {
+                    ProcessingOverlay()
+                }
+
+                if (state.sessionState == DicteeSessionState.SCORED && state.feedback != null) {
+                    ScoredContent(
+                        score = state.feedback,
+                        onRetry = { onIntent(DicteePracticeIntent.RetryWord) },
+                        onNext = { onIntent(DicteePracticeIntent.NextWord) },
+                    )
+                }
+            }
+        },
+        rightPane = {
+            // Right pane: input mode selector + input area (fills pane)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                if (state.hasListenedAtLeastOnce &&
+                    state.sessionState != DicteeSessionState.SCORED
+                ) {
+                    InputModeSelector(
+                        currentMode = state.inputMode,
+                        onModeSelected = { onIntent(DicteePracticeIntent.SwitchInputMode(it)) },
+                        enabled = state.feedback == null,
+                    )
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    val inputAlpha = if (state.isInputEnabled) 1f else 0.5f
+                    Box(
+                        modifier = Modifier
+                            .weight(1f)
+                            .alpha(inputAlpha),
+                    ) {
+                        when (state.inputMode) {
+                            InputMode.KEYBOARD -> KeyboardInput(
+                                value = state.userInput,
+                                enabled = state.isInputEnabled,
+                                onValueChange = { onIntent(DicteePracticeIntent.UpdateInput(it)) },
+                                onDone = {
+                                    if (state.userInput.isNotBlank()) {
+                                        onIntent(DicteePracticeIntent.CheckAnswer)
+                                    }
+                                },
+                            )
+                            InputMode.LETTER_TILES -> LetterTileInput(
+                                answerSlots = state.answerSlots,
+                                tiles = state.letterTiles,
+                                enabled = state.isInputEnabled,
+                                onTapTile = { onIntent(DicteePracticeIntent.TapTile(it)) },
+                                onRemoveFromSlot = { onIntent(DicteePracticeIntent.RemoveFromSlot(it)) },
+                            )
+                            InputMode.HANDWRITING -> {
+                                Column {
+                                    HandwritingCanvas(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .weight(1f),
+                                        recognizedText = state.recognizedText ?: "",
+                                        referenceWord = state.currentWord?.word ?: "",
+                                        onInkReady = { ink ->
+                                            onIntent(DicteePracticeIntent.RecognizeInk(ink))
+                                        },
+                                        onClear = { onIntent(DicteePracticeIntent.UpdateInput("")) },
+                                        onUndo = { ink ->
+                                            if (ink != null) {
+                                                onIntent(DicteePracticeIntent.RecognizeInk(ink))
+                                            } else {
+                                                onIntent(DicteePracticeIntent.UpdateInput(""))
+                                            }
+                                        },
+                                    )
+                                    HandwritingStatus(state = state)
+                                }
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(12.dp))
+
+                    // Check + Skip buttons
+                    if (state.feedback == null) {
+                        CheckSkipButtons(state = state, onIntent = onIntent)
+                    }
+                }
+            }
+        },
+    )
+}
+
+// endregion
+
+// region Shared composables
+
+@Composable
+private fun ProgressSection(state: DicteePracticeState) {
+    StudyBuddyProgressBar(
+        progress = state.progress,
+        modifier = Modifier.fillMaxWidth(),
+    )
+    Text(
+        text = stringResource(
+            CoreUiR.string.dictee_word_of,
+            state.currentIndex + 1,
+            state.totalWords,
+        ),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.padding(top = 4.dp),
+    )
+}
 
 @Composable
 private fun SpeakerButton(
     isPlaying: Boolean,
     hasListenedOnce: Boolean,
     onClick: () -> Unit,
+    buttonSize: androidx.compose.ui.unit.Dp = 72.dp,
 ) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         val scale = if (isPlaying) {
@@ -410,7 +500,7 @@ private fun SpeakerButton(
             onClick = onClick,
             containerColor = fabColor,
             modifier = Modifier
-                .size(72.dp)
+                .size(buttonSize)
                 .scale(scale),
         ) {
             Text(
@@ -435,7 +525,153 @@ private fun SpeakerButton(
     }
 }
 
-// ── Input Mode Selector ──
+@Composable
+private fun SlowReplayAndHint(
+    state: DicteePracticeState,
+    onIntent: (DicteePracticeIntent) -> Unit,
+) {
+    if (state.hasListenedAtLeastOnce) {
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedButton(
+            onClick = { onIntent(DicteePracticeIntent.PlayWordSlow) },
+            enabled = !state.isPlaying,
+        ) {
+            Text(stringResource(CoreUiR.string.dictee_slow_replay))
+        }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    AnimatedVisibility(visible = state.hintVisible) {
+        val word = state.currentWord
+        if (word != null) {
+            val maskedWord = "${word.word.first()}" + "_".repeat(word.word.length - 1)
+            Text(
+                text = stringResource(CoreUiR.string.dictee_hint_format, maskedWord, word.word.length),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+
+    if (!state.hintVisible && state.feedback == null && state.hasListenedAtLeastOnce) {
+        OutlinedButton(onClick = { onIntent(DicteePracticeIntent.ShowHint) }) {
+            Text(stringResource(CoreUiR.string.dictee_show_hint))
+        }
+    }
+}
+
+@Composable
+private fun InputSection(
+    state: DicteePracticeState,
+    onIntent: (DicteePracticeIntent) -> Unit,
+    canvasHeight: androidx.compose.ui.unit.Dp = AdaptiveDimensDefaults.current().canvasHeight,
+) {
+    if (state.hasListenedAtLeastOnce) {
+        InputModeSelector(
+            currentMode = state.inputMode,
+            onModeSelected = { onIntent(DicteePracticeIntent.SwitchInputMode(it)) },
+            enabled = state.feedback == null,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        val inputAlpha = if (state.isInputEnabled) 1f else 0.5f
+        Box(modifier = Modifier.alpha(inputAlpha)) {
+            when (state.inputMode) {
+                InputMode.KEYBOARD -> KeyboardInput(
+                    value = state.userInput,
+                    enabled = state.isInputEnabled,
+                    onValueChange = { onIntent(DicteePracticeIntent.UpdateInput(it)) },
+                    onDone = {
+                        if (state.userInput.isNotBlank()) {
+                            onIntent(DicteePracticeIntent.CheckAnswer)
+                        }
+                    },
+                )
+                InputMode.LETTER_TILES -> LetterTileInput(
+                    answerSlots = state.answerSlots,
+                    tiles = state.letterTiles,
+                    enabled = state.isInputEnabled,
+                    onTapTile = { onIntent(DicteePracticeIntent.TapTile(it)) },
+                    onRemoveFromSlot = { onIntent(DicteePracticeIntent.RemoveFromSlot(it)) },
+                )
+                InputMode.HANDWRITING -> {
+                    HandwritingCanvas(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(canvasHeight),
+                        recognizedText = state.recognizedText ?: "",
+                        referenceWord = state.currentWord?.word ?: "",
+                        onInkReady = { ink ->
+                            onIntent(DicteePracticeIntent.RecognizeInk(ink))
+                        },
+                        onClear = { onIntent(DicteePracticeIntent.UpdateInput("")) },
+                        onUndo = { ink ->
+                            if (ink != null) {
+                                onIntent(DicteePracticeIntent.RecognizeInk(ink))
+                            } else {
+                                onIntent(DicteePracticeIntent.UpdateInput(""))
+                            }
+                        },
+                    )
+                    HandwritingStatus(state = state)
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        if (state.feedback == null) {
+            CheckSkipButtons(state = state, onIntent = onIntent)
+        }
+    }
+}
+
+@Composable
+private fun HandwritingStatus(state: DicteePracticeState) {
+    if (state.recognitionPending) {
+        Text(
+            text = stringResource(CoreUiR.string.dictee_recognizing),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
+    state.recognitionErrorResId?.let { errorResId ->
+        Text(
+            text = stringResource(errorResId),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.error,
+            modifier = Modifier.padding(top = 8.dp),
+        )
+    }
+}
+
+@Composable
+private fun CheckSkipButtons(
+    state: DicteePracticeState,
+    onIntent: (DicteePracticeIntent) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Button(
+            onClick = { onIntent(DicteePracticeIntent.CheckAnswer) },
+            modifier = Modifier.weight(1f),
+            enabled = state.userInput.isNotBlank() && state.isInputEnabled,
+        ) {
+            Text(stringResource(CoreUiR.string.dictee_check))
+        }
+        OutlinedButton(
+            onClick = { onIntent(DicteePracticeIntent.SkipWord) },
+            modifier = Modifier.weight(0.5f),
+        ) {
+            Text(stringResource(CoreUiR.string.dictee_skip))
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -464,8 +700,6 @@ private fun InputModeSelector(
     }
 }
 
-// ── Keyboard Input ──
-
 @Composable
 private fun KeyboardInput(
     value: String,
@@ -491,8 +725,6 @@ private fun KeyboardInput(
     )
 }
 
-// ── Processing Overlay ──
-
 @Composable
 private fun ProcessingOverlay() {
     Column(
@@ -511,8 +743,6 @@ private fun ProcessingOverlay() {
     }
 }
 
-// ── Scored Content: Letter Feedback + Stars + Encouragement ──
-
 @Composable
 private fun ScoredContent(
     score: DicteeWordScore,
@@ -523,12 +753,10 @@ private fun ScoredContent(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        // Star rating
         AnimatedStarRating(starCount = score.starRating)
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Encouragement message
         Text(
             text = stringResource(score.encouragementResId),
             style = MaterialTheme.typography.titleMedium,
@@ -538,12 +766,10 @@ private fun ScoredContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Letter-level feedback
         LetterFeedbackDisplay(scoredLetters = score.scoredLetters)
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // Correct answer reveal
         if (!score.isCorrect) {
             Text(
                 text = stringResource(CoreUiR.string.dictee_correct_spelling),
@@ -561,7 +787,6 @@ private fun ScoredContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Action buttons — Try Again is primary, Next is secondary
         Button(
             onClick = onRetry,
             modifier = Modifier.fillMaxWidth(),
@@ -577,8 +802,6 @@ private fun ScoredContent(
         }
     }
 }
-
-// ── Animated Star Rating (identical to poems) ──
 
 @Composable
 private fun AnimatedStarRating(starCount: Int) {
@@ -609,8 +832,6 @@ private fun AnimatedStarRating(starCount: Int) {
     }
 }
 
-// ── Letter Feedback Display ──
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun LetterFeedbackDisplay(
@@ -639,6 +860,8 @@ private fun LetterFeedbackDisplay(
 
 @Composable
 private fun ScoredLetterCard(scored: ScoredLetter) {
+    val dimens = AdaptiveDimensDefaults.current()
+
     val backgroundColor = when (scored.status) {
         LetterStatus.CORRECT -> CorrectBg
         LetterStatus.ACCENT_WRONG -> AccentWrongBg
@@ -668,7 +891,7 @@ private fun ScoredLetterCard(scored: ScoredLetter) {
 
     Box(
         modifier = Modifier
-            .size(36.dp)
+            .size(dimens.letterCardSize)
             .clip(RoundedCornerShape(8.dp))
             .background(backgroundColor)
             .then(
@@ -696,14 +919,18 @@ private fun ScoredLetterCard(scored: ScoredLetter) {
     }
 }
 
-// ── Session Summary Content ──
+// endregion
 
-@OptIn(ExperimentalLayoutApi::class)
+// region Session Summary
+
 @Composable
 private fun SessionSummaryContent(
     state: DicteePracticeState,
     onNavigateBack: () -> Unit,
 ) {
+    val layoutType = LocalLayoutType.current
+    val useGrid = layoutType != LayoutType.COMPACT
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -725,14 +952,12 @@ private fun SessionSummaryContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Average star rating
         if (state.averageStars > 0) {
             AnimatedStarRating(starCount = state.averageStars)
         }
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Points
         Text(
             text = stringResource(CoreUiR.string.dictee_score_points, state.sessionScore),
             style = MaterialTheme.typography.titleLarge,
@@ -741,14 +966,30 @@ private fun SessionSummaryContent(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Word-by-word results
-        FlowRow(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            state.sessionResults.forEach { result ->
-                WordResultChip(result)
+        // Word-by-word results — grid on tablet, FlowRow on phone
+        if (useGrid) {
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 120.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height((state.sessionResults.size * 24).coerceAtLeast(120).dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                items(state.sessionResults) { result ->
+                    WordResultChip(result)
+                }
+            }
+        } else {
+            @OptIn(ExperimentalLayoutApi::class)
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                state.sessionResults.forEach { result ->
+                    WordResultChip(result)
+                }
             }
         }
 
@@ -777,7 +1018,6 @@ private fun SessionSummaryContent(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Done button
         Button(
             onClick = onNavigateBack,
             modifier = Modifier.fillMaxWidth(),
@@ -809,6 +1049,8 @@ private fun WordResultChip(result: DicteeWordScore) {
         )
     }
 }
+
+// endregion
 
 @Preview
 @Composable
