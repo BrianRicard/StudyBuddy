@@ -118,6 +118,27 @@ fun StudyBuddyNavHost(
                 onNavigateToChallenge = { listIds ->
                     navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
                 },
+                onNavigateToAdd = {
+                    navController.navigate(StudyBuddyRoutes.DICTEE_ADD)
+                },
+                onNavigateToEdit = { setId ->
+                    navController.navigate(StudyBuddyRoutes.dicteeEdit(setId))
+                },
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(route = StudyBuddyRoutes.DICTEE_ADD) {
+            com.studybuddy.feature.dictee.add.AddDicteeScreen(
+                onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.DICTEE_EDIT,
+            arguments = listOf(navArgument("setId") { type = NavType.StringType }),
+        ) {
+            com.studybuddy.feature.dictee.add.AddDicteeScreen(
                 onNavigateBack = { navController.popBackStack() },
             )
         }

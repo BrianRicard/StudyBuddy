@@ -2,10 +2,9 @@ package com.studybuddy.feature.dictee.list
 
 import app.cash.turbine.test
 import com.studybuddy.core.domain.model.DicteeList
+import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
-import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
-import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -32,7 +31,6 @@ class DicteeListViewModelTest {
 
     private val dicteeRepository: DicteeRepository = mockk(relaxed = true)
     private val getDicteeListsUseCase: GetDicteeListsUseCase = mockk()
-    private val importWordListUseCase: ImportWordListUseCase = mockk()
 
     private val testLists = listOf(
         DicteeList(
@@ -57,10 +55,18 @@ class DicteeListViewModelTest {
         ),
     )
 
+    private val testWords = listOf(
+        DicteeWord(id = "w1", listId = "list1", word = "chat"),
+        DicteeWord(id = "w2", listId = "list1", word = "chien"),
+        DicteeWord(id = "w3", listId = "list1", word = "oiseau"),
+    )
+
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         every { getDicteeListsUseCase(any()) } returns flowOf(testLists)
+        every { dicteeRepository.getWordsForList("list1") } returns flowOf(testWords)
+        every { dicteeRepository.getWordsForList("list2") } returns flowOf(emptyList())
     }
 
     @AfterEach
@@ -71,83 +77,52 @@ class DicteeListViewModelTest {
     private fun createViewModel(): DicteeListViewModel = DicteeListViewModel(
         getDicteeListsUseCase = getDicteeListsUseCase,
         dicteeRepository = dicteeRepository,
-        importWordListUseCase = importWordListUseCase,
     )
 
     @Test
     fun `initial state is loading`() = runTest {
         val viewModel = createViewModel()
-        // Before idle, state should have isLoading true by default
         assertTrue(viewModel.state.value.isLoading)
     }
 
     @Test
-    fun `load lists populates state`() = runTest {
+    fun `load lists populates state with word previews`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         val state = viewModel.state.value
         assertFalse(state.isLoading)
-        assertEquals(2, state.lists.size)
-        assertEquals("Animals", state.lists[0].title)
+        assertEquals(2, state.items.size)
+        assertEquals("Animals", state.items[0].list.title)
+        assertEquals(listOf("chat", "chien", "oiseau"), state.items[0].wordPreview)
+        assertTrue(state.items[1].wordPreview.isEmpty())
     }
 
     @Test
-    fun `show create dialog updates state`() = runTest {
+    fun `search filters items by title`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
+        viewModel.onIntent(DicteeListIntent.UpdateSearch("anim"))
         advanceUntilIdle()
 
-        assertTrue(viewModel.state.value.showCreateDialog)
+        val state = viewModel.state.value
+        assertEquals("anim", state.searchQuery)
+        assertEquals(1, state.filteredItems.size)
+        assertEquals("Animals", state.filteredItems[0].list.title)
     }
 
     @Test
-    fun `dismiss create dialog updates state`() = runTest {
+    fun `search filters items by word preview`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-        advanceUntilIdle()
-        viewModel.onIntent(DicteeListIntent.DismissCreateDialog)
+        viewModel.onIntent(DicteeListIntent.UpdateSearch("chat"))
         advanceUntilIdle()
 
-        assertFalse(viewModel.state.value.showCreateDialog)
-    }
-
-    @Test
-    fun `create list calls repository and closes dialog`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-        viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("My New List"))
-        viewModel.onIntent(DicteeListIntent.UpdateNewListLanguage("de"))
-        viewModel.onIntent(DicteeListIntent.CreateList)
-        advanceUntilIdle()
-
-        coVerify {
-            dicteeRepository.createList(
-                match {
-                    it.title == "My New List" && it.language == "de"
-                },
-            )
-        }
-        assertFalse(viewModel.state.value.showCreateDialog)
-    }
-
-    @Test
-    fun `create list with blank title does nothing`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.onIntent(DicteeListIntent.ShowCreateDialog)
-        viewModel.onIntent(DicteeListIntent.UpdateNewListTitle("  "))
-        viewModel.onIntent(DicteeListIntent.CreateList)
-        advanceUntilIdle()
-
-        coVerify(exactly = 0) { dicteeRepository.createList(any()) }
+        val state = viewModel.state.value
+        assertEquals(1, state.filteredItems.size)
+        assertEquals("Animals", state.filteredItems[0].list.title)
     }
 
     @Test
@@ -190,6 +165,21 @@ class DicteeListViewModelTest {
             val effect = awaitItem()
             assertTrue(effect is DicteeListEffect.NavigateToWords)
             assertEquals("list1", (effect as DicteeListEffect.NavigateToWords).listId)
+        }
+    }
+
+    @Test
+    fun `edit list emits navigate to edit effect`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(DicteeListIntent.EditList("list1"))
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.NavigateToEdit)
+            assertEquals("list1", (effect as DicteeListEffect.NavigateToEdit).listId)
         }
     }
 
@@ -258,7 +248,7 @@ class DicteeListViewModelTest {
     }
 
     @Test
-    fun `start challenge emits NavigateToChallenge with selected ids and exits select mode`() = runTest {
+    fun `start challenge emits NavigateToChallenge with selected ids`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -314,71 +304,5 @@ class DicteeListViewModelTest {
         }
 
         assertTrue("list1" in viewModel.state.value.selectedListIds)
-    }
-
-    // ── Import CSV tests ─────────────────────────────────────────────────────
-
-    @Test
-    fun `import csv calls use case and emits success toast`() = runTest {
-        val csv = "List,Language,Word\nAnimals,fr,chat\nAnimals,fr,chien"
-        coEvery { importWordListUseCase(csv, any()) } returns 2
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.effects.test {
-            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
-            advanceUntilIdle()
-
-            val effect = awaitItem()
-            assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(
-                com.studybuddy.core.ui.R.string.dictee_imported_count,
-                (effect as DicteeListEffect.ShowToast).messageResId,
-            )
-        }
-
-        assertFalse(viewModel.state.value.isImporting)
-    }
-
-    @Test
-    fun `import csv with zero words emits no words found toast`() = runTest {
-        val csv = "List,Language,Word"
-        coEvery { importWordListUseCase(csv, any()) } returns 0
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.effects.test {
-            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
-            advanceUntilIdle()
-
-            val effect = awaitItem()
-            assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(
-                com.studybuddy.core.ui.R.string.dictee_import_no_words,
-                (effect as DicteeListEffect.ShowToast).messageResId,
-            )
-        }
-    }
-
-    @Test
-    fun `import csv error emits failure toast`() = runTest {
-        val csv = "bad data"
-        coEvery { importWordListUseCase(csv, any()) } throws RuntimeException("parse error")
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        viewModel.effects.test {
-            viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
-            advanceUntilIdle()
-
-            val effect = awaitItem()
-            assertTrue(effect is DicteeListEffect.ShowToast)
-            assertEquals(
-                com.studybuddy.core.ui.R.string.dictee_import_error,
-                (effect as DicteeListEffect.ShowToast).messageResId,
-            )
-        }
-
-        assertFalse(viewModel.state.value.isImporting)
     }
 }

@@ -1,18 +1,17 @@
 package com.studybuddy.feature.dictee.list
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,8 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -37,18 +35,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.SwipeToDismissBox
-import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,23 +53,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.EmptyState
 import com.studybuddy.core.ui.components.LoadingState
+import com.studybuddy.core.ui.components.SearchField
 import com.studybuddy.core.ui.components.StudyBuddyCard
+import com.studybuddy.core.ui.components.SwipeableListCard
 import com.studybuddy.core.ui.modifier.animateItemAppearance
 
 @Composable
 fun DicteeListScreen(
     onNavigateToWords: (String) -> Unit,
     onNavigateToChallenge: (List<String>) -> Unit,
+    onNavigateToAdd: () -> Unit,
+    onNavigateToEdit: (String) -> Unit,
     onNavigateBack: () -> Unit,
     viewModel: DicteeListViewModel = hiltViewModel(),
 ) {
@@ -83,25 +79,19 @@ fun DicteeListScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
 
-    val importLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
-    ) { uri ->
-        uri?.let {
-            val csv = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
-            if (csv != null) {
-                viewModel.onIntent(DicteeListIntent.ImportCsv(csv))
-            }
-        }
-    }
-
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is DicteeListEffect.NavigateToWords -> onNavigateToWords(effect.listId)
+                is DicteeListEffect.NavigateToAdd -> onNavigateToAdd()
+                is DicteeListEffect.NavigateToEdit -> onNavigateToEdit(effect.listId)
                 is DicteeListEffect.NavigateToChallenge -> onNavigateToChallenge(effect.listIds)
                 is DicteeListEffect.ShowUndoSnackbar -> {
                     val result = snackbarHostState.showSnackbar(
-                        message = context.getString(CoreUiR.string.dictee_list_deleted, effect.list.title),
+                        message = context.getString(
+                            CoreUiR.string.dictee_list_deleted,
+                            effect.list.title,
+                        ),
                         actionLabel = context.getString(CoreUiR.string.dictee_undo),
                         duration = SnackbarDuration.Short,
                     )
@@ -110,7 +100,9 @@ fun DicteeListScreen(
                     }
                 }
                 is DicteeListEffect.ShowToast -> {
-                    snackbarHostState.showSnackbar(context.getString(effect.messageResId, *effect.args))
+                    snackbarHostState.showSnackbar(
+                        context.getString(effect.messageResId, *effect.args),
+                    )
                 }
             }
         }
@@ -120,7 +112,7 @@ fun DicteeListScreen(
         state = state,
         snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent,
-        onImportCsv = { importLauncher.launch("text/*") },
+        onNavigateToAdd = onNavigateToAdd,
         onNavigateBack = onNavigateBack,
     )
 }
@@ -131,18 +123,17 @@ private fun DicteeListContent(
     state: DicteeListState,
     snackbarHostState: SnackbarHostState,
     onIntent: (DicteeListIntent) -> Unit,
-    onImportCsv: () -> Unit = {},
+    onNavigateToAdd: () -> Unit = {},
     onNavigateBack: () -> Unit = {},
 ) {
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     Text(
                         if (state.isSelectMode) {
-                            stringResource(
-                                CoreUiR.string.dictee_select_lists,
-                            )
+                            stringResource(CoreUiR.string.dictee_select_lists)
                         } else {
                             stringResource(CoreUiR.string.dictee_list_title)
                         },
@@ -157,18 +148,11 @@ private fun DicteeListContent(
                     }
                 },
                 actions = {
-                    if (!state.isSelectMode) {
-                        TextButton(onClick = onImportCsv) {
-                            Text(stringResource(CoreUiR.string.dictee_import))
-                        }
-                    }
-                    if (state.lists.size >= 2) {
+                    if (state.items.size >= 2) {
                         TextButton(onClick = { onIntent(DicteeListIntent.ToggleSelectMode) }) {
                             Text(
                                 if (state.isSelectMode) {
-                                    stringResource(
-                                        CoreUiR.string.cancel,
-                                    )
+                                    stringResource(CoreUiR.string.cancel)
                                 } else {
                                     stringResource(CoreUiR.string.dictee_mix_lists)
                                 },
@@ -180,8 +164,11 @@ private fun DicteeListContent(
         },
         floatingActionButton = {
             if (!state.isSelectMode) {
-                FloatingActionButton(onClick = { onIntent(DicteeListIntent.ShowCreateDialog) }) {
-                    Icon(Icons.Default.Add, contentDescription = stringResource(CoreUiR.string.dictee_new_list))
+                FloatingActionButton(onClick = onNavigateToAdd) {
+                    Icon(
+                        Icons.Default.Add,
+                        contentDescription = stringResource(CoreUiR.string.dictee_new_list),
+                    )
                 }
             }
         },
@@ -190,35 +177,61 @@ private fun DicteeListContent(
         Box(modifier = Modifier.fillMaxSize().padding(padding)) {
             when {
                 state.isLoading -> LoadingState()
-                state.lists.isEmpty() -> EmptyState(
+                state.items.isEmpty() -> EmptyState(
                     title = stringResource(CoreUiR.string.dictee_no_lists),
                     message = stringResource(CoreUiR.string.dictee_no_lists_hint),
                 )
-                else -> LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                        top = 8.dp,
-                        bottom = if (state.isSelectMode) 100.dp else 80.dp,
-                    ),
-                ) {
-                    itemsIndexed(state.lists, key = { _, it -> it.id }) { index, list ->
-                        val isSelected = list.id in state.selectedListIds
-                        DicteeListItem(
-                            list = list,
-                            isSelectMode = state.isSelectMode,
-                            isSelected = isSelected,
-                            onTap = { onIntent(DicteeListIntent.OpenList(list.id)) },
-                            onDelete = { onIntent(DicteeListIntent.DeleteList(list.id)) },
-                            modifier = Modifier.animateItemAppearance(index),
-                        )
+                else -> {
+                    val filtered = state.filteredItems
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(horizontal = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                            top = 8.dp,
+                            bottom = if (state.isSelectMode) 100.dp else 80.dp,
+                        ),
+                    ) {
+                        // Search field
+                        if (!state.isSelectMode) {
+                            item(key = "search") {
+                                SearchField(
+                                    query = state.searchQuery,
+                                    onQueryChange = {
+                                        onIntent(DicteeListIntent.UpdateSearch(it))
+                                    },
+                                    placeholder = stringResource(
+                                        CoreUiR.string.search_placeholder_dictees,
+                                    ),
+                                    modifier = Modifier.padding(bottom = 4.dp),
+                                )
+                            }
+                        }
+
+                        itemsIndexed(
+                            filtered,
+                            key = { _, it -> it.list.id },
+                        ) { index, item ->
+                            val isSelected = item.list.id in state.selectedListIds
+                            DicteeListCard(
+                                item = item,
+                                isSelectMode = state.isSelectMode,
+                                isSelected = isSelected,
+                                onTap = {
+                                    onIntent(DicteeListIntent.OpenList(item.list.id))
+                                },
+                                onEdit = {
+                                    onIntent(DicteeListIntent.EditList(item.list.id))
+                                },
+                                modifier = Modifier.animateItemAppearance(index),
+                            )
+                        }
                     }
                 }
             }
 
-            // Challenge start bar — slides in from bottom when 2+ lists are selected
+            // Challenge start bar
             AnimatedVisibility(
                 visible = state.isSelectMode && state.canStartChallenge,
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -232,27 +245,15 @@ private fun DicteeListContent(
             }
         }
     }
-
-    if (state.showCreateDialog) {
-        CreateListDialog(
-            title = state.newListTitle,
-            language = state.newListLanguage,
-            onTitleChange = { onIntent(DicteeListIntent.UpdateNewListTitle(it)) },
-            onLanguageChange = { onIntent(DicteeListIntent.UpdateNewListLanguage(it)) },
-            onConfirm = { onIntent(DicteeListIntent.CreateList) },
-            onDismiss = { onIntent(DicteeListIntent.DismissCreateDialog) },
-        )
-    }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun DicteeListItem(
-    list: DicteeList,
+private fun DicteeListCard(
+    item: DicteeListItem,
     isSelectMode: Boolean,
     isSelected: Boolean,
     onTap: () -> Unit,
-    onDelete: () -> Unit,
+    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val borderColor by animateColorAsState(
@@ -261,7 +262,6 @@ private fun DicteeListItem(
     )
 
     if (isSelectMode) {
-        // In select mode: no swipe-to-dismiss, show checkbox overlay
         StudyBuddyCard(
             onClick = onTap,
             modifier = modifier.border(
@@ -270,7 +270,7 @@ private fun DicteeListItem(
                 shape = MaterialTheme.shapes.medium,
             ),
         ) {
-            DicteeListItemContent(list = list, trailingContent = {
+            DicteeCardContent(item = item, trailingContent = {
                 if (isSelected) {
                     Icon(
                         imageVector = Icons.Default.CheckCircle,
@@ -288,55 +288,21 @@ private fun DicteeListItem(
             })
         }
     } else {
-        val dismissState = rememberSwipeToDismissBoxState(
-            confirmValueChange = { value ->
-                if (value == SwipeToDismissBoxValue.EndToStart) {
-                    onDelete()
-                    true
-                } else {
-                    false
-                }
-            },
-        )
-
-        SwipeToDismissBox(
-            state = dismissState,
+        SwipeableListCard(
+            onEdit = onEdit,
             modifier = modifier,
-            backgroundContent = {
-                val color by animateColorAsState(
-                    targetValue = if (dismissState.targetValue == SwipeToDismissBoxValue.EndToStart) {
-                        MaterialTheme.colorScheme.error
-                    } else {
-                        Color.Transparent
-                    },
-                    label = "swipe-bg",
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(color, MaterialTheme.shapes.medium)
-                        .padding(horizontal = 20.dp),
-                    contentAlignment = Alignment.CenterEnd,
-                ) {
-                    Icon(
-                        Icons.Default.Delete,
-                        contentDescription = stringResource(CoreUiR.string.dictee_delete),
-                        tint = Color.White,
-                    )
-                }
-            },
-            enableDismissFromStartToEnd = false,
         ) {
             StudyBuddyCard(onClick = onTap) {
-                DicteeListItemContent(list = list)
+                DicteeCardContent(item = item)
             }
         }
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DicteeListItemContent(
-    list: DicteeList,
+private fun DicteeCardContent(
+    item: DicteeListItem,
     trailingContent: @Composable (() -> Unit)? = null,
 ) {
     Column(modifier = Modifier.padding(16.dp)) {
@@ -350,13 +316,13 @@ private fun DicteeListItemContent(
                 modifier = Modifier.weight(1f),
             ) {
                 Text(
-                    text = list.title,
+                    text = item.list.title,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.weight(1f),
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = languageFlag(list.language),
+                    text = languageFlag(item.list.language),
                     style = MaterialTheme.typography.titleLarge,
                 )
             }
@@ -367,13 +333,50 @@ private fun DicteeListItemContent(
         }
         Spacer(modifier = Modifier.height(4.dp))
         Text(
-            text = pluralStringResource(CoreUiR.plurals.dictee_word_count_plural, list.wordCount, list.wordCount),
+            text = pluralStringResource(
+                CoreUiR.plurals.dictee_word_count_plural,
+                item.list.wordCount,
+                item.list.wordCount,
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+
+        // Word preview chips
+        if (item.wordPreview.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                item.wordPreview.forEach { word ->
+                    AssistChip(
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = word,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        },
+                    )
+                }
+                if (item.list.wordCount > item.wordPreview.size) {
+                    AssistChip(
+                        onClick = {},
+                        label = {
+                            Text(
+                                text = "+${item.list.wordCount - item.wordPreview.size}",
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        },
+                    )
+                }
+            }
+        }
+
         Spacer(modifier = Modifier.height(8.dp))
-        val masteryPercent = if (list.wordCount > 0) {
-            list.masteredCount.toFloat() / list.wordCount
+        val masteryPercent = if (item.list.wordCount > 0) {
+            item.list.masteredCount.toFloat() / item.list.wordCount
         } else {
             0f
         }
@@ -401,7 +404,6 @@ private fun ChallengeStartBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(horizontal = 20.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -415,77 +417,6 @@ private fun ChallengeStartBar(
             Text(stringResource(CoreUiR.string.dictee_start_challenge))
         }
     }
-}
-
-@Composable
-private fun CreateListDialog(
-    title: String,
-    language: String,
-    onTitleChange: (String) -> Unit,
-    onLanguageChange: (String) -> Unit,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(stringResource(CoreUiR.string.dictee_new_word_list)) },
-        text = {
-            Column {
-                OutlinedTextField(
-                    value = title,
-                    onValueChange = onTitleChange,
-                    label = { Text(stringResource(CoreUiR.string.dictee_list_title_label)) },
-                    placeholder = { Text(stringResource(CoreUiR.string.dictee_list_title_hint)) },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                Text(stringResource(CoreUiR.string.dictee_language), style = MaterialTheme.typography.labelMedium)
-                Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(
-                        space = 8.dp,
-                        alignment = Alignment.CenterHorizontally,
-                    ),
-                ) {
-                    SupportedLocale.entries.forEach { locale ->
-                        val isSelected = language == locale.code
-                        TextButton(
-                            onClick = { onLanguageChange(locale.code) },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                Text(
-                                    text = languageFlag(locale.code),
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                                Text(
-                                    text = locale.displayName,
-                                    color = if (isSelected) {
-                                        MaterialTheme.colorScheme.primary
-                                    } else {
-                                        MaterialTheme.colorScheme.onSurfaceVariant
-                                    },
-                                    style = MaterialTheme.typography.labelMedium,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onConfirm, enabled = title.isNotBlank()) {
-                Text(stringResource(CoreUiR.string.dictee_create))
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) { Text(stringResource(CoreUiR.string.cancel)) }
-        },
-    )
 }
 
 private fun languageFlag(code: String): String = when (code) {
@@ -507,26 +438,32 @@ private fun DicteeListScreenPreview() {
     DicteeListContent(
         state = DicteeListState(
             isLoading = false,
-            lists = listOf(
-                DicteeList(
-                    id = "1",
-                    profileId = "p",
-                    title = "Les Animaux",
-                    language = "fr",
-                    wordCount = 10,
-                    masteredCount = 7,
-                    createdAt = kotlinx.datetime.Clock.System.now(),
-                    updatedAt = kotlinx.datetime.Clock.System.now(),
+            items = listOf(
+                DicteeListItem(
+                    list = DicteeList(
+                        id = "1",
+                        profileId = "p",
+                        title = "Les Animaux",
+                        language = "fr",
+                        wordCount = 10,
+                        masteredCount = 7,
+                        createdAt = kotlinx.datetime.Clock.System.now(),
+                        updatedAt = kotlinx.datetime.Clock.System.now(),
+                    ),
+                    wordPreview = listOf("chat", "chien", "oiseau", "poisson"),
                 ),
-                DicteeList(
-                    id = "2",
-                    profileId = "p",
-                    title = "Week 2 — Colours",
-                    language = "fr",
-                    wordCount = 8,
-                    masteredCount = 3,
-                    createdAt = kotlinx.datetime.Clock.System.now(),
-                    updatedAt = kotlinx.datetime.Clock.System.now(),
+                DicteeListItem(
+                    list = DicteeList(
+                        id = "2",
+                        profileId = "p",
+                        title = "Week 2 \u2014 Colours",
+                        language = "fr",
+                        wordCount = 8,
+                        masteredCount = 3,
+                        createdAt = kotlinx.datetime.Clock.System.now(),
+                        updatedAt = kotlinx.datetime.Clock.System.now(),
+                    ),
+                    wordPreview = listOf("rouge", "bleu", "vert"),
                 ),
             ),
         ),
@@ -543,26 +480,30 @@ private fun DicteeListSelectModePreview() {
             isLoading = false,
             isSelectMode = true,
             selectedListIds = setOf("1"),
-            lists = listOf(
-                DicteeList(
-                    id = "1",
-                    profileId = "p",
-                    title = "Les Animaux",
-                    language = "fr",
-                    wordCount = 10,
-                    masteredCount = 7,
-                    createdAt = kotlinx.datetime.Clock.System.now(),
-                    updatedAt = kotlinx.datetime.Clock.System.now(),
+            items = listOf(
+                DicteeListItem(
+                    list = DicteeList(
+                        id = "1",
+                        profileId = "p",
+                        title = "Les Animaux",
+                        language = "fr",
+                        wordCount = 10,
+                        masteredCount = 7,
+                        createdAt = kotlinx.datetime.Clock.System.now(),
+                        updatedAt = kotlinx.datetime.Clock.System.now(),
+                    ),
                 ),
-                DicteeList(
-                    id = "2",
-                    profileId = "p",
-                    title = "Week 2 — Colours",
-                    language = "fr",
-                    wordCount = 8,
-                    masteredCount = 3,
-                    createdAt = kotlinx.datetime.Clock.System.now(),
-                    updatedAt = kotlinx.datetime.Clock.System.now(),
+                DicteeListItem(
+                    list = DicteeList(
+                        id = "2",
+                        profileId = "p",
+                        title = "Week 2 \u2014 Colours",
+                        language = "fr",
+                        wordCount = 8,
+                        masteredCount = 3,
+                        createdAt = kotlinx.datetime.Clock.System.now(),
+                        updatedAt = kotlinx.datetime.Clock.System.now(),
+                    ),
                 ),
             ),
         ),
