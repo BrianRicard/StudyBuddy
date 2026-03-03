@@ -13,7 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.unit.dp
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
 
 @Composable
 fun StudyBuddyProgressBar(
@@ -26,18 +26,20 @@ fun StudyBuddyProgressBar(
         label = "progress",
     )
 
+    val barHeight = AdaptiveDimensDefaults.current().progressBarHeight
+
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(8.dp)
-            .clip(RoundedCornerShape(4.dp))
+            .height(barHeight)
+            .clip(RoundedCornerShape(barHeight / 2))
             .background(MaterialTheme.colorScheme.surfaceVariant),
     ) {
         Box(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth(animatedProgress)
-                .clip(RoundedCornerShape(4.dp))
+                .clip(RoundedCornerShape(barHeight / 2))
                 .background(MaterialTheme.colorScheme.primary),
         )
     }

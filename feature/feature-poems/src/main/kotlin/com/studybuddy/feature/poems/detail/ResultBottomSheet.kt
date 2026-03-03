@@ -50,7 +50,7 @@ private val IncorrectBg = Color(0xFFFFCDD2)
 private val UnclearBg = Color(0xFFFFF9C4)
 private const val SKIPPED_ALPHA = 0.35f
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ResultBottomSheet(
     score: PoemScore,
@@ -65,97 +65,118 @@ fun ResultBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .padding(bottom = 32.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Text(
-                text = stringResource(CoreUiR.string.poems_result_title),
-                style = MaterialTheme.typography.titleLarge,
-            )
+        ResultContent(
+            score = score,
+            words = words,
+            onTapWord = onTapWord,
+            onTryAgain = onTryAgain,
+        )
+    }
+}
 
+/**
+ * The inner content of poem scoring results. Used inside [ResultBottomSheet] on COMPACT,
+ * and rendered inline on EXPANDED tablet layouts.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun ResultContent(
+    score: PoemScore,
+    words: List<WordInfo>,
+    onTapWord: (Int) -> Unit,
+    onTryAgain: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 24.dp)
+            .padding(bottom = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = stringResource(CoreUiR.string.poems_result_title),
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Star rating
+        AnimatedStarRating(starCount = score.starRating)
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        // Encouragement
+        Text(
+            text = stringResource(score.encouragementResId),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Colour legend
+        ColourLegend()
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // All words coloured by state
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            words.forEach { word ->
+                ScoredWord(
+                    word = word,
+                    onClick = { onTapWord(word.globalIndex) },
+                )
+            }
+        }
+
+        // Words to practise
+        val practiceWords = words.filter {
+            it.state == WordState.INCORRECT || it.state == WordState.UNCLEAR
+        }
+        if (practiceWords.isNotEmpty()) {
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Star rating
-            AnimatedStarRating(starCount = score.starRating)
-
+            Text(
+                text = stringResource(CoreUiR.string.poems_words_to_practise),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = stringResource(CoreUiR.string.poems_tap_word_to_hear),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.fillMaxWidth(),
+            )
             Spacer(modifier = Modifier.height(8.dp))
 
-            // Encouragement
-            Text(
-                text = stringResource(score.encouragementResId),
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.primary,
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // Colour legend
-            ColourLegend()
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            // All words coloured by state
             FlowRow(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
-                words.forEach { word ->
+                practiceWords.forEach { word ->
                     ScoredWord(
                         word = word,
                         onClick = { onTapWord(word.globalIndex) },
                     )
                 }
             }
+        }
 
-            // Words to practise
-            val practiceWords = words.filter {
-                it.state == WordState.INCORRECT || it.state == WordState.UNCLEAR
-            }
-            if (practiceWords.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
-                Text(
-                    text = stringResource(CoreUiR.string.poems_words_to_practise),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = stringResource(CoreUiR.string.poems_tap_word_to_hear),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    practiceWords.forEach { word ->
-                        ScoredWord(
-                            word = word,
-                            onClick = { onTapWord(word.globalIndex) },
-                        )
-                    }
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Button(
-                onClick = onTryAgain,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Text(stringResource(CoreUiR.string.poems_try_again))
-            }
+        Button(
+            onClick = onTryAgain,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(CoreUiR.string.poems_try_again))
         }
     }
 }
@@ -251,7 +272,7 @@ private fun ScoredWord(
         TextDecoration.None
     }
 
-    val alpha = if (word.state == WordState.SKIPPED) SKIPPED_ALPHA else 1f
+    val wordAlpha = if (word.state == WordState.SKIPPED) SKIPPED_ALPHA else 1f
 
     Box(
         modifier = Modifier
@@ -259,7 +280,7 @@ private fun ScoredWord(
             .background(backgroundColor)
             .clickable(onClick = onClick)
             .padding(horizontal = 4.dp, vertical = 2.dp)
-            .alpha(alpha),
+            .alpha(wordAlpha),
     ) {
         Text(
             text = word.text,

@@ -13,5 +13,6 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.lottie.compose)
     api(libs.compose.material3)
+    api(libs.compose.material3.window.size)
     implementation(libs.bundles.lifecycle)
 }

@@ -29,6 +29,8 @@ datastore = "1.1.1"
 work-manager = "2.10.0"
 core-ktx = "1.15.0"
 activity-compose = "1.9.3"
+adaptive = "1.1.0-alpha07"
+adaptive-navigation-suite = "1.4.0-alpha01"
 ktor = "2.3.12"
 
 [libraries]
@@ -42,6 +44,10 @@ compose-material-icons-extended = { group = "androidx.compose.material", name = 
 compose-animation = { group = "androidx.compose.animation", name = "animation" }
 compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
 compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
+compose-material3-window-size = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+
+# Adaptive
+material3-adaptive-navigation-suite = { group = "androidx.compose.material3", name = "material3-adaptive-navigation-suite", version.ref = "adaptive-navigation-suite" }
 
 # Navigation
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }

@@ -12,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.studybuddy.core.ui.adaptive.LayoutType
+import com.studybuddy.core.ui.adaptive.LocalLayoutType
 import com.studybuddy.core.ui.theme.PointsGold
 
 @Composable
@@ -19,6 +21,13 @@ fun PointsBadge(
     points: Long,
     modifier: Modifier = Modifier,
 ) {
+    val textStyle = when (LocalLayoutType.current) {
+        LayoutType.COMPACT -> MaterialTheme.typography.labelLarge
+        LayoutType.MEDIUM,
+        LayoutType.EXPANDED,
+        -> MaterialTheme.typography.titleSmall
+    }
+
     Surface(
         modifier = modifier,
         shape = MaterialTheme.shapes.small,
@@ -34,7 +43,7 @@ fun PointsBadge(
             Spacer(modifier = Modifier.width(4.dp))
             Text(
                 text = points.toString(),
-                style = MaterialTheme.typography.labelLarge,
+                style = textStyle,
                 color = MaterialTheme.colorScheme.onBackground,
             )
         }

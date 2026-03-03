@@ -28,12 +28,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
 
 private val TileCornerRadius = RoundedCornerShape(12.dp)
 private val SlotCornerRadius = RoundedCornerShape(12.dp)
-private val TileSize = 48.dp
 private val WarmCream = Color(0xFFFFF8E1)
 private val FilledSlotBg = Color(0xFFE8EAF6) // Light indigo
 private val EmptySlotBorder = Color(0xFFBDBDBD)
@@ -59,6 +60,8 @@ fun LetterTileInput(
     onRemoveFromSlot: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val tileSize = AdaptiveDimensDefaults.current().letterCardSize
+
     Column(
         modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,6 +75,7 @@ fun LetterTileInput(
             answerSlots.forEachIndexed { index, letter ->
                 AnswerSlot(
                     letter = letter,
+                    size = tileSize,
                     onClick = {
                         if (enabled && letter != null) {
                             onRemoveFromSlot(index)
@@ -96,6 +100,7 @@ fun LetterTileInput(
                 AvailableTile(
                     letter = tile.letter,
                     isUsed = tile.isUsed,
+                    size = tileSize,
                     onClick = {
                         if (enabled && !tile.isUsed) {
                             onTapTile(index)
@@ -110,6 +115,7 @@ fun LetterTileInput(
 @Composable
 private fun AnswerSlot(
     letter: Char?,
+    size: Dp,
     onClick: () -> Unit,
 ) {
     val backgroundColor by animateColorAsState(
@@ -120,7 +126,7 @@ private fun AnswerSlot(
 
     Box(
         modifier = Modifier
-            .size(TileSize)
+            .size(size)
             .clip(SlotCornerRadius)
             .background(backgroundColor)
             .clickable(enabled = letter != null, onClick = onClick)
@@ -147,7 +153,7 @@ private fun AnswerSlot(
             // Empty slot — show underline
             Box(
                 modifier = Modifier
-                    .width(TileSize - 12.dp)
+                    .width(size - 12.dp)
                     .height(3.dp)
                     .clip(RoundedCornerShape(1.5.dp))
                     .background(EmptySlotBorder)
@@ -162,6 +168,7 @@ private fun AnswerSlot(
 private fun AvailableTile(
     letter: Char,
     isUsed: Boolean,
+    size: Dp,
     onClick: () -> Unit,
 ) {
     val backgroundColor by animateColorAsState(
@@ -178,7 +185,7 @@ private fun AvailableTile(
 
     Box(
         modifier = Modifier
-            .size(TileSize)
+            .size(size)
             .clip(TileCornerRadius)
             .background(backgroundColor)
             .clickable(enabled = !isUsed, onClick = onClick),
