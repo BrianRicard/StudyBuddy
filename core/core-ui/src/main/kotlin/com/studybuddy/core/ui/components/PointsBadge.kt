@@ -24,7 +24,8 @@ fun PointsBadge(
     val textStyle = when (LocalLayoutType.current) {
         LayoutType.COMPACT -> MaterialTheme.typography.labelLarge
         LayoutType.MEDIUM,
-        LayoutType.EXPANDED -> MaterialTheme.typography.titleSmall
+        LayoutType.EXPANDED,
+        -> MaterialTheme.typography.titleSmall
     }
 
     Surface(

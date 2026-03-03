@@ -9,8 +9,10 @@ import androidx.compose.runtime.staticCompositionLocalOf
 enum class LayoutType {
     /** Phone portrait/landscape (<600dp) */
     COMPACT,
+
     /** Tablet portrait or small tablet landscape (600dp–839dp) */
     MEDIUM,
+
     /** Tablet landscape (>=840dp) */
     EXPANDED,
 }

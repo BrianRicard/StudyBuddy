@@ -23,7 +23,6 @@ import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteType
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowWidthSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -92,77 +91,78 @@ class MainActivity : AppCompatActivity() {
             val themeConfig = ThemeConfig.fromId(themeId)
 
             CompositionLocalProvider(LocalLayoutType provides layoutType) {
-            StudyBuddyTheme(themeConfig = themeConfig) {
-                // Wait for DataStore to load before deciding start destination
-                if (isOnboardingComplete == null) {
-                    // Show nothing while loading — avoids wrong-screen flash
-                    return@StudyBuddyTheme
-                }
-
-                val startDestination = if (isOnboardingComplete == true) {
-                    StudyBuddyRoutes.HOME
-                } else {
-                    StudyBuddyRoutes.ONBOARDING
-                }
-
-                val navController = rememberNavController()
-                val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val currentDestination = navBackStackEntry?.destination
-                val currentRoute = currentDestination?.route
-
-                val showNav = currentRoute in BOTTOM_NAV_ROUTES
-
-                // Hide navigation entirely on non-nav screens (onboarding, dictée practice, etc.)
-                val navSuiteType = if (showNav) {
-                    when (layoutType) {
-                        LayoutType.COMPACT -> NavigationSuiteType.NavigationBar
-                        LayoutType.MEDIUM,
-                        LayoutType.EXPANDED -> NavigationSuiteType.NavigationRail
+                StudyBuddyTheme(themeConfig = themeConfig) {
+                    // Wait for DataStore to load before deciding start destination
+                    if (isOnboardingComplete == null) {
+                        // Show nothing while loading — avoids wrong-screen flash
+                        return@StudyBuddyTheme
                     }
-                } else {
-                    NavigationSuiteType.None
-                }
 
-                NavigationSuiteScaffold(
-                    layoutType = navSuiteType,
-                    navigationSuiteItems = {
-                        BOTTOM_NAV_ITEMS.forEach { navItem ->
-                            val isSelected = currentDestination?.hierarchy?.any {
-                                it.route == navItem.route
-                            } == true
-                            item(
-                                icon = {
-                                    Icon(
-                                        imageVector = if (isSelected) {
-                                            navItem.selectedIcon
-                                        } else {
-                                            navItem.unselectedIcon
-                                        },
-                                        contentDescription = stringResource(navItem.labelResId),
-                                        modifier = Modifier.size(24.dp),
-                                    )
-                                },
-                                label = { Text(stringResource(navItem.labelResId)) },
-                                selected = isSelected,
-                                onClick = {
-                                    navController.navigate(navItem.route) {
-                                        popUpTo(navController.graph.findStartDestination().id) {
-                                            saveState = true
-                                        }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                            )
+                    val startDestination = if (isOnboardingComplete == true) {
+                        StudyBuddyRoutes.HOME
+                    } else {
+                        StudyBuddyRoutes.ONBOARDING
+                    }
+
+                    val navController = rememberNavController()
+                    val navBackStackEntry by navController.currentBackStackEntryAsState()
+                    val currentDestination = navBackStackEntry?.destination
+                    val currentRoute = currentDestination?.route
+
+                    val showNav = currentRoute in BOTTOM_NAV_ROUTES
+
+                    // Hide navigation entirely on non-nav screens (onboarding, dictée practice, etc.)
+                    val navSuiteType = if (showNav) {
+                        when (layoutType) {
+                            LayoutType.COMPACT -> NavigationSuiteType.NavigationBar
+                            LayoutType.MEDIUM,
+                            LayoutType.EXPANDED,
+                            -> NavigationSuiteType.NavigationRail
                         }
-                    },
-                ) {
-                    StudyBuddyNavHost(
-                        navController = navController,
-                        startDestination = startDestination,
-                    )
+                    } else {
+                        NavigationSuiteType.None
+                    }
+
+                    NavigationSuiteScaffold(
+                        layoutType = navSuiteType,
+                        navigationSuiteItems = {
+                            BOTTOM_NAV_ITEMS.forEach { navItem ->
+                                val isSelected = currentDestination?.hierarchy?.any {
+                                    it.route == navItem.route
+                                } == true
+                                item(
+                                    icon = {
+                                        Icon(
+                                            imageVector = if (isSelected) {
+                                                navItem.selectedIcon
+                                            } else {
+                                                navItem.unselectedIcon
+                                            },
+                                            contentDescription = stringResource(navItem.labelResId),
+                                            modifier = Modifier.size(24.dp),
+                                        )
+                                    },
+                                    label = { Text(stringResource(navItem.labelResId)) },
+                                    selected = isSelected,
+                                    onClick = {
+                                        navController.navigate(navItem.route) {
+                                            popUpTo(navController.graph.findStartDestination().id) {
+                                                saveState = true
+                                            }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                )
+                            }
+                        },
+                    ) {
+                        StudyBuddyNavHost(
+                            navController = navController,
+                            startDestination = startDestination,
+                        )
+                    }
                 }
-            }
             }
         }
     }

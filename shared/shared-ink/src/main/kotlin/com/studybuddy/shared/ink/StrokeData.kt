@@ -26,7 +26,10 @@ data class NormalizedStrokePoint(
 /**
  * Normalize a pixel-space [StrokePoint] to [0..1] fractions of the given canvas dimensions.
  */
-fun StrokePoint.normalize(canvasWidth: Float, canvasHeight: Float): NormalizedStrokePoint {
+fun StrokePoint.normalize(
+    canvasWidth: Float,
+    canvasHeight: Float,
+): NormalizedStrokePoint {
     return NormalizedStrokePoint(
         xFraction = if (canvasWidth > 0f) x / canvasWidth else 0f,
         yFraction = if (canvasHeight > 0f) y / canvasHeight else 0f,
@@ -38,7 +41,10 @@ fun StrokePoint.normalize(canvasWidth: Float, canvasHeight: Float): NormalizedSt
 /**
  * Denormalize a [NormalizedStrokePoint] back to pixel-space for the given canvas dimensions.
  */
-fun NormalizedStrokePoint.denormalize(canvasWidth: Float, canvasHeight: Float): StrokePoint {
+fun NormalizedStrokePoint.denormalize(
+    canvasWidth: Float,
+    canvasHeight: Float,
+): StrokePoint {
     return StrokePoint(
         x = xFraction * canvasWidth,
         y = yFraction * canvasHeight,

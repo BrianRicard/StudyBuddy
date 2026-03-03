@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
@@ -209,12 +208,18 @@ private fun PoemDetailCompactContent(
                 isReadingAloud = state.isReadingAloud,
                 amplitude = state.currentAmplitude,
                 onMicClick = {
-                    if (isRecording) onIntent(PoemDetailIntent.StopRecording)
-                    else onIntent(PoemDetailIntent.StartRecording)
+                    if (isRecording) {
+                        onIntent(PoemDetailIntent.StopRecording)
+                    } else {
+                        onIntent(PoemDetailIntent.StartRecording)
+                    }
                 },
                 onTtsClick = {
-                    if (state.isReadingAloud) onIntent(PoemDetailIntent.StopReadAloud)
-                    else onIntent(PoemDetailIntent.StartReadAloud)
+                    if (state.isReadingAloud) {
+                        onIntent(PoemDetailIntent.StopReadAloud)
+                    } else {
+                        onIntent(PoemDetailIntent.StartReadAloud)
+                    }
                 },
             )
         },
@@ -278,12 +283,18 @@ private fun PoemDetailMediumContent(
                 isReadingAloud = state.isReadingAloud,
                 amplitude = state.currentAmplitude,
                 onMicClick = {
-                    if (isRecording) onIntent(PoemDetailIntent.StopRecording)
-                    else onIntent(PoemDetailIntent.StartRecording)
+                    if (isRecording) {
+                        onIntent(PoemDetailIntent.StopRecording)
+                    } else {
+                        onIntent(PoemDetailIntent.StartRecording)
+                    }
                 },
                 onTtsClick = {
-                    if (state.isReadingAloud) onIntent(PoemDetailIntent.StopReadAloud)
-                    else onIntent(PoemDetailIntent.StartReadAloud)
+                    if (state.isReadingAloud) {
+                        onIntent(PoemDetailIntent.StopReadAloud)
+                    } else {
+                        onIntent(PoemDetailIntent.StartReadAloud)
+                    }
                 },
             )
         },
@@ -394,12 +405,18 @@ private fun PoemDetailExpandedContent(
                             isReadingAloud = state.isReadingAloud,
                             amplitude = state.currentAmplitude,
                             onMicClick = {
-                                if (isRecording) onIntent(PoemDetailIntent.StopRecording)
-                                else onIntent(PoemDetailIntent.StartRecording)
+                                if (isRecording) {
+                                    onIntent(PoemDetailIntent.StopRecording)
+                                } else {
+                                    onIntent(PoemDetailIntent.StartRecording)
+                                }
                             },
                             onTtsClick = {
-                                if (state.isReadingAloud) onIntent(PoemDetailIntent.StopReadAloud)
-                                else onIntent(PoemDetailIntent.StartReadAloud)
+                                if (state.isReadingAloud) {
+                                    onIntent(PoemDetailIntent.StopReadAloud)
+                                } else {
+                                    onIntent(PoemDetailIntent.StartReadAloud)
+                                }
                             },
                         )
                     }
