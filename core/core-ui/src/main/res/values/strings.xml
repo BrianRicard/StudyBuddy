@@ -444,6 +444,8 @@
     <string name="poems_import_failed">Could not import file. Check the format and try again.</string>
     <string name="poems_no_my_poems">No poems yet.\nTap + to create or import one!</string>
     <string name="poems_or_import">Or import from a file</string>
+    <string name="poems_delete">Delete poem</string>
+    <string name="poems_deleted">Poem deleted</string>
 
     <!-- Encouragement messages -->
     <string name="encourage_1">Great job!</string>

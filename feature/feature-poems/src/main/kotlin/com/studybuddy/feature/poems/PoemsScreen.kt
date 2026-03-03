@@ -21,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -158,8 +159,10 @@ private fun PoemsContent(
                 else -> {
                     PoemsList(
                         poems = state.displayPoems,
+                        tab = state.selectedTab,
                         onPoemClick = { onIntent(PoemsIntent.OpenPoem(it.id)) },
                         onFavouriteClick = { onIntent(PoemsIntent.ToggleFavourite(it)) },
+                        onDeleteClick = { onIntent(PoemsIntent.DeletePoem(it)) },
                     )
                 }
             }
@@ -201,18 +204,22 @@ private fun LanguageChip(
 @Composable
 private fun PoemsList(
     poems: List<Poem>,
+    tab: PoemsTab,
     onPoemClick: (Poem) -> Unit,
     onFavouriteClick: (Poem) -> Unit,
+    onDeleteClick: (Poem) -> Unit,
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(16.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 88.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(poems, key = { it.id }) { poem ->
             PoemCard(
                 poem = poem,
+                showDelete = tab == PoemsTab.MY_POEMS,
                 onClick = { onPoemClick(poem) },
                 onFavouriteClick = { onFavouriteClick(poem) },
+                onDeleteClick = { onDeleteClick(poem) },
             )
         }
     }
@@ -221,8 +228,10 @@ private fun PoemsList(
 @Composable
 private fun PoemCard(
     poem: Poem,
+    showDelete: Boolean,
     onClick: () -> Unit,
     onFavouriteClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -265,6 +274,15 @@ private fun PoemCard(
                 )
             }
             Spacer(modifier = Modifier.width(8.dp))
+            if (showDelete) {
+                IconButton(onClick = onDeleteClick) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = stringResource(CoreUiR.string.poems_delete),
+                        tint = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
             IconButton(onClick = onFavouriteClick) {
                 Icon(
                     imageVector = if (poem.isFavourite) {
