@@ -29,12 +29,23 @@ data class PoemsState(
     val isLoading: Boolean = true,
     val selectedLanguage: String = "en",
     val selectedTab: PoemsTab = PoemsTab.BROWSE,
+    val searchQuery: String = "",
 ) {
     val displayPoems: List<Poem>
-        get() = when (selectedTab) {
-            PoemsTab.BROWSE -> poems
-            PoemsTab.FAVOURITES -> favourites
-            PoemsTab.MY_POEMS -> userPoems
+        get() {
+            val base = when (selectedTab) {
+                PoemsTab.BROWSE -> poems
+                PoemsTab.FAVOURITES -> favourites
+                PoemsTab.MY_POEMS -> userPoems
+            }
+            return if (searchQuery.isBlank()) {
+                base
+            } else {
+                base.filter {
+                    it.title.contains(searchQuery, ignoreCase = true) ||
+                        it.author.contains(searchQuery, ignoreCase = true)
+                }
+            }
         }
 }
 
@@ -51,6 +62,7 @@ sealed interface PoemsIntent {
     data class OpenPoem(val poemId: String) : PoemsIntent
     data class ToggleFavourite(val poem: Poem) : PoemsIntent
     data class DeletePoem(val poem: Poem) : PoemsIntent
+    data class UpdateSearch(val query: String) : PoemsIntent
 }
 
 sealed interface PoemsEffect {
@@ -91,6 +103,7 @@ class PoemsViewModel @Inject constructor(
             }
             is PoemsIntent.ToggleFavourite -> toggleFavourite(intent.poem)
             is PoemsIntent.DeletePoem -> deletePoem(intent.poem)
+            is PoemsIntent.UpdateSearch -> _state.update { it.copy(searchQuery = intent.query) }
         }
     }
 

@@ -23,7 +23,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -53,6 +52,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PoemSource
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.components.FavoriteToggle
+import com.studybuddy.core.ui.components.SearchField
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
 @Composable
@@ -159,6 +160,8 @@ private fun PoemsContent(
                 else -> {
                     PoemsList(
                         poems = state.displayPoems,
+                        searchQuery = state.searchQuery,
+                        onSearchChange = { onIntent(PoemsIntent.UpdateSearch(it)) },
                         tab = state.selectedTab,
                         onPoemClick = { onIntent(PoemsIntent.OpenPoem(it.id)) },
                         onFavouriteClick = { onIntent(PoemsIntent.ToggleFavourite(it)) },
@@ -204,15 +207,25 @@ private fun LanguageChip(
 @Composable
 private fun PoemsList(
     poems: List<Poem>,
+    searchQuery: String,
+    onSearchChange: (String) -> Unit,
     tab: PoemsTab,
     onPoemClick: (Poem) -> Unit,
     onFavouriteClick: (Poem) -> Unit,
     onDeleteClick: (Poem) -> Unit,
 ) {
     LazyColumn(
-        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 88.dp),
+        contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 88.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
+        item(key = "search") {
+            SearchField(
+                query = searchQuery,
+                onQueryChange = onSearchChange,
+                placeholder = stringResource(CoreUiR.string.search_placeholder_poems),
+                modifier = Modifier.padding(bottom = 4.dp),
+            )
+        }
         items(poems, key = { it.id }) { poem ->
             PoemCard(
                 poem = poem,
@@ -283,21 +296,10 @@ private fun PoemCard(
                     )
                 }
             }
-            IconButton(onClick = onFavouriteClick) {
-                Icon(
-                    imageVector = if (poem.isFavourite) {
-                        Icons.Filled.Favorite
-                    } else {
-                        Icons.Filled.FavoriteBorder
-                    },
-                    contentDescription = stringResource(CoreUiR.string.poems_favourite),
-                    tint = if (poem.isFavourite) {
-                        MaterialTheme.colorScheme.primary
-                    } else {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    },
-                )
-            }
+            FavoriteToggle(
+                isFavorite = poem.isFavourite,
+                onToggle = onFavouriteClick,
+            )
         }
     }
 }
