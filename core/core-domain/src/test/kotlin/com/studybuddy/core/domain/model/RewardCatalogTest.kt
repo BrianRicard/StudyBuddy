@@ -273,6 +273,69 @@ class RewardCatalogTest {
         }
     }
 
+    // ── Upgrade stability tests ──────────────────────────────────────────
+
+    /**
+     * Verifies that all canonical item IDs remain present in the catalog.
+     * If an ID is removed or renamed, existing OwnedRewardEntity rows referencing
+     * that ID become orphaned (the user loses access to their purchase).
+     */
+    @Test
+    fun `catalog preserves all canonical item IDs across versions`() {
+        val expectedIds = setOf(
+            // Characters
+            "char_bunny", "char_squirrel", "char_dog", "char_fox", "char_cat",
+            "char_unicorn", "char_panda", "char_butterfly", "char_owl", "char_dragon",
+            "char_bear", "char_blue_monster", "char_shrimp", "char_shark", "char_octopus",
+            "char_moose", "char_canada_goose", "char_turkey",
+            // Hats
+            "hat_none", "hat_tophat", "hat_party", "hat_crown", "hat_wizard",
+            // Face
+            "face_none", "face_shades", "face_mask", "face_monocle",
+            // Outfit
+            "outfit_none",
+            // Pets
+            "pet_none", "pet_chick", "pet_fish",
+            // Themes
+            "theme_sunset", "theme_ocean", "theme_forest", "theme_galaxy",
+            "theme_candy", "theme_arctic", "theme_maple",
+            // Effects
+            "effect_confetti", "effect_stars", "effect_fireworks", "effect_rainbow",
+            "effect_maple_storm", "effect_rockstar", "effect_champion",
+            "effect_unicorn", "effect_dragon",
+            // Sounds
+            "sound_chime", "sound_goose", "sound_musical", "sound_fanfare", "sound_arcade",
+            // Titles
+            "title_rising_star", "title_word_wizard", "title_speed_demon",
+            "title_streak_champion", "title_perfect_scholar", "title_star_collector",
+            "title_polyglot", "title_grand_master", "title_true_north", "title_mix_master",
+        )
+        val actualIds = RewardCatalog.allItems.map { it.id }.toSet()
+        val missing = expectedIds - actualIds
+        assertTrue(missing.isEmpty(), "Canonical item IDs missing from catalog (would orphan purchases): $missing")
+    }
+
+    @Test
+    fun `starter item IDs all resolve to catalog items`() {
+        RewardCatalog.starterItemIds.forEach { id ->
+            assertNotNull(
+                RewardCatalog.getItemById(id),
+                "Starter item '$id' is not in the catalog — onOpen backfill and runtime union would fail",
+            )
+        }
+    }
+
+    @Test
+    fun `character reward IDs match character body IDs`() {
+        RewardCatalog.characters.forEach { body ->
+            val rewardId = RewardCatalog.characterRewardId(body.id)
+            assertNotNull(
+                RewardCatalog.getItemById(rewardId),
+                "Character body '${body.id}' has no matching reward item '$rewardId'",
+            )
+        }
+    }
+
     @Test
     fun `character prices increase across tiers`() {
         val chars = RewardCatalog.characterItems.filter { it.cost > 0 }

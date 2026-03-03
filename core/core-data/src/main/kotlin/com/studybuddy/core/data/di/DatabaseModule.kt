@@ -6,7 +6,9 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.work.WorkManager
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.data.db.Migrations
 import com.studybuddy.core.data.db.StudyBuddyDatabase
+import com.studybuddy.core.domain.model.RewardCatalog
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -52,9 +54,31 @@ object DatabaseModule {
                         """.trimIndent(),
                     )
                 }
+
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
+                    // Backfill starter items for the default profile on every open.
+                    // The unique index on (profileId, rewardId) prevents duplicates.
+                    val profileId = AppConstants.DEFAULT_PROFILE_ID
+                    val now = System.currentTimeMillis()
+                    RewardCatalog.starterItemIds.forEach { rewardId ->
+                        val item = RewardCatalog.getItemById(rewardId) ?: return@forEach
+                        db.execSQL(
+                            """
+                            INSERT OR IGNORE INTO owned_rewards
+                                (id, profileId, rewardId, category, purchasedAt)
+                            VALUES (
+                                '${java.util.UUID.randomUUID()}',
+                                '$profileId', '$rewardId',
+                                '${item.category.name}', $now
+                            )
+                            """.trimIndent(),
+                        )
+                    }
+                }
             },
         )
-        .fallbackToDestructiveMigration()
+        .addMigrations(Migrations.MIGRATION_1_2)
         .build()
 
     @Provides
