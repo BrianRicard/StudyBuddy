@@ -404,6 +404,7 @@
     <string name="dictee_undo">Rückgängig</string>
     <string name="dictee_no_words">Noch keine Wörter</string>
     <string name="dictee_no_words_hint">Füge unten Wörter hinzu, um mit dem Üben zu beginnen!</string>
+    <string name="dictee_add_words_first">Füge Wörter zu dieser Liste hinzu, bevor du übst</string>
     <string name="dictee_add_word_error">Wort konnte nicht hinzugefügt werden. Versuche es erneut.</string>
     <string name="dictee_delete_word_error">Wort konnte nicht gelöscht werden.</string>
     <string name="dictee_restore_word_error">Wort konnte nicht wiederhergestellt werden.</string>

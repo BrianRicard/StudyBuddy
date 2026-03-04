@@ -6,6 +6,7 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
+import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,9 +44,7 @@ class DicteeListViewModel @Inject constructor(
                 if (_state.value.isSelectMode) {
                     onIntent(DicteeListIntent.ToggleListSelection(intent.listId))
                 } else {
-                    viewModelScope.launch {
-                        _effects.emit(DicteeListEffect.NavigateToWords(intent.listId))
-                    }
+                    openList(intent.listId)
                 }
             }
             is DicteeListIntent.EditList -> {
@@ -77,6 +76,21 @@ class DicteeListViewModel @Inject constructor(
                 }
             }
             is DicteeListIntent.StartChallenge -> startChallenge()
+        }
+    }
+
+    private fun openList(listId: String) {
+        val item = _state.value.items.find { it.list.id == listId }
+        if (item != null && item.list.wordCount == 0) {
+            viewModelScope.launch {
+                _effects.emit(
+                    DicteeListEffect.ShowToast(CoreUiR.string.dictee_add_words_first),
+                )
+            }
+            return
+        }
+        viewModelScope.launch {
+            _effects.emit(DicteeListEffect.NavigateToPractice(listId))
         }
     }
 

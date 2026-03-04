@@ -7,7 +7,6 @@ package com.studybuddy.core.ui.navigation
 object StudyBuddyRoutes {
     const val HOME = "home"
     const val DICTEE_LISTS = "dictee/lists"
-    const val DICTEE_WORDS = "dictee/words/{listId}"
     const val DICTEE_PRACTICE = "dictee/practice/{listId}"
 
     // listIds = pipe-separated UUIDs, e.g. "uuid1|uuid2|uuid3"
@@ -34,7 +33,6 @@ object StudyBuddyRoutes {
     fun dicteeEdit(setId: String) = "dictee/edit/$setId"
     const val ONBOARDING = "onboarding"
 
-    fun dicteeWords(listId: String) = "dictee/words/$listId"
     fun dicteePractice(listId: String) = "dictee/practice/$listId"
     fun dicteeChallenge(listIds: List<String>) = "dictee/challenge/${listIds.joinToString("|")}"
 

@@ -44,7 +44,7 @@ sealed interface DicteeListIntent {
 }
 
 sealed interface DicteeListEffect {
-    data class NavigateToWords(val listId: String) : DicteeListEffect
+    data class NavigateToPractice(val listId: String) : DicteeListEffect
     data class NavigateToAdd(val unused: Unit = Unit) : DicteeListEffect
     data class NavigateToEdit(val listId: String) : DicteeListEffect
     data class ShowUndoSnackbar(val list: DicteeList) : DicteeListEffect
