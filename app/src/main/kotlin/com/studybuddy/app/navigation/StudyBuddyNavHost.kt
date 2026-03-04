@@ -17,7 +17,6 @@ import com.studybuddy.feature.backup.BackupExportScreen
 import com.studybuddy.feature.dictee.add.AddDicteeScreen
 import com.studybuddy.feature.dictee.list.DicteeListScreen
 import com.studybuddy.feature.dictee.practice.DicteePracticeScreen
-import com.studybuddy.feature.dictee.words.DicteeWordEntryScreen
 import com.studybuddy.feature.home.HomeScreen
 import com.studybuddy.feature.math.challenge.MathChallengeScreen
 import com.studybuddy.feature.math.play.MathPlayScreen
@@ -136,8 +135,8 @@ fun StudyBuddyNavHost(
         // Dictée flow
         composable(route = StudyBuddyRoutes.DICTEE_LISTS) {
             DicteeListScreen(
-                onNavigateToWords = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteeWords(listId))
+                onNavigateToPractice = { listId ->
+                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
                 },
                 onNavigateToChallenge = { listIds ->
                     navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
@@ -163,18 +162,6 @@ fun StudyBuddyNavHost(
             arguments = listOf(navArgument("setId") { type = NavType.StringType }),
         ) {
             AddDicteeScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
-        }
-
-        composable(
-            route = StudyBuddyRoutes.DICTEE_WORDS,
-            arguments = listOf(navArgument("listId") { type = NavType.StringType }),
-        ) {
-            DicteeWordEntryScreen(
-                onNavigateToPractice = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
-                },
                 onNavigateBack = { navController.popBackStack() },
             )
         }

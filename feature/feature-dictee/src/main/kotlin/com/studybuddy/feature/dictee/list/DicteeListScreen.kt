@@ -68,7 +68,7 @@ import com.studybuddy.core.ui.modifier.animateItemAppearance
 
 @Composable
 fun DicteeListScreen(
-    onNavigateToWords: (String) -> Unit,
+    onNavigateToPractice: (String) -> Unit,
     onNavigateToChallenge: (List<String>) -> Unit,
     onNavigateToAdd: () -> Unit,
     onNavigateToEdit: (String) -> Unit,
@@ -82,7 +82,7 @@ fun DicteeListScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is DicteeListEffect.NavigateToWords -> onNavigateToWords(effect.listId)
+                is DicteeListEffect.NavigateToPractice -> onNavigateToPractice(effect.listId)
                 is DicteeListEffect.NavigateToAdd -> onNavigateToAdd()
                 is DicteeListEffect.NavigateToEdit -> onNavigateToEdit(effect.listId)
                 is DicteeListEffect.NavigateToChallenge -> onNavigateToChallenge(effect.listIds)

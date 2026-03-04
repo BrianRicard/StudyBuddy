@@ -154,7 +154,7 @@ class DicteeListViewModelTest {
     }
 
     @Test
-    fun `open list emits navigate effect`() = runTest {
+    fun `open list emits navigate to practice effect`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -163,8 +163,46 @@ class DicteeListViewModelTest {
             advanceUntilIdle()
 
             val effect = awaitItem()
-            assertTrue(effect is DicteeListEffect.NavigateToWords)
-            assertEquals("list1", (effect as DicteeListEffect.NavigateToWords).listId)
+            assertTrue(effect is DicteeListEffect.NavigateToPractice)
+            assertEquals("list1", (effect as DicteeListEffect.NavigateToPractice).listId)
+        }
+    }
+
+    @Test
+    fun `open empty list shows toast instead of navigating`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            // list2 has wordCount = 8 but the mock returns empty words list.
+            // However wordCount is set on the DicteeList model itself (8).
+            // We need a list with wordCount = 0 to trigger the guard.
+            // Let's use a fresh list with wordCount = 0.
+        }
+
+        // Create a ViewModel with a list that has 0 words
+        val emptyList = DicteeList(
+            id = "empty",
+            profileId = "p1",
+            title = "Empty List",
+            language = "fr",
+            wordCount = 0,
+            masteredCount = 0,
+            createdAt = Instant.fromEpochMilliseconds(0),
+            updatedAt = Instant.fromEpochMilliseconds(0),
+        )
+        every { getDicteeListsUseCase(any()) } returns flowOf(listOf(emptyList))
+        every { dicteeRepository.getWordsForList("empty") } returns flowOf(emptyList())
+
+        val viewModel2 = createViewModel()
+        advanceUntilIdle()
+
+        viewModel2.effects.test {
+            viewModel2.onIntent(DicteeListIntent.OpenList("empty"))
+            advanceUntilIdle()
+
+            val effect = awaitItem()
+            assertTrue(effect is DicteeListEffect.ShowToast)
         }
     }
 
@@ -299,7 +337,7 @@ class DicteeListViewModelTest {
             viewModel.onIntent(DicteeListIntent.OpenList("list1"))
             advanceUntilIdle()
 
-            // Should NOT emit NavigateToWords
+            // Should NOT emit NavigateToPractice
             expectNoEvents()
         }
 

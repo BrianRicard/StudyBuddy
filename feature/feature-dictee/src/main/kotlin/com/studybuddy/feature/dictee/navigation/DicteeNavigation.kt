@@ -10,7 +10,6 @@ import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.feature.dictee.add.AddDicteeScreen
 import com.studybuddy.feature.dictee.list.DicteeListScreen
 import com.studybuddy.feature.dictee.practice.DicteePracticeScreen
-import com.studybuddy.feature.dictee.words.DicteeWordEntryScreen
 
 fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
     navigation(
@@ -19,8 +18,8 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
     ) {
         composable(StudyBuddyRoutes.DICTEE_LISTS) {
             DicteeListScreen(
-                onNavigateToWords = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteeWords(listId))
+                onNavigateToPractice = { listId ->
+                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
                 },
                 onNavigateToChallenge = { listIds ->
                     navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
@@ -46,18 +45,6 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
             arguments = listOf(navArgument("setId") { type = NavType.StringType }),
         ) {
             AddDicteeScreen(
-                onNavigateBack = { navController.popBackStack() },
-            )
-        }
-
-        composable(
-            route = StudyBuddyRoutes.DICTEE_WORDS,
-            arguments = listOf(navArgument("listId") { type = NavType.StringType }),
-        ) {
-            DicteeWordEntryScreen(
-                onNavigateToPractice = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
-                },
                 onNavigateBack = { navController.popBackStack() },
             )
         }
