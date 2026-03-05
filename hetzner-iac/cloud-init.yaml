@@ -15,7 +15,6 @@ package_update: true
 package_upgrade: true
 
 packages:
-  # Base packages
   - git
   - curl
   - wget
@@ -28,76 +27,104 @@ packages:
   - cmake
   - ninja-build
   - pkg-config
-  # KVM / emulator support
-  - qemu-kvm
-  - libvirt-daemon-system
-  - cpu-checker
-  # Java 17
-  - openjdk-17-jdk
-  # Gradle (system-level; per-project Gradle wrappers from the repo are preferred)
-  - gradle
 
 runcmd:
   # ---------------------------------------------------------------
+  # 0. Ensure package index is fresh
+  # ---------------------------------------------------------------
+  - apt-get update -y 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
+
+  # ---------------------------------------------------------------
   # 1. KVM setup
   # ---------------------------------------------------------------
-  - usermod -aG kvm claude
   - |
-    echo "=== KVM check ===" > /var/log/cloud-init-kvm.log
-    kvm-ok >> /var/log/cloud-init-kvm.log 2>&1 || echo "KVM NOT available" >> /var/log/cloud-init-kvm.log
+    echo "=== KVM setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    apt-get install -y qemu-kvm libvirt-daemon-system cpu-checker 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    usermod -aG kvm claude && \
+    usermod -aG libvirt claude && \
+    echo "KVM packages installed, claude added to kvm+libvirt groups" | tee -a /var/log/cloud-init-studybuddy.log
+    kvm-ok 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || echo "KVM NOT available" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
-  # 2. Java — set JAVA_HOME
+  # 2. Java 17
   # ---------------------------------------------------------------
   - |
-    JAVA_DIR=$(dirname $(dirname $(readlink -f $(which java))))
-    echo "JAVA_HOME=${JAVA_DIR}" >> /etc/environment
+    echo "=== Java 17 setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    apt-get install -y openjdk-17-jdk 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    update-java-alternatives --set java-1.17.0-openjdk-amd64 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
+    export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
+    echo "JAVA_HOME=${JAVA_HOME}" >> /etc/environment
+    echo "JAVA_HOME set to ${JAVA_HOME}" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
-  # 3. Android SDK (command-line tools)
+  # 3. Gradle
   # ---------------------------------------------------------------
-  - mkdir -p /opt/android-sdk/cmdline-tools
-  - wget -q -O /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-latest.zip
-  - unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-tools-extract
-  - mv /tmp/cmdline-tools-extract/cmdline-tools /opt/android-sdk/cmdline-tools/latest
-  - rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools-extract
-
-  # Set ANDROID_HOME and update PATH in /etc/environment
   - |
+    echo "=== Gradle setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    apt-get install -y gradle 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
+
+  # ---------------------------------------------------------------
+  # 4. Android SDK (command-line tools)
+  # ---------------------------------------------------------------
+  - |
+    echo "=== Android SDK setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    export ANDROID_HOME=/opt/android-sdk
+    export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+    mkdir -p ${ANDROID_HOME}/cmdline-tools && \
+    wget -q -O /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-latest.zip 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-tools-extract && \
+    mv /tmp/cmdline-tools-extract/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest && \
+    rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools-extract && \
+    echo "cmdline-tools installed" | tee -a /var/log/cloud-init-studybuddy.log
+
+    # Accept licenses
+    yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
+
+    # Install SDK components
+    sdkmanager --sdk_root=${ANDROID_HOME} --install \
+      "platform-tools" \
+      "platforms;android-34" \
+      "build-tools;34.0.0" \
+      "emulator" \
+      "system-images;android-34;google_apis;x86_64" \
+      2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    echo "SDK components installed" | tee -a /var/log/cloud-init-studybuddy.log
+
+    # Make SDK accessible to claude user
+    chown -R claude:claude ${ANDROID_HOME}
+
+    # Symlink adb system-wide
+    ln -sf ${ANDROID_HOME}/platform-tools/adb /usr/local/bin/adb
+
+    # Persist env vars for SSH sessions
     sed -i '/^PATH=/d' /etc/environment
-    echo 'ANDROID_HOME=/opt/android-sdk' >> /etc/environment
-    echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/emulator" >> /etc/environment
-
-  # Accept all SDK licenses non-interactively
-  - yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
-
-  # Install SDK components
-  - /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "emulator" "system-images;android-34;google_apis;x86_64"
-
-  # ---------------------------------------------------------------
-  # 4. ADB — ensure available system-wide
-  # ---------------------------------------------------------------
-  - ln -sf /opt/android-sdk/platform-tools/adb /usr/local/bin/adb
+    echo "ANDROID_HOME=${ANDROID_HOME}" >> /etc/environment
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator" >> /etc/environment
 
   # ---------------------------------------------------------------
   # 5. whisper.cpp
   # ---------------------------------------------------------------
-  - git clone https://github.com/ggerganov/whisper.cpp /opt/whisper.cpp
   - |
-    echo "=== whisper.cpp build ===" > /var/log/cloud-init-whisper.log
-    echo "AVX2 support:" >> /var/log/cloud-init-whisper.log
-    grep -o 'avx2' /proc/cpuinfo | head -1 >> /var/log/cloud-init-whisper.log 2>&1 || echo "AVX2 not detected" >> /var/log/cloud-init-whisper.log
-    cd /opt/whisper.cpp
-    make -j$(nproc) WHISPER_AVX2=1 >> /var/log/cloud-init-whisper.log 2>&1
-    echo "Build exit code: $?" >> /var/log/cloud-init-whisper.log
+    echo "=== whisper.cpp setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    git clone --depth=1 https://github.com/ggerganov/whisper.cpp /opt/whisper.cpp 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    cd /opt/whisper.cpp && \
+    make -j$(nproc) WHISPER_AVX2=1 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    echo "whisper.cpp compiled successfully" | tee -a /var/log/cloud-init-studybuddy.log || \
+    echo "whisper.cpp compilation FAILED" | tee -a /var/log/cloud-init-studybuddy.log
   - bash /opt/whisper.cpp/models/download-ggml-model.sh base
 
   # ---------------------------------------------------------------
   # 6. Node.js 20 LTS + Claude Code
   # ---------------------------------------------------------------
-  - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-  - apt-get install -y nodejs
-  - npm install -g @anthropic-ai/claude-code
+  - |
+    echo "=== Node.js 20 + Claude Code setup ===" | tee -a /var/log/cloud-init-studybuddy.log
+    apt-get update -y 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
+    curl -fsSL https://deb.nodesource.com/setup_20.x | bash - 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    apt-get install -y nodejs 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    echo "Node.js $(node --version) installed" | tee -a /var/log/cloud-init-studybuddy.log
+    npm install -g @anthropic-ai/claude-code 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
+    echo "Claude Code installed" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
   # 7. UFW firewall
@@ -120,18 +147,22 @@ runcmd:
   # ---------------------------------------------------------------
   - |
     LOG=/var/log/cloud-init-studybuddy.log
-    echo "========================================" > $LOG
+    echo "" >> $LOG
+    echo "========================================" >> $LOG
     echo " StudyBuddy VM provisioning summary"     >> $LOG
     echo " $(date -u '+%Y-%m-%d %H:%M:%S UTC')"    >> $LOG
     echo "========================================" >> $LOG
     echo "" >> $LOG
 
+    export ANDROID_HOME=/opt/android-sdk
+    export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
     echo "[hostname]   $(hostname)" >> $LOG
 
     echo "[java]       $(java -version 2>&1 | head -1)" >> $LOG
 
-    echo "[android]    ANDROID_HOME=/opt/android-sdk" >> $LOG
-    /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed 2>/dev/null | head -20 >> $LOG || true
+    echo "[android]    ANDROID_HOME=${ANDROID_HOME}" >> $LOG
+    sdkmanager --sdk_root=${ANDROID_HOME} --list_installed 2>/dev/null | head -20 >> $LOG || true
 
     echo "[adb]        $(adb --version 2>&1 | head -1)" >> $LOG
 
@@ -153,3 +184,8 @@ runcmd:
     echo "Root SSH login disabled" >> $LOG
     echo "" >> $LOG
     echo "Cloud-init provisioning complete." >> $LOG
+
+  # ---------------------------------------------------------------
+  # 10. Completion marker
+  # ---------------------------------------------------------------
+  - echo "cloud-init completed successfully at $(date)" > /var/log/cloud-init-done.flag
