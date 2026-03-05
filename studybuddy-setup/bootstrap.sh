@@ -36,10 +36,12 @@ if gh repo view "$REPO_NAME" &>/dev/null 2>&1; then
     gh repo clone "$REPO_NAME" "$REPO_NAME" 2>/dev/null || true
 else
     echo "  Creating new private repository..."
-    gh repo create "$REPO_NAME" \
-        --private \
-        --description "$REPO_DESC" \
-        --clone
+    # Install GitHub CLI if not present
+if ! command -v gh &> /dev/null; then
+  curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null
+  sudo apt update && sudo apt install gh -y
+fi
 fi
 
 cd "$REPO_NAME"
