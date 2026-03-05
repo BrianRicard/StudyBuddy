@@ -3,6 +3,14 @@
 hostname: studybuddy-dev
 manage_etc_hosts: true
 
+users:
+  - name: claude
+    groups: [sudo, kvm, libvirt]
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+
 package_update: true
 package_upgrade: true
 
@@ -33,7 +41,7 @@ runcmd:
   # ---------------------------------------------------------------
   # 1. KVM setup
   # ---------------------------------------------------------------
-  - usermod -aG kvm ubuntu
+  - usermod -aG kvm claude
   - |
     echo "=== KVM check ===" > /var/log/cloud-init-kvm.log
     kvm-ok >> /var/log/cloud-init-kvm.log 2>&1 || echo "KVM NOT available" >> /var/log/cloud-init-kvm.log
@@ -101,7 +109,14 @@ runcmd:
   - ufw --force enable
 
   # ---------------------------------------------------------------
-  # 8. Final summary log
+  # 8. Disable root SSH login
+  # ---------------------------------------------------------------
+  - sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' /etc/ssh/sshd_config
+  - sed -i 's/^#PermitRootLogin.*/PermitRootLogin no/' /etc/ssh/sshd_config
+  - systemctl restart sshd
+
+  # ---------------------------------------------------------------
+  # 9. Final summary log
   # ---------------------------------------------------------------
   - |
     LOG=/var/log/cloud-init-studybuddy.log
@@ -133,5 +148,8 @@ runcmd:
 
     echo "[ufw]        $(ufw status 2>&1)" >> $LOG
 
+    echo "" >> $LOG
+    echo "Non-root user 'claude' created with sudo and kvm access" >> $LOG
+    echo "Root SSH login disabled" >> $LOG
     echo "" >> $LOG
     echo "Cloud-init provisioning complete." >> $LOG

@@ -12,6 +12,8 @@ OpenTofu (Terraform-compatible) IaC to provision a Hetzner Cloud VM pre-configur
 
 The cloud-init script installs: JDK 17, Android SDK 34, KVM/emulator, whisper.cpp (AVX2), Node.js 20 + Claude Code, Gradle, and UFW.
 
+> **Non-root user:** Claude Code refuses to run as root for security reasons. All SSH access and Claude Code sessions should use the `claude` user, which has passwordless sudo for unattended operations. Root SSH login is disabled after provisioning.
+
 ## Prerequisites
 
 - **OpenTofu >= 1.6** — install via `brew install opentofu` or see [opentofu.org/docs/intro/install](https://opentofu.org/docs/intro/install/)
@@ -42,7 +44,7 @@ After `apply` completes, OpenTofu prints the server IP and an SSH command.
 
 > **Note:** Cloud-init takes 5–10 minutes to finish after the server is created. You can SSH in immediately, but some tools may still be installing. Monitor progress with:
 > ```bash
-> ssh root@<ip> "tail -f /var/log/cloud-init-output.log"
+> ssh claude@<ip> "tail -f /var/log/cloud-init-output.log"
 > ```
 
 ## Connect
@@ -52,7 +54,7 @@ After `apply` completes, OpenTofu prints the server IP and an SSH command.
 tofu output ssh_command
 
 # Or manually
-ssh root@<SERVER_IP>
+ssh claude@<SERVER_IP>
 ```
 
 ## Verify the Setup
@@ -60,27 +62,27 @@ ssh root@<SERVER_IP>
 ### KVM
 
 ```bash
-ssh root@<ip> "kvm-ok"
+ssh claude@<ip> "kvm-ok"
 # Expected: INFO: /dev/kvm exists — KVM acceleration can be used
 ```
 
 ### Android SDK
 
 ```bash
-ssh root@<ip> "adb --version"
-ssh root@<ip> "/opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed"
+ssh claude@<ip> "adb --version"
+ssh claude@<ip> "/opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed"
 ```
 
 ### whisper.cpp
 
 ```bash
-ssh root@<ip> "/opt/whisper.cpp/main -m /opt/whisper.cpp/models/ggml-base.bin --help"
+ssh claude@<ip> "/opt/whisper.cpp/main -m /opt/whisper.cpp/models/ggml-base.bin --help"
 ```
 
 ### Cloud-init summary log
 
 ```bash
-ssh root@<ip> "cat /var/log/cloud-init-studybuddy.log"
+ssh claude@<ip> "cat /var/log/cloud-init-studybuddy.log"
 ```
 
 ## Create an Android AVD
@@ -88,7 +90,7 @@ ssh root@<ip> "cat /var/log/cloud-init-studybuddy.log"
 After cloud-init finishes:
 
 ```bash
-ssh root@<ip>
+ssh claude@<ip>
 
 # Source the environment (or reconnect for a fresh shell)
 source /etc/environment
