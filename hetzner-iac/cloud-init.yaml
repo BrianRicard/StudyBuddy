@@ -1,0 +1,137 @@
+#cloud-config
+
+hostname: studybuddy-dev
+manage_etc_hosts: true
+
+package_update: true
+package_upgrade: true
+
+packages:
+  # Base packages
+  - git
+  - curl
+  - wget
+  - unzip
+  - zip
+  - htop
+  - tmux
+  - ufw
+  - build-essential
+  - cmake
+  - ninja-build
+  - pkg-config
+  # KVM / emulator support
+  - qemu-kvm
+  - libvirt-daemon-system
+  - cpu-checker
+  # Java 17
+  - openjdk-17-jdk
+  # Gradle (system-level; per-project Gradle wrappers from the repo are preferred)
+  - gradle
+
+runcmd:
+  # ---------------------------------------------------------------
+  # 1. KVM setup
+  # ---------------------------------------------------------------
+  - usermod -aG kvm ubuntu
+  - |
+    echo "=== KVM check ===" > /var/log/cloud-init-kvm.log
+    kvm-ok >> /var/log/cloud-init-kvm.log 2>&1 || echo "KVM NOT available" >> /var/log/cloud-init-kvm.log
+
+  # ---------------------------------------------------------------
+  # 2. Java — set JAVA_HOME
+  # ---------------------------------------------------------------
+  - |
+    JAVA_DIR=$(dirname $(dirname $(readlink -f $(which java))))
+    echo "JAVA_HOME=${JAVA_DIR}" >> /etc/environment
+
+  # ---------------------------------------------------------------
+  # 3. Android SDK (command-line tools)
+  # ---------------------------------------------------------------
+  - mkdir -p /opt/android-sdk/cmdline-tools
+  - wget -q -O /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-latest.zip
+  - unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-tools-extract
+  - mv /tmp/cmdline-tools-extract/cmdline-tools /opt/android-sdk/cmdline-tools/latest
+  - rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools-extract
+
+  # Set ANDROID_HOME and update PATH in /etc/environment
+  - |
+    sed -i '/^PATH=/d' /etc/environment
+    echo 'ANDROID_HOME=/opt/android-sdk' >> /etc/environment
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/opt/android-sdk/emulator" >> /etc/environment
+
+  # Accept all SDK licenses non-interactively
+  - yes | /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+
+  # Install SDK components
+  - /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "emulator" "system-images;android-34;google_apis;x86_64"
+
+  # ---------------------------------------------------------------
+  # 4. ADB — ensure available system-wide
+  # ---------------------------------------------------------------
+  - ln -sf /opt/android-sdk/platform-tools/adb /usr/local/bin/adb
+
+  # ---------------------------------------------------------------
+  # 5. whisper.cpp
+  # ---------------------------------------------------------------
+  - git clone https://github.com/ggerganov/whisper.cpp /opt/whisper.cpp
+  - |
+    echo "=== whisper.cpp build ===" > /var/log/cloud-init-whisper.log
+    echo "AVX2 support:" >> /var/log/cloud-init-whisper.log
+    grep -o 'avx2' /proc/cpuinfo | head -1 >> /var/log/cloud-init-whisper.log 2>&1 || echo "AVX2 not detected" >> /var/log/cloud-init-whisper.log
+    cd /opt/whisper.cpp
+    make -j$(nproc) WHISPER_AVX2=1 >> /var/log/cloud-init-whisper.log 2>&1
+    echo "Build exit code: $?" >> /var/log/cloud-init-whisper.log
+  - bash /opt/whisper.cpp/models/download-ggml-model.sh base
+
+  # ---------------------------------------------------------------
+  # 6. Node.js 20 LTS + Claude Code
+  # ---------------------------------------------------------------
+  - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  - apt-get install -y nodejs
+  - npm install -g @anthropic-ai/claude-code
+
+  # ---------------------------------------------------------------
+  # 7. UFW firewall
+  # ---------------------------------------------------------------
+  - ufw allow 22/tcp
+  - ufw allow 8080/tcp
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw --force enable
+
+  # ---------------------------------------------------------------
+  # 8. Final summary log
+  # ---------------------------------------------------------------
+  - |
+    LOG=/var/log/cloud-init-studybuddy.log
+    echo "========================================" > $LOG
+    echo " StudyBuddy VM provisioning summary"     >> $LOG
+    echo " $(date -u '+%Y-%m-%d %H:%M:%S UTC')"    >> $LOG
+    echo "========================================" >> $LOG
+    echo "" >> $LOG
+
+    echo "[hostname]   $(hostname)" >> $LOG
+
+    echo "[java]       $(java -version 2>&1 | head -1)" >> $LOG
+
+    echo "[android]    ANDROID_HOME=/opt/android-sdk" >> $LOG
+    /opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed 2>/dev/null | head -20 >> $LOG || true
+
+    echo "[adb]        $(adb --version 2>&1 | head -1)" >> $LOG
+
+    echo "[kvm]        $(kvm-ok 2>&1 | tail -1)" >> $LOG
+
+    echo "[whisper]    $(ls -la /opt/whisper.cpp/main 2>&1)" >> $LOG
+    echo "[whisper-model] $(ls -la /opt/whisper.cpp/models/ggml-base.bin 2>&1)" >> $LOG
+
+    echo "[node]       $(node --version 2>&1)" >> $LOG
+    echo "[npm]        $(npm --version 2>&1)" >> $LOG
+    echo "[claude]     $(claude --version 2>&1 || echo 'not found')" >> $LOG
+
+    echo "[gradle]     $(gradle --version 2>&1 | head -3)" >> $LOG
+
+    echo "[ufw]        $(ufw status 2>&1)" >> $LOG
+
+    echo "" >> $LOG
+    echo "Cloud-init provisioning complete." >> $LOG
