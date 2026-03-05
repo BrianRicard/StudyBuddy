@@ -11,7 +11,7 @@ set -euo pipefail
 #   ./bootstrap.sh
 #
 # Prerequisites:
-#   - gh CLI installed and authenticated (https://cli.github.com)
+#   - GITHUB_TOKEN environment variable set
 #   - claude CLI installed (Claude Code)
 #   - Git configured with your name and email
 # ═══════════════════════════════════════════════════════════════
@@ -31,17 +31,26 @@ echo ""
 # ─────────────────────────────────────────────────
 echo "▸ Step 1: Creating GitHub repository..."
 
-if gh repo view "$REPO_NAME" &>/dev/null 2>&1; then
-    echo "  Repository '$REPO_NAME' already exists. Cloning..."
-    gh repo clone "$REPO_NAME" "$REPO_NAME" 2>/dev/null || true
-else
-    echo "  Creating new private repository..."
-   # Create private repo via API instead of gh CLI
-curl -s -X POST \
+# Resolve GitHub username via API
+GITHUB_USER=$(curl -s -H "Authorization: token $GITHUB_TOKEN" https://api.github.com/user | grep -o '"login":"[^"]*"' | cut -d'"' -f4)
+
+# Check if repo already exists via API
+HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
   -H "Authorization: token $GITHUB_TOKEN" \
   -H "Accept: application/vnd.github.v3+json" \
-  https://api.github.com/user/repos \
-  -d '{"name":"StudyBuddy","private":true}'
+  "https://api.github.com/repos/$GITHUB_USER/$REPO_NAME")
+
+if [ "$HTTP_STATUS" = "200" ]; then
+    echo "  Repository '$REPO_NAME' already exists. Cloning..."
+    git clone "https://$GITHUB_TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git" "$REPO_NAME" 2>/dev/null || true
+else
+    echo "  Creating new private repository..."
+    curl -s -X POST \
+      -H "Authorization: token $GITHUB_TOKEN" \
+      -H "Accept: application/vnd.github.v3+json" \
+      https://api.github.com/user/repos \
+      -d "{\"name\":\"$REPO_NAME\",\"private\":true,\"description\":\"$REPO_DESC\"}"
+    git clone "https://$GITHUB_TOKEN@github.com/$GITHUB_USER/$REPO_NAME.git" "$REPO_NAME" 2>/dev/null || true
 fi
 
 cd "$REPO_NAME"
