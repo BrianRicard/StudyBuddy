@@ -70,6 +70,7 @@ fun ResultBottomSheet(
             words = words,
             onTapWord = onTapWord,
             onTryAgain = onTryAgain,
+            modifier = Modifier.verticalScroll(rememberScrollState()),
         )
     }
 }
@@ -90,7 +91,6 @@ fun ResultContent(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .verticalScroll(rememberScrollState())
             .padding(horizontal = 24.dp)
             .padding(bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,

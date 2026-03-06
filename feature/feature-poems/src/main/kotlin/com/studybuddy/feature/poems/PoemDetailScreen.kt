@@ -228,6 +228,7 @@ private fun PoemDetailCompactContent(
             state = state,
             poem = poem,
             isProcessing = isProcessing,
+            onIntent = onIntent,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(padding)
@@ -308,6 +309,7 @@ private fun PoemDetailMediumContent(
                 state = state,
                 poem = poem,
                 isProcessing = isProcessing,
+                onIntent = onIntent,
                 poemTextStyle = MaterialTheme.typography.titleMedium,
                 modifier = Modifier
                     .fillMaxSize()
@@ -376,6 +378,7 @@ private fun PoemDetailExpandedContent(
                         state = state,
                         poem = poem,
                         isProcessing = false,
+                        onIntent = onIntent,
                         poemTextStyle = MaterialTheme.typography.titleMedium,
                         modifier = Modifier
                             .fillMaxSize()
@@ -504,6 +507,7 @@ private fun PoemLines(
     state: PoemDetailState,
     poem: Poem,
     isProcessing: Boolean,
+    onIntent: (PoemDetailIntent) -> Unit,
     modifier: Modifier = Modifier,
     poemTextStyle: androidx.compose.ui.text.TextStyle = MaterialTheme.typography.bodyLarge,
 ) {
@@ -532,7 +536,7 @@ private fun PoemLines(
                     words = lineWords,
                     isHighlighted = state.isReadingAloud && index == state.currentReadLine,
                     textStyle = poemTextStyle,
-                    onTapWord = { globalIdx -> state.poem?.let { onTapWordIntent(globalIdx) } },
+                    onTapWord = { globalIdx -> onIntent(PoemDetailIntent.TapWord(globalIdx)) },
                 )
             } else {
                 PoemLineItem(
@@ -566,8 +570,6 @@ private fun PoemLines(
         item { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
-
-private fun onTapWordIntent(globalIdx: Int): PoemDetailIntent = PoemDetailIntent.TapWord(globalIdx)
 
 @Composable
 private fun DualFabs(
