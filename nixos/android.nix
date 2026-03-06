@@ -2,7 +2,7 @@
 
 let
   androidComposition = pkgs.androidenv.composeAndroidPackages {
-    cmdLineToolsVersion = "latest";
+    cmdLineToolsVersion = "11.0";
     platformVersions = [ "34" ];
     buildToolsVersions = [ "34.0.0" ];
     includeEmulator = true;
@@ -11,6 +11,18 @@ let
     abiVersions = [ "x86_64" ];
     includeNDK = false;
     useGoogleAPIs = true;
+
+    # Accept Android SDK licenses automatically — required for unattended builds.
+    # These cover: android-sdk-license, android-sdk-preview-license,
+    # google-gdk-license, intel-android-extra-license.
+    extraLicenses = [
+      "android-sdk-license"
+      "android-sdk-preview-license"
+      "android-googletv-license"
+      "google-gdk-license"
+      "intel-android-extra-license"
+      "mips-android-sysimage-license"
+    ];
   };
   androidSdk = androidComposition.androidsdk;
 in
