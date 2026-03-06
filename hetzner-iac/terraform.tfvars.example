@@ -4,8 +4,18 @@
 hcloud_token = ""
 
 # Path to your SSH public key (optional, default: ~/.ssh/id_rsa.pub)
-# ssh_public_key_path = "~/.ssh/id_rsa.pub"
+# ssh_public_key_path = "~/.ssh/hetzner_studybuddy.pub"
+
+# Path to your SSH private key (optional, default: ~/.ssh/id_rsa)
+# Must match the public key above. Used by nixos-anywhere to SSH into the target.
+# ssh_private_key_path = "~/.ssh/hetzner_studybuddy"
 
 # Hetzner datacenter location (optional, default: nbg1)
 # Options: nbg1 (Nuremberg), fsn1 (Falkenstein), hel1 (Helsinki), ash (Ashburn), hil (Hillsboro)
 # server_location = "nbg1"
+
+# Server type (optional, default: ccx13)
+# ccx13 = 4 dedicated AMD vCPU, 8 GB RAM, 160 GB NVMe (~€15.90/mo) — KVM supported
+# ccx23 = 8 dedicated AMD vCPU, 16 GB RAM, 240 GB NVMe (~€30.90/mo) — KVM supported
+# cx22  = 2 shared vCPU, 4 GB RAM, 40 GB — no KVM (emulator uses software rendering)
+# server_type = "ccx13"

@@ -66,18 +66,18 @@ resource "hcloud_firewall" "studybuddy" {
 }
 
 # --- Server ---
+#
+# Creates a VM ready for nixos-anywhere. The OS installation is a separate step
+# so it works cross-platform (Windows, macOS, Linux). After `tofu apply`, run
+# the nixos-anywhere command from the output.
 
 resource "hcloud_server" "studybuddy" {
   name        = "studybuddy-dev"
-  server_type = "ccx13"
+  server_type = var.server_type
   image       = "ubuntu-24.04"
   location    = var.server_location
 
   ssh_keys = [hcloud_ssh_key.studybuddy.id]
-
-  user_data = templatefile("${path.module}/cloud-init.yaml", {
-    ssh_public_key = trimspace(file(var.ssh_public_key_path))
-  })
 
   firewall_ids = [hcloud_firewall.studybuddy.id]
 

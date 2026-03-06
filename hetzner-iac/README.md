@@ -1,24 +1,43 @@
-# StudyBuddy — Hetzner VM Infrastructure
+# StudyBuddy — Hetzner VM Infrastructure (nixos-anywhere)
 
-OpenTofu (Terraform-compatible) IaC to provision a Hetzner Cloud VM pre-configured for Android CI, builds, emulator testing, and on-device model work (whisper.cpp).
+OpenTofu IaC to provision a Hetzner Cloud VM, then install NixOS via [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) with declarative disk partitioning via [disko](https://github.com/nix-community/disko).
+
+## How It Works
+
+Two steps — Terraform creates the VM, then you run nixos-anywhere:
+
+1. **`tofu apply`** — Creates a Hetzner VM (Ubuntu 24.04), firewall, and SSH key
+2. **`deploy-anywhere.sh`** — Runs nixos-anywhere which:
+   - kexec boots a NixOS installer on the target
+   - Partitions `/dev/sda` declaratively via disko (`nixos/disk-config.nix`)
+   - Installs NixOS from `nixos/flake.nix`
+   - Reboots into the finished system
+
+The nixos-anywhere step is separate from Terraform so it works cross-platform — run it from **WSL**, **Git Bash**, or any shell with Nix installed.
 
 ## What Gets Provisioned
 
-| Resource | Details |
+| Component | Details |
 |---|---|
-| **Server** | `ccx13` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, Ubuntu 24.04 |
-| **Location** | `nbg1` (Nuremberg, Germany) |
-| **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound allowed |
+| **Server** | `ccx13` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, NixOS 24.05 |
+| **JDK 17** | For Gradle / Android builds |
+| **Android SDK** | Platform 34, build-tools 34.0.0, x86_64 emulator, licenses auto-accepted |
+| **Node.js 20** | For Claude Code |
+| **Claude Code** | Installed globally via npm |
+| **Gradle** | System-wide |
+| **whisper.cpp** | Built from source with AVX2, base model auto-downloaded |
+| **KVM** | Emulator acceleration (CCX dedicated vCPU required) |
+| **SSH** | Key-only auth, root login disabled, fail2ban |
+| **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound |
 
-The cloud-init script installs: JDK 17, Android SDK 34, KVM/emulator, whisper.cpp (AVX2), Node.js 20 + Claude Code, Gradle, and UFW.
-
-> **Non-root user:** Claude Code refuses to run as root for security reasons. All SSH access and Claude Code sessions should use the `claude` user, which has passwordless sudo for unattended operations. Root SSH login is disabled after provisioning.
+> **Non-root user:** Claude Code refuses to run as root. All SSH access uses the `claude` user, which has passwordless sudo. Root SSH login is disabled after installation.
 
 ## Prerequisites
 
-- **OpenTofu >= 1.6** — install via `brew install opentofu` or see [opentofu.org/docs/intro/install](https://opentofu.org/docs/intro/install/)
-- **Hetzner Cloud API token** — get one from [Hetzner Console](https://console.hetzner.cloud/) → your project → Security → API Tokens → Generate API Token (Read & Write)
-- **SSH key pair** — defaults to `~/.ssh/id_rsa.pub`
+- **OpenTofu >= 1.6** — `brew install opentofu` or see [opentofu.org](https://opentofu.org/docs/intro/install/)
+- **Nix with flakes** — required for nixos-anywhere (run from WSL/Git Bash on Windows)
+- **Hetzner Cloud API token** — [Hetzner Console](https://console.hetzner.cloud/) → Project → Security → API Tokens
+- **SSH key pair** — defaults to `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`
 
 ## Deploy
 
@@ -27,86 +46,87 @@ cd hetzner-iac
 
 # 1. Create your variables file
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars and paste your hcloud_token
-# (or export TF_VAR_hcloud_token="your-token-here")
+# Edit terraform.tfvars — paste your hcloud_token, set SSH key paths
 
 # 2. Initialize providers
 tofu init
 
-# 3. Preview changes
+# 3. Preview
 tofu plan
 
-# 4. Apply
+# 4. Create the VM
 tofu apply
+
+# 5. Install NixOS (run from a shell with Nix — WSL, Git Bash, Linux, macOS)
+#    The exact command is printed by tofu as the "nixos_anywhere_command" output:
+../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
+
+# Or copy the command from tofu output:
+$(tofu output -raw nixos_anywhere_command)
 ```
 
-After `apply` completes, OpenTofu prints the server IP and an SSH command.
+After nixos-anywhere completes (~10–15 min), SSH in as `claude`.
 
-> **Note:** Cloud-init takes 5–10 minutes to finish after the server is created. You can SSH in immediately, but some tools may still be installing. Monitor progress with:
-> ```bash
-> ssh claude@<ip> "tail -f /var/log/cloud-init-output.log"
-> ```
+## Windows Users
+
+Terraform/OpenTofu runs natively on Windows. The nixos-anywhere step requires Nix, which runs in **WSL**:
+
+```powershell
+# Step 1: From PowerShell / cmd — create the VM
+tofu apply
+
+# Step 2: From WSL — install NixOS
+wsl ../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
+```
 
 ## Connect
 
 ```bash
 # Use the output directly
-tofu output ssh_command
+$(tofu output -raw ssh_command)
 
 # Or manually
 ssh claude@<SERVER_IP>
 ```
 
+## Spin Up Multiple VMs
+
+```bash
+tofu workspace new vm2
+tofu apply
+# then run deploy-anywhere.sh against the new IP
+
+tofu workspace select vm2
+tofu output ssh_command
+```
+
 ## Verify the Setup
-
-### KVM
-
-```bash
-ssh claude@<ip> "kvm-ok"
-# Expected: INFO: /dev/kvm exists — KVM acceleration can be used
-```
-
-### Android SDK
-
-```bash
-ssh claude@<ip> "adb --version"
-ssh claude@<ip> "/opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed"
-```
-
-### whisper.cpp
-
-```bash
-ssh claude@<ip> "/opt/whisper.cpp/main -m /opt/whisper.cpp/models/ggml-base.bin --help"
-```
-
-### Cloud-init summary log
-
-```bash
-ssh claude@<ip> "cat /var/log/cloud-init-studybuddy.log"
-```
-
-## Create an Android AVD
-
-After cloud-init finishes:
 
 ```bash
 ssh claude@<ip>
+java -version               # JDK 17
+echo $ANDROID_HOME           # Android SDK
+node --version               # Node.js 20
+claude --version             # Claude Code
+ls /dev/kvm                  # KVM support
+```
 
-# Source the environment (or reconnect for a fresh shell)
-source /etc/environment
+## Update NixOS Config
 
-# Create AVD
-avdmanager create avd \
-  -n studybuddy_avd \
-  -k "system-images;android-34;google_apis;x86_64" \
-  --device "pixel_6"
+```bash
+# Edit directly on the VM and rebuild
+ssh claude@<ip>
+sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
 
-# Launch headless emulator
-emulator -avd studybuddy_avd -no-audio -no-window &
+# Or re-run nixos-anywhere for a clean reinstall
+../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
+```
 
-# Wait for boot
-adb wait-for-device
-adb shell getprop sys.boot_completed  # returns "1" when ready
+## Roll Back
+
+```bash
+ssh claude@<ip>
+sudo nixos-rebuild --rollback
 ```
 
 ## Destroy
@@ -115,21 +135,34 @@ adb shell getprop sys.boot_completed  # returns "1" when ready
 tofu destroy
 ```
 
-This terminates the server and removes the firewall and SSH key from Hetzner. Local state files remain until you delete them.
-
 ## File Structure
 
 ```
 hetzner-iac/
 ├── main.tf                  # Provider, server, firewall, SSH key
-├── variables.tf             # Input variables (token, SSH key path, location)
-├── outputs.tf               # server_ip, ssh_command
+├── variables.tf             # Input variables (token, SSH keys, location, server type)
+├── outputs.tf               # server_ip, ssh_command, nixos_anywhere_command
 ├── terraform.tfvars.example # Sample variables file (no secrets)
-├── cloud-init.yaml          # Server bootstrap script
 ├── .gitignore               # Excludes tfstate, .terraform/, terraform.tfvars
 └── README.md                # This file
+
+nixos/                       # NixOS configuration (used by deploy-anywhere.sh)
+├── configuration.nix        # Main system config
+├── disk-config.nix          # Disko declarative disk partitioning
+├── flake.nix                # Nix flake (includes disko input)
+├── deploy-anywhere.sh       # nixos-anywhere deploy script
+├── deploy.sh                # Legacy nixos-infect deploy (reference only)
+└── ...
 ```
 
 ## Cost
 
-The `ccx13` server costs approximately **€15.90/month** (billed hourly). Remember to `tofu destroy` when you're done to stop billing.
+The `ccx13` server costs approximately **€15.90/month** (~€0.022/hr). Remember to `tofu destroy` when done.
+
+## Fixing Whisper Hashes
+
+On first build, Nix errors with the correct hashes. Update them in `nixos/whisper.nix` and rebuild:
+
+```bash
+sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
+```
