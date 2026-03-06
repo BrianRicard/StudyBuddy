@@ -2,10 +2,9 @@ package com.studybuddy.feature.onboarding
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,21 +14,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -37,13 +33,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,8 +47,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyButton
-import com.studybuddy.core.ui.components.StudyBuddyCard
-import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import java.util.Locale
 
@@ -104,106 +98,37 @@ private fun OnboardingContent(
     modifier: Modifier = Modifier,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    val pagerState = rememberPagerState(
-        initialPage = state.currentStep,
-        pageCount = { OnboardingViewModel.TOTAL_STEPS },
-    )
-
-    // Sync pager position with ViewModel state
-    LaunchedEffect(state.currentStep) {
-        if (pagerState.currentPage != state.currentStep) {
-            pagerState.animateScrollToPage(state.currentStep)
-        }
-    }
-
-    // Pager-to-ViewModel sync removed: userScrollEnabled = false means the pager
-    // is only driven programmatically via the LaunchedEffect above. The previous
-    // snapshotFlow on settledPage caused a feedback loop that skipped the avatar step.
-
     Scaffold(
         modifier = modifier,
         containerColor = MaterialTheme.colorScheme.background,
         snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
     ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            // Step indicator dots
-            StepIndicator(
-                currentStep = state.currentStep,
-                totalSteps = OnboardingViewModel.TOTAL_STEPS,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
-            )
-
-            HorizontalPager(
-                state = pagerState,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
-                userScrollEnabled = false,
-            ) { page ->
-                when (page) {
-                    OnboardingViewModel.STEP_WELCOME -> WelcomeStep(
-                        name = state.name,
-                        nameError = state.nameError,
-                        onNameChange = { onIntent(OnboardingIntent.SetName(it)) },
-                        onNext = { onIntent(OnboardingIntent.NextStep) },
-                    )
-                    OnboardingViewModel.STEP_VOICE -> VoiceStep(
-                        isCompleting = state.isCompleting,
-                        onComplete = { onIntent(OnboardingIntent.Complete) },
-                        onBack = { onIntent(OnboardingIntent.PreviousStep) },
-                    )
-                }
-            }
-        }
+        WelcomeStep(
+            name = state.name,
+            nameError = state.nameError,
+            selectedLocale = state.selectedLocale,
+            isCompleting = state.isCompleting,
+            onNameChange = { onIntent(OnboardingIntent.SetName(it)) },
+            onLocaleSelect = {
+                onIntent(OnboardingIntent.SelectLocale(it))
+            },
+            onComplete = { onIntent(OnboardingIntent.Complete) },
+            modifier = Modifier.padding(padding),
+        )
     }
 }
 
-// region Step Indicator
-
-@Composable
-private fun StepIndicator(
-    currentStep: Int,
-    totalSteps: Int,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        repeat(totalSteps) { index ->
-            val color by animateColorAsState(
-                targetValue = if (index <= currentStep) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    MaterialTheme.colorScheme.outlineVariant
-                },
-                label = "step-dot-$index",
-            )
-            Box(
-                modifier = Modifier
-                    .size(if (index == currentStep) 10.dp else 8.dp)
-                    .clip(CircleShape)
-                    .background(color),
-            )
-        }
-    }
-}
-
-// endregion
-
-// region Step 1 — Welcome
+// region Welcome
 
 @Composable
 private fun WelcomeStep(
     name: String,
     nameError: String?,
+    selectedLocale: String,
+    isCompleting: Boolean,
     onNameChange: (String) -> Unit,
-    onNext: () -> Unit,
+    onLocaleSelect: (String) -> Unit,
+    onComplete: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -252,17 +177,49 @@ private fun WelcomeStep(
                 { Text(text = error) }
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onNext() }),
+            keyboardActions = KeyboardActions(onDone = { if (name.isNotBlank()) onComplete() }),
             shape = MaterialTheme.shapes.medium,
             modifier = Modifier.fillMaxWidth(),
         )
 
+        Spacer(modifier = Modifier.height(24.dp))
+
+        Text(
+            text = stringResource(CoreUiR.string.onboarding_choose_language),
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Language selector row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 12.dp,
+                alignment = Alignment.CenterHorizontally,
+            ),
+        ) {
+            SupportedLocale.entries.forEach { locale ->
+                LanguageCard(
+                    locale = locale,
+                    isSelected = locale.code == selectedLocale,
+                    onClick = { onLocaleSelect(locale.code) },
+                    modifier = Modifier.weight(1f),
+                )
+            }
+        }
+
         Spacer(modifier = Modifier.weight(1f))
 
         StudyBuddyButton(
-            text = stringResource(CoreUiR.string.onboarding_next),
-            onClick = onNext,
-            enabled = name.isNotBlank(),
+            text = if (isCompleting) {
+                stringResource(CoreUiR.string.onboarding_saving)
+            } else {
+                stringResource(CoreUiR.string.onboarding_lets_go)
+            },
+            onClick = onComplete,
+            enabled = name.isNotBlank() && !isCompleting,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
@@ -270,106 +227,11 @@ private fun WelcomeStep(
     }
 }
 
-// endregion
-
-// region Step 2 — Voice Setup
-
 @Composable
-private fun VoiceStep(
-    isCompleting: Boolean,
-    onComplete: () -> Unit,
-    onBack: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Speaker icon
-        Image(
-            painter = painterResource(CoreUiR.drawable.ic_speaker_tts),
-            contentDescription = stringResource(CoreUiR.string.onboarding_voice_setup),
-            modifier = Modifier.size(80.dp),
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_voice_setup),
-            style = MaterialTheme.typography.headlineSmall,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_voice_desc),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Language voice cards (placeholder — show "Ready" for now)
-        SupportedLocale.entries.forEach { locale ->
-            VoiceLanguageCard(
-                locale = locale,
-                modifier = Modifier.padding(bottom = 12.dp),
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // "Skip for now" text link
-        TextButton(onClick = onComplete) {
-            Text(
-                text = stringResource(CoreUiR.string.onboarding_skip),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        // Back + Let's Go! buttons
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            StudyBuddyOutlinedButton(
-                text = stringResource(CoreUiR.string.onboarding_back),
-                onClick = onBack,
-                enabled = !isCompleting,
-                modifier = Modifier.weight(1f),
-            )
-            StudyBuddyButton(
-                text = if (isCompleting) {
-                    stringResource(
-                        CoreUiR.string.onboarding_saving,
-                    )
-                } else {
-                    stringResource(CoreUiR.string.onboarding_lets_go)
-                },
-                onClick = onComplete,
-                enabled = !isCompleting,
-                modifier = Modifier.weight(1f),
-            )
-        }
-    }
-}
-
-@Composable
-private fun VoiceLanguageCard(
+private fun LanguageCard(
     locale: SupportedLocale,
+    isSelected: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val flagRes = when (locale) {
@@ -378,51 +240,53 @@ private fun VoiceLanguageCard(
         SupportedLocale.GERMAN -> CoreUiR.drawable.ic_flag_de
     }
 
-    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
-        Row(
+    val borderColor by animateColorAsState(
+        targetValue = if (isSelected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.outlineVariant
+        },
+        label = "locale-border-${locale.code}",
+    )
+
+    Card(
+        onClick = onClick,
+        modifier = modifier,
+        shape = MaterialTheme.shapes.medium,
+        border = BorderStroke(
+            width = if (isSelected) 2.dp else 1.dp,
+            color = borderColor,
+        ),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surface
+            },
+        ),
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = if (isSelected) 4.dp else 1.dp,
+        ),
+    ) {
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 14.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(vertical = 12.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Image(
-                    painter = painterResource(flagRes),
-                    contentDescription = locale.displayName,
-                    modifier = Modifier.size(32.dp),
-                )
-                Column {
-                    Text(
-                        text = locale.displayName,
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Medium,
-                    )
-                    Text(
-                        text = stringResource(CoreUiR.string.onboarding_voice_pack),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            }
-
-            // Placeholder status — ready indicator
-            Surface(
-                shape = MaterialTheme.shapes.small,
-                color = MaterialTheme.colorScheme.primaryContainer,
-            ) {
-                Text(
-                    text = stringResource(CoreUiR.string.onboarding_voice_ready),
-                    style = MaterialTheme.typography.labelMedium,
-                    modifier = Modifier.padding(
-                        horizontal = 10.dp,
-                        vertical = 4.dp,
-                    ),
-                )
-            }
+            Image(
+                painter = painterResource(flagRes),
+                contentDescription = locale.displayName,
+                modifier = Modifier.size(36.dp),
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            Text(
+                text = locale.displayName,
+                style = MaterialTheme.typography.labelMedium,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }
@@ -437,8 +301,8 @@ private fun OnboardingWelcomePreview() {
     StudyBuddyTheme {
         OnboardingContent(
             state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
+                selectedLocale = "en",
             ),
             onIntent = {},
         )
@@ -451,8 +315,8 @@ private fun OnboardingWelcomeFilledPreview() {
     StudyBuddyTheme {
         OnboardingContent(
             state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "Sophie",
+                selectedLocale = "en",
             ),
             onIntent = {},
         )
@@ -465,8 +329,8 @@ private fun OnboardingWelcomeErrorPreview() {
     StudyBuddyTheme {
         OnboardingContent(
             state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
+                selectedLocale = "en",
                 nameError = "Please enter your name",
             ),
             onIntent = {},
@@ -476,26 +340,12 @@ private fun OnboardingWelcomeErrorPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun OnboardingVoicePreview() {
+private fun OnboardingCompletingPreview() {
     StudyBuddyTheme {
         OnboardingContent(
             state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_VOICE,
                 name = "Sophie",
-            ),
-            onIntent = {},
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun OnboardingVoiceCompletingPreview() {
-    StudyBuddyTheme {
-        OnboardingContent(
-            state = OnboardingState(
-                currentStep = OnboardingViewModel.STEP_VOICE,
-                name = "Sophie",
+                selectedLocale = "fr",
                 isCompleting = true,
             ),
             onIntent = {},
