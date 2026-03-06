@@ -92,13 +92,13 @@ runcmd:
     JAVA_HOME_PATH="/usr/lib/jvm/java-17-openjdk-amd64"
     if [ ! -d "$${JAVA_HOME_PATH}" ]; then
       # Fallback: detect dynamically
-      JAVA_HOME_PATH="$$(dirname $$(dirname $$(readlink -f $$(command -v java))))"
+      JAVA_HOME_PATH="$(dirname $(dirname $(readlink -f $(command -v java))))"
     fi
 
     echo "JAVA_HOME=$${JAVA_HOME_PATH}" >> /etc/environment
     # Also write to profile.d so it's available in all shell sessions
     echo "export JAVA_HOME=$${JAVA_HOME_PATH}" > /etc/profile.d/java.sh
-    echo "export PATH=\$$PATH:\$$JAVA_HOME/bin" >> /etc/profile.d/java.sh
+    echo "export PATH=\$PATH:\$JAVA_HOME/bin" >> /etc/profile.d/java.sh
     chmod +x /etc/profile.d/java.sh
     echo "JAVA_HOME set to $${JAVA_HOME_PATH}" | tee -a /var/log/cloud-init-studybuddy.log
 
@@ -111,7 +111,7 @@ runcmd:
     export DEBIAN_FRONTEND=noninteractive
     echo "=== Gradle setup ===" | tee -a /var/log/cloud-init-studybuddy.log
     apt-get install -y gradle 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
-    echo "Gradle installed: $$(gradle --version 2>&1 | head -3)" | tee -a /var/log/cloud-init-studybuddy.log
+    echo "Gradle installed: $(gradle --version 2>&1 | head -3)" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
   # 4. Android SDK (command-line tools)
@@ -125,7 +125,7 @@ runcmd:
     # re-source what step 2 wrote to /etc/profile.d
     export JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
     if [ ! -d "$${JAVA_HOME}" ]; then
-      export JAVA_HOME="$$(dirname $$(dirname $$(readlink -f $$(command -v java))))"
+      export JAVA_HOME="$(dirname $(dirname $(readlink -f $(command -v java))))"
     fi
     export PATH="$${JAVA_HOME}/bin:$${PATH}"
     echo "Using JAVA_HOME=$${JAVA_HOME} for sdkmanager" | tee -a /var/log/cloud-init-studybuddy.log
@@ -202,13 +202,13 @@ runcmd:
     cd /opt/whisper.cpp
     # Use GGML_AVX2 (the ggml backend controls SIMD flags, not WHISPER_AVX2)
     cmake -B build -DGGML_AVX2=ON 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
-    cmake --build build --config Release -j $$(nproc) 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
+    cmake --build build --config Release -j $(nproc) 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
 
     if [ -f build/bin/whisper-cli ] || [ -f build/bin/main ]; then
       echo "whisper.cpp compiled successfully" | tee -a /var/log/cloud-init-studybuddy.log
     else
       echo "whisper.cpp compilation FAILED — trying make fallback" | tee -a /var/log/cloud-init-studybuddy.log
-      make -j $$(nproc) 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
+      make -j $(nproc) 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
     fi
 
     chown -R claude:claude /opt/whisper.cpp
@@ -232,7 +232,7 @@ runcmd:
         2>&1 | tee -a /var/log/cloud-init-studybuddy.log
     fi
     if [ -f models/ggml-base.bin ]; then
-      echo "whisper base model present ($$(du -h models/ggml-base.bin | cut -f1))" | tee -a /var/log/cloud-init-studybuddy.log
+      echo "whisper base model present ($(du -h models/ggml-base.bin | cut -f1))" | tee -a /var/log/cloud-init-studybuddy.log
     else
       echo "ERROR: whisper base model download failed" | tee -a /var/log/cloud-init-studybuddy.log
     fi
@@ -262,12 +262,12 @@ runcmd:
       > /etc/apt/sources.list.d/nodesource.list
     apt-get update -y 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
     apt-get install -y nodejs 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
-    echo "Node.js $$(node --version) installed" | tee -a /var/log/cloud-init-studybuddy.log
-    echo "npm $$(npm --version) installed" | tee -a /var/log/cloud-init-studybuddy.log
+    echo "Node.js $(node --version) installed" | tee -a /var/log/cloud-init-studybuddy.log
+    echo "npm $(npm --version) installed" | tee -a /var/log/cloud-init-studybuddy.log
 
     # Install Claude Code globally
     npm install -g @anthropic-ai/claude-code 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
-    echo "Claude Code installed: $$(claude --version 2>&1 || echo 'install may have failed')" | tee -a /var/log/cloud-init-studybuddy.log
+    echo "Claude Code installed: $(claude --version 2>&1 || echo 'install may have failed')" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
   # 7. UFW firewall
@@ -294,7 +294,7 @@ runcmd:
     ufw default deny incoming 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
     ufw default allow outgoing 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
     ufw --force enable 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
-    echo "UFW enabled: $$(ufw status 2>&1)" | tee -a /var/log/cloud-init-studybuddy.log
+    echo "UFW enabled: $(ufw status 2>&1)" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
   # 8. Disable root SSH login
@@ -315,8 +315,8 @@ runcmd:
     # Fix any drop-in configs that allow root login
     if [ -d /etc/ssh/sshd_config.d ]; then
       for f in /etc/ssh/sshd_config.d/*.conf; do
-        [ -f "$$f" ] || continue
-        sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' "$$f" 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
+        [ -f "$f" ] || continue
+        sed -i 's/^PermitRootLogin yes/PermitRootLogin no/' "$f" 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
       done
       # Add our own high-priority drop-in to guarantee the setting
       echo "PermitRootLogin no" > /etc/ssh/sshd_config.d/99-studybuddy-hardening.conf
@@ -332,35 +332,35 @@ runcmd:
   # ---------------------------------------------------------------
   - |
     LOG=/var/log/cloud-init-studybuddy.log
-    echo "" >> $$LOG
-    echo "========================================" >> $$LOG
-    echo " StudyBuddy VM provisioning summary"     >> $$LOG
-    echo " $$(date -u '+%Y-%m-%d %H:%M:%S UTC')"   >> $$LOG
-    echo "========================================" >> $$LOG
-    echo "" >> $$LOG
+    echo "" >> $LOG
+    echo "========================================" >> $LOG
+    echo " StudyBuddy VM provisioning summary"     >> $LOG
+    echo " $(date -u '+%Y-%m-%d %H:%M:%S UTC')"   >> $LOG
+    echo "========================================" >> $LOG
+    echo "" >> $LOG
 
     export ANDROID_HOME=/opt/android-sdk
     export PATH="$${ANDROID_HOME}/cmdline-tools/latest/bin:$${ANDROID_HOME}/platform-tools:$${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-    echo "[hostname]   $$(hostname)" >> $$LOG
-    echo "[java]       $$(java -version 2>&1 | head -1)" >> $$LOG
-    echo "[java_home]  $$(cat /etc/environment | grep JAVA_HOME)" >> $$LOG
-    echo "[android]    ANDROID_HOME=$${ANDROID_HOME}" >> $$LOG
-    $${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --sdk_root=$${ANDROID_HOME} --list_installed 2>/dev/null | head -20 >> $$LOG || true
-    echo "[adb]        $$(adb --version 2>&1 | head -1)" >> $$LOG || true
-    echo "[kvm]        $$(kvm-ok 2>&1 | tail -1)" >> $$LOG || true
-    echo "[whisper]    $$(ls -la /opt/whisper.cpp/build/bin/whisper-cli 2>&1 || ls -la /opt/whisper.cpp/build/bin/main 2>&1 || ls -la /opt/whisper.cpp/main 2>&1)" >> $$LOG || true
-    echo "[whisper-model] $$(ls -la /opt/whisper.cpp/models/ggml-base.bin 2>&1)" >> $$LOG || true
-    echo "[node]       $$(node --version 2>&1)" >> $$LOG || true
-    echo "[npm]        $$(npm --version 2>&1)" >> $$LOG || true
-    echo "[claude]     $$(claude --version 2>&1 || echo 'not found')" >> $$LOG
-    echo "[gradle]     $$(gradle --version 2>&1 | head -3)" >> $$LOG || true
-    echo "[ufw]        $$(ufw status 2>&1)" >> $$LOG
-    echo "" >> $$LOG
-    echo "Non-root user 'claude' created with sudo and kvm access" >> $$LOG
-    echo "Root SSH login disabled" >> $$LOG
-    echo "" >> $$LOG
-    echo "Cloud-init provisioning complete." >> $$LOG
+    echo "[hostname]   $(hostname)" >> $LOG
+    echo "[java]       $(java -version 2>&1 | head -1)" >> $LOG
+    echo "[java_home]  $(cat /etc/environment | grep JAVA_HOME)" >> $LOG
+    echo "[android]    ANDROID_HOME=$${ANDROID_HOME}" >> $LOG
+    $${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --sdk_root=$${ANDROID_HOME} --list_installed 2>/dev/null | head -20 >> $LOG || true
+    echo "[adb]        $(adb --version 2>&1 | head -1)" >> $LOG || true
+    echo "[kvm]        $(kvm-ok 2>&1 | tail -1)" >> $LOG || true
+    echo "[whisper]    $(ls -la /opt/whisper.cpp/build/bin/whisper-cli 2>&1 || ls -la /opt/whisper.cpp/build/bin/main 2>&1 || ls -la /opt/whisper.cpp/main 2>&1)" >> $LOG || true
+    echo "[whisper-model] $(ls -la /opt/whisper.cpp/models/ggml-base.bin 2>&1)" >> $LOG || true
+    echo "[node]       $(node --version 2>&1)" >> $LOG || true
+    echo "[npm]        $(npm --version 2>&1)" >> $LOG || true
+    echo "[claude]     $(claude --version 2>&1 || echo 'not found')" >> $LOG
+    echo "[gradle]     $(gradle --version 2>&1 | head -3)" >> $LOG || true
+    echo "[ufw]        $(ufw status 2>&1)" >> $LOG
+    echo "" >> $LOG
+    echo "Non-root user 'claude' created with sudo and kvm access" >> $LOG
+    echo "Root SSH login disabled" >> $LOG
+    echo "" >> $LOG
+    echo "Cloud-init provisioning complete." >> $LOG
 
   # ---------------------------------------------------------------
   # 10. Completion marker
