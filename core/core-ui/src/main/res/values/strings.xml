@@ -313,6 +313,12 @@
     <string name="settings_pin_set_success">Parent PIN set successfully</string>
     <string name="settings_type_reset_confirm">Type RESET to confirm</string>
     <string name="settings_reset_failed">Reset failed</string>
+    <string name="settings_gift_points">Gift Points</string>
+    <string name="settings_gift_points_desc">Award bonus points to your child\'s balance.</string>
+    <string name="settings_current_balance">Current balance: %d points</string>
+    <string name="settings_gift_amount_label">Points to gift</string>
+    <string name="settings_gift_confirm">Gift Points</string>
+    <string name="settings_gift_points_success">Points gifted successfully!</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Backup</string>

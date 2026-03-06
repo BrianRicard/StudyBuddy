@@ -4,10 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.AvatarConfig
+import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.BackupRepository
+import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -37,6 +40,8 @@ data class SettingsState(
     val showPinDialog: Boolean = false,
     @androidx.annotation.StringRes val pinErrorResId: Int? = null,
     val showResetDialog: Boolean = false,
+    val showGiftPointsDialog: Boolean = false,
+    val currentPointBalance: Long = 0,
     val isLoading: Boolean = true,
 )
 
@@ -58,6 +63,9 @@ sealed interface SettingsIntent {
     data object NavigateToAvatarCloset : SettingsIntent
     data object NavigateToStats : SettingsIntent
     data object NavigateToBackup : SettingsIntent
+    data object OpenGiftPoints : SettingsIntent
+    data class ConfirmGiftPoints(val amount: Int) : SettingsIntent
+    data object DismissGiftPointsDialog : SettingsIntent
 }
 
 /**
@@ -75,6 +83,8 @@ class SettingsViewModel @Inject constructor(
     private val profileRepository: ProfileRepository,
     private val avatarRepository: AvatarRepository,
     private val backupRepository: BackupRepository,
+    private val awardPointsUseCase: AwardPointsUseCase,
+    private val pointsRepository: PointsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -95,6 +105,7 @@ class SettingsViewModel @Inject constructor(
         observeSettings()
         observeProfile()
         observePinHash()
+        observePoints()
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -113,6 +124,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsIntent.NavigateToAvatarCloset -> navigateTo(StudyBuddyRoutes.AVATAR)
             is SettingsIntent.NavigateToStats -> navigateTo(StudyBuddyRoutes.STATS)
             is SettingsIntent.NavigateToBackup -> navigateTo(StudyBuddyRoutes.BACKUP)
+            is SettingsIntent.OpenGiftPoints -> openGiftPoints()
+            is SettingsIntent.ConfirmGiftPoints -> confirmGiftPoints(intent.amount)
+            is SettingsIntent.DismissGiftPointsDialog -> dismissGiftPointsDialog()
         }
     }
 
@@ -330,6 +344,37 @@ class SettingsViewModel @Inject constructor(
         _state.update { it.copy(showResetDialog = false) }
     }
 
+    private fun observePoints() {
+        viewModelScope.launch {
+            pointsRepository.getTotalPoints(profileId).collect { total ->
+                _state.update { it.copy(currentPointBalance = total) }
+            }
+        }
+    }
+
+    private fun openGiftPoints() {
+        _state.update { it.copy(showGiftPointsDialog = true) }
+    }
+
+    private fun confirmGiftPoints(amount: Int) {
+        if (amount <= 0 || amount > MAX_GIFT_POINTS) return
+        _state.update { it.copy(showGiftPointsDialog = false) }
+        viewModelScope.launch {
+            awardPointsUseCase(
+                profileId = profileId,
+                basePoints = amount,
+                streak = 0,
+                source = PointSource.GIFT,
+                reason = "Gift from parent",
+            )
+            _effects.emit(SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_gift_points_success))
+        }
+    }
+
+    private fun dismissGiftPointsDialog() {
+        _state.update { it.copy(showGiftPointsDialog = false) }
+    }
+
     private fun navigateTo(route: String) {
         viewModelScope.launch {
             _effects.emit(SettingsEffect.NavigateTo(route))
@@ -339,6 +384,7 @@ class SettingsViewModel @Inject constructor(
     companion object {
         const val PIN_LENGTH = 4
         const val RESET_CONFIRMATION_TEXT = "RESET"
+        const val MAX_GIFT_POINTS = 99_999
     }
 }
 

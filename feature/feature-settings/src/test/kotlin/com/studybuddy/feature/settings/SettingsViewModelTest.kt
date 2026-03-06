@@ -1,11 +1,14 @@
 package com.studybuddy.feature.settings
 
 import com.studybuddy.core.domain.model.AvatarConfig
+import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.BackupRepository
+import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.shared.points.AwardPointsUseCase
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -34,6 +37,8 @@ class SettingsViewModelTest {
     private val profileRepository: ProfileRepository = mockk()
     private val avatarRepository: AvatarRepository = mockk()
     private val backupRepository: BackupRepository = mockk(relaxed = true)
+    private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
+    private val pointsRepository: PointsRepository = mockk()
 
     private val testProfile = Profile(
         id = "default",
@@ -56,6 +61,7 @@ class SettingsViewModelTest {
         every { settingsRepository.isAccentStrict() } returns flowOf(false)
         every { settingsRepository.getSelectedTheme() } returns flowOf("sunset")
         every { settingsRepository.getParentPinHash() } returns flowOf(null)
+        every { pointsRepository.getTotalPoints(any()) } returns flowOf(500L)
     }
 
     @AfterEach
@@ -68,6 +74,8 @@ class SettingsViewModelTest {
         profileRepository = profileRepository,
         avatarRepository = avatarRepository,
         backupRepository = backupRepository,
+        awardPointsUseCase = awardPointsUseCase,
+        pointsRepository = pointsRepository,
     )
 
     @Test
@@ -174,5 +182,106 @@ class SettingsViewModelTest {
         advanceUntilIdle()
 
         assertFalse(viewModel.state.value.showResetDialog)
+    }
+
+    // --- Gift Points tests ---
+
+    @Test
+    fun `open gift points shows dialog`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.showGiftPointsDialog)
+    }
+
+    @Test
+    fun `dismiss gift points dialog clears state`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.DismissGiftPointsDialog)
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.showGiftPointsDialog)
+    }
+
+    @Test
+    fun `confirm gift points awards points and closes dialog`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.ConfirmGiftPoints(100))
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.showGiftPointsDialog)
+        coVerify {
+            awardPointsUseCase(
+                profileId = any(),
+                basePoints = 100,
+                streak = 0,
+                source = PointSource.GIFT,
+                reason = "Gift from parent",
+            )
+        }
+    }
+
+    @Test
+    fun `confirm gift points rejects zero amount`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.ConfirmGiftPoints(0))
+        advanceUntilIdle()
+
+        // Dialog should still be open since 0 is invalid
+        assertTrue(viewModel.state.value.showGiftPointsDialog)
+    }
+
+    @Test
+    fun `confirm gift points rejects negative amount`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.ConfirmGiftPoints(-50))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.showGiftPointsDialog)
+    }
+
+    @Test
+    fun `confirm gift points rejects amount exceeding max`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.OpenGiftPoints)
+        advanceUntilIdle()
+
+        viewModel.onIntent(SettingsIntent.ConfirmGiftPoints(100_000))
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.showGiftPointsDialog)
+    }
+
+    @Test
+    fun `point balance is observed from repository`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(500L, viewModel.state.value.currentPointBalance)
     }
 }

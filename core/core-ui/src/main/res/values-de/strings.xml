@@ -313,6 +313,12 @@
     <string name="settings_pin_set_success">Eltern-PIN erfolgreich festgelegt</string>
     <string name="settings_type_reset_confirm">Geben Sie RESET zur Bestätigung ein</string>
     <string name="settings_reset_failed">Zurücksetzen fehlgeschlagen</string>
+    <string name="settings_gift_points">Punkte schenken</string>
+    <string name="settings_gift_points_desc">Schenken Sie Ihrem Kind Bonuspunkte.</string>
+    <string name="settings_current_balance">Aktuelles Guthaben: %d Punkte</string>
+    <string name="settings_gift_amount_label">Punkte zum Schenken</string>
+    <string name="settings_gift_confirm">Punkte schenken</string>
+    <string name="settings_gift_points_success">Punkte erfolgreich geschenkt!</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Sicherung</string>

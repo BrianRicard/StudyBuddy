@@ -192,22 +192,29 @@ private fun SettingsContent(
                         )
                     }
                     item {
+                        NavigationSettingRow(
+                            label = stringResource(CoreUiR.string.settings_gift_points),
+                            onClick = { onIntent(SettingsIntent.OpenGiftPoints) },
+                            modifier = Modifier.animateItemAppearance(10),
+                        )
+                    }
+                    item {
                         DisabledSettingRow(
                             label = stringResource(CoreUiR.string.settings_cloud_sync),
                             subtitle = stringResource(CoreUiR.string.settings_coming_soon),
-                            modifier = Modifier.animateItemAppearance(10),
+                            modifier = Modifier.animateItemAppearance(11),
                         )
                     }
                     item {
                         ResetSettingRow(
                             onClick = { onIntent(SettingsIntent.RequestReset) },
-                            modifier = Modifier.animateItemAppearance(11),
+                            modifier = Modifier.animateItemAppearance(12),
                         )
                     }
                 }
 
                 // Bottom spacer for scroll padding
-                item { Spacer(modifier = Modifier.animateItemAppearance(12).height(24.dp)) }
+                item { Spacer(modifier = Modifier.animateItemAppearance(13).height(24.dp)) }
             }
         }
     }
@@ -232,6 +239,14 @@ private fun SettingsContent(
         ResetConfirmationDialog(
             onConfirm = { text -> onIntent(SettingsIntent.ConfirmReset(text)) },
             onDismiss = { onIntent(SettingsIntent.DismissResetDialog) },
+        )
+    }
+
+    if (state.showGiftPointsDialog) {
+        GiftPointsDialog(
+            currentBalance = state.currentPointBalance,
+            onConfirm = { amount -> onIntent(SettingsIntent.ConfirmGiftPoints(amount)) },
+            onDismiss = { onIntent(SettingsIntent.DismissGiftPointsDialog) },
         )
     }
 }
@@ -735,6 +750,68 @@ private fun ResetConfirmationDialog(
                 text = stringResource(CoreUiR.string.settings_reset_everything),
                 onClick = { onConfirm(confirmText) },
                 enabled = confirmText == SettingsViewModel.RESET_CONFIRMATION_TEXT,
+            )
+        },
+        dismissButton = {
+            StudyBuddyOutlinedButton(
+                text = stringResource(CoreUiR.string.cancel),
+                onClick = onDismiss,
+            )
+        },
+    )
+}
+
+@Composable
+private fun GiftPointsDialog(
+    currentBalance: Long,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var amountText by remember { mutableStateOf("") }
+    val amount = amountText.toIntOrNull() ?: 0
+    val isValid = amount in 1..SettingsViewModel.MAX_GIFT_POINTS
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(CoreUiR.string.settings_gift_points)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(CoreUiR.string.settings_gift_points_desc),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(CoreUiR.string.settings_current_balance, currentBalance),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = { value ->
+                        if (value.isEmpty() || (value.all { it.isDigit() } && value.length <= 5)) {
+                            amountText = value
+                        }
+                    },
+                    label = { Text(stringResource(CoreUiR.string.settings_gift_amount_label)) },
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { if (isValid) onConfirm(amount) },
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            StudyBuddyButton(
+                text = stringResource(CoreUiR.string.settings_gift_confirm),
+                onClick = { onConfirm(amount) },
+                enabled = isValid,
             )
         },
         dismissButton = {

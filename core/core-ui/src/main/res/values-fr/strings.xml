@@ -313,6 +313,12 @@
     <string name="settings_pin_set_success">PIN parent défini avec succès</string>
     <string name="settings_type_reset_confirm">Tapez RESET pour confirmer</string>
     <string name="settings_reset_failed">La réinitialisation a échoué</string>
+    <string name="settings_gift_points">Offrir des points</string>
+    <string name="settings_gift_points_desc">Attribuez des points bonus au solde de votre enfant.</string>
+    <string name="settings_current_balance">Solde actuel : %d points</string>
+    <string name="settings_gift_amount_label">Points à offrir</string>
+    <string name="settings_gift_confirm">Offrir les points</string>
+    <string name="settings_gift_points_success">Points offerts avec succès !</string>
 
     <!-- Backup additions -->
     <string name="backup_section">Sauvegarde</string>
