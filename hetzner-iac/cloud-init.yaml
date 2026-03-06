@@ -52,9 +52,9 @@ runcmd:
     echo "=== Java 17 setup ===" | tee -a /var/log/cloud-init-studybuddy.log
     apt-get install -y openjdk-17-jdk 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
     update-java-alternatives --set java-1.17.0-openjdk-amd64 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
-    export JAVA_HOME=$(dirname $(dirname $(readlink -f $(which java))))
-    echo "JAVA_HOME=${JAVA_HOME}" >> /etc/environment
-    echo "JAVA_HOME set to ${JAVA_HOME}" | tee -a /var/log/cloud-init-studybuddy.log
+    export JAVA_HOME=$$(dirname $$(dirname $$(readlink -f $$(which java))))
+    echo "JAVA_HOME=$${JAVA_HOME}" >> /etc/environment
+    echo "JAVA_HOME set to $${JAVA_HOME}" | tee -a /var/log/cloud-init-studybuddy.log
 
   # ---------------------------------------------------------------
   # 3. Gradle
@@ -69,20 +69,20 @@ runcmd:
   - |
     echo "=== Android SDK setup ===" | tee -a /var/log/cloud-init-studybuddy.log
     export ANDROID_HOME=/opt/android-sdk
-    export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    export PATH="$${ANDROID_HOME}/cmdline-tools/latest/bin:$${ANDROID_HOME}/platform-tools:$${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-    mkdir -p ${ANDROID_HOME}/cmdline-tools && \
+    mkdir -p $${ANDROID_HOME}/cmdline-tools && \
     wget -q -O /tmp/cmdline-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-latest.zip 2>&1 | tee -a /var/log/cloud-init-studybuddy.log && \
     unzip -q /tmp/cmdline-tools.zip -d /tmp/cmdline-tools-extract && \
-    mv /tmp/cmdline-tools-extract/cmdline-tools ${ANDROID_HOME}/cmdline-tools/latest && \
+    mv /tmp/cmdline-tools-extract/cmdline-tools $${ANDROID_HOME}/cmdline-tools/latest && \
     rm -rf /tmp/cmdline-tools.zip /tmp/cmdline-tools-extract && \
     echo "cmdline-tools installed" | tee -a /var/log/cloud-init-studybuddy.log
 
     # Accept licenses
-    yes | sdkmanager --sdk_root=${ANDROID_HOME} --licenses 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
+    yes | sdkmanager --sdk_root=$${ANDROID_HOME} --licenses 2>&1 | tee -a /var/log/cloud-init-studybuddy.log || true
 
     # Install SDK components
-    sdkmanager --sdk_root=${ANDROID_HOME} --install \
+    sdkmanager --sdk_root=$${ANDROID_HOME} --install \
       "platform-tools" \
       "platforms;android-34" \
       "build-tools;34.0.0" \
@@ -92,15 +92,15 @@ runcmd:
     echo "SDK components installed" | tee -a /var/log/cloud-init-studybuddy.log
 
     # Make SDK accessible to claude user
-    chown -R claude:claude ${ANDROID_HOME}
+    chown -R claude:claude $${ANDROID_HOME}
 
     # Symlink adb system-wide
-    ln -sf ${ANDROID_HOME}/platform-tools/adb /usr/local/bin/adb
+    ln -sf $${ANDROID_HOME}/platform-tools/adb /usr/local/bin/adb
 
     # Persist env vars for SSH sessions
     sed -i '/^PATH=/d' /etc/environment
-    echo "ANDROID_HOME=${ANDROID_HOME}" >> /etc/environment
-    echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator" >> /etc/environment
+    echo "ANDROID_HOME=$${ANDROID_HOME}" >> /etc/environment
+    echo "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$${ANDROID_HOME}/cmdline-tools/latest/bin:$${ANDROID_HOME}/platform-tools:$${ANDROID_HOME}/emulator" >> /etc/environment
 
   # ---------------------------------------------------------------
   # 5. whisper.cpp
@@ -155,14 +155,14 @@ runcmd:
     echo "" >> $LOG
 
     export ANDROID_HOME=/opt/android-sdk
-    export PATH="${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+    export PATH="$${ANDROID_HOME}/cmdline-tools/latest/bin:$${ANDROID_HOME}/platform-tools:$${ANDROID_HOME}/emulator:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-    echo "[hostname]   $(hostname)" >> $LOG
+    echo "[hostname]   $$(hostname)" >> $LOG
 
-    echo "[java]       $(java -version 2>&1 | head -1)" >> $LOG
+    echo "[java]       $$(java -version 2>&1 | head -1)" >> $LOG
 
-    echo "[android]    ANDROID_HOME=${ANDROID_HOME}" >> $LOG
-    sdkmanager --sdk_root=${ANDROID_HOME} --list_installed 2>/dev/null | head -20 >> $LOG || true
+    echo "[android]    ANDROID_HOME=$${ANDROID_HOME}" >> $LOG
+    sdkmanager --sdk_root=$${ANDROID_HOME} --list_installed 2>/dev/null | head -20 >> $LOG || true
 
     echo "[adb]        $(adb --version 2>&1 | head -1)" >> $LOG
 
