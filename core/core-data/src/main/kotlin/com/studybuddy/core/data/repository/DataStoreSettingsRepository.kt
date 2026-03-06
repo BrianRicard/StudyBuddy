@@ -30,6 +30,7 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val SELECTED_THEME = stringPreferencesKey("selected_theme")
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         val PARENT_PIN_HASH = intPreferencesKey("parent_pin_hash")
+        val DICTEE_SEEDED = booleanPreferencesKey("dictee_seeded")
     }
 
     override fun getAppLocale(): Flow<String> = context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
@@ -80,6 +81,12 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
                 it.remove(Keys.PARENT_PIN_HASH)
             }
         }
+    }
+
+    override fun isDicteeSeeded(): Flow<Boolean> = context.dataStore.data.map { it[Keys.DICTEE_SEEDED] ?: false }
+
+    override suspend fun setDicteeSeeded(seeded: Boolean) {
+        context.dataStore.edit { it[Keys.DICTEE_SEEDED] = seeded }
     }
 
     override suspend fun clearAll() {

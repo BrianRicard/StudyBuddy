@@ -287,6 +287,13 @@ private fun DicteeListCard(
                 }
             })
         }
+    } else if (item.isDefault) {
+        StudyBuddyCard(
+            onClick = onTap,
+            modifier = modifier,
+        ) {
+            DicteeCardContent(item = item)
+        }
     } else {
         SwipeableListCard(
             onEdit = onEdit,
@@ -332,15 +339,27 @@ private fun DicteeCardContent(
             }
         }
         Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = pluralStringResource(
-                CoreUiR.plurals.dictee_word_count_plural,
-                item.list.wordCount,
-                item.list.wordCount,
-            ),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = pluralStringResource(
+                    CoreUiR.plurals.dictee_word_count_plural,
+                    item.list.wordCount,
+                    item.list.wordCount,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            if (item.isDefault) {
+                Text(
+                    text = stringResource(CoreUiR.string.dictee_default_badge),
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
 
         // Word preview chips
         if (item.wordPreview.isNotEmpty()) {

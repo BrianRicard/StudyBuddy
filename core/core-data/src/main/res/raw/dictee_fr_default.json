@@ -1,0 +1,121 @@
+[
+  {
+    "id": "fr_dictee_01",
+    "unit": 1,
+    "title": "Le m devant le b ou le p",
+    "language": "fr",
+    "words": ["campagne", "printemps", "temps", "tomber", "tout", "toute", "trop"]
+  },
+  {
+    "id": "fr_dictee_02",
+    "unit": 2,
+    "title": "an \u00b7 en",
+    "language": "fr",
+    "words": ["an", "avant", "devant", "attendre", "encore", "moment", "souvent", "cent", "entendre", "parent", "en", "entre", "prendre", "pendant"]
+  },
+  {
+    "id": "fr_dictee_03",
+    "unit": 3,
+    "title": "on \u00b7 om",
+    "language": "fr",
+    "words": ["chanson", "non", "donc", "oncle", "monstre", "onze", "montrer", "r\u00e9pondre", "compter"]
+  },
+  {
+    "id": "fr_dictee_04",
+    "unit": 4,
+    "title": "Consonne double entre deux voyelles",
+    "language": "fr",
+    "words": ["appeler", "aussi", "derri\u00e8re", "passer", "tellement", "arr\u00eater", "basse", "fausse", "patte", "arriver", "carotte", "femme", "princesse", "bas"]
+  },
+  {
+    "id": "fr_dictee_05",
+    "unit": 5,
+    "title": "ui",
+    "language": "fr",
+    "words": ["aujourd\u2019hui", "bruit", "depuis", "ensuite", "fruit", "huit", "nuit", "puis", "suivre", "truie"]
+  },
+  {
+    "id": "fr_dictee_06",
+    "unit": 6,
+    "title": "in \u00b7 ain",
+    "language": "fr",
+    "words": ["cousin", "enfin", "vingt", "certain", "maintenant", "certaine", "cousine"]
+  },
+  {
+    "id": "fr_dictee_07",
+    "unit": 7,
+    "title": "oin \u00b7 ier",
+    "language": "fr",
+    "words": ["loin", "moins", "dernier", "derni\u00e8re", "madame", "messieurs", "M.", "mesdames", "monsieur"]
+  },
+  {
+    "id": "fr_dictee_08",
+    "unit": 8,
+    "title": "oi",
+    "language": "fr",
+    "words": ["bois", "moi", "soixante", "froid", "parfois", "toi", "froide", "savoir", "voix", "comme", "comment"]
+  },
+  {
+    "id": "fr_dictee_09",
+    "unit": 9,
+    "title": "La lettre muette",
+    "language": "fr",
+    "words": ["brebis", "canard", "porc", "vers", "cane"]
+  },
+  {
+    "id": "fr_dictee_10",
+    "unit": 10,
+    "title": "eil",
+    "language": "fr",
+    "words": ["merveille", "merveilleux", "vieille", "jamais", "laide", "marier", "jument", "mal", "laid", "malade"]
+  },
+  {
+    "id": "fr_dictee_11",
+    "unit": 11,
+    "title": "c \u00b7 que",
+    "language": "fr",
+    "words": ["coq", "cinquante", "quarante", "quelques", "lorsqu\u2019", "quatorze", "quinze", "lorsque", "que", "qu\u2019", "quelque"]
+  },
+  {
+    "id": "fr_dictee_12",
+    "unit": 12,
+    "title": "eu \u00b7 \u0153u",
+    "language": "fr",
+    "words": ["mieux", "peu", "peut-\u00eatre", "seul", "seule", "vieux", "n\u0153ud"]
+  },
+  {
+    "id": "fr_dictee_13",
+    "unit": 13,
+    "title": "our",
+    "language": "fr",
+    "words": ["autour", "cour", "pour", "pourquoi", "toujours", "banane", "mettre"]
+  },
+  {
+    "id": "fr_dictee_14",
+    "unit": 14,
+    "title": "eur",
+    "language": "fr",
+    "words": ["leur", "leurs", "peur", "penser", "pri\u00e8re", "r\u00e9pondre", "prendre", "propre"]
+  },
+  {
+    "id": "fr_dictee_15",
+    "unit": 15,
+    "title": "f",
+    "language": "fr",
+    "words": ["caf\u00e9", "fable", "ferme", "fils", "fort", "forte", "fourmi", "lecture", "ni", "penser", "venir"]
+  },
+  {
+    "id": "fr_dictee_16",
+    "unit": 16,
+    "title": "Le son s entre deux voyelles qui fait zzz",
+    "language": "fr",
+    "words": ["amuser", "joyeuse", "rose", "joyeux", "sortir"]
+  },
+  {
+    "id": "fr_dictee_17",
+    "unit": 17,
+    "title": "c doux",
+    "language": "fr",
+    "words": ["sel", "sels", "celui", "ce", "face", "ici", "parce que", "parce qu\u2019", "prince", "voici", "le\u00e7on"]
+  }
+]

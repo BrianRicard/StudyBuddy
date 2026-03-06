@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.repository.DicteeRepository
+import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 class DicteeListViewModel @Inject constructor(
     private val getDicteeListsUseCase: GetDicteeListsUseCase,
     private val dicteeRepository: DicteeRepository,
+    private val settingsRepository: SettingsRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(DicteeListState())
@@ -96,6 +98,7 @@ class DicteeListViewModel @Inject constructor(
 
     private fun loadLists() {
         viewModelScope.launch {
+            seedDefaultListsIfNeeded()
             getDicteeListsUseCase(profileId).collect { lists ->
                 val items = lists.map { list ->
                     val words = dicteeRepository.getWordsForList(list.id).first()
@@ -106,6 +109,14 @@ class DicteeListViewModel @Inject constructor(
                 }
                 _state.update { it.copy(items = items, isLoading = false) }
             }
+        }
+    }
+
+    private suspend fun seedDefaultListsIfNeeded() {
+        val seeded = settingsRepository.isDicteeSeeded().first()
+        if (!seeded) {
+            dicteeRepository.seedDefaultLists(profileId)
+            settingsRepository.setDicteeSeeded(true)
         }
     }
 

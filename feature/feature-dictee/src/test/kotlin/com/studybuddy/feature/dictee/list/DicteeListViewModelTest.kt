@@ -4,6 +4,7 @@ import app.cash.turbine.test
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
+import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.GetDicteeListsUseCase
 import io.mockk.coVerify
 import io.mockk.every
@@ -30,6 +31,7 @@ class DicteeListViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
 
     private val dicteeRepository: DicteeRepository = mockk(relaxed = true)
+    private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val getDicteeListsUseCase: GetDicteeListsUseCase = mockk()
 
     private val testLists = listOf(
@@ -64,6 +66,7 @@ class DicteeListViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        every { settingsRepository.isDicteeSeeded() } returns flowOf(true)
         every { getDicteeListsUseCase(any()) } returns flowOf(testLists)
         every { dicteeRepository.getWordsForList("list1") } returns flowOf(testWords)
         every { dicteeRepository.getWordsForList("list2") } returns flowOf(emptyList())
@@ -77,6 +80,7 @@ class DicteeListViewModelTest {
     private fun createViewModel(): DicteeListViewModel = DicteeListViewModel(
         getDicteeListsUseCase = getDicteeListsUseCase,
         dicteeRepository = dicteeRepository,
+        settingsRepository = settingsRepository,
     )
 
     @Test
@@ -324,6 +328,29 @@ class DicteeListViewModelTest {
 
             expectNoEvents()
         }
+    }
+
+    // ── Default list seeding ──────────────────────────────────────────────────
+
+    @Test
+    fun `seeds default lists on first launch`() = runTest {
+        every { settingsRepository.isDicteeSeeded() } returns flowOf(false)
+
+        createViewModel()
+        advanceUntilIdle()
+
+        coVerify { dicteeRepository.seedDefaultLists(any()) }
+        coVerify { settingsRepository.setDicteeSeeded(true) }
+    }
+
+    @Test
+    fun `skips seeding when already seeded`() = runTest {
+        every { settingsRepository.isDicteeSeeded() } returns flowOf(true)
+
+        createViewModel()
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { dicteeRepository.seedDefaultLists(any()) }
     }
 
     @Test

@@ -411,6 +411,7 @@
     <string name="dictee_no_words">No Words Yet</string>
     <string name="dictee_no_words_hint">Add words below to start practicing!</string>
     <string name="dictee_add_words_first">Add words to this list before practicing</string>
+    <string name="dictee_default_badge">Default</string>
     <string name="dictee_add_word_error">Could not add word. Please try again.</string>
     <string name="dictee_delete_word_error">Could not delete word.</string>
     <string name="dictee_restore_word_error">Could not restore word.</string>
