@@ -3,6 +3,7 @@ package com.studybuddy.feature.onboarding
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.model.RewardCatalog
@@ -10,7 +11,6 @@ import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
-import com.studybuddy.core.common.locale.SupportedLocale
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
