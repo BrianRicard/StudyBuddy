@@ -1,24 +1,43 @@
-# StudyBuddy — Hetzner VM Infrastructure
+# StudyBuddy — Hetzner VM Infrastructure (NixOS)
 
-OpenTofu (Terraform-compatible) IaC to provision a Hetzner Cloud VM pre-configured for Android CI, builds, emulator testing, and on-device model work (whisper.cpp).
+OpenTofu IaC to provision a Hetzner Cloud VM running NixOS, pre-configured for Android CI, builds, emulator testing, and whisper.cpp.
+
+## How It Works
+
+`tofu apply` is fully unattended — no manual steps after it completes:
+
+1. **Phase 1** — Creates a Hetzner VM with Ubuntu 24.04, runs `provision.sh` via user_data which:
+   - Writes all NixOS configuration files to `/root/studybuddy-nixos/`
+   - Runs `nixos-infect` to convert Ubuntu → NixOS (VM reboots)
+
+2. **Phase 2** — A `null_resource` provisioner waits for the reboot, then:
+   - Copies the generated `hardware-configuration.nix` into the config dir
+   - Runs `nixos-rebuild switch --flake .#studybuddy-dev`
+
+After ~15–20 minutes, SSH in as `claude` and start working.
 
 ## What Gets Provisioned
 
-| Resource | Details |
+| Component | Details |
 |---|---|
-| **Server** | `ccx13` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, Ubuntu 24.04 |
-| **Location** | `nbg1` (Nuremberg, Germany) |
-| **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound allowed |
+| **Server** | `ccx13` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, NixOS 24.05 |
+| **JDK 17** | For Gradle / Android builds |
+| **Android SDK** | Platform 34, build-tools 34.0.0, x86_64 emulator, licenses auto-accepted |
+| **Node.js 20** | For Claude Code |
+| **Claude Code** | Installed globally via npm |
+| **Gradle** | System-wide |
+| **whisper.cpp** | Built from source with AVX2, base model auto-downloaded |
+| **KVM** | Emulator acceleration (CCX dedicated vCPU required) |
+| **SSH** | Key-only auth, root login disabled, fail2ban |
+| **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound |
 
-The cloud-init script installs: JDK 17, Android SDK 34, KVM/emulator, whisper.cpp (AVX2), Node.js 20 + Claude Code, Gradle, and UFW.
-
-> **Non-root user:** Claude Code refuses to run as root for security reasons. All SSH access and Claude Code sessions should use the `claude` user, which has passwordless sudo for unattended operations. Root SSH login is disabled after provisioning.
+> **Non-root user:** Claude Code refuses to run as root. All SSH access uses the `claude` user, which has passwordless sudo. Root SSH login is disabled after nixos-rebuild.
 
 ## Prerequisites
 
-- **OpenTofu >= 1.6** — install via `brew install opentofu` or see [opentofu.org/docs/intro/install](https://opentofu.org/docs/intro/install/)
-- **Hetzner Cloud API token** — get one from [Hetzner Console](https://console.hetzner.cloud/) → your project → Security → API Tokens → Generate API Token (Read & Write)
-- **SSH key pair** — defaults to `~/.ssh/id_rsa.pub`
+- **OpenTofu >= 1.6** — `brew install opentofu` or see [opentofu.org](https://opentofu.org/docs/intro/install/)
+- **Hetzner Cloud API token** — [Hetzner Console](https://console.hetzner.cloud/) → Project → Security → API Tokens
+- **SSH key pair** — defaults to `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`
 
 ## Deploy
 
@@ -27,86 +46,93 @@ cd hetzner-iac
 
 # 1. Create your variables file
 cp terraform.tfvars.example terraform.tfvars
-# Edit terraform.tfvars and paste your hcloud_token
-# (or export TF_VAR_hcloud_token="your-token-here")
+# Edit terraform.tfvars — paste your hcloud_token, set SSH key paths
 
 # 2. Initialize providers
 tofu init
 
-# 3. Preview changes
+# 3. Preview
 tofu plan
 
-# 4. Apply
+# 4. Apply (fully unattended — creates VM, converts to NixOS, configures everything)
 tofu apply
 ```
 
-After `apply` completes, OpenTofu prints the server IP and an SSH command.
-
-> **Note:** Cloud-init takes 5–10 minutes to finish after the server is created. You can SSH in immediately, but some tools may still be installing. Monitor progress with:
-> ```bash
-> ssh claude@<ip> "tail -f /var/log/cloud-init-output.log"
-> ```
+After `apply` completes, Tofu prints the server IP and SSH command.
 
 ## Connect
 
 ```bash
 # Use the output directly
-tofu output ssh_command
+$(tofu output -raw ssh_command)
 
 # Or manually
 ssh claude@<SERVER_IP>
 ```
 
+## Spin Up Multiple VMs
+
+To run several VMs in parallel, use Tofu workspaces:
+
+```bash
+tofu workspace new vm2
+tofu apply
+
+tofu workspace new vm3
+tofu apply
+
+# Switch between them
+tofu workspace select vm2
+tofu output ssh_command
+
+# Destroy a specific VM
+tofu workspace select vm3
+tofu destroy
+```
+
 ## Verify the Setup
-
-### KVM
-
-```bash
-ssh claude@<ip> "kvm-ok"
-# Expected: INFO: /dev/kvm exists — KVM acceleration can be used
-```
-
-### Android SDK
-
-```bash
-ssh claude@<ip> "adb --version"
-ssh claude@<ip> "/opt/android-sdk/cmdline-tools/latest/bin/sdkmanager --list_installed"
-```
-
-### whisper.cpp
-
-```bash
-ssh claude@<ip> "/opt/whisper.cpp/main -m /opt/whisper.cpp/models/ggml-base.bin --help"
-```
-
-### Cloud-init summary log
-
-```bash
-ssh claude@<ip> "cat /var/log/cloud-init-studybuddy.log"
-```
-
-## Create an Android AVD
-
-After cloud-init finishes:
 
 ```bash
 ssh claude@<ip>
 
-# Source the environment (or reconnect for a fresh shell)
-source /etc/environment
+# Check KVM
+ls /dev/kvm
 
-# Create AVD
-avdmanager create avd \
-  -n studybuddy_avd \
-  -k "system-images;android-34;google_apis;x86_64" \
-  --device "pixel_6"
+# Check Android SDK
+echo $ANDROID_HOME
+adb --version
 
-# Launch headless emulator
-emulator -avd studybuddy_avd -no-audio -no-window &
+# Check whisper
+which whisper
+ls /var/lib/whisper/models/
 
-# Wait for boot
-adb wait-for-device
-adb shell getprop sys.boot_completed  # returns "1" when ready
+# Check Claude Code
+claude --version
+
+# Check Java
+java -version
+```
+
+## Update NixOS Config
+
+If you change files in `nixos/`, re-apply on the VM:
+
+```bash
+# Option 1: Edit directly on the VM and rebuild
+ssh claude@<ip>
+sudo nano /root/studybuddy-nixos/configuration.nix
+sudo nixos-rebuild switch --flake /root/studybuddy-nixos#studybuddy-dev
+
+# Option 2: Taint and re-provision (recreates from scratch)
+tofu taint null_resource.nixos_rebuild
+tofu apply
+```
+
+## Roll Back
+
+```bash
+ssh claude@<ip>
+sudo nixos-rebuild --rollback
 ```
 
 ## Destroy
@@ -115,21 +141,40 @@ adb shell getprop sys.boot_completed  # returns "1" when ready
 tofu destroy
 ```
 
-This terminates the server and removes the firewall and SSH key from Hetzner. Local state files remain until you delete them.
-
 ## File Structure
 
 ```
 hetzner-iac/
-├── main.tf                  # Provider, server, firewall, SSH key
-├── variables.tf             # Input variables (token, SSH key path, location)
-├── outputs.tf               # server_ip, ssh_command
+├── main.tf                  # Provider, server, firewall, SSH key, nixos-rebuild provisioner
+├── variables.tf             # Input variables (token, SSH keys, location, server type)
+├── outputs.tf               # server_ip, ssh_command, nixos_config_path
 ├── terraform.tfvars.example # Sample variables file (no secrets)
-├── cloud-init.yaml          # Server bootstrap script
+├── provision.sh.tftpl       # User_data template: writes NixOS configs + runs nixos-infect
 ├── .gitignore               # Excludes tfstate, .terraform/, terraform.tfvars
 └── README.md                # This file
+
+nixos/                       # Standalone NixOS config (for manual deploy.sh use)
+├── configuration.nix
+├── users.nix
+├── android.nix
+├── whisper.nix
+├── security.nix
+├── flake.nix
+├── flake.lock
+├── deploy.sh
+└── README.md
 ```
 
 ## Cost
 
-The `ccx13` server costs approximately **€15.90/month** (billed hourly). Remember to `tofu destroy` when you're done to stop billing.
+The `ccx13` server costs approximately **€15.90/month** (billed hourly at ~€0.022/hr). Remember to `tofu destroy` when you're done to stop billing.
+
+## Fixing Whisper Hashes
+
+On first `nixos-rebuild`, Nix will error with the correct hashes for whisper.cpp source and model. SSH in, update the hashes in `/root/studybuddy-nixos/whisper.nix`, and re-run:
+
+```bash
+sudo nixos-rebuild switch --flake /root/studybuddy-nixos#studybuddy-dev
+```
+
+Then update `nixos/whisper.nix` and `hetzner-iac/provision.sh.tftpl` in the repo so future VMs get it right the first time.
