@@ -571,7 +571,6 @@ private fun PoemLines(
     }
 }
 
-
 @Composable
 private fun DualFabs(
     isRecording: Boolean,
