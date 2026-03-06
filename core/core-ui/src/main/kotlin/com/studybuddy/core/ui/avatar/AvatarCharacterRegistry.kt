@@ -289,6 +289,185 @@ object AvatarCharacterRegistry {
                 petAnchor = Offset(0.85f, 0.82f),
             ),
         ),
+
+        // ── Epic skins ──────────────────────────────────────────────────────
+
+        CharacterSpec(
+            id = "cyberpunk_bunny",
+            primaryColor = Color(0xFF00E5FF),
+            secondaryColor = Color(0xFFE040FB),
+            accentColor = Color(0xFF1A1A1A),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.18f),
+                faceAnchor = Offset(0.50f, 0.36f),
+                chestAnchor = Offset(0.50f, 0.63f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "engineer_cat",
+            primaryColor = Color(0xFFFF9800),
+            secondaryColor = Color(0xFF9E9E9E),
+            accentColor = Color(0xFF1A1A1A),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "samurai_fox",
+            primaryColor = Color(0xFFE07B39),
+            secondaryColor = Color(0xFFC62828),
+            accentColor = Color(0xFFFFD700),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.9f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "pirate_panda",
+            primaryColor = Color(0xFFF5F5F5),
+            secondaryColor = Color(0xFF212121),
+            accentColor = Color(0xFFFFD700),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.05f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "ninja_squirrel",
+            primaryColor = Color(0xFF37474F),
+            secondaryColor = Color(0xFFA1622F),
+            accentColor = Color(0xFFD32F2F),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.07f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "dj_hedgehog",
+            primaryColor = Color(0xFF795548),
+            secondaryColor = Color(0xFFE040FB),
+            accentColor = Color(0xFF00E5FF),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        // ── Legendary skins ─────────────────────────────────────────────────
+
+        CharacterSpec(
+            id = "elder_dragon",
+            primaryColor = Color(0xFF6A1B9A),
+            secondaryColor = Color(0xFFFFD700),
+            accentColor = Color(0xFFFF6F00),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatRotation = -5f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "wizard_owl",
+            primaryColor = Color(0xFF4A148C),
+            secondaryColor = Color(0xFFCE93D8),
+            accentColor = Color(0xFF00E5FF),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.03f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.80f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "royal_unicorn",
+            primaryColor = Color(0xFFF8F8FF),
+            secondaryColor = Color(0xFFFFD700),
+            accentColor = Color(0xFFE040FB),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.02f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "robot_dog",
+            primaryColor = Color(0xFF90A4AE),
+            secondaryColor = Color(0xFF00E5FF),
+            accentColor = Color(0xFFFF1744),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.08f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "phoenix_butterfly",
+            primaryColor = Color(0xFFFF6F00),
+            secondaryColor = Color(0xFFFF1744),
+            accentColor = Color(0xFFFFD700),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.10f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.78f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "steampunk_hamster",
+            primaryColor = Color(0xFFFFB74D),
+            secondaryColor = Color(0xFF8D6E63),
+            accentColor = Color(0xFFBF8040),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.07f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "space_penguin",
+            primaryColor = Color(0xFF263238),
+            secondaryColor = Color(0xFFECEFF1),
+            accentColor = Color(0xFF2196F3),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
     )
 
     private val specsById: Map<String, CharacterSpec> = allSpecs.associateBy { it.id }

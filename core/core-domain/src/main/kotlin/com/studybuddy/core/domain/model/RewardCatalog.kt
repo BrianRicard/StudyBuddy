@@ -25,6 +25,21 @@ object RewardCatalog {
         CharacterBody("moose", "Moose", "\uD83E\uDEAB"),
         CharacterBody("canada_goose", "Canada Goose", "\uD83E\uDD9A"),
         CharacterBody("turkey", "Turkey", "\uD83E\uDD83"),
+        // Epic characters
+        CharacterBody("cyberpunk_bunny", "Cyberpunk Bunny", "\uD83D\uDC30"),
+        CharacterBody("engineer_cat", "Engineer Cat", "\uD83D\uDC31"),
+        CharacterBody("samurai_fox", "Samurai Fox", "\uD83E\uDD8A"),
+        CharacterBody("pirate_panda", "Pirate Panda", "\uD83D\uDC3C"),
+        CharacterBody("ninja_squirrel", "Ninja Squirrel", "\uD83D\uDC3F\uFE0F"),
+        CharacterBody("dj_hedgehog", "DJ Hedgehog", "\uD83E\uDD94"),
+        // Legendary characters
+        CharacterBody("elder_dragon", "Elder Dragon", "\uD83D\uDC09"),
+        CharacterBody("wizard_owl", "Wizard Owl", "\uD83E\uDD89"),
+        CharacterBody("royal_unicorn", "Royal Unicorn", "\uD83E\uDD84"),
+        CharacterBody("robot_dog", "Robot Dog", "\uD83E\uDD16"),
+        CharacterBody("phoenix_butterfly", "Phoenix Butterfly", "\uD83E\uDD8B"),
+        CharacterBody("steampunk_hamster", "Steampunk Hamster", "\uD83D\uDC39"),
+        CharacterBody("space_penguin", "Space Penguin", "\uD83D\uDC27"),
     )
 
     // ── Character purchase items ────────────────────────────────────────────────
@@ -61,6 +76,49 @@ object RewardCatalog {
         RewardItem("char_unicorn", RewardCategory.CHARACTER, "Unicorn", "\uD83E\uDD84", 400, AvatarTier.EPIC),
         // Legendary
         RewardItem("char_dragon", RewardCategory.CHARACTER, "Dragon", "\uD83D\uDC09", 750, AvatarTier.LEGENDARY),
+        // Epic — new skins
+        RewardItem("char_engineer_cat", RewardCategory.CHARACTER, "Engineer Cat", "\uD83D\uDC31", 300, AvatarTier.EPIC),
+        RewardItem("char_dj_hedgehog", RewardCategory.CHARACTER, "DJ Hedgehog", "\uD83E\uDD94", 300, AvatarTier.EPIC),
+        RewardItem("char_cyberpunk_bunny", RewardCategory.CHARACTER, "Cyberpunk Bunny", "\uD83D\uDC30", 300, AvatarTier.EPIC),
+        RewardItem("char_pirate_panda", RewardCategory.CHARACTER, "Pirate Panda", "\uD83D\uDC3C", 300, AvatarTier.EPIC),
+        RewardItem("char_samurai_fox", RewardCategory.CHARACTER, "Samurai Fox", "\uD83E\uDD8A", 350, AvatarTier.EPIC),
+        RewardItem("char_ninja_squirrel", RewardCategory.CHARACTER, "Ninja Squirrel", "\uD83D\uDC3F\uFE0F", 350, AvatarTier.EPIC),
+        // Legendary — new skins
+        RewardItem("char_wizard_owl", RewardCategory.CHARACTER, "Wizard Owl", "\uD83E\uDD89", 750, AvatarTier.LEGENDARY),
+        RewardItem("char_elder_dragon", RewardCategory.CHARACTER, "Elder Dragon", "\uD83D\uDC09", 800, AvatarTier.LEGENDARY),
+        RewardItem(
+            "char_steampunk_hamster",
+            RewardCategory.CHARACTER,
+            "Steampunk Hamster",
+            "\uD83D\uDC39",
+            850,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem("char_robot_dog", RewardCategory.CHARACTER, "Robot Dog", "\uD83E\uDD16", 900, AvatarTier.LEGENDARY),
+        RewardItem(
+            "char_royal_unicorn",
+            RewardCategory.CHARACTER,
+            "Royal Unicorn",
+            "\uD83E\uDD84",
+            1000,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem(
+            "char_phoenix_butterfly",
+            RewardCategory.CHARACTER,
+            "Phoenix Butterfly",
+            "\uD83E\uDD8B",
+            1200,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem(
+            "char_space_penguin",
+            RewardCategory.CHARACTER,
+            "Space Penguin",
+            "\uD83D\uDC27",
+            1500,
+            AvatarTier.LEGENDARY,
+        ),
     )
 
     // ── Hats ──────────────────────────────────────────────────────────────────
