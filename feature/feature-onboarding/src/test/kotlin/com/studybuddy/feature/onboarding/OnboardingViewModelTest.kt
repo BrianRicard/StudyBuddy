@@ -1,14 +1,19 @@
 package com.studybuddy.feature.onboarding
 
 import app.cash.turbine.test
+import com.studybuddy.core.domain.model.VoicePack
+import com.studybuddy.core.domain.model.VoicePackStatus
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.domain.repository.VoicePackRepository
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -32,10 +37,18 @@ class OnboardingViewModelTest {
     private val avatarRepository: AvatarRepository = mockk(relaxed = true)
     private val rewardsRepository: RewardsRepository = mockk(relaxed = true)
     private val settingsRepository: SettingsRepository = mockk(relaxed = true)
+    private val voicePackRepository: VoicePackRepository = mockk(relaxed = true)
+
+    private val testVoicePacks = listOf(
+        VoicePack("vp_fr", "fr", "French", 0L, VoicePackStatus.NOT_INSTALLED),
+        VoicePack("vp_en", "en", "English", 0L, VoicePackStatus.NOT_INSTALLED),
+        VoicePack("vp_de", "de", "German", 0L, VoicePackStatus.NOT_INSTALLED),
+    )
 
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        coEvery { voicePackRepository.getVoicePacks() } returns flowOf(testVoicePacks)
     }
 
     @AfterEach
@@ -48,20 +61,14 @@ class OnboardingViewModelTest {
         avatarRepository = avatarRepository,
         rewardsRepository = rewardsRepository,
         settingsRepository = settingsRepository,
+        voicePackRepository = voicePackRepository,
     )
-
-    @Test
-    fun `initial state starts at step 0`() = runTest {
-        val viewModel = createViewModel()
-        assertEquals(0, viewModel.state.value.currentStep)
-    }
 
     @Test
     fun `initial state has onboarding defaults`() = runTest {
         val viewModel = createViewModel()
         val state = viewModel.state.value
 
-        assertEquals(0, state.currentStep)
         assertEquals("", state.name)
         assertEquals("en", state.selectedLocale)
     }
@@ -80,8 +87,8 @@ class OnboardingViewModelTest {
     fun `set name clears error`() = runTest {
         val viewModel = createViewModel()
 
-        // Trigger error by trying next with empty name
-        viewModel.onIntent(OnboardingIntent.NextStep)
+        // Trigger error by trying to complete with empty name
+        viewModel.onIntent(OnboardingIntent.Complete)
         advanceUntilIdle()
         assertNotNull(viewModel.state.value.nameError)
 
@@ -131,70 +138,6 @@ class OnboardingViewModelTest {
     }
 
     @Test
-    fun `next step with empty name shows error`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-
-        assertNotNull(viewModel.state.value.nameError)
-        assertEquals(0, viewModel.state.value.currentStep)
-    }
-
-    @Test
-    fun `next step with valid name advances to step 1`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        advanceUntilIdle()
-
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.state.value.currentStep)
-    }
-
-    @Test
-    fun `next step from step 1 stays at step 1 (final step)`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-        assertEquals(1, viewModel.state.value.currentStep)
-
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.state.value.currentStep)
-    }
-
-    @Test
-    fun `previous step goes back`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-        assertEquals(1, viewModel.state.value.currentStep)
-
-        viewModel.onIntent(OnboardingIntent.PreviousStep)
-        advanceUntilIdle()
-
-        assertEquals(0, viewModel.state.value.currentStep)
-    }
-
-    @Test
-    fun `previous step from step 0 stays at 0`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.PreviousStep)
-        advanceUntilIdle()
-
-        assertEquals(0, viewModel.state.value.currentStep)
-    }
-
-    @Test
     fun `complete creates profile and emits NavigateToHome`() = runTest {
         val viewModel = createViewModel()
 
@@ -228,99 +171,44 @@ class OnboardingViewModelTest {
         assertFalse(viewModel.state.value.isCompleting)
     }
 
-    // --- Regression tests: nextStep only advances by 1 step (bug fix #16) ---
-
     @Test
-    fun `nextStep from step 0 advances to exactly step 1 not step 2`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        advanceUntilIdle()
-        assertEquals(0, viewModel.state.value.currentStep)
-
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-
-        assertEquals(
-            1,
-            viewModel.state.value.currentStep,
-            "nextStep() from step 0 must land on step 1, never skip to step 2",
-        )
-    }
-
-    @Test
-    fun `nextStep visits all 2 steps in order 0 then 1`() = runTest {
+    fun `complete enables all voice packs`() = runTest {
         val viewModel = createViewModel()
 
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
         advanceUntilIdle()
 
-        // Step 0 -> 1
-        assertEquals(0, viewModel.state.value.currentStep)
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-        assertEquals(1, viewModel.state.value.currentStep)
-
-        // Step 1 is the final step (STEP_VOICE), nextStep should NOT advance further
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-        assertEquals(
-            1,
-            viewModel.state.value.currentStep,
-            "nextStep() at final step (1) must not advance beyond it",
-        )
-    }
-
-    @Test
-    fun `nextStep from step 0 caps at step 1`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        advanceUntilIdle()
-
-        // Call nextStep twice rapidly — should cap at step 1 (final step)
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        viewModel.onIntent(OnboardingIntent.NextStep)
-        advanceUntilIdle()
-
-        assertEquals(1, viewModel.state.value.currentStep)
-    }
-
-    @Test
-    fun `previousStep at step 0 does not go below 0`() = runTest {
-        val viewModel = createViewModel()
-        assertEquals(0, viewModel.state.value.currentStep)
-
-        // Try going back multiple times from step 0
-        viewModel.onIntent(OnboardingIntent.PreviousStep)
-        advanceUntilIdle()
-        assertEquals(0, viewModel.state.value.currentStep)
-
-        viewModel.onIntent(OnboardingIntent.PreviousStep)
-        advanceUntilIdle()
-        assertEquals(0, viewModel.state.value.currentStep)
-
-        // Verify the step is never negative
-        assertTrue(
-            viewModel.state.value.currentStep >= 0,
-            "currentStep must never be negative",
-        )
-    }
-
-    @Test
-    fun `previousStep at step 0 repeated 5 times stays at 0`() = runTest {
-        val viewModel = createViewModel()
-        assertEquals(0, viewModel.state.value.currentStep)
-
-        repeat(5) {
-            viewModel.onIntent(OnboardingIntent.PreviousStep)
+        viewModel.effects.test {
+            viewModel.onIntent(OnboardingIntent.Complete)
             advanceUntilIdle()
+            awaitItem()
         }
 
-        assertEquals(
-            0,
-            viewModel.state.value.currentStep,
-            "previousStep() called repeatedly at step 0 must never go below 0",
+        coVerify { voicePackRepository.updateVoicePackStatus("vp_fr", VoicePackStatus.INSTALLED) }
+        coVerify { voicePackRepository.updateVoicePackStatus("vp_en", VoicePackStatus.INSTALLED) }
+        coVerify { voicePackRepository.updateVoicePackStatus("vp_de", VoicePackStatus.INSTALLED) }
+    }
+
+    @Test
+    fun `complete skips already installed voice packs`() = runTest {
+        val mixedPacks = listOf(
+            VoicePack("vp_fr", "fr", "French", 0L, VoicePackStatus.NOT_INSTALLED),
+            VoicePack("vp_en", "en", "English", 0L, VoicePackStatus.INSTALLED),
         )
+        coEvery { voicePackRepository.getVoicePacks() } returns flowOf(mixedPacks)
+
+        val viewModel = createViewModel()
+
+        viewModel.onIntent(OnboardingIntent.SetName("Alice"))
+        advanceUntilIdle()
+
+        viewModel.effects.test {
+            viewModel.onIntent(OnboardingIntent.Complete)
+            advanceUntilIdle()
+            awaitItem()
+        }
+
+        coVerify { voicePackRepository.updateVoicePackStatus("vp_fr", VoicePackStatus.INSTALLED) }
+        coVerify(exactly = 0) { voicePackRepository.updateVoicePackStatus("vp_en", any()) }
     }
 }
