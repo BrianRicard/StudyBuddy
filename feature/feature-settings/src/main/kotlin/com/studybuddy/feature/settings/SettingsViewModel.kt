@@ -10,8 +10,8 @@ import com.studybuddy.core.domain.repository.BackupRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
-import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
+import com.studybuddy.shared.points.AwardPointsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
