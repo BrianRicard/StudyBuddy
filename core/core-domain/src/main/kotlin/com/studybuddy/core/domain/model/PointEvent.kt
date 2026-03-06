@@ -18,4 +18,5 @@ enum class PointSource {
     DAILY_LOGIN,
     CHALLENGE,
     PURCHASE,
+    GIFT,
 }
