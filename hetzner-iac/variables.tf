@@ -10,6 +10,13 @@ variable "ssh_public_key_path" {
   default     = "~/.ssh/id_rsa.pub"
 }
 
+variable "anthropic_api_key" {
+  description = "Anthropic API key for Claude Code. Set via TF_VAR_anthropic_api_key or terraform.tfvars."
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
 variable "server_location" {
   description = "Hetzner datacenter location for the server."
   type        = string

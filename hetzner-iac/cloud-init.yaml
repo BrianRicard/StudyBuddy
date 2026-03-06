@@ -269,6 +269,18 @@ runcmd:
     npm install -g @anthropic-ai/claude-code 2>&1 | tee -a /var/log/cloud-init-studybuddy.log
     echo "Claude Code installed: $(claude --version 2>&1 || echo 'install may have failed')" | tee -a /var/log/cloud-init-studybuddy.log
 
+    # Configure Anthropic API key for hands-off authentication (if provided)
+    if [ -n "${anthropic_api_key}" ]; then
+      echo "ANTHROPIC_API_KEY=${anthropic_api_key}" >> /home/claude/.env
+      chown claude:claude /home/claude/.env
+      chmod 600 /home/claude/.env
+      # Source .env in claude's bashrc so it's available in all sessions
+      echo '[ -f ~/.env ] && set -a && . ~/.env && set +a' >> /home/claude/.bashrc
+      echo "Anthropic API key configured for claude user" | tee -a /var/log/cloud-init-studybuddy.log
+    else
+      echo "No Anthropic API key provided — Claude Code will require interactive login" | tee -a /var/log/cloud-init-studybuddy.log
+    fi
+
   # ---------------------------------------------------------------
   # 7. UFW firewall
   # ---------------------------------------------------------------
