@@ -1,30 +1,19 @@
 # StudyBuddy — Hetzner VM Infrastructure (nixos-anywhere)
 
-OpenTofu IaC to provision a Hetzner Cloud VM running NixOS, pre-configured for Android CI, builds, emulator testing, and whisper.cpp.
-
-Uses [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) for clean, reproducible NixOS installation with declarative disk partitioning via [disko](https://github.com/nix-community/disko).
+OpenTofu IaC to provision a Hetzner Cloud VM, then install NixOS via [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) with declarative disk partitioning via [disko](https://github.com/nix-community/disko).
 
 ## How It Works
 
-`tofu apply` is fully unattended — no manual steps after it completes:
+Two steps — Terraform creates the VM, then you run nixos-anywhere:
 
-1. Creates a Hetzner VM with Ubuntu 24.04 (any Linux works — nixos-anywhere doesn't care)
-2. Runs `nixos-anywhere` locally which:
+1. **`tofu apply`** — Creates a Hetzner VM (Ubuntu 24.04), firewall, and SSH key
+2. **`deploy-anywhere.sh`** — Runs nixos-anywhere which:
    - kexec boots a NixOS installer on the target
    - Partitions `/dev/sda` declaratively via disko (`nixos/disk-config.nix`)
    - Installs NixOS from `nixos/flake.nix`
    - Reboots into the finished system
 
-After ~10–15 minutes, SSH in as `claude` and start working.
-
-### Why nixos-anywhere?
-
-The previous approach used `nixos-infect` (an in-place Ubuntu-to-NixOS conversion hack) which could leave artifacts and required copying `hardware-configuration.nix` from the VM. nixos-anywhere provides:
-
-- **Clean install** — kexec into NixOS installer, no host distro leftovers
-- **Declarative disk partitioning** — disko handles partitions, no manual `hardware-configuration.nix`
-- **Single step** — one command does everything (partition, install, configure, reboot)
-- **Any source distro** — works from any Linux with kexec support
+The nixos-anywhere step is separate from Terraform so it works cross-platform — run it from **WSL**, **Git Bash**, or any shell with Nix installed.
 
 ## What Gets Provisioned
 
@@ -46,7 +35,7 @@ The previous approach used `nixos-infect` (an in-place Ubuntu-to-NixOS conversio
 ## Prerequisites
 
 - **OpenTofu >= 1.6** — `brew install opentofu` or see [opentofu.org](https://opentofu.org/docs/intro/install/)
-- **Nix with flakes** — required locally for nixos-anywhere (`curl -L https://nixos.org/nix/install | sh`)
+- **Nix with flakes** — required for nixos-anywhere (run from WSL/Git Bash on Windows)
 - **Hetzner Cloud API token** — [Hetzner Console](https://console.hetzner.cloud/) → Project → Security → API Tokens
 - **SSH key pair** — defaults to `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`
 
@@ -65,11 +54,30 @@ tofu init
 # 3. Preview
 tofu plan
 
-# 4. Apply (fully unattended — creates VM, runs nixos-anywhere, configures everything)
+# 4. Create the VM
 tofu apply
+
+# 5. Install NixOS (run from a shell with Nix — WSL, Git Bash, Linux, macOS)
+#    The exact command is printed by tofu as the "nixos_anywhere_command" output:
+../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
+
+# Or copy the command from tofu output:
+$(tofu output -raw nixos_anywhere_command)
 ```
 
-After `apply` completes, Tofu prints the server IP and SSH command.
+After nixos-anywhere completes (~10–15 min), SSH in as `claude`.
+
+## Windows Users
+
+Terraform/OpenTofu runs natively on Windows. The nixos-anywhere step requires Nix, which runs in **WSL**:
+
+```powershell
+# Step 1: From PowerShell / cmd — create the VM
+tofu apply
+
+# Step 2: From WSL — install NixOS
+wsl ../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
+```
 
 ## Connect
 
@@ -83,59 +91,35 @@ ssh claude@<SERVER_IP>
 
 ## Spin Up Multiple VMs
 
-To run several VMs in parallel, use Tofu workspaces:
-
 ```bash
 tofu workspace new vm2
 tofu apply
+# then run deploy-anywhere.sh against the new IP
 
-tofu workspace new vm3
-tofu apply
-
-# Switch between them
 tofu workspace select vm2
 tofu output ssh_command
-
-# Destroy a specific VM
-tofu workspace select vm3
-tofu destroy
 ```
 
 ## Verify the Setup
 
 ```bash
 ssh claude@<ip>
-
-# Check KVM
-ls /dev/kvm
-
-# Check Android SDK
-echo $ANDROID_HOME
-adb --version
-
-# Check whisper
-which whisper
-ls /var/lib/whisper/models/
-
-# Check Claude Code
-claude --version
-
-# Check Java
-java -version
+java -version               # JDK 17
+echo $ANDROID_HOME           # Android SDK
+node --version               # Node.js 20
+claude --version             # Claude Code
+ls /dev/kvm                  # KVM support
 ```
 
 ## Update NixOS Config
 
-If you change files in `nixos/`, re-apply on the VM:
-
 ```bash
-# Option 1: Edit directly on the VM and rebuild
+# Edit directly on the VM and rebuild
 ssh claude@<ip>
 sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
 
-# Option 2: Re-run nixos-anywhere (wipes and reinstalls — use for major changes)
-tofu taint null_resource.nixos_anywhere
-tofu apply
+# Or re-run nixos-anywhere for a clean reinstall
+../nixos/deploy-anywhere.sh <SERVER_IP> ~/.ssh/your_key.pub
 ```
 
 ## Roll Back
@@ -155,37 +139,30 @@ tofu destroy
 
 ```
 hetzner-iac/
-├── main.tf                  # Provider, server, firewall, SSH key, nixos-anywhere provisioner
-├── variables.tf             # Input variables (token, SSH keys, location, server type, config dir)
-├── outputs.tf               # server_ip, ssh_command, deployment_method
+├── main.tf                  # Provider, server, firewall, SSH key
+├── variables.tf             # Input variables (token, SSH keys, location, server type)
+├── outputs.tf               # server_ip, ssh_command, nixos_anywhere_command
 ├── terraform.tfvars.example # Sample variables file (no secrets)
 ├── .gitignore               # Excludes tfstate, .terraform/, terraform.tfvars
 └── README.md                # This file
 
-nixos/                       # NixOS configuration (used by both Tofu and standalone deploy)
-├── configuration.nix        # Main system config (imports all modules)
-├── users.nix                # User definitions (claude user, sudo)
-├── android.nix              # Android SDK + emulator
-├── whisper.nix              # whisper.cpp build + model
-├── security.nix             # SSH hardening + fail2ban
-├── flake.nix                # Nix flake (includes disko input)
-├── flake.lock               # Locked dependency versions
+nixos/                       # NixOS configuration (used by deploy-anywhere.sh)
+├── configuration.nix        # Main system config
 ├── disk-config.nix          # Disko declarative disk partitioning
-├── deploy-anywhere.sh       # Standalone nixos-anywhere deploy script
-├── deploy.sh                # Legacy nixos-infect deploy (kept for reference)
-└── README.md
+├── flake.nix                # Nix flake (includes disko input)
+├── deploy-anywhere.sh       # nixos-anywhere deploy script
+├── deploy.sh                # Legacy nixos-infect deploy (reference only)
+└── ...
 ```
 
 ## Cost
 
-The `ccx13` server costs approximately **€15.90/month** (billed hourly at ~€0.022/hr). Remember to `tofu destroy` when you're done to stop billing.
+The `ccx13` server costs approximately **€15.90/month** (~€0.022/hr). Remember to `tofu destroy` when done.
 
 ## Fixing Whisper Hashes
 
-On first build, Nix will error with the correct hashes for whisper.cpp source and model. SSH in, update the hashes in `nixos/whisper.nix`, and re-run:
+On first build, Nix errors with the correct hashes. Update them in `nixos/whisper.nix` and rebuild:
 
 ```bash
 sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
 ```
-
-Then update `nixos/whisper.nix` in the repo so future VMs get it right the first time.
