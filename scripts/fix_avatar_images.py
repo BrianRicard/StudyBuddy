@@ -35,10 +35,10 @@ def has_white_background(img):
     pixels = img.load()
     w, h = img.size
 
-    # Sample a band 3-10 pixels inside each edge
+    # Sample a band 3-30 pixels inside each edge
     white_count = 0
     total = 0
-    for offset in range(3, min(11, w // 4)):
+    for offset in range(3, min(31, w // 4)):
         for x in range(0, w, max(1, w // 20)):
             for y_pos in [offset, h - 1 - offset]:
                 r, g, b, a = pixels[x, y_pos]
@@ -52,7 +52,7 @@ def has_white_background(img):
                 if r > WHITE_THRESHOLD and g > WHITE_THRESHOLD and b > WHITE_THRESHOLD and a > 200:
                     white_count += 1
 
-    return total > 0 and (white_count / total) > 0.3
+    return total > 0 and (white_count / total) > 0.15
 
 
 def flood_fill_remove_background(img):
