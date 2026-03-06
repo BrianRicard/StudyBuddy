@@ -30,13 +30,13 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,8 +51,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
+import com.studybuddy.core.ui.adaptive.LayoutType
+import com.studybuddy.core.ui.adaptive.LocalLayoutType
 import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.LoadingState
@@ -72,7 +76,7 @@ fun HomeScreen(
     onNavigateToRewards: () -> Unit = {},
     onNavigateToSettings: () -> Unit = {},
 ) {
-    val state by viewModel.state.collectAsState()
+    val state by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
@@ -96,6 +100,20 @@ fun HomeScreen(
         return
     }
 
+    HomeContent(
+        state = state,
+        onIntent = viewModel::onIntent,
+    )
+}
+
+@Composable
+private fun HomeContent(
+    state: HomeState,
+    onIntent: (HomeIntent) -> Unit,
+) {
+    val dimens = AdaptiveDimensDefaults.current()
+    val layoutType = LocalLayoutType.current
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
     ) { paddingValues ->
@@ -103,17 +121,18 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .padding(horizontal = dimens.screenPadding),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            item { Spacer(Modifier.height(8.dp)) }
+            item { Spacer(Modifier.height(4.dp)) }
 
             // Header: Avatar + Greeting + Stars + Settings
             item {
                 HomeHeader(
                     state = state,
-                    onAvatarClick = { viewModel.onIntent(HomeIntent.NavigateToAvatar) },
-                    onStarsClick = { viewModel.onIntent(HomeIntent.NavigateToStats) },
+                    onAvatarClick = { onIntent(HomeIntent.NavigateToAvatar) },
+                    onStarsClick = { onIntent(HomeIntent.NavigateToStats) },
+                    onSettingsClick = { onIntent(HomeIntent.NavigateToSettings) },
                     modifier = Modifier.animateItemAppearance(0),
                 )
             }
@@ -138,13 +157,14 @@ fun HomeScreen(
                 )
             }
 
-            // Mode Cards Grid (2x2)
+            // Mode Cards Grid
             item {
                 ModeCardsGrid(
-                    onDicteeClick = { viewModel.onIntent(HomeIntent.NavigateToDictee) },
-                    onMathClick = { viewModel.onIntent(HomeIntent.NavigateToMath) },
-                    onMathChallengeClick = { viewModel.onIntent(HomeIntent.NavigateToMathChallenge) },
-                    onPoemsClick = { viewModel.onIntent(HomeIntent.NavigateToPoems) },
+                    onDicteeClick = { onIntent(HomeIntent.NavigateToDictee) },
+                    onMathClick = { onIntent(HomeIntent.NavigateToMath) },
+                    onMathChallengeClick = { onIntent(HomeIntent.NavigateToMathChallenge) },
+                    onPoemsClick = { onIntent(HomeIntent.NavigateToPoems) },
+                    layoutType = layoutType,
                     modifier = Modifier.animateItemAppearance(3),
                 )
             }
@@ -173,11 +193,14 @@ fun HomeScreen(
     }
 }
 
+// region Header
+
 @Composable
 private fun HomeHeader(
     state: HomeState,
     onAvatarClick: () -> Unit,
     onStarsClick: () -> Unit,
+    onSettingsClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -244,8 +267,23 @@ private fun HomeHeader(
                 color = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
+
+        Spacer(Modifier.width(4.dp))
+
+        // Settings gear
+        IconButton(onClick = onSettingsClick) {
+            Image(
+                painter = painterResource(CoreUiR.drawable.ic_nav_settings),
+                contentDescription = stringResource(CoreUiR.string.nav_settings),
+                modifier = Modifier.size(28.dp),
+            )
+        }
     }
 }
+
+// endregion
+
+// region Streak Banner
 
 @Composable
 private fun StreakBanner(
@@ -255,13 +293,13 @@ private fun StreakBanner(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.secondaryContainer,
         ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-        ) {
+        Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(CoreUiR.drawable.ic_streak_flame),
@@ -281,7 +319,7 @@ private fun StreakBanner(
                 )
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(12.dp))
 
             // Week dots (Mon-Sun)
             Row(
@@ -321,6 +359,7 @@ private fun StreakBanner(
                                 )
                             }
                         }
+                        Spacer(Modifier.height(2.dp))
                         Text(
                             text = dayLabels[index],
                             style = MaterialTheme.typography.labelSmall,
@@ -333,6 +372,10 @@ private fun StreakBanner(
     }
 }
 
+// endregion
+
+// region Daily Challenge
+
 @Composable
 private fun DailyChallengeCard(
     sessionsToday: Int,
@@ -343,6 +386,7 @@ private fun DailyChallengeCard(
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = if (isComplete) {
                 MaterialTheme.colorScheme.tertiaryContainer
@@ -350,6 +394,7 @@ private fun DailyChallengeCard(
                 MaterialTheme.colorScheme.surfaceVariant
             },
         ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -393,12 +438,17 @@ private fun DailyChallengeCard(
     }
 }
 
+// endregion
+
+// region Mode Cards Grid
+
 @Composable
 private fun ModeCardsGrid(
     onDicteeClick: () -> Unit,
     onMathClick: () -> Unit,
     onMathChallengeClick: () -> Unit,
     onPoemsClick: () -> Unit,
+    layoutType: LayoutType,
     modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "modeCardBob")
@@ -414,6 +464,7 @@ private fun ModeCardsGrid(
                 onClick = onDicteeClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_dictee_illustration,
+                containerColor = ModeCardColor.Primary,
                 infiniteTransition = infiniteTransition,
                 animationDelay = 0,
             )
@@ -423,6 +474,7 @@ private fun ModeCardsGrid(
                 onClick = onMathClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_math_illustration,
+                containerColor = ModeCardColor.Secondary,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY,
             )
@@ -437,6 +489,7 @@ private fun ModeCardsGrid(
                 onClick = onPoemsClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_poems_notepad,
+                containerColor = ModeCardColor.Tertiary,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 2,
             )
@@ -446,12 +499,15 @@ private fun ModeCardsGrid(
                 onClick = onMathChallengeClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_target_challenge,
+                containerColor = ModeCardColor.Primary,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 3,
             )
         }
     }
 }
+
+private enum class ModeCardColor { Primary, Secondary, Tertiary }
 
 @Composable
 private fun ModeCard(
@@ -461,6 +517,7 @@ private fun ModeCard(
     modifier: Modifier = Modifier,
     @DrawableRes iconRes: Int = 0,
     isLocked: Boolean = false,
+    containerColor: ModeCardColor = ModeCardColor.Primary,
     infiniteTransition: InfiniteTransition,
     animationDelay: Int = 0,
 ) {
@@ -475,19 +532,34 @@ private fun ModeCard(
         label = "bob_$title",
     )
 
+    val cardContainerColor = if (isLocked) {
+        MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
+    } else {
+        when (containerColor) {
+            ModeCardColor.Primary -> MaterialTheme.colorScheme.primaryContainer
+            ModeCardColor.Secondary -> MaterialTheme.colorScheme.secondaryContainer
+            ModeCardColor.Tertiary -> MaterialTheme.colorScheme.tertiaryContainer
+        }
+    }
+
+    val textColor = if (isLocked) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        when (containerColor) {
+            ModeCardColor.Primary -> MaterialTheme.colorScheme.onPrimaryContainer
+            ModeCardColor.Secondary -> MaterialTheme.colorScheme.onSecondaryContainer
+            ModeCardColor.Tertiary -> MaterialTheme.colorScheme.onTertiaryContainer
+        }
+    }
+
     Card(
         modifier = modifier
             .height(MODE_CARD_HEIGHT)
             .graphicsLayer { translationY = bobOffset }
             .then(if (!isLocked) Modifier.bounceClick(onClick) else Modifier),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isLocked) {
-                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f)
-            } else {
-                MaterialTheme.colorScheme.primaryContainer
-            },
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = if (isLocked) 0.dp else 4.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = cardContainerColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = if (isLocked) 0.dp else 2.dp),
     ) {
         Box(
             modifier = Modifier
@@ -505,17 +577,18 @@ private fun ModeCard(
                         modifier = Modifier.size(48.dp),
                     )
                 }
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(8.dp))
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleSmall,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
+                    color = textColor,
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = textColor.copy(alpha = 0.7f),
                     textAlign = TextAlign.Center,
                 )
             }
@@ -534,10 +607,15 @@ private fun ModeCard(
     }
 }
 
+// endregion
+
+// region Recent Activity
+
 @Composable
 private fun EmptyRecentActivity() {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
         ),
@@ -573,9 +651,11 @@ private fun EmptyRecentActivity() {
 private fun RecentActivityRow(activity: RecentActivity) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surface,
         ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
     ) {
         Row(
             modifier = Modifier
@@ -585,10 +665,11 @@ private fun RecentActivityRow(activity: RecentActivity) {
         ) {
             Image(
                 painter = painterResource(
-                    if (activity.source == PointSource.DICTEE) {
-                        CoreUiR.drawable.ic_dictee_illustration
-                    } else {
-                        CoreUiR.drawable.ic_math_illustration
+                    when (activity.source) {
+                        PointSource.DICTEE -> CoreUiR.drawable.ic_dictee_illustration
+                        PointSource.MATH -> CoreUiR.drawable.ic_math_illustration
+                        PointSource.POEMS -> CoreUiR.drawable.ic_poems_notepad
+                        else -> CoreUiR.drawable.ic_milestone_star
                     },
                 ),
                 contentDescription = null,
@@ -635,15 +716,67 @@ private fun resolveTimeAgo(timeAgo: TimeAgo): String = when (timeAgo) {
     is TimeAgo.Days -> stringResource(CoreUiR.string.time_days_ago, timeAgo.days.toInt())
 }
 
+// endregion
+
 private val MODE_CARD_HEIGHT = 140.dp
 private const val BOB_AMPLITUDE = 4f
 private const val BOB_DURATION = 2000
 private const val BOB_ANIMATION_DELAY = 300
 
-@Preview
+// region Previews
+
+@Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
     StudyBuddyTheme {
-        HomeScreen()
+        HomeContent(
+            state = HomeState(
+                profileName = "Sophie",
+                totalStars = 1250,
+                dayStreak = 3,
+                weekDots = listOf(true, true, true, false, false, false, false),
+                sessionsToday = 3,
+                dailyGoal = 5,
+                isLoading = false,
+            ),
+            onIntent = {},
+        )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenEmptyPreview() {
+    StudyBuddyTheme {
+        HomeContent(
+            state = HomeState(
+                profileName = "New Kid",
+                totalStars = 0,
+                dayStreak = 0,
+                isLoading = false,
+            ),
+            onIntent = {},
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenGoalCompletePreview() {
+    StudyBuddyTheme {
+        HomeContent(
+            state = HomeState(
+                profileName = "Sophie",
+                totalStars = 2500,
+                dayStreak = 7,
+                weekDots = listOf(true, true, true, true, true, true, true),
+                sessionsToday = 5,
+                dailyGoal = 5,
+                isLoading = false,
+            ),
+            onIntent = {},
+        )
+    }
+}
+
+// endregion
