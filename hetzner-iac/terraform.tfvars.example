@@ -7,7 +7,7 @@ hcloud_token = ""
 # ssh_public_key_path = "~/.ssh/hetzner_studybuddy.pub"
 
 # Path to your SSH private key (optional, default: ~/.ssh/id_rsa)
-# Must match the public key above. Used for post-reboot provisioning.
+# Must match the public key above. Used by nixos-anywhere to SSH into the target.
 # ssh_private_key_path = "~/.ssh/hetzner_studybuddy"
 
 # Hetzner datacenter location (optional, default: nbg1)
@@ -19,3 +19,6 @@ hcloud_token = ""
 # ccx23 = 8 dedicated AMD vCPU, 16 GB RAM, 240 GB NVMe (~€30.90/mo) — KVM supported
 # cx22  = 2 shared vCPU, 4 GB RAM, 40 GB — no KVM (emulator uses software rendering)
 # server_type = "ccx13"
+
+# Path to nixos/ config directory (optional, default: ../nixos)
+# nixos_config_dir = "../nixos"

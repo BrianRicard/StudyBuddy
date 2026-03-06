@@ -1,20 +1,30 @@
-# StudyBuddy — Hetzner VM Infrastructure (NixOS)
+# StudyBuddy — Hetzner VM Infrastructure (nixos-anywhere)
 
 OpenTofu IaC to provision a Hetzner Cloud VM running NixOS, pre-configured for Android CI, builds, emulator testing, and whisper.cpp.
+
+Uses [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) for clean, reproducible NixOS installation with declarative disk partitioning via [disko](https://github.com/nix-community/disko).
 
 ## How It Works
 
 `tofu apply` is fully unattended — no manual steps after it completes:
 
-1. **Phase 1** — Creates a Hetzner VM with Ubuntu 24.04, runs `provision.sh` via user_data which:
-   - Writes all NixOS configuration files to `/root/studybuddy-nixos/`
-   - Runs `nixos-infect` to convert Ubuntu → NixOS (VM reboots)
+1. Creates a Hetzner VM with Ubuntu 24.04 (any Linux works — nixos-anywhere doesn't care)
+2. Runs `nixos-anywhere` locally which:
+   - kexec boots a NixOS installer on the target
+   - Partitions `/dev/sda` declaratively via disko (`nixos/disk-config.nix`)
+   - Installs NixOS from `nixos/flake.nix`
+   - Reboots into the finished system
 
-2. **Phase 2** — A `null_resource` provisioner waits for the reboot, then:
-   - Copies the generated `hardware-configuration.nix` into the config dir
-   - Runs `nixos-rebuild switch --flake .#studybuddy-dev`
+After ~10–15 minutes, SSH in as `claude` and start working.
 
-After ~15–20 minutes, SSH in as `claude` and start working.
+### Why nixos-anywhere?
+
+The previous approach used `nixos-infect` (an in-place Ubuntu-to-NixOS conversion hack) which could leave artifacts and required copying `hardware-configuration.nix` from the VM. nixos-anywhere provides:
+
+- **Clean install** — kexec into NixOS installer, no host distro leftovers
+- **Declarative disk partitioning** — disko handles partitions, no manual `hardware-configuration.nix`
+- **Single step** — one command does everything (partition, install, configure, reboot)
+- **Any source distro** — works from any Linux with kexec support
 
 ## What Gets Provisioned
 
@@ -31,11 +41,12 @@ After ~15–20 minutes, SSH in as `claude` and start working.
 | **SSH** | Key-only auth, root login disabled, fail2ban |
 | **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound |
 
-> **Non-root user:** Claude Code refuses to run as root. All SSH access uses the `claude` user, which has passwordless sudo. Root SSH login is disabled after nixos-rebuild.
+> **Non-root user:** Claude Code refuses to run as root. All SSH access uses the `claude` user, which has passwordless sudo. Root SSH login is disabled after installation.
 
 ## Prerequisites
 
 - **OpenTofu >= 1.6** — `brew install opentofu` or see [opentofu.org](https://opentofu.org/docs/intro/install/)
+- **Nix with flakes** — required locally for nixos-anywhere (`curl -L https://nixos.org/nix/install | sh`)
 - **Hetzner Cloud API token** — [Hetzner Console](https://console.hetzner.cloud/) → Project → Security → API Tokens
 - **SSH key pair** — defaults to `~/.ssh/id_rsa` and `~/.ssh/id_rsa.pub`
 
@@ -54,7 +65,7 @@ tofu init
 # 3. Preview
 tofu plan
 
-# 4. Apply (fully unattended — creates VM, converts to NixOS, configures everything)
+# 4. Apply (fully unattended — creates VM, runs nixos-anywhere, configures everything)
 tofu apply
 ```
 
@@ -120,11 +131,10 @@ If you change files in `nixos/`, re-apply on the VM:
 ```bash
 # Option 1: Edit directly on the VM and rebuild
 ssh claude@<ip>
-sudo nano /root/studybuddy-nixos/configuration.nix
-sudo nixos-rebuild switch --flake /root/studybuddy-nixos#studybuddy-dev
+sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
 
-# Option 2: Taint and re-provision (recreates from scratch)
-tofu taint null_resource.nixos_rebuild
+# Option 2: Re-run nixos-anywhere (wipes and reinstalls — use for major changes)
+tofu taint null_resource.nixos_anywhere
 tofu apply
 ```
 
@@ -145,23 +155,24 @@ tofu destroy
 
 ```
 hetzner-iac/
-├── main.tf                  # Provider, server, firewall, SSH key, nixos-rebuild provisioner
-├── variables.tf             # Input variables (token, SSH keys, location, server type)
-├── outputs.tf               # server_ip, ssh_command, nixos_config_path
+├── main.tf                  # Provider, server, firewall, SSH key, nixos-anywhere provisioner
+├── variables.tf             # Input variables (token, SSH keys, location, server type, config dir)
+├── outputs.tf               # server_ip, ssh_command, deployment_method
 ├── terraform.tfvars.example # Sample variables file (no secrets)
-├── provision.sh.tftpl       # User_data template: writes NixOS configs + runs nixos-infect
 ├── .gitignore               # Excludes tfstate, .terraform/, terraform.tfvars
 └── README.md                # This file
 
-nixos/                       # Standalone NixOS config (for manual deploy.sh use)
-├── configuration.nix
-├── users.nix
-├── android.nix
-├── whisper.nix
-├── security.nix
-├── flake.nix
-├── flake.lock
-├── deploy.sh
+nixos/                       # NixOS configuration (used by both Tofu and standalone deploy)
+├── configuration.nix        # Main system config (imports all modules)
+├── users.nix                # User definitions (claude user, sudo)
+├── android.nix              # Android SDK + emulator
+├── whisper.nix              # whisper.cpp build + model
+├── security.nix             # SSH hardening + fail2ban
+├── flake.nix                # Nix flake (includes disko input)
+├── flake.lock               # Locked dependency versions
+├── disk-config.nix          # Disko declarative disk partitioning
+├── deploy-anywhere.sh       # Standalone nixos-anywhere deploy script
+├── deploy.sh                # Legacy nixos-infect deploy (kept for reference)
 └── README.md
 ```
 
@@ -171,10 +182,10 @@ The `ccx13` server costs approximately **€15.90/month** (billed hourly at ~€
 
 ## Fixing Whisper Hashes
 
-On first `nixos-rebuild`, Nix will error with the correct hashes for whisper.cpp source and model. SSH in, update the hashes in `/root/studybuddy-nixos/whisper.nix`, and re-run:
+On first build, Nix will error with the correct hashes for whisper.cpp source and model. SSH in, update the hashes in `nixos/whisper.nix`, and re-run:
 
 ```bash
-sudo nixos-rebuild switch --flake /root/studybuddy-nixos#studybuddy-dev
+sudo nixos-rebuild switch --flake /etc/nixos#studybuddy-dev
 ```
 
-Then update `nixos/whisper.nix` and `hetzner-iac/provision.sh.tftpl` in the repo so future VMs get it right the first time.
+Then update `nixos/whisper.nix` in the repo so future VMs get it right the first time.

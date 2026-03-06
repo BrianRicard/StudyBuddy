@@ -11,7 +11,7 @@ variable "ssh_public_key_path" {
 }
 
 variable "ssh_private_key_path" {
-  description = "Path to the SSH private key for provisioning. Used by the null_resource to SSH in after nixos-infect reboot."
+  description = "Path to the SSH private key for nixos-anywhere SSH access."
   type        = string
   default     = "~/.ssh/id_rsa"
 }
@@ -26,4 +26,10 @@ variable "server_type" {
   description = "Hetzner server type. Use ccx* for dedicated vCPU (KVM support). cx* is shared (no KVM)."
   type        = string
   default     = "ccx13"
+}
+
+variable "nixos_config_dir" {
+  description = "Path to the nixos/ directory containing flake.nix, disk-config.nix, etc."
+  type        = string
+  default     = "../nixos"
 }
