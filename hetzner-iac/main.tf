@@ -67,13 +67,9 @@ resource "hcloud_firewall" "studybuddy" {
 
 # --- Server ---
 #
-# nixos-anywhere deployment (replaces nixos-infect):
-#   1. Create an Ubuntu VM (any Linux works — nixos-anywhere kexecs into NixOS installer)
-#   2. Run nixos-anywhere locally which:
-#      - kexec boots the NixOS installer on the target
-#      - Partitions disk declaratively via disko (disk-config.nix)
-#      - Installs NixOS from flake.nix
-#      - Reboots into the finished system
+# Creates a VM ready for nixos-anywhere. The OS installation is a separate step
+# so it works cross-platform (Windows, macOS, Linux). After `tofu apply`, run
+# the nixos-anywhere command from the output.
 
 resource "hcloud_server" "studybuddy" {
   name        = "studybuddy-dev"
@@ -88,72 +84,5 @@ resource "hcloud_server" "studybuddy" {
   labels = {
     project = "studybuddy"
     env     = "dev"
-  }
-}
-
-# --- nixos-anywhere Deployment ---
-#
-# After the server is created, run nixos-anywhere from the local machine.
-# This replaces the old two-phase approach (user_data nixos-infect + null_resource rebuild).
-#
-# nixos-anywhere will:
-#   1. kexec into a NixOS installer (no distro dependency)
-#   2. Partition /dev/sda via disko (disk-config.nix)
-#   3. Install NixOS from the flake
-#   4. Reboot into the finished system
-#
-# Requires: Nix installed locally with flakes enabled.
-
-resource "null_resource" "nixos_anywhere" {
-  depends_on = [hcloud_server.studybuddy]
-
-  triggers = {
-    server_id = hcloud_server.studybuddy.id
-  }
-
-  # Prepare config: inject SSH key into users.nix, then run nixos-anywhere
-  provisioner "local-exec" {
-    command = <<-SCRIPT
-      set -euo pipefail
-
-      NIXOS_DIR="${var.nixos_config_dir}"
-      TARGET_IP="${hcloud_server.studybuddy.ipv4_address}"
-      SSH_KEY_PATH="${var.ssh_private_key_path}"
-      SSH_PUB_KEY=$(cat "${var.ssh_public_key_path}")
-
-      # Prepare a temp copy with injected SSH key
-      TMPDIR=$(mktemp -d)
-      trap 'rm -rf "$TMPDIR"' EXIT
-      cp -r "$NIXOS_DIR"/* "$TMPDIR/"
-
-      # Inject SSH public key into users.nix
-      ESCAPED_KEY=$(echo "$SSH_PUB_KEY" | sed 's/[&/\]/\\&/g')
-      sed -i "s|@SSH_AUTHORIZED_KEY@|$ESCAPED_KEY|g" "$TMPDIR/users.nix"
-
-      # Wait for SSH to become available on the fresh server
-      echo "Waiting for SSH on $TARGET_IP..."
-      for i in $(seq 1 30); do
-        if ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null \
-             -o ConnectTimeout=5 -i "$SSH_KEY_PATH" \
-             "root@$TARGET_IP" true 2>/dev/null; then
-          echo "SSH is up."
-          break
-        fi
-        sleep 5
-      done
-
-      # Run nixos-anywhere
-      echo "Running nixos-anywhere against $TARGET_IP..."
-      nix run github:nix-community/nixos-anywhere -- \
-        --flake "$TMPDIR#studybuddy-dev" \
-        --target-host "root@$TARGET_IP" \
-        --ssh-option "StrictHostKeyChecking=no" \
-        --ssh-option "UserKnownHostsFile=/dev/null" \
-        --ssh-option "IdentityFile=$SSH_KEY_PATH"
-
-      echo "nixos-anywhere deployment complete."
-    SCRIPT
-
-    interpreter = ["bash", "-c"]
   }
 }

@@ -19,6 +19,3 @@ hcloud_token = ""
 # ccx23 = 8 dedicated AMD vCPU, 16 GB RAM, 240 GB NVMe (~€30.90/mo) — KVM supported
 # cx22  = 2 shared vCPU, 4 GB RAM, 40 GB — no KVM (emulator uses software rendering)
 # server_type = "ccx13"
-
-# Path to nixos/ config directory (optional, default: ../nixos)
-# nixos_config_dir = "../nixos"

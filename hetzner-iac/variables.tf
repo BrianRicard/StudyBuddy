@@ -27,9 +27,3 @@ variable "server_type" {
   type        = string
   default     = "ccx13"
 }
-
-variable "nixos_config_dir" {
-  description = "Path to the nixos/ directory containing flake.nix, disk-config.nix, etc."
-  type        = string
-  default     = "../nixos"
-}
