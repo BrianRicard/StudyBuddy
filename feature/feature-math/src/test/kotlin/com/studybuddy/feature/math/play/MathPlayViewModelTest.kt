@@ -422,6 +422,46 @@ class MathPlayViewModelTest {
         viewModel.viewModelScope.cancel()
     }
 
+    // ── Infinite time mode ────────────────────────────────────────────────────
+
+    @Test
+    fun `infinite time mode does not trigger time up`() = runTest {
+        val viewModel = createViewModel(timerSeconds = 0, problemCount = 2)
+        runCurrent()
+
+        // Advance well past what would trigger timeUp in timed mode
+        advanceTimeBy(30_000)
+        runCurrent()
+
+        // Should NOT have auto-failed — no feedback set, problem still active
+        assertNull(viewModel.state.value.feedback)
+        assertNotNull(viewModel.state.value.currentProblem)
+        assertFalse(viewModel.state.value.isComplete)
+
+        viewModel.viewModelScope.cancel()
+    }
+
+    @Test
+    fun `infinite time mode allows answering without time pressure`() = runTest {
+        val viewModel = createViewModel(timerSeconds = 0, problemCount = 1)
+        runCurrent()
+
+        // Wait a long time, then answer
+        advanceTimeBy(60_000)
+        runCurrent()
+
+        viewModel.onIntent(MathPlayIntent.DigitEntered(1))
+        viewModel.onIntent(MathPlayIntent.DigitEntered(0))
+        viewModel.onIntent(MathPlayIntent.Submit)
+        advanceTimeBy(2_000)
+        runCurrent()
+
+        assertTrue(viewModel.state.value.isComplete)
+        assertEquals(1, viewModel.state.value.correctCount)
+
+        viewModel.viewModelScope.cancel()
+    }
+
     @Test
     fun `completeSession awards points via RewardCalculator`() = runTest {
         // RewardCalculator computes session points based on difficulty factors.
