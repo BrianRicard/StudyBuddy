@@ -10,7 +10,9 @@ import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.common.locale.SupportedLocale
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,7 +29,7 @@ import kotlinx.datetime.Clock
  *
  * @property currentStep The active pager index (0 = Welcome, 1 = Voice).
  * @property name The name entered by the child.
- * @property selectedLocale The chosen app language code ("fr", "en", or "de").
+ * @property selectedLocale The app language code, defaulting to the device locale.
  * @property avatarConfig The avatar configuration (uses defaults).
  * @property isCompleting True while the final save sequence is running.
  * @property nameError Validation message shown when the name field is empty.
@@ -35,7 +37,7 @@ import kotlinx.datetime.Clock
 data class OnboardingState(
     val currentStep: Int = 0,
     val name: String = "",
-    val selectedLocale: String = "en",
+    val selectedLocale: String = SupportedLocale.fromCode(Locale.getDefault().language).code,
     val avatarConfig: AvatarConfig = AvatarConfig.default(),
     val isCompleting: Boolean = false,
     val nameError: String? = null,
@@ -46,7 +48,6 @@ data class OnboardingState(
  */
 sealed interface OnboardingIntent {
     data class SetName(val name: String) : OnboardingIntent
-    data class SelectLocale(val locale: String) : OnboardingIntent
     data class SelectCharacter(val bodyId: String) : OnboardingIntent
     data class SelectHat(val hatId: String) : OnboardingIntent
     data class SelectFace(val faceId: String) : OnboardingIntent
@@ -80,7 +81,6 @@ class OnboardingViewModel @Inject constructor(
     fun onIntent(intent: OnboardingIntent) {
         when (intent) {
             is OnboardingIntent.SetName -> setName(intent.name)
-            is OnboardingIntent.SelectLocale -> selectLocale(intent.locale)
             is OnboardingIntent.SelectCharacter -> selectCharacter(intent.bodyId)
             is OnboardingIntent.SelectHat -> selectHat(intent.hatId)
             is OnboardingIntent.SelectFace -> selectFace(intent.faceId)
@@ -97,10 +97,6 @@ class OnboardingViewModel @Inject constructor(
                 nameError = null,
             )
         }
-    }
-
-    private fun selectLocale(locale: String) {
-        _state.update { it.copy(selectedLocale = locale) }
     }
 
     private fun selectCharacter(bodyId: String) {

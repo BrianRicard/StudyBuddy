@@ -63,7 +63,14 @@ class OnboardingViewModelTest {
 
         assertEquals(0, state.currentStep)
         assertEquals("", state.name)
-        assertEquals("en", state.selectedLocale)
+    }
+
+    @Test
+    fun `initial locale defaults to device locale when supported`() = runTest {
+        val deviceLang = java.util.Locale.getDefault().language
+        val viewModel = createViewModel()
+        val expected = com.studybuddy.core.common.locale.SupportedLocale.fromCode(deviceLang).code
+        assertEquals(expected, viewModel.state.value.selectedLocale)
     }
 
     @Test
@@ -88,16 +95,6 @@ class OnboardingViewModelTest {
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
         advanceUntilIdle()
         assertNull(viewModel.state.value.nameError)
-    }
-
-    @Test
-    fun `select locale updates state`() = runTest {
-        val viewModel = createViewModel()
-
-        viewModel.onIntent(OnboardingIntent.SelectLocale("de"))
-        advanceUntilIdle()
-
-        assertEquals("de", viewModel.state.value.selectedLocale)
     }
 
     @Test
@@ -199,7 +196,6 @@ class OnboardingViewModelTest {
         val viewModel = createViewModel()
 
         viewModel.onIntent(OnboardingIntent.SetName("Alice"))
-        viewModel.onIntent(OnboardingIntent.SelectLocale("fr"))
         viewModel.onIntent(OnboardingIntent.SelectCharacter("unicorn"))
         advanceUntilIdle()
 
@@ -213,7 +209,7 @@ class OnboardingViewModelTest {
 
         coVerify { profileRepository.updateProfile(any()) }
         coVerify { avatarRepository.saveAvatarConfig(any(), any()) }
-        coVerify { settingsRepository.setAppLocale("fr") }
+        coVerify { settingsRepository.setAppLocale(any()) }
         coVerify { settingsRepository.setOnboardingComplete(true) }
     }
 
