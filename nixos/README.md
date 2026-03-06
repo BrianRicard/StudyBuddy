@@ -27,53 +27,55 @@ and SSH hardening.
 | `android.nix` | Android SDK + emulator via `androidenv` |
 | `whisper.nix` | whisper.cpp build from source + model download |
 | `security.nix` | SSH hardening + fail2ban |
-| `flake.nix` | Nix flake for reproducible builds |
+| `flake.nix` | Nix flake (includes disko for declarative disk partitioning) |
 | `flake.lock` | Locked dependency versions (populated by nix) |
-| `deploy.sh` | Zero-touch provisioning script |
+| `disk-config.nix` | Disko disk partitioning layout (GPT, boot, root) |
+| `deploy-anywhere.sh` | Deploy via nixos-anywhere (recommended) |
+| `deploy.sh` | Legacy deploy via nixos-infect (kept for reference) |
 
-## Zero-Touch Deployment
+## Deployment with nixos-anywhere (Recommended)
 
-Spin up a fresh Hetzner VM and run one command from your local machine:
+Uses [nixos-anywhere](https://github.com/nix-community/nixos-anywhere) for a clean,
+single-command install. No nixos-infect, no Ubuntu leftovers, declarative disk partitioning.
 
 ```bash
-./nixos/deploy.sh <server-ip> [~/.ssh/hetzner_studybuddy.pub]
+./nixos/deploy-anywhere.sh <server-ip> [~/.ssh/hetzner_studybuddy.pub]
 ```
 
 This will:
-1. Run `nixos-infect` to convert Ubuntu/Debian to NixOS
-2. Copy this configuration to the VM
-3. Inject your SSH public key
-4. Run `nixos-rebuild switch`
+1. kexec boot a NixOS installer on the target (works from any Linux distro)
+2. Partition `/dev/sda` declaratively via disko (`disk-config.nix`)
+3. Install NixOS from the flake configuration
+4. Reboot into the finished system
 5. Verify all components
 
 After ~10–15 minutes, SSH in as `claude@<server-ip>` and start working.
 
 ### Prerequisites
 
-- A fresh Hetzner Cloud VM (Ubuntu 22.04 or Debian 12)
+- **Nix** installed locally with flakes enabled
+- A fresh Hetzner Cloud VM (any Linux distro — Ubuntu, Debian, etc.)
 - Root SSH access (Hetzner default)
 - Your SSH public key at `~/.ssh/hetzner_studybuddy.pub`
+- Target VM must have at least 1 GB RAM
 
-## Manual Setup (Alternative)
+### Why nixos-anywhere over nixos-infect?
 
-If you prefer to set up manually:
+| | nixos-infect (legacy) | nixos-anywhere |
+|---|---|---|
+| **Install method** | In-place conversion hack | Clean kexec → NixOS installer |
+| **Disk partitioning** | Inherits existing partitions | Declarative via disko |
+| **Leftover artifacts** | May leave Ubuntu remnants | Clean install, nothing left over |
+| **hardware-configuration.nix** | Must copy from VM | Not needed (disko handles it) |
+| **Reproducibility** | Depends on host distro state | Fully reproducible |
+| **Target distro** | Ubuntu/Debian only | Any Linux with kexec (most x86_64) |
+
+## Legacy Deployment (nixos-infect)
+
+The old `deploy.sh` is kept for reference but is no longer recommended:
 
 ```bash
-# 1. SSH into the VM as root and run nixos-infect
-curl -fsSL https://raw.githubusercontent.com/elitak/nixos-infect/master/nixos-infect | \
-  NIX_CHANNEL=nixos-24.05 bash -x
-
-# 2. After reboot, clone this repo
-git clone <your-repo> ~/nixos-config
-cd ~/nixos-config/nixos
-
-# 3. Copy generated hardware config
-cp /etc/nixos/hardware-configuration.nix ./
-
-# 4. Edit users.nix — replace @SSH_AUTHORIZED_KEY@ with your public key
-
-# 5. Apply the configuration
-sudo nixos-rebuild switch --flake .#studybuddy-dev
+./nixos/deploy.sh <server-ip> [~/.ssh/hetzner_studybuddy.pub]
 ```
 
 ## Day-to-Day Usage
@@ -127,7 +129,7 @@ nix-prefetch-url https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-
 
 - **KVM acceleration** requires a Hetzner CCX (dedicated vCPU) instance.
   On shared CX instances the Android emulator falls back to software rendering.
-- The `hardware-configuration.nix` file is **not** checked in — it is generated
-  per-VM by `nixos-infect` or `nixos-generate-config`.
+- **No hardware-configuration.nix needed** — disko handles disk setup declaratively
+  via `disk-config.nix`. This file is loaded through the flake.
 - All Android SDK licenses are accepted in `android.nix` for unattended builds.
 - The `claude` user has passwordless sudo via the `wheel` group.

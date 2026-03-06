@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./hardware-configuration.nix # generated on the VM by nixos-infect
+    # disk-config.nix and disko are loaded via flake.nix — no hardware-configuration.nix needed
     ./users.nix
     ./android.nix
     ./whisper.nix
@@ -17,9 +17,11 @@
   # Allow unfree packages (Android SDK components)
   nixpkgs.config.allowUnfree = true;
 
+  # Bootloader: GRUB for BIOS (Hetzner Cloud default) with EFI fallback
   boot.loader.grub = {
     enable = true;
-    device = "/dev/sda";
+    efiSupport = true;
+    efiInstallAsRemovable = true;
   };
 
   networking = {

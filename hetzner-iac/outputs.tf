@@ -8,7 +8,7 @@ output "ssh_command" {
   value       = "ssh claude@${hcloud_server.studybuddy.ipv4_address}"
 }
 
-output "nixos_config_path" {
-  description = "Path to the NixOS configuration on the VM."
-  value       = "/root/studybuddy-nixos"
+output "deployment_method" {
+  description = "Deployment method used for NixOS installation."
+  value       = "nixos-anywhere (disko + kexec)"
 }
