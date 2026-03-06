@@ -255,6 +255,7 @@ class MathPlayViewModel @Inject constructor(
 
     private fun startTimer() {
         timerJob?.cancel()
+        if (timerMs <= 0L) return // Infinite time mode — no countdown
         timerJob = viewModelScope.launch {
             while (true) {
                 delay(TIMER_TICK_MS)
