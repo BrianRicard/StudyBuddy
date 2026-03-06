@@ -411,6 +411,7 @@
     <string name="dictee_no_words">Aucun mot encore</string>
     <string name="dictee_no_words_hint">Ajoute des mots ci-dessous pour commencer à t\'entraîner !</string>
     <string name="dictee_add_words_first">Ajoute des mots à cette liste avant de t\'entraîner</string>
+    <string name="dictee_default_badge">Par défaut</string>
     <string name="dictee_add_word_error">Impossible d\'ajouter le mot. Réessaie.</string>
     <string name="dictee_delete_word_error">Impossible de supprimer le mot.</string>
     <string name="dictee_restore_word_error">Impossible de restaurer le mot.</string>

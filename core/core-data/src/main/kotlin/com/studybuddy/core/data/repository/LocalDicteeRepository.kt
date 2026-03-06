@@ -3,9 +3,11 @@ package com.studybuddy.core.data.repository
 import com.studybuddy.core.data.db.dao.DicteeDao
 import com.studybuddy.core.data.mapper.toDomain
 import com.studybuddy.core.data.mapper.toEntity
+import com.studybuddy.core.data.network.BundledDicteeListLoader
 import com.studybuddy.core.domain.model.DicteeList
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.repository.DicteeRepository
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -13,9 +15,13 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
 
 @Singleton
-class LocalDicteeRepository @Inject constructor(private val dao: DicteeDao) : DicteeRepository {
+class LocalDicteeRepository @Inject constructor(
+    private val dao: DicteeDao,
+    private val bundledDicteeListLoader: BundledDicteeListLoader,
+) : DicteeRepository {
 
     override fun getListsForProfile(profileId: String): Flow<List<DicteeList>> =
         dao.getListsForProfile(profileId).flatMapLatest { lists ->
@@ -72,6 +78,29 @@ class LocalDicteeRepository @Inject constructor(private val dao: DicteeDao) : Di
 
     override suspend fun deleteWord(wordId: String) {
         dao.deleteWord(wordId)
+    }
+
+    override suspend fun seedDefaultLists(profileId: String) {
+        val now = Clock.System.now()
+        bundledDicteeListLoader.loadFrenchLists().forEach { bundled ->
+            val list = DicteeList(
+                id = bundled.id,
+                profileId = profileId,
+                title = "Unit ${bundled.unit}: ${bundled.title}",
+                language = bundled.language,
+                createdAt = now,
+                updatedAt = now,
+            )
+            dao.insertList(list.toEntity())
+            bundled.words.forEach { word ->
+                val dicteeWord = DicteeWord(
+                    id = UUID.randomUUID().toString(),
+                    listId = bundled.id,
+                    word = word,
+                )
+                dao.insertWord(dicteeWord.toEntity())
+            }
+        }
     }
 
     override suspend fun sync() { /* no-op: cloud migration hook */ }

@@ -17,6 +17,8 @@ interface SettingsRepository {
     suspend fun setOnboardingComplete(complete: Boolean)
     fun getParentPinHash(): Flow<Int?>
     suspend fun setParentPinHash(hash: Int?)
+    fun isDicteeSeeded(): Flow<Boolean>
+    suspend fun setDicteeSeeded(seeded: Boolean)
     suspend fun clearAll()
     suspend fun sync()
 }

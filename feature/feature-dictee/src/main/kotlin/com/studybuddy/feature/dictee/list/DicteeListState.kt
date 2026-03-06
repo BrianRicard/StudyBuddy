@@ -6,7 +6,9 @@ import com.studybuddy.core.domain.model.DicteeList
 data class DicteeListItem(
     val list: DicteeList,
     val wordPreview: List<String> = emptyList(),
-)
+) {
+    val isDefault: Boolean get() = list.id.startsWith("fr_dictee_")
+}
 
 data class DicteeListState(
     val items: List<DicteeListItem> = emptyList(),

@@ -15,5 +15,6 @@ interface DicteeRepository {
     suspend fun addWord(word: DicteeWord)
     suspend fun updateWord(word: DicteeWord)
     suspend fun deleteWord(wordId: String)
+    suspend fun seedDefaultLists(profileId: String)
     suspend fun sync()
 }
