@@ -5,5 +5,5 @@ output "server_ip" {
 
 output "ssh_command" {
   description = "Ready-to-use SSH command to connect to the server."
-  value       = "ssh root@${hcloud_server.studybuddy.ipv4_address}"
+  value       = "ssh -i ~/.ssh/hetzner_studybuddy claude@${hcloud_server.studybuddy.ipv4_address}"
 }

@@ -75,7 +75,9 @@ resource "hcloud_server" "studybuddy" {
 
   ssh_keys = [hcloud_ssh_key.studybuddy.id]
 
-  user_data = file("${path.module}/cloud-init.yaml")
+  user_data = templatefile("${path.module}/cloud-init.yaml", {
+    ssh_public_key = trimspace(file(var.ssh_public_key_path))
+  })
 
   firewall_ids = [hcloud_firewall.studybuddy.id]
 
