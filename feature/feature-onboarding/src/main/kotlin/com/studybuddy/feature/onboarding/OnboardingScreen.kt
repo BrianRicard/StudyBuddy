@@ -2,7 +2,6 @@ package com.studybuddy.feature.onboarding
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -23,8 +22,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -47,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -153,11 +149,7 @@ private fun OnboardingContent(
                     OnboardingViewModel.STEP_WELCOME -> WelcomeStep(
                         name = state.name,
                         nameError = state.nameError,
-                        selectedLocale = state.selectedLocale,
                         onNameChange = { onIntent(OnboardingIntent.SetName(it)) },
-                        onLocaleSelect = {
-                            onIntent(OnboardingIntent.SelectLocale(it))
-                        },
                         onNext = { onIntent(OnboardingIntent.NextStep) },
                     )
                     OnboardingViewModel.STEP_VOICE -> VoiceStep(
@@ -210,9 +202,7 @@ private fun StepIndicator(
 private fun WelcomeStep(
     name: String,
     nameError: String?,
-    selectedLocale: String,
     onNameChange: (String) -> Unit,
-    onLocaleSelect: (String) -> Unit,
     onNext: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -267,34 +257,6 @@ private fun WelcomeStep(
             modifier = Modifier.fillMaxWidth(),
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Text(
-            text = stringResource(CoreUiR.string.onboarding_choose_language),
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-        )
-
-        Spacer(modifier = Modifier.height(12.dp))
-
-        // Language selector row
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 12.dp,
-                alignment = Alignment.CenterHorizontally,
-            ),
-        ) {
-            SupportedLocale.entries.forEach { locale ->
-                LanguageCard(
-                    locale = locale,
-                    isSelected = locale.code == selectedLocale,
-                    onClick = { onLocaleSelect(locale.code) },
-                    modifier = Modifier.weight(1f),
-                )
-            }
-        }
-
         Spacer(modifier = Modifier.weight(1f))
 
         StudyBuddyButton(
@@ -305,70 +267,6 @@ private fun WelcomeStep(
                 .fillMaxWidth()
                 .padding(bottom = 24.dp),
         )
-    }
-}
-
-@Composable
-private fun LanguageCard(
-    locale: SupportedLocale,
-    isSelected: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val flagRes = when (locale) {
-        SupportedLocale.FRENCH -> CoreUiR.drawable.ic_flag_fr
-        SupportedLocale.ENGLISH -> CoreUiR.drawable.ic_flag_gb
-        SupportedLocale.GERMAN -> CoreUiR.drawable.ic_flag_de
-    }
-
-    val borderColor by animateColorAsState(
-        targetValue = if (isSelected) {
-            MaterialTheme.colorScheme.primary
-        } else {
-            MaterialTheme.colorScheme.outlineVariant
-        },
-        label = "locale-border-${locale.code}",
-    )
-
-    Card(
-        onClick = onClick,
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        border = BorderStroke(
-            width = if (isSelected) 2.dp else 1.dp,
-            color = borderColor,
-        ),
-        colors = CardDefaults.cardColors(
-            containerColor = if (isSelected) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.colorScheme.surface
-            },
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isSelected) 4.dp else 1.dp,
-        ),
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Image(
-                painter = painterResource(flagRes),
-                contentDescription = locale.displayName,
-                modifier = Modifier.size(36.dp),
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = locale.displayName,
-                style = MaterialTheme.typography.labelMedium,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-        }
     }
 }
 
@@ -541,7 +439,6 @@ private fun OnboardingWelcomePreview() {
             state = OnboardingState(
                 currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
-                selectedLocale = "en",
             ),
             onIntent = {},
         )
@@ -556,7 +453,6 @@ private fun OnboardingWelcomeFilledPreview() {
             state = OnboardingState(
                 currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "Sophie",
-                selectedLocale = "en",
             ),
             onIntent = {},
         )
@@ -571,7 +467,6 @@ private fun OnboardingWelcomeErrorPreview() {
             state = OnboardingState(
                 currentStep = OnboardingViewModel.STEP_WELCOME,
                 name = "",
-                selectedLocale = "en",
                 nameError = "Please enter your name",
             ),
             onIntent = {},
