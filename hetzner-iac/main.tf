@@ -69,7 +69,7 @@ resource "hcloud_firewall" "studybuddy" {
 
 resource "hcloud_server" "studybuddy" {
   name        = "studybuddy-dev"
-  server_type = "cpx31"
+  server_type = "ccx13"
   image       = "ubuntu-24.04"
   location    = var.server_location
 

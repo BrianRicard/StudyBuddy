@@ -6,7 +6,7 @@ OpenTofu (Terraform-compatible) IaC to provision a Hetzner Cloud VM pre-configur
 
 | Resource | Details |
 |---|---|
-| **Server** | `cpx31` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, Ubuntu 24.04 |
+| **Server** | `ccx13` — 4 AMD vCPU, 8 GB RAM, 160 GB NVMe, Ubuntu 24.04 |
 | **Location** | `nbg1` (Nuremberg, Germany) |
 | **Firewall** | SSH (22) + dev HTTP (8080) inbound; all outbound allowed |
 
@@ -130,4 +130,4 @@ hetzner-iac/
 
 ## Cost
 
-The `cpx31` server costs approximately **€15.90/month** (billed hourly). Remember to `tofu destroy` when you're done to stop billing.
+The `ccx13` server costs approximately **€15.90/month** (billed hourly). Remember to `tofu destroy` when you're done to stop billing.
