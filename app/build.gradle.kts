@@ -4,13 +4,6 @@ plugins {
     id("studybuddy.android.hilt")
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.licensee)
-    alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
-}
-
-if (file("google-services.json").exists()) {
-    apply(plugin = "com.google.gms.google-services")
-    apply(plugin = "com.google.firebase.crashlytics")
 }
 
 android {
@@ -18,6 +11,10 @@ android {
 
     defaultConfig {
         applicationId = "com.studybuddy.app"
+
+        val crashToken = System.getenv("CRASH_REPORT_TOKEN")
+            ?: providers.gradleProperty("CRASH_REPORT_TOKEN").getOrElse("")
+        buildConfigField("String", "CRASH_REPORT_TOKEN", "\"$crashToken\"")
     }
 
     buildFeatures {
@@ -67,9 +64,7 @@ dependencies {
     implementation(libs.core.ktx)
     implementation(libs.material3.adaptive.navigation.suite)
 
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.analytics)
+    implementation(libs.acra.core)
 
     debugImplementation(libs.leakcanary)
 }
@@ -82,7 +77,6 @@ licensee {
     allow("ISC")
     allowUrl("https://developer.android.com/studio/terms.html")
     allowUrl("https://developers.google.com/ml-kit/terms")
-    allowUrl("https://firebase.google.com/terms/")
     allowUrl("https://developers.google.com/android/licenses")
     ignoreDependencies("org.jetbrains", "annotations")
     ignoreDependencies("org.jetbrains.kotlin")
