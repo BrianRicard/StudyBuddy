@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "passages": [
+    {
+      "id": "de_t1_animals_01",
+      "language": "DE",
+      "tier": 1,
+      "theme": "ANIMALS",
+      "title": "Der Hase und die Schildkr\u00f6te",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Nach einer Fabel von \u00c4sop",
+      "passage": "Ein Hase hat eine Schildkr\u00f6te ausgelacht, weil sie so langsam war. Die Schildkr\u00f6te hat gesagt: \u201eLass uns ein Rennen machen!\u201c Das Rennen hat angefangen. Der Hase ist schnell gerannt. Er war so weit vorne, dass er sich hingelegt und geschlafen hat. Die Schildkr\u00f6te ist langsam weitergelaufen. Als der Hase aufgewacht ist, war die Schildkr\u00f6te schon im Ziel.",
+      "wordCount": 58,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Warum hat der Hase die Schildkr\u00f6te ausgelacht?",
+          "options": ["Weil sie klein war", "Weil sie langsam war", "Weil sie Angst hatte", "Weil sie nicht schwimmen konnte"],
+          "correctAnswer": "1",
+          "explanation": "\u201eDer Hase hat eine Schildkr\u00f6te ausgelacht, weil sie so langsam war.\u201c",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was hat der Hase w\u00e4hrend des Rennens gemacht?",
+          "options": ["Er hat gegessen", "Er hat sich hingelegt und geschlafen", "Er hat mit Freunden geredet", "Er hat sich verlaufen"],
+          "correctAnswer": "1",
+          "explanation": "\u201eEr war so weit vorne, dass er sich hingelegt und geschlafen hat.\u201c",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Die Schildkr\u00f6te hat das Rennen gewonnen.",
+          "options": null,
+          "correctAnswer": "true",
+          "explanation": "\u201eAls der Hase aufgewacht ist, war die Schildkr\u00f6te schon im Ziel.\u201c",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "de_t2_adventure_01",
+      "language": "DE",
+      "tier": 2,
+      "theme": "ADVENTURE",
+      "title": "Der Junge, der Wolf rief",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Nach einer Fabel von \u00c4sop",
+      "passage": "Ein Junge hat auf einem H\u00fcgel Schafe geh\u00fctet. Ihm war langweilig, also hat er gerufen: \u201eWolf! Wolf!\u201c Die Leute aus dem Dorf sind gerannt gekommen, aber es war kein Wolf da. Der Junge hat gelacht. Am n\u00e4chsten Tag hat er es wieder gemacht. Die Leute sind wieder gekommen. Aber am dritten Tag ist ein echter Wolf gekommen. Der Junge hat um Hilfe gerufen, aber niemand ist gekommen. Sie haben gedacht, er l\u00fcgt wieder. Der Wolf hat die Schafe verjagt.",
+      "wordCount": 82,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Warum hat der Junge \u201eWolf!\u201c gerufen?",
+          "options": ["Er hat einen Wolf gesehen", "Er hatte Angst", "Ihm war langweilig", "Er wollte nach Hause"],
+          "correctAnswer": "2",
+          "explanation": "\u201eIhm war langweilig, also hat er gerufen: \u2018Wolf! Wolf!\u2019\u201c",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was ist passiert, als der echte Wolf kam?",
+          "options": ["Die Leute haben die Schafe gerettet", "Der Junge ist weggerannt", "Niemand ist gekommen", "Der Wolf ist weggelaufen"],
+          "correctAnswer": "2",
+          "explanation": "\u201eDer Junge hat um Hilfe gerufen, aber niemand ist gekommen.\u201c",
+          "evidenceSentenceIndex": 6
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Die Leute haben dem Jungen immer geglaubt.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201eSie haben gedacht, er l\u00fcgt wieder.\u201c",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, in dem die Leute dem Jungen nicht mehr glauben.",
+          "options": null,
+          "correctAnswer": "7",
+          "explanation": "\u201eSie haben gedacht, er l\u00fcgt wieder.\u201c",
+          "evidenceSentenceIndex": 7
+        }
+      ]
+    },
+    {
+      "id": "de_t2_animals_01",
+      "language": "DE",
+      "tier": 2,
+      "theme": "ANIMALS",
+      "title": "Die Stadtmaus und die Landmaus",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Nach einer Fabel von \u00c4sop",
+      "passage": "Eine Landmaus hat ihre Freundin, die Stadtmaus, zu sich eingeladen. Sie hat ihr K\u00e4se, N\u00fcsse und Getreide angeboten. Die Stadtmaus hat gesagt: \u201eBei mir gibt es viel besseres Essen! Komm in die Stadt!\u201c In der Stadt gab es Kuchen, Schokolade und Brot. Aber pl\u00f6tzlich ist eine gro\u00dfe Katze gekommen. Die beiden M\u00e4use sind weggerannt. Die Landmaus hat gesagt: \u201eIch gehe lieber nach Hause. Dort ist es sicher, auch wenn das Essen einfacher ist.\u201c",
+      "wordCount": 78,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was hat die Landmaus ihrer Freundin angeboten?",
+          "options": ["Kuchen und Schokolade", "K\u00e4se, N\u00fcsse und Getreide", "Brot und Butter", "Fr\u00fcchte und Wasser"],
+          "correctAnswer": "1",
+          "explanation": "\u201eSie hat ihr K\u00e4se, N\u00fcsse und Getreide angeboten.\u201c",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was ist in der Stadt passiert?",
+          "options": ["Es hat geregnet", "Die M\u00e4use haben sich verlaufen", "Eine Katze ist gekommen", "Das Essen war schlecht"],
+          "correctAnswer": "2",
+          "explanation": "\u201eAber pl\u00f6tzlich ist eine gro\u00dfe Katze gekommen.\u201c",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Die Landmaus wollte in der Stadt bleiben.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201eIch gehe lieber nach Hause. Dort ist es sicher, auch wenn das Essen einfacher ist.\u201c",
+          "evidenceSentenceIndex": 6
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, in dem die Landmaus erkl\u00e4rt, warum sie nach Hause geht.",
+          "options": null,
+          "correctAnswer": "6",
+          "explanation": "\u201eIch gehe lieber nach Hause. Dort ist es sicher, auch wenn das Essen einfacher ist.\u201c",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "de_t1_family_01",
+      "language": "DE",
+      "tier": 1,
+      "theme": "FAMILY",
+      "title": "Papas Geburtstag",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Heute hat Papa Geburtstag. Lena und ihr Bruder Max haben heimlich einen Kuchen gebacken. Mama hat ihnen geholfen. Der Kuchen war mit Schokolade und Kerzen. Papa hat sich sehr gefreut. Er hat gesagt: \u201eDas ist der beste Kuchen, den ich je gegessen habe!\u201c Dann haben sie zusammen gespielt.",
+      "wordCount": 46,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "F\u00fcr wen haben die Kinder einen Kuchen gebacken?",
+          "options": ["F\u00fcr Mama", "F\u00fcr Oma", "F\u00fcr Papa", "F\u00fcr die Lehrerin"],
+          "correctAnswer": "2",
+          "explanation": "\u201eHeute hat Papa Geburtstag.\u201c und die Kinder haben den Kuchen f\u00fcr ihn gebacken.",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Wer hat den Kindern beim Backen geholfen?",
+          "options": ["Papa", "Oma", "Mama", "Niemand"],
+          "correctAnswer": "2",
+          "explanation": "\u201eMama hat ihnen geholfen.\u201c",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Papa war traurig \u00fcber den Kuchen.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201ePapa hat sich sehr gefreut.\u201c",
+          "evidenceSentenceIndex": 4
+        }
+      ]
+    },
+    {
+      "id": "de_t1_school_01",
+      "language": "DE",
+      "tier": 1,
+      "theme": "SCHOOL",
+      "title": "Der Ausflug zum Zoo",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Die Klasse 2b ist heute in den Zoo gefahren. Alle Kinder waren aufgeregt. Sie haben Elefanten, Affen und Pinguine gesehen. Am besten hat Lina die Pinguine gefunden. Sie sind lustig gewatschelt. Zum Mittagessen gab es Pizza. Am Ende hat jedes Kind ein Bild von seinem Lieblingstier gemalt.",
+      "wordCount": 44,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Wohin ist die Klasse gefahren?",
+          "options": ["In den Wald", "In den Zoo", "Ans Meer", "In ein Museum"],
+          "correctAnswer": "1",
+          "explanation": "\u201eDie Klasse 2b ist heute in den Zoo gefahren.\u201c",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Welche Tiere hat Lina am liebsten gehabt?",
+          "options": ["Elefanten", "Affen", "Pinguine", "L\u00f6wen"],
+          "correctAnswer": "2",
+          "explanation": "\u201eAm besten hat Lina die Pinguine gefunden.\u201c",
+          "evidenceSentenceIndex": 3
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Zum Mittagessen gab es Nudeln.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201eZum Mittagessen gab es Pizza.\u201c",
+          "evidenceSentenceIndex": 5
+        }
+      ]
+    },
+    {
+      "id": "de_t2_animals_02",
+      "language": "DE",
+      "tier": 2,
+      "theme": "ANIMALS",
+      "title": "Das kleine Eichh\u00f6rnchen",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Im Park hat Felix ein kleines Eichh\u00f6rnchen beobachtet. Es hat N\u00fcsse gesammelt und sie unter einem Baum versteckt. Felix wollte dem Eichh\u00f6rnchen eine Nuss geben, aber seine Mama hat gesagt, dass Wildtiere ihr Essen selbst finden sollen. Am n\u00e4chsten Tag hat Felix wieder nach dem Eichh\u00f6rnchen geschaut. Es hat seine N\u00fcsse ausgegraben und gefressen. Felix hat gel\u00e4chelt, weil das Eichh\u00f6rnchen sich erinnert hat, wo seine N\u00fcsse waren.",
+      "wordCount": 70,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was hat das Eichh\u00f6rnchen mit den N\u00fcssen gemacht?",
+          "options": ["Es hat sie gegessen", "Es hat sie unter einem Baum versteckt", "Es hat sie Felix gegeben", "Es hat sie ins Wasser geworfen"],
+          "correctAnswer": "1",
+          "explanation": "\u201eEs hat N\u00fcsse gesammelt und sie unter einem Baum versteckt.\u201c",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Warum durfte Felix dem Eichh\u00f6rnchen keine Nuss geben?",
+          "options": ["Er hatte keine N\u00fcsse", "Wildtiere sollen ihr Essen selbst finden", "Das Eichh\u00f6rnchen hatte keinen Hunger", "N\u00fcsse sind ungesund f\u00fcr Eichh\u00f6rnchen"],
+          "correctAnswer": "1",
+          "explanation": "\u201eSeine Mama hat gesagt, dass Wildtiere ihr Essen selbst finden sollen.\u201c",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Das Eichh\u00f6rnchen hat vergessen, wo es seine N\u00fcsse versteckt hat.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201eDas Eichh\u00f6rnchen sich erinnert hat, wo seine N\u00fcsse waren.\u201c",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, in dem Felix etwas \u00fcber Wildtiere lernt.",
+          "options": null,
+          "correctAnswer": "2",
+          "explanation": "\u201eSeine Mama hat gesagt, dass Wildtiere ihr Essen selbst finden sollen.\u201c",
+          "evidenceSentenceIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "de_t3_science_01",
+      "language": "DE",
+      "tier": 3,
+      "theme": "SCIENCE",
+      "title": "Warum Bl\u00e4tter ihre Farbe \u00e4ndern",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Im Fr\u00fchling und Sommer sind die Bl\u00e4tter der B\u00e4ume gr\u00fcn. Das kommt von einem Stoff namens Chlorophyll. Chlorophyll hilft den Bl\u00e4ttern, Sonnenlicht in Energie umzuwandeln. Im Herbst werden die Tage k\u00fcrzer und es gibt weniger Sonne. Die B\u00e4ume h\u00f6ren auf, neues Chlorophyll zu machen. Ohne Chlorophyll verschwinden die gr\u00fcne Farbe. Andere Farben wie Gelb, Orange und Rot werden sichtbar. Diese Farben waren die ganze Zeit in den Bl\u00e4ttern versteckt. Am Ende fallen die bunten Bl\u00e4tter auf den Boden.",
+      "wordCount": 83,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was macht die Bl\u00e4tter gr\u00fcn?",
+          "options": ["Wasser", "Sonne", "Chlorophyll", "Die Erde"],
+          "correctAnswer": "2",
+          "explanation": "\u201eDas kommt von einem Stoff namens Chlorophyll.\u201c",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Warum \u00e4ndern die Bl\u00e4tter im Herbst ihre Farbe?",
+          "options": ["Weil es regnet", "Weil die B\u00e4ume kein neues Chlorophyll mehr machen", "Weil die Bl\u00e4tter krank werden", "Weil der Wind kommt"],
+          "correctAnswer": "1",
+          "explanation": "\u201eDie B\u00e4ume h\u00f6ren auf, neues Chlorophyll zu machen.\u201c",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Die gelben und roten Farben kommen erst im Herbst in die Bl\u00e4tter.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u201eDiese Farben waren die ganze Zeit in den Bl\u00e4ttern versteckt.\u201c",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, der erkl\u00e4rt, was Chlorophyll macht.",
+          "options": null,
+          "correctAnswer": "2",
+          "explanation": "\u201eChlorophyll hilft den Bl\u00e4ttern, Sonnenlicht in Energie umzuwandeln.\u201c",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, der sagt, dass die Farben schon vorher da waren.",
+          "options": null,
+          "correctAnswer": "7",
+          "explanation": "\u201eDiese Farben waren die ganze Zeit in den Bl\u00e4ttern versteckt.\u201c",
+          "evidenceSentenceIndex": 7
+        }
+      ]
+    },
+    {
+      "id": "de_t3_adventure_01",
+      "language": "DE",
+      "tier": 3,
+      "theme": "ADVENTURE",
+      "title": "Die Geheimh\u00f6hle",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Beim Wandern hat Mia einen schmalen Pfad zwischen den Felsen entdeckt. Sie hat ihren Bruder Tim gerufen. Zusammen sind sie durch den Pfad gegangen. Dahinter war eine kleine H\u00f6hle. An den W\u00e4nden waren bunte Steine, die im Licht der Taschenlampe geglitzert haben. Tim hat einen glatten, runden Stein gefunden. Er war dunkelblau mit goldenen Flecken. Sie haben die H\u00f6hle \u201edie Geheimh\u00f6hle\u201c genannt. Bevor sie gegangen sind, haben sie den Eingang mit Steinen markiert, um ihn wiederzufinden.",
+      "wordCount": 80,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was hat Mia entdeckt?",
+          "options": ["Einen Fluss", "Einen schmalen Pfad zwischen den Felsen", "Ein Tier", "Einen Schatz"],
+          "correctAnswer": "1",
+          "explanation": "\u201eMia hat einen schmalen Pfad zwischen den Felsen entdeckt.\u201c",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Was hat Tim in der H\u00f6hle gefunden?",
+          "options": ["Gold", "Einen glatten, runden Stein", "Ein Bild", "Eine alte M\u00fcnze"],
+          "correctAnswer": "1",
+          "explanation": "\u201eTim hat einen glatten, runden Stein gefunden.\u201c",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Sie haben den Eingang der H\u00f6hle markiert.",
+          "options": null,
+          "correctAnswer": "true",
+          "explanation": "\u201eSie haben den Eingang mit Steinen markiert, um ihn wiederzufinden.\u201c",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, der beschreibt, wie die Steine in der H\u00f6hle aussahen.",
+          "options": null,
+          "correctAnswer": "4",
+          "explanation": "\u201eAn den W\u00e4nden waren bunte Steine, die im Licht der Taschenlampe geglitzert haben.\u201c",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Finde den Satz, der den besonderen Stein beschreibt.",
+          "options": null,
+          "correctAnswer": "6",
+          "explanation": "\u201eEr war dunkelblau mit goldenen Flecken.\u201c",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    }
+  ]
+}

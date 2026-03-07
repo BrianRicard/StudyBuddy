@@ -15,6 +15,7 @@ enum class PointSource {
     DICTEE,
     MATH,
     POEMS,
+    READING,
     DAILY_LOGIN,
     CHALLENGE,
     PURCHASE,

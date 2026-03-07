@@ -1,0 +1,21 @@
+{
+  "words": [
+    {"word": "li\u00e8vre", "language": "FR", "definition": "Un animal qui ressemble \u00e0 un grand lapin et qui court tr\u00e8s vite.", "translations": {"EN": "hare", "DE": "Hase"}, "passageIds": ["fr_t1_animals_01"]},
+    {"word": "tortue", "language": "FR", "definition": "Un animal avec une carapace dure qui marche lentement.", "translations": {"EN": "tortoise", "DE": "Schildkr\u00f6te"}, "passageIds": ["fr_t1_animals_01"]},
+    {"word": "corbeau", "language": "FR", "definition": "Un gros oiseau noir.", "translations": {"EN": "crow", "DE": "Krähe"}, "passageIds": ["fr_t2_animals_01"]},
+    {"word": "renard", "language": "FR", "definition": "Un animal roux et malin qui vit dans la for\u00eat.", "translations": {"EN": "fox", "DE": "Fuchs"}, "passageIds": ["fr_t2_animals_01"]},
+    {"word": "fromage", "language": "FR", "definition": "Un aliment fait avec du lait, souvent jaune ou blanc.", "translations": {"EN": "cheese", "DE": "Käse"}, "passageIds": ["fr_t2_animals_01"]},
+    {"word": "bec", "language": "FR", "definition": "La bouche dure d'un oiseau.", "translations": {"EN": "beak", "DE": "Schnabel"}, "passageIds": ["fr_t2_animals_01"]},
+    {"word": "chaperon", "language": "FR", "definition": "Un petit capuchon ou bonnet.", "translations": {"EN": "hood", "DE": "Käppchen"}, "passageIds": ["fr_t2_adventure_01"]},
+    {"word": "chasseur", "language": "FR", "definition": "Une personne qui chasse les animaux.", "translations": {"EN": "hunter", "DE": "Jäger"}, "passageIds": ["fr_t2_adventure_01"]},
+    {"word": "cigale", "language": "FR", "definition": "Un insecte qui chante tr\u00e8s fort en \u00e9t\u00e9.", "translations": {"EN": "cicada", "DE": "Zikade"}, "passageIds": ["fr_t3_nature_01"]},
+    {"word": "fourmi", "language": "FR", "definition": "Un tout petit insecte qui vit en groupe et travaille beaucoup.", "translations": {"EN": "ant", "DE": "Ameise"}, "passageIds": ["fr_t3_nature_01"]},
+    {"word": "vapeur", "language": "FR", "definition": "De l'eau qui est devenue un gaz invisible.", "translations": {"EN": "steam", "DE": "Dampf"}, "passageIds": ["fr_t3_science_01"]},
+    {"word": "minuscules", "language": "FR", "definition": "Tr\u00e8s tr\u00e8s petites.", "translations": {"EN": "tiny", "DE": "winzig"}, "passageIds": ["fr_t3_science_01"]},
+    {"word": "grenier", "language": "FR", "definition": "La pi\u00e8ce tout en haut de la maison, sous le toit.", "translations": {"EN": "attic", "DE": "Dachboden"}, "passageIds": ["fr_t3_adventure_01"]},
+    {"word": "pelle", "language": "FR", "definition": "Un outil pour creuser la terre.", "translations": {"EN": "shovel", "DE": "Schaufel"}, "passageIds": ["fr_t3_adventure_01"]},
+    {"word": "ch\u00eane", "language": "FR", "definition": "Un grand arbre qui produit des glands.", "translations": {"EN": "oak tree", "DE": "Eiche"}, "passageIds": ["fr_t3_adventure_01"]},
+    {"word": "bless\u00e9e", "language": "FR", "definition": "Qui a mal, qui a une blessure.", "translations": {"EN": "injured", "DE": "verletzt"}, "passageIds": ["fr_t2_animals_02"]},
+    {"word": "timide", "language": "FR", "definition": "Qui a peur de parler aux gens ou d'\u00eatre remarqu\u00e9.", "translations": {"EN": "shy", "DE": "schüchtern"}, "passageIds": ["fr_t1_school_01"]}
+  ]
+}

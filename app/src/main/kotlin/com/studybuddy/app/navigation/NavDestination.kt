@@ -2,21 +2,23 @@ package com.studybuddy.app.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.automirrored.outlined.MenuBook
+import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Calculate
 import androidx.compose.material.icons.filled.CrueltyFree
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Calculate
 import androidx.compose.material.icons.outlined.CrueltyFree
 import androidx.compose.material.icons.outlined.Draw
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.MenuBook
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.studybuddy.core.ui.R as CoreUiR
@@ -41,8 +43,8 @@ enum class NavDestination(
     POEMS(
         route = StudyBuddyRoutes.POEMS,
         labelResId = CoreUiR.string.nav_poems,
-        selectedIcon = Icons.Filled.MenuBook,
-        unselectedIcon = Icons.Outlined.MenuBook,
+        selectedIcon = Icons.AutoMirrored.Filled.MenuBook,
+        unselectedIcon = Icons.AutoMirrored.Outlined.MenuBook,
     ),
     DICTEE(
         route = StudyBuddyRoutes.DICTEE_LISTS,
@@ -55,6 +57,12 @@ enum class NavDestination(
         labelResId = CoreUiR.string.nav_speed_math,
         selectedIcon = Icons.Filled.Calculate,
         unselectedIcon = Icons.Outlined.Calculate,
+    ),
+    READING(
+        route = StudyBuddyRoutes.READING,
+        labelResId = CoreUiR.string.nav_reading,
+        selectedIcon = Icons.Filled.AutoStories,
+        unselectedIcon = Icons.Outlined.AutoStories,
     ),
     MATH_CHALLENGE(
         route = StudyBuddyRoutes.MATH_CHALLENGE,
@@ -97,6 +105,7 @@ val TABLET_NAV_DESTINATIONS = NavDestination.entries.toList()
 val LEARNING_DESTINATIONS = listOf(
     NavDestination.HOME,
     NavDestination.POEMS,
+    NavDestination.READING,
     NavDestination.DICTEE,
     NavDestination.SPEED_MATH,
     NavDestination.MATH_CHALLENGE,
@@ -119,6 +128,7 @@ fun resolveActiveDestination(currentRoute: String?): NavDestination? = when {
     currentRoute == null -> null
     currentRoute == StudyBuddyRoutes.HOME -> NavDestination.HOME
     currentRoute.startsWith("poems") -> NavDestination.POEMS
+    currentRoute.startsWith("reading") -> NavDestination.READING
     currentRoute.startsWith("dictee") -> NavDestination.DICTEE
     currentRoute == StudyBuddyRoutes.MATH_CHALLENGE -> NavDestination.MATH_CHALLENGE
     currentRoute.startsWith("math") -> NavDestination.SPEED_MATH

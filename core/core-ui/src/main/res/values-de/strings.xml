@@ -10,6 +10,7 @@
     <string name="nav_rewards">Belohnungen</string>
     <string name="nav_avatar">Avatar</string>
     <string name="nav_settings">Einstellungen</string>
+    <string name="nav_reading">Lesen</string>
     <string name="nav_section_learn">LERNEN</string>
     <string name="nav_section_more">MEHR</string>
 
@@ -541,6 +542,7 @@
     <!-- Math Challenge -->
     <string name="mode_math_challenge">Mathe-Challenge</string>
     <string name="label_falling_equations">Fallende Gleichungen</string>
+    <string name="label_reading_comprehension">Leseverständnis</string>
     <string name="challenge_score_value">%d Pkt.</string>
     <string name="challenge_level">Level %d</string>
     <string name="challenge_multiplier">×%.1f</string>

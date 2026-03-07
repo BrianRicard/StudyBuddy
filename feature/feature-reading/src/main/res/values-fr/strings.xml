@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reading_title">Lecture</string>
+    <string name="reading_no_passages">Aucun texte disponible</string>
+    <string name="reading_words">mots</string>
+    <string name="reading_locked">Verrouill\u00e9</string>
+    <string name="reading_theme_animals">Animaux</string>
+    <string name="reading_theme_adventure">Aventure</string>
+    <string name="reading_theme_family">Famille</string>
+    <string name="reading_theme_school">\u00c9cole</string>
+    <string name="reading_theme_nature">Nature</string>
+    <string name="reading_theme_science">Sciences</string>
+    <string name="reading_read_aloud">Lire \u00e0 voix haute</string>
+    <string name="reading_stop_reading">Arr\u00eater la lecture</string>
+    <string name="reading_im_ready">Je suis pr\u00eat !</string>
+    <string name="reading_speak_word">Prononcer le mot</string>
+    <string name="reading_tap_to_hear">Appuie sur le haut-parleur pour entendre ce mot</string>
+    <string name="reading_question_progress">Question %1$d sur %2$d</string>
+    <string name="reading_tap_to_reread">Appuie pour relire le texte</string>
+    <string name="reading_confirm">Confirmer</string>
+    <string name="reading_true">Vrai</string>
+    <string name="reading_false">Faux</string>
+    <string name="reading_results_title">Bravo !</string>
+    <string name="reading_correct_answers">bonnes r\u00e9ponses</string>
+    <string name="reading_first_try_bonus">Bonus premier essai ! +5</string>
+    <string name="reading_read_again">Relire</string>
+    <string name="reading_go_home">Retour \u00e0 l\'accueil</string>
+    <string name="mode_reading">Lecture</string>
+    <string name="label_reading_comprehension">Compr\u00e9hension</string>
+</resources>

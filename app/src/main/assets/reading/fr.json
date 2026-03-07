@@ -1,0 +1,410 @@
+{
+  "version": 1,
+  "passages": [
+    {
+      "id": "fr_t1_animals_01",
+      "language": "FR",
+      "tier": 1,
+      "theme": "ANIMALS",
+      "title": "Le Li\u00e8vre et la Tortue",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapt\u00e9 de la fable d'\u00c9sope",
+      "passage": "Un jour, un li\u00e8vre s'est moqu\u00e9 d'une tortue parce qu'elle marchait tr\u00e8s lentement. La tortue lui a propos\u00e9 une course. Le li\u00e8vre a accept\u00e9 en riant. La course a commenc\u00e9. Le li\u00e8vre courait vite, alors il s'est arr\u00eat\u00e9 pour dormir. La tortue a continu\u00e9 \u00e0 avancer, pas \u00e0 pas. Quand le li\u00e8vre s'est r\u00e9veill\u00e9, la tortue avait d\u00e9j\u00e0 franchi la ligne d'arriv\u00e9e.",
+      "wordCount": 65,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Pourquoi le li\u00e8vre s'est-il moqu\u00e9 de la tortue ?",
+          "options": ["Parce qu'elle \u00e9tait petite", "Parce qu'elle marchait lentement", "Parce qu'elle avait peur", "Parce qu'elle ne savait pas nager"],
+          "correctAnswer": "1",
+          "explanation": "Le texte dit que le li\u00e8vre s'est moqu\u00e9 de la tortue \u00ab parce qu'elle marchait tr\u00e8s lentement \u00bb.",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'a fait le li\u00e8vre pendant la course ?",
+          "options": ["Il a mang\u00e9", "Il a parl\u00e9 avec un ami", "Il s'est arr\u00eat\u00e9 pour dormir", "Il s'est perdu"],
+          "correctAnswer": "2",
+          "explanation": "Le li\u00e8vre courait vite, alors \u00ab il s'est arr\u00eat\u00e9 pour dormir \u00bb.",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "La tortue a gagn\u00e9 la course.",
+          "options": null,
+          "correctAnswer": "true",
+          "explanation": "Oui, la tortue a franchi la ligne d'arriv\u00e9e avant le li\u00e8vre parce qu'elle n'a jamais arr\u00eat\u00e9 d'avancer.",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "fr_t2_animals_01",
+      "language": "FR",
+      "tier": 2,
+      "theme": "ANIMALS",
+      "title": "Le Corbeau et le Renard",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapt\u00e9 de Jean de La Fontaine",
+      "passage": "Un corbeau \u00e9tait assis sur une branche avec un morceau de fromage dans le bec. Un renard est pass\u00e9 et a senti le fromage. Il a dit au corbeau : \u00ab Comme tu es beau ! Ta voix doit \u00eatre magnifique. Est-ce que tu peux chanter pour moi ? \u00bb Le corbeau, tr\u00e8s fier, a ouvert le bec pour chanter. Le fromage est tomb\u00e9 par terre. Le renard l'a attrap\u00e9 et s'est sauv\u00e9 en courant.",
+      "wordCount": 80,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Que tenait le corbeau dans son bec ?",
+          "options": ["Un ver", "Un morceau de fromage", "Une cerise", "Un bout de pain"],
+          "correctAnswer": "1",
+          "explanation": "Le texte dit que le corbeau avait \u00ab un morceau de fromage dans le bec \u00bb.",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Pourquoi le renard a-t-il fait des compliments au corbeau ?",
+          "options": ["Parce qu'il voulait \u00eatre son ami", "Parce qu'il voulait le fromage", "Parce qu'il aimait les oiseaux", "Parce qu'il avait peur"],
+          "correctAnswer": "1",
+          "explanation": "Le renard a fait des compliments pour que le corbeau ouvre le bec et laisse tomber le fromage.",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Le corbeau a gard\u00e9 son fromage.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "Non, quand le corbeau a ouvert le bec pour chanter, le fromage est tomb\u00e9 et le renard l'a pris.",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase o\u00f9 le renard fait un compliment au corbeau.",
+          "options": null,
+          "correctAnswer": "2",
+          "explanation": "Le renard dit \u00ab Comme tu es beau ! Ta voix doit \u00eatre magnifique. \u00bb pour flatter le corbeau.",
+          "evidenceSentenceIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "fr_t2_adventure_01",
+      "language": "FR",
+      "tier": 2,
+      "theme": "ADVENTURE",
+      "title": "Le Petit Chaperon Rouge",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapt\u00e9 de Charles Perrault",
+      "passage": "Une petite fille portait toujours un chaperon rouge. Sa maman lui a demand\u00e9 d'apporter un g\u00e2teau \u00e0 sa grand-m\u00e8re malade. En chemin, elle a rencontr\u00e9 un loup. Le loup lui a demand\u00e9 o\u00f9 elle allait. La petite fille a r\u00e9pondu qu'elle allait chez sa grand-m\u00e8re. Le loup est arriv\u00e9 en premier et s'est cach\u00e9 dans le lit de la grand-m\u00e8re. Quand la petite fille est arriv\u00e9e, un chasseur courageux a chass\u00e9 le loup et a sauv\u00e9 tout le monde.",
+      "wordCount": 90,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'est-ce que la petite fille devait apporter \u00e0 sa grand-m\u00e8re ?",
+          "options": ["Des fleurs", "Un g\u00e2teau", "Du lait", "Une couverture"],
+          "correctAnswer": "1",
+          "explanation": "Sa maman lui a demand\u00e9 \u00ab d'apporter un g\u00e2teau \u00e0 sa grand-m\u00e8re malade \u00bb.",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qui a sauv\u00e9 la petite fille et sa grand-m\u00e8re ?",
+          "options": ["Le loup", "Sa maman", "Un chasseur", "Son papa"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Un chasseur courageux a chass\u00e9 le loup et a sauv\u00e9 tout le monde. \u00bb",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Le loup est arriv\u00e9 chez la grand-m\u00e8re avant la petite fille.",
+          "options": null,
+          "correctAnswer": "true",
+          "explanation": "Oui, \u00ab Le loup est arriv\u00e9 en premier et s'est cach\u00e9 dans le lit de la grand-m\u00e8re. \u00bb",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase o\u00f9 le loup demande \u00e0 la petite fille o\u00f9 elle va.",
+          "options": null,
+          "correctAnswer": "3",
+          "explanation": "\u00ab Le loup lui a demand\u00e9 o\u00f9 elle allait. \u00bb",
+          "evidenceSentenceIndex": 3
+        }
+      ]
+    },
+    {
+      "id": "fr_t3_nature_01",
+      "language": "FR",
+      "tier": 3,
+      "theme": "NATURE",
+      "title": "La Cigale et la Fourmi",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapt\u00e9 de Jean de La Fontaine",
+      "passage": "Pendant tout l'\u00e9t\u00e9, la cigale a chant\u00e9 et a profit\u00e9 du soleil. Elle n'a pas travaill\u00e9 du tout. La fourmi, elle, a travaill\u00e9 tr\u00e8s dur. Elle a ramass\u00e9 de la nourriture et l'a rang\u00e9e dans sa maison pour l'hiver. Quand l'hiver est arriv\u00e9, la cigale avait tr\u00e8s faim et tr\u00e8s froid. Elle est all\u00e9e voir la fourmi pour lui demander de la nourriture. La fourmi lui a demand\u00e9 : \u00ab Qu'est-ce que tu as fait pendant l'\u00e9t\u00e9 ? \u00bb La cigale a r\u00e9pondu : \u00ab J'ai chant\u00e9. \u00bb Cette histoire nous apprend qu'il faut pr\u00e9parer l'avenir.",
+      "wordCount": 105,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'a fait la cigale pendant l'\u00e9t\u00e9 ?",
+          "options": ["Elle a travaill\u00e9", "Elle a dormi", "Elle a chant\u00e9", "Elle a voyag\u00e9"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Pendant tout l'\u00e9t\u00e9, la cigale a chant\u00e9 et a profit\u00e9 du soleil. \u00bb",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Pourquoi la fourmi avait-elle de la nourriture en hiver ?",
+          "options": ["Elle a achet\u00e9 de la nourriture", "Elle a trouv\u00e9 de la nourriture sous la neige", "Elle a travaill\u00e9 et ramass\u00e9 de la nourriture pendant l'\u00e9t\u00e9", "Un ami lui a donn\u00e9 de la nourriture"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab La fourmi a travaill\u00e9 tr\u00e8s dur. Elle a ramass\u00e9 de la nourriture et l'a rang\u00e9e dans sa maison pour l'hiver. \u00bb",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "La cigale a aussi travaill\u00e9 pendant l'\u00e9t\u00e9.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u00ab Elle n'a pas travaill\u00e9 du tout. \u00bb",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase qui explique la le\u00e7on de l'histoire.",
+          "options": null,
+          "correctAnswer": "8",
+          "explanation": "\u00ab Cette histoire nous apprend qu'il faut pr\u00e9parer l'avenir. \u00bb",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase o\u00f9 la cigale dit ce qu'elle a fait pendant l'\u00e9t\u00e9.",
+          "options": null,
+          "correctAnswer": "7",
+          "explanation": "La cigale a r\u00e9pondu : \u00ab J'ai chant\u00e9. \u00bb",
+          "evidenceSentenceIndex": 7
+        }
+      ]
+    },
+    {
+      "id": "fr_t1_family_01",
+      "language": "FR",
+      "tier": 1,
+      "theme": "FAMILY",
+      "title": "Le g\u00e2teau de mamie",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Samedi, Lucas est all\u00e9 chez sa mamie. Ils ont d\u00e9cid\u00e9 de faire un g\u00e2teau au chocolat ensemble. Lucas a cass\u00e9 les \u0153ufs et mamie a m\u00e9lang\u00e9 la p\u00e2te. Le g\u00e2teau sentait tr\u00e8s bon dans le four. Apr\u00e8s, ils l'ont mang\u00e9 avec un grand verre de lait. C'\u00e9tait le meilleur g\u00e2teau du monde.",
+      "wordCount": 55,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Quel jour Lucas est-il all\u00e9 chez sa mamie ?",
+          "options": ["Dimanche", "Lundi", "Samedi", "Mercredi"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Samedi, Lucas est all\u00e9 chez sa mamie. \u00bb",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Quel g\u00e2teau ont-ils fait ?",
+          "options": ["Un g\u00e2teau \u00e0 la vanille", "Un g\u00e2teau au chocolat", "Un g\u00e2teau aux fraises", "Un g\u00e2teau au citron"],
+          "correctAnswer": "1",
+          "explanation": "\u00ab Ils ont d\u00e9cid\u00e9 de faire un g\u00e2teau au chocolat ensemble. \u00bb",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Lucas a m\u00e9lang\u00e9 la p\u00e2te.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "Non, c'est mamie qui a m\u00e9lang\u00e9 la p\u00e2te. Lucas a cass\u00e9 les \u0153ufs.",
+          "evidenceSentenceIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "fr_t1_school_01",
+      "language": "FR",
+      "tier": 1,
+      "theme": "SCHOOL",
+      "title": "Le nouvel \u00e9l\u00e8ve",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Ce matin, un nouvel \u00e9l\u00e8ve est arriv\u00e9 dans la classe de madame Dupont. Il s'appelle Th\u00e9o et il vient d'une autre ville. Th\u00e9o \u00e9tait un peu timide. Emma lui a pr\u00eat\u00e9 ses crayons de couleur. \u00c0 la r\u00e9cr\u00e9ation, ils ont jou\u00e9 ensemble. Le soir, Th\u00e9o a dit \u00e0 sa maman qu'il aimait sa nouvelle \u00e9cole.",
+      "wordCount": 53,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qui est le nouvel \u00e9l\u00e8ve ?",
+          "options": ["Emma", "Madame Dupont", "Th\u00e9o", "Lucas"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Il s'appelle Th\u00e9o et il vient d'une autre ville. \u00bb",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'est-ce qu'Emma a fait pour aider Th\u00e9o ?",
+          "options": ["Elle lui a donn\u00e9 son go\u00fbter", "Elle lui a pr\u00eat\u00e9 ses crayons de couleur", "Elle l'a emmen\u00e9 chez elle", "Elle lui a lu une histoire"],
+          "correctAnswer": "1",
+          "explanation": "\u00ab Emma lui a pr\u00eat\u00e9 ses crayons de couleur. \u00bb",
+          "evidenceSentenceIndex": 3
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Th\u00e9o n'a pas aim\u00e9 sa nouvelle \u00e9cole.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "Au contraire, \u00ab Th\u00e9o a dit \u00e0 sa maman qu'il aimait sa nouvelle \u00e9cole. \u00bb",
+          "evidenceSentenceIndex": 5
+        }
+      ]
+    },
+    {
+      "id": "fr_t2_animals_02",
+      "language": "FR",
+      "tier": 2,
+      "theme": "ANIMALS",
+      "title": "L'oiseau bless\u00e9",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "En rentrant de l'\u00e9cole, Mila a trouv\u00e9 un petit oiseau dans le jardin. Il avait une aile bless\u00e9e et ne pouvait plus voler. Mila l'a doucement mis dans une bo\u00eete avec du coton. Elle lui a donn\u00e9 de l'eau et des graines. Chaque jour, elle a pris soin de lui. Apr\u00e8s deux semaines, l'oiseau a recommenc\u00e9 \u00e0 battre des ailes. Un matin, Mila a ouvert la bo\u00eete et l'oiseau s'est envol\u00e9 dans le ciel. Elle \u00e9tait triste mais heureuse en m\u00eame temps.",
+      "wordCount": 85,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "O\u00f9 Mila a-t-elle trouv\u00e9 l'oiseau ?",
+          "options": ["Sur le chemin de l'\u00e9cole", "Dans le jardin", "Sur le balcon", "Dans la for\u00eat"],
+          "correctAnswer": "1",
+          "explanation": "\u00ab Mila a trouv\u00e9 un petit oiseau dans le jardin. \u00bb",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Combien de temps Mila a-t-elle soign\u00e9 l'oiseau ?",
+          "options": ["Trois jours", "Une semaine", "Deux semaines", "Un mois"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Apr\u00e8s deux semaines, l'oiseau a recommenc\u00e9 \u00e0 battre des ailes. \u00bb",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "L'oiseau avait une patte cass\u00e9e.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "Non, \u00ab Il avait une aile bless\u00e9e et ne pouvait plus voler. \u00bb C'\u00e9tait l'aile, pas la patte.",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase o\u00f9 l'oiseau s'envole.",
+          "options": null,
+          "correctAnswer": "6",
+          "explanation": "\u00ab Un matin, Mila a ouvert la bo\u00eete et l'oiseau s'est envol\u00e9 dans le ciel. \u00bb",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "fr_t3_science_01",
+      "language": "FR",
+      "tier": 3,
+      "theme": "SCIENCE",
+      "title": "Comment la pluie se forme",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "L'eau des rivi\u00e8res, des lacs et des oc\u00e9ans se r\u00e9chauffe gr\u00e2ce au soleil. Quand l'eau est chaude, elle se transforme en vapeur. Cette vapeur monte tr\u00e8s haut dans le ciel. En haut, l'air est froid. La vapeur se refroidit et forme de minuscules gouttes d'eau. Ces gouttes se rassemblent pour cr\u00e9er des nuages. Quand un nuage contient trop de gouttes, elles deviennent lourdes et tombent. C'est la pluie. La pluie retombe dans les rivi\u00e8res et les oc\u00e9ans, et le cycle recommence.",
+      "wordCount": 88,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'est-ce qui r\u00e9chauffe l'eau des rivi\u00e8res et des oc\u00e9ans ?",
+          "options": ["Le vent", "La lune", "Le soleil", "Les nuages"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab L'eau des rivi\u00e8res, des lacs et des oc\u00e9ans se r\u00e9chauffe gr\u00e2ce au soleil. \u00bb",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Que se passe-t-il quand la vapeur monte dans le ciel ?",
+          "options": ["Elle dispara\u00eet", "Elle se refroidit et forme des gouttes d'eau", "Elle devient du vent", "Elle retombe tout de suite"],
+          "correctAnswer": "1",
+          "explanation": "\u00ab La vapeur se refroidit et forme de minuscules gouttes d'eau. \u00bb",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "La pluie ne retourne jamais dans les rivi\u00e8res.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\u00ab La pluie retombe dans les rivi\u00e8res et les oc\u00e9ans, et le cycle recommence. \u00bb",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase qui explique comment les nuages se forment.",
+          "options": null,
+          "correctAnswer": "5",
+          "explanation": "\u00ab Ces gouttes se rassemblent pour cr\u00e9er des nuages. \u00bb",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase qui explique pourquoi il pleut.",
+          "options": null,
+          "correctAnswer": "6",
+          "explanation": "\u00ab Quand un nuage contient trop de gouttes, elles deviennent lourdes et tombent. \u00bb",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "fr_t3_adventure_01",
+      "language": "FR",
+      "tier": 3,
+      "theme": "ADVENTURE",
+      "title": "La chasse au tr\u00e9sor",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Jade et son fr\u00e8re No\u00e9 ont trouv\u00e9 une vieille carte dans le grenier. La carte montrait un chemin jusqu'\u00e0 un arbre marqu\u00e9 d'une croix dans le parc. Ils ont pris une pelle et sont partis. Au parc, ils ont suivi le chemin de la carte. Ils ont compt\u00e9 dix pas depuis la fontaine et tourn\u00e9 \u00e0 gauche. Sous le grand ch\u00eane, ils ont creus\u00e9 un petit trou. \u00c0 l'int\u00e9rieur, il y avait une bo\u00eete en m\u00e9tal. Elle contenait des photos de famille anciennes et un mot de leur grand-p\u00e8re. Le vrai tr\u00e9sor, c'\u00e9taient les souvenirs.",
+      "wordCount": 103,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "O\u00f9 Jade et No\u00e9 ont-ils trouv\u00e9 la carte ?",
+          "options": ["Dans le jardin", "Dans le grenier", "Sous un arbre", "\u00c0 l'\u00e9cole"],
+          "correctAnswer": "1",
+          "explanation": "\u00ab Jade et son fr\u00e8re No\u00e9 ont trouv\u00e9 une vieille carte dans le grenier. \u00bb",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Qu'y avait-il dans la bo\u00eete ?",
+          "options": ["De l'argent", "Des jouets", "Des photos de famille et un mot du grand-p\u00e8re", "Des bonbons"],
+          "correctAnswer": "2",
+          "explanation": "\u00ab Elle contenait des photos de famille anciennes et un mot de leur grand-p\u00e8re. \u00bb",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Jade et No\u00e9 ont trouv\u00e9 de l'or dans la bo\u00eete.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "Non, ils ont trouv\u00e9 des photos de famille et un mot de leur grand-p\u00e8re. \u00ab Le vrai tr\u00e9sor, c'\u00e9taient les souvenirs. \u00bb",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase qui dit o\u00f9 ils ont creus\u00e9.",
+          "options": null,
+          "correctAnswer": "5",
+          "explanation": "\u00ab Sous le grand ch\u00eane, ils ont creus\u00e9 un petit trou. \u00bb",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Trouve la phrase qui parle du vrai tr\u00e9sor.",
+          "options": null,
+          "correctAnswer": "8",
+          "explanation": "\u00ab Le vrai tr\u00e9sor, c'\u00e9taient les souvenirs. \u00bb",
+          "evidenceSentenceIndex": 8
+        }
+      ]
+    }
+  ]
+}
