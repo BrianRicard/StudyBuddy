@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId = "com.studybuddy.app"
 
-        val crashToken = System.getenv("GITHUB_CRASH_TOKEN")
-            ?: providers.gradleProperty("GITHUB_CRASH_TOKEN").getOrElse("")
-        buildConfigField("String", "GITHUB_CRASH_TOKEN", "\"$crashToken\"")
+        val crashToken = System.getenv("CRASH_REPORT_TOKEN")
+            ?: providers.gradleProperty("CRASH_REPORT_TOKEN").getOrElse("")
+        buildConfigField("String", "CRASH_REPORT_TOKEN", "\"$crashToken\"")
     }
 
     buildFeatures {
