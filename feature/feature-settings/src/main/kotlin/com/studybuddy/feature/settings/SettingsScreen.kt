@@ -1,6 +1,8 @@
 package com.studybuddy.feature.settings
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -213,8 +215,26 @@ private fun SettingsContent(
                     }
                 }
 
+                // Version info with debug crash trigger
+                item {
+                    val context = androidx.compose.ui.platform.LocalContext.current
+                    val appVersion = remember {
+                        try {
+                            val pi = context.packageManager.getPackageInfo(context.packageName, 0)
+                            @Suppress("DEPRECATION")
+                            "${pi.versionName} (${pi.versionCode})"
+                        } catch (_: Exception) {
+                            "unknown"
+                        }
+                    }
+                    VersionInfoRow(
+                        appVersion = appVersion,
+                        modifier = Modifier.animateItemAppearance(13),
+                    )
+                }
+
                 // Bottom spacer for scroll padding
-                item { Spacer(modifier = Modifier.animateItemAppearance(13).height(24.dp)) }
+                item { Spacer(modifier = Modifier.animateItemAppearance(14).height(24.dp)) }
             }
         }
     }
@@ -542,6 +562,39 @@ private fun ResetSettingRow(
         )
     }
     HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun VersionInfoRow(
+    appVersion: String,
+    modifier: Modifier = Modifier,
+) {
+    val isDebug = remember {
+        try {
+            val clazz = Class.forName("com.studybuddy.app.BuildConfig")
+            clazz.getField("DEBUG").getBoolean(null)
+        } catch (_: Exception) {
+            false
+        }
+    }
+
+    Text(
+        text = "v$appVersion",
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f),
+        modifier = modifier
+            .fillMaxWidth()
+            .combinedClickable(
+                onClick = { },
+                onLongClick = {
+                    if (isDebug) {
+                        throw RuntimeException("StudyBuddy test crash - ACRA -> GitHub Issues")
+                    }
+                },
+            )
+            .padding(vertical = 16.dp),
+    )
 }
 
 // endregion

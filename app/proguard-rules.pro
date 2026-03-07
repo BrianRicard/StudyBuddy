@@ -22,6 +22,8 @@
 -keepclasseswithmembernames class * { native <methods>; }
 -keep class com.studybuddy.shared.whisper.** { *; }
 
-# Firebase Crashlytics
+# ACRA crash reporting
 -keepattributes SourceFile,LineNumberTable
 -keep public class * extends java.lang.Exception
+-keep class org.acra.** { *; }
+-keep class com.studybuddy.app.crash.** { *; }

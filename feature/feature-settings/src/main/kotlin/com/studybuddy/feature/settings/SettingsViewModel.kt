@@ -95,10 +95,6 @@ class SettingsViewModel @Inject constructor(
 
     private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
-    /**
-     * Stored parent PIN hash. Null means no PIN has been set yet.
-     * Loaded from DataStore on init and kept in sync.
-     */
     private var storedPinHash: Int? = null
 
     init {

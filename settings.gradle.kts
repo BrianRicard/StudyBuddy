@@ -34,10 +34,6 @@ pluginManagement {
                     useModule("org.owasp:dependency-check-gradle:${requested.version}")
                 "app.cash.licensee" ->
                     useModule("app.cash.licensee:licensee-gradle-plugin:${requested.version}")
-                "com.google.gms.google-services" ->
-                    useModule("com.google.gms:google-services:${requested.version}")
-                "com.google.firebase.crashlytics" ->
-                    useModule("com.google.firebase:firebase-crashlytics-gradle:${requested.version}")
             }
         }
     }

@@ -13,8 +13,6 @@ plugins {
     alias(libs.plugins.versions)
     alias(libs.plugins.dependency.check)
     alias(libs.plugins.licensee) apply false
-    alias(libs.plugins.google.services) apply false
-    alias(libs.plugins.firebase.crashlytics) apply false
 }
 
 kover {
