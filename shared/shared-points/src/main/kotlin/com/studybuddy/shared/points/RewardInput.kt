@@ -42,4 +42,11 @@ sealed class RewardInput {
         val highestLevel: Int,
         val longestStreak: Int,
     ) : RewardInput()
+
+    data class ReadingReward(
+        val correctAnswers: Int,
+        val totalQuestions: Int,
+        val tier: Int,
+        val allCorrectFirstTry: Boolean,
+    ) : RewardInput()
 }

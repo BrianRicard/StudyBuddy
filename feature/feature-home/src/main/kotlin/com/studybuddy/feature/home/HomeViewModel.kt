@@ -97,6 +97,7 @@ sealed interface HomeIntent {
     data object NavigateToMath : HomeIntent
     data object NavigateToMathChallenge : HomeIntent
     data object NavigateToPoems : HomeIntent
+    data object NavigateToReading : HomeIntent
     data object NavigateToAvatar : HomeIntent
     data object NavigateToStats : HomeIntent
     data object NavigateToRewards : HomeIntent
@@ -111,6 +112,7 @@ sealed interface HomeEffect {
     data object OpenMath : HomeEffect
     data object OpenMathChallenge : HomeEffect
     data object OpenPoems : HomeEffect
+    data object OpenReading : HomeEffect
     data object OpenAvatar : HomeEffect
     data object OpenStats : HomeEffect
     data object OpenRewards : HomeEffect
@@ -143,6 +145,7 @@ class HomeViewModel @Inject constructor(
                 HomeIntent.NavigateToMath -> _effects.emit(HomeEffect.OpenMath)
                 HomeIntent.NavigateToMathChallenge -> _effects.emit(HomeEffect.OpenMathChallenge)
                 HomeIntent.NavigateToPoems -> _effects.emit(HomeEffect.OpenPoems)
+                HomeIntent.NavigateToReading -> _effects.emit(HomeEffect.OpenReading)
                 HomeIntent.NavigateToAvatar -> _effects.emit(HomeEffect.OpenAvatar)
                 HomeIntent.NavigateToStats -> _effects.emit(HomeEffect.OpenStats)
                 HomeIntent.NavigateToRewards -> _effects.emit(HomeEffect.OpenRewards)
@@ -270,13 +273,18 @@ class HomeViewModel @Inject constructor(
         val now = Clock.System.now()
 
         return events
-            .filter { it.source == PointSource.DICTEE || it.source == PointSource.MATH }
+            .filter {
+                it.source == PointSource.DICTEE ||
+                    it.source == PointSource.MATH ||
+                    it.source == PointSource.READING
+            }
             .sortedByDescending { it.timestamp }
             .take(MAX_RECENT_ACTIVITIES)
             .map { event ->
                 @StringRes val modeResId = when (event.source) {
                     PointSource.DICTEE -> CoreUiR.string.mode_dictee
                     PointSource.MATH -> CoreUiR.string.mode_math
+                    PointSource.READING -> CoreUiR.string.nav_reading
                     else -> CoreUiR.string.mode_activity
                 }
                 val elapsed = now - event.timestamp

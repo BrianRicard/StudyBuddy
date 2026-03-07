@@ -8,6 +8,7 @@ import com.studybuddy.core.data.repository.LocalMathRepository
 import com.studybuddy.core.data.repository.LocalPoemRepository
 import com.studybuddy.core.data.repository.LocalPointsRepository
 import com.studybuddy.core.data.repository.LocalProfileRepository
+import com.studybuddy.core.data.repository.LocalReadingRepository
 import com.studybuddy.core.data.repository.LocalRewardsRepository
 import com.studybuddy.core.data.repository.LocalVoicePackRepository
 import com.studybuddy.core.domain.repository.AvatarRepository
@@ -17,6 +18,7 @@ import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PoemRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
+import com.studybuddy.core.domain.repository.ReadingRepository
 import com.studybuddy.core.domain.repository.RewardsRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.repository.VoicePackRepository
@@ -58,6 +60,9 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindPoemRepo(impl: LocalPoemRepository): PoemRepository
+
+    @Binds
+    abstract fun bindReadingRepo(impl: LocalReadingRepository): ReadingRepository
 
     // CLOUD MIGRATION: When ready, create CloudXxxRepository implementations and
     // swap the @Binds here. No other code changes needed.

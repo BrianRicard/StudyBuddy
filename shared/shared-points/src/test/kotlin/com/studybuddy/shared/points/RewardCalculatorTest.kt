@@ -319,6 +319,113 @@ class RewardCalculatorTest {
         assertTrue(result.totalPoints in 90..160, "Amazing run: expected ~128, got ${result.totalPoints}")
     }
 
+    // --- Reading Rewards ---
+
+    @Test
+    fun `reading - perfect tier 1 with 3 questions earns 15 plus first try bonus`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(
+                correctAnswers = 3,
+                totalQuestions = 3,
+                tier = 1,
+                allCorrectFirstTry = true,
+            ),
+        )
+        // base=15 * diff=1.0 * acc=1.0 + bonus=5 = 20
+        assertEquals(20, result.totalPoints)
+    }
+
+    @Test
+    fun `reading - perfect tier 2 with 4 questions earns 30 plus first try bonus`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(
+                correctAnswers = 4,
+                totalQuestions = 4,
+                tier = 2,
+                allCorrectFirstTry = true,
+            ),
+        )
+        // base=20 * diff=1.5 * acc=1.0 + bonus=5 = 35
+        assertEquals(35, result.totalPoints)
+    }
+
+    @Test
+    fun `reading - perfect tier 3 with 5 questions earns 60 plus first try bonus`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(
+                correctAnswers = 5,
+                totalQuestions = 5,
+                tier = 3,
+                allCorrectFirstTry = true,
+            ),
+        )
+        // base=30 * diff=2.0 * acc=1.0 + bonus=5 = 65
+        assertEquals(65, result.totalPoints)
+    }
+
+    @Test
+    fun `reading - partial score no first try bonus`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(
+                correctAnswers = 2,
+                totalQuestions = 4,
+                tier = 1,
+                allCorrectFirstTry = false,
+            ),
+        )
+        // base=20 * diff=1.0 * acc=0.5 + bonus=0 = 10
+        assertEquals(10, result.totalPoints)
+    }
+
+    @Test
+    fun `reading - zero correct earns minimum 1 point`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(
+                correctAnswers = 0,
+                totalQuestions = 3,
+                tier = 1,
+                allCorrectFirstTry = false,
+            ),
+        )
+        assertEquals(1, result.totalPoints)
+    }
+
+    @Test
+    fun `reading - higher tier gives higher reward for same accuracy`() {
+        val tier1 = calculator.calculate(
+            RewardInput.ReadingReward(3, 3, 1, false),
+        )
+        val tier3 = calculator.calculate(
+            RewardInput.ReadingReward(3, 3, 3, false),
+        )
+        assertTrue(
+            tier3.totalPoints > tier1.totalPoints,
+            "Tier 3 should reward more: tier3=${tier3.totalPoints}, tier1=${tier1.totalPoints}",
+        )
+    }
+
+    @Test
+    fun `reading - first try bonus only when all correct first try`() {
+        val withBonus = calculator.calculate(
+            RewardInput.ReadingReward(3, 3, 1, allCorrectFirstTry = true),
+        )
+        val noBonus = calculator.calculate(
+            RewardInput.ReadingReward(3, 3, 1, allCorrectFirstTry = false),
+        )
+        assertEquals(
+            RewardCalculator.READING_FIRST_TRY_BONUS,
+            withBonus.totalPoints - noBonus.totalPoints,
+        )
+    }
+
+    @Test
+    fun `reading - breakdown total matches totalPoints`() {
+        val result = calculator.calculate(
+            RewardInput.ReadingReward(4, 5, 2, false),
+        )
+        assertEquals(result.totalPoints, result.breakdown.total)
+    }
+
     // --- Cross-Section Balance ---
 
     @Test
@@ -396,6 +503,7 @@ class RewardCalculatorTest {
             RewardInput.DicteeReward(0, 5, InputMode.KEYBOARD, Difficulty.EASY, 0.0f),
             RewardInput.SpeedMathReward(0, 5, 30, setOf(Operator.PLUS), 1, 10, 0),
             RewardInput.MathChallengeReward(0, 0, 5000, 1, 0),
+            RewardInput.ReadingReward(0, 3, 1, false),
         )
         inputs.forEach { input ->
             val result = calculator.calculate(input)

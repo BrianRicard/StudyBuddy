@@ -28,10 +28,34 @@ object StudyBuddyRoutes {
     const val MATH_CHALLENGE = "math/challenge"
     const val DICTEE_ADD = "dictee/add"
     const val DICTEE_EDIT = "dictee/edit/{setId}"
+    const val READING = "reading"
+    const val READING_DETAIL = "reading/detail/{passageId}"
+    const val READING_QUESTIONS =
+        "reading/questions/{passageId}/{readingTimeMs}"
+    const val READING_RESULTS =
+        "reading/results/{passageId}/{score}/{totalQuestions}/{readingTimeMs}" +
+            "/{questionsTimeMs}/{allCorrectFirstTry}/{tier}"
 
     fun poemDetail(poemId: String) = "poems/detail/$poemId"
     fun dicteeEdit(setId: String) = "dictee/edit/$setId"
     const val ONBOARDING = "onboarding"
+
+    fun readingDetail(passageId: String) = "reading/detail/$passageId"
+    fun readingQuestions(
+        passageId: String,
+        readingTimeMs: Long,
+    ) = "reading/questions/$passageId/$readingTimeMs"
+
+    fun readingResults(
+        passageId: String,
+        score: Int,
+        totalQuestions: Int,
+        readingTimeMs: Long,
+        questionsTimeMs: Long,
+        allCorrectFirstTry: Boolean,
+        tier: Int,
+    ) = "reading/results/$passageId/$score/$totalQuestions/$readingTimeMs" +
+        "/$questionsTimeMs/$allCorrectFirstTry/$tier"
 
     fun dicteePractice(listId: String) = "dictee/practice/$listId"
     fun dicteeChallenge(listIds: List<String>) = "dictee/challenge/${listIds.joinToString("|")}"

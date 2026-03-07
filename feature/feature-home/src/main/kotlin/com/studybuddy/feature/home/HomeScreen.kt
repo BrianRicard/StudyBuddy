@@ -71,6 +71,7 @@ fun HomeScreen(
     onNavigateToMath: () -> Unit = {},
     onNavigateToMathChallenge: () -> Unit = {},
     onNavigateToPoems: () -> Unit = {},
+    onNavigateToReading: () -> Unit = {},
     onNavigateToAvatar: () -> Unit = {},
     onNavigateToStats: () -> Unit = {},
     onNavigateToRewards: () -> Unit = {},
@@ -85,6 +86,7 @@ fun HomeScreen(
                 HomeEffect.OpenMath -> onNavigateToMath()
                 HomeEffect.OpenMathChallenge -> onNavigateToMathChallenge()
                 HomeEffect.OpenPoems -> onNavigateToPoems()
+                HomeEffect.OpenReading -> onNavigateToReading()
                 HomeEffect.OpenAvatar -> onNavigateToAvatar()
                 HomeEffect.OpenStats -> onNavigateToStats()
                 HomeEffect.OpenRewards -> onNavigateToRewards()
@@ -164,6 +166,7 @@ private fun HomeContent(
                     onMathClick = { onIntent(HomeIntent.NavigateToMath) },
                     onMathChallengeClick = { onIntent(HomeIntent.NavigateToMathChallenge) },
                     onPoemsClick = { onIntent(HomeIntent.NavigateToPoems) },
+                    onReadingClick = { onIntent(HomeIntent.NavigateToReading) },
                     layoutType = layoutType,
                     modifier = Modifier.animateItemAppearance(3),
                 )
@@ -448,6 +451,7 @@ private fun ModeCardsGrid(
     onMathClick: () -> Unit,
     onMathChallengeClick: () -> Unit,
     onPoemsClick: () -> Unit,
+    onReadingClick: () -> Unit,
     layoutType: LayoutType,
     modifier: Modifier = Modifier,
 ) {
@@ -503,6 +507,22 @@ private fun ModeCardsGrid(
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 3,
             )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            ModeCard(
+                title = stringResource(CoreUiR.string.nav_reading),
+                subtitle = stringResource(CoreUiR.string.label_reading_comprehension),
+                onClick = onReadingClick,
+                modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_poems_notepad,
+                containerColor = ModeCardColor.Secondary,
+                infiniteTransition = infiniteTransition,
+                animationDelay = BOB_ANIMATION_DELAY * 4,
+            )
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 }

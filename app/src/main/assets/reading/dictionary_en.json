@@ -1,0 +1,19 @@
+{
+  "words": [
+    {"word": "tortoise", "language": "EN", "definition": "An animal with a hard shell that moves very slowly.", "translations": {"FR": "tortue", "DE": "Schildkröte"}, "passageIds": ["en_t1_animals_01"]},
+    {"word": "hare", "language": "EN", "definition": "An animal like a big rabbit that runs very fast.", "translations": {"FR": "lièvre", "DE": "Hase"}, "passageIds": ["en_t1_animals_01"]},
+    {"word": "nap", "language": "EN", "definition": "A short sleep during the day.", "translations": {"FR": "sieste", "DE": "Nickerchen"}, "passageIds": ["en_t1_animals_01"]},
+    {"word": "villagers", "language": "EN", "definition": "People who live in a small village.", "translations": {"FR": "villageois", "DE": "Dorfbewohner"}, "passageIds": ["en_t2_adventure_01"]},
+    {"word": "shepherd", "language": "EN", "definition": "A person who takes care of sheep.", "translations": {"FR": "berger", "DE": "Hirte"}, "passageIds": ["en_t2_adventure_01"]},
+    {"word": "traveller", "language": "EN", "definition": "A person on a journey.", "translations": {"FR": "voyageur", "DE": "Reisender"}, "passageIds": ["en_t2_nature_01"]},
+    {"word": "contest", "language": "EN", "definition": "A competition to find out who is better.", "translations": {"FR": "concours", "DE": "Wettbewerb"}, "passageIds": ["en_t2_nature_01"]},
+    {"word": "batter", "language": "EN", "definition": "A liquid mixture of flour, eggs and milk used to make pancakes.", "translations": {"FR": "pâte", "DE": "Teig"}, "passageIds": ["en_t1_family_01"]},
+    {"word": "maple syrup", "language": "EN", "definition": "A sweet, thick liquid made from the sap of maple trees.", "translations": {"FR": "sirop d'érable", "DE": "Ahornsirup"}, "passageIds": ["en_t1_family_01"]},
+    {"word": "nectar", "language": "EN", "definition": "A sweet liquid found in flowers that bees collect.", "translations": {"FR": "nectar", "DE": "Nektar"}, "passageIds": ["en_t2_nature_02", "en_t3_science_01"]},
+    {"word": "honeycomb", "language": "EN", "definition": "A structure of wax cells where bees store honey.", "translations": {"FR": "rayon de miel", "DE": "Honigwabe"}, "passageIds": ["en_t3_science_01"]},
+    {"word": "hive", "language": "EN", "definition": "A home where bees live together.", "translations": {"FR": "ruche", "DE": "Bienenstock"}, "passageIds": ["en_t3_science_01"]},
+    {"word": "raft", "language": "EN", "definition": "A flat boat made of wood or other materials.", "translations": {"FR": "radeau", "DE": "Floß"}, "passageIds": ["en_t3_adventure_01"]},
+    {"word": "planks", "language": "EN", "definition": "Long, flat pieces of wood.", "translations": {"FR": "planches", "DE": "Bretter"}, "passageIds": ["en_t3_adventure_01"]},
+    {"word": "stream", "language": "EN", "definition": "A small, narrow river.", "translations": {"FR": "ruisseau", "DE": "Bach"}, "passageIds": ["en_t3_adventure_01"]}
+  ]
+}

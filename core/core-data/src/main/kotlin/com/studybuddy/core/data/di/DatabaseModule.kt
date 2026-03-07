@@ -78,7 +78,7 @@ object DatabaseModule {
                 }
             },
         )
-        .addMigrations(Migrations.MIGRATION_1_2)
+        .addMigrations(Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3)
         .build()
 
     @Provides
@@ -104,6 +104,9 @@ object DatabaseModule {
 
     @Provides
     fun providePoemDao(db: StudyBuddyDatabase) = db.poemDao()
+
+    @Provides
+    fun provideReadingDao(db: StudyBuddyDatabase) = db.readingDao()
 
     @Provides
     @Singleton

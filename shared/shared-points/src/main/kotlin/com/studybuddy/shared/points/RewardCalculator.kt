@@ -28,6 +28,7 @@ class RewardCalculator @Inject constructor() {
         is RewardInput.DicteeReward -> calculateDicteeReward(input)
         is RewardInput.SpeedMathReward -> calculateSpeedMathReward(input)
         is RewardInput.MathChallengeReward -> calculateChallengeReward(input)
+        is RewardInput.ReadingReward -> calculateReadingReward(input)
     }
 
     internal fun calculatePoemReward(input: RewardInput.PoemReward): RewardResult {
@@ -239,8 +240,49 @@ class RewardCalculator @Inject constructor() {
         )
     }
 
+    internal fun calculateReadingReward(input: RewardInput.ReadingReward): RewardResult {
+        val base = when {
+            input.totalQuestions <= 3 -> READING_BASE_3Q
+            input.totalQuestions <= 4 -> READING_BASE_4Q
+            else -> READING_BASE_5Q
+        }
+
+        val diffMultiplier = when (input.tier) {
+            1 -> 1.0f
+            2 -> 1.5f
+            3 -> 2.0f
+            else -> 2.5f
+        }
+
+        val accMultiplier = input.correctAnswers.toFloat() / input.totalQuestions.coerceAtLeast(1)
+
+        val volumeBonus = if (input.allCorrectFirstTry) READING_FIRST_TRY_BONUS else 0
+
+        val raw = (base * diffMultiplier * accMultiplier).toInt()
+        val total = (raw + volumeBonus).coerceAtLeast(1)
+
+        return RewardResult(
+            basePoints = base,
+            difficultyMultiplier = diffMultiplier,
+            accuracyMultiplier = accMultiplier,
+            volumeBonus = volumeBonus,
+            totalPoints = total,
+            breakdown = PointBreakdown(
+                base = base,
+                difficultyBonus = (base * diffMultiplier).toInt() - base,
+                accuracyBonus = raw - (base * diffMultiplier).toInt(),
+                volumeBonus = volumeBonus,
+                total = total,
+            ),
+        )
+    }
+
     companion object {
         const val POEM_BASE_POINTS = 10
         const val DICTEE_POINTS_PER_WORD = 2
+        const val READING_BASE_3Q = 15
+        const val READING_BASE_4Q = 20
+        const val READING_BASE_5Q = 30
+        const val READING_FIRST_TRY_BONUS = 5
     }
 }

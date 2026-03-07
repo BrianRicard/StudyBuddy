@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reading_title">Reading</string>
+    <string name="reading_no_passages">No passages available</string>
+    <string name="reading_words">words</string>
+    <string name="reading_locked">Locked</string>
+    <string name="reading_theme_animals">Animals</string>
+    <string name="reading_theme_adventure">Adventure</string>
+    <string name="reading_theme_family">Family</string>
+    <string name="reading_theme_school">School</string>
+    <string name="reading_theme_nature">Nature</string>
+    <string name="reading_theme_science">Science</string>
+    <string name="reading_read_aloud">Read aloud</string>
+    <string name="reading_stop_reading">Stop reading</string>
+    <string name="reading_im_ready">I\'m Ready!</string>
+    <string name="reading_speak_word">Speak word</string>
+    <string name="reading_tap_to_hear">Tap the speaker to hear this word</string>
+    <string name="reading_question_progress">Question %1$d of %2$d</string>
+    <string name="reading_tap_to_reread">Tap to re-read the passage</string>
+    <string name="reading_confirm">Confirm</string>
+    <string name="reading_true">True</string>
+    <string name="reading_false">False</string>
+    <string name="reading_results_title">Great Job!</string>
+    <string name="reading_correct_answers">correct answers</string>
+    <string name="reading_first_try_bonus">First try bonus! +5</string>
+    <string name="reading_read_again">Read Again</string>
+    <string name="reading_go_home">Back to Home</string>
+    <string name="mode_reading">Reading</string>
+    <string name="label_reading_comprehension">Comprehension</string>
+</resources>

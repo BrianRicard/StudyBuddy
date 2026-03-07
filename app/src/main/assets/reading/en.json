@@ -1,0 +1,357 @@
+{
+  "version": 1,
+  "passages": [
+    {
+      "id": "en_t1_animals_01",
+      "language": "EN",
+      "tier": 1,
+      "theme": "ANIMALS",
+      "title": "The Tortoise and the Hare",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapted from Aesop's Fables",
+      "passage": "One day, a hare laughed at a tortoise for being so slow. The tortoise said, \"Let's have a race!\" The hare agreed. The race started and the hare ran very fast. He was so far ahead that he stopped to take a nap. The tortoise kept walking, step by step. When the hare woke up, the tortoise had already crossed the finish line.",
+      "wordCount": 62,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Why did the hare laugh at the tortoise?",
+          "options": ["Because she was small", "Because she was slow", "Because she was green", "Because she was old"],
+          "correctAnswer": "1",
+          "explanation": "The text says the hare \"laughed at a tortoise for being so slow.\"",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What did the hare do during the race?",
+          "options": ["He ate lunch", "He talked to friends", "He stopped to take a nap", "He got lost"],
+          "correctAnswer": "2",
+          "explanation": "\"He was so far ahead that he stopped to take a nap.\"",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "The tortoise won the race.",
+          "options": null,
+          "correctAnswer": "true",
+          "explanation": "Yes, \"the tortoise had already crossed the finish line\" before the hare woke up.",
+          "evidenceSentenceIndex": 6
+        }
+      ]
+    },
+    {
+      "id": "en_t2_adventure_01",
+      "language": "EN",
+      "tier": 2,
+      "theme": "ADVENTURE",
+      "title": "The Boy Who Cried Wolf",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapted from Aesop's Fables",
+      "passage": "A boy watched over sheep on a hill near a village. He got bored and shouted, \"Wolf! Wolf!\" The villagers ran up the hill to help, but there was no wolf. The boy laughed. He did it again the next day, and the villagers came running once more. But on the third day, a real wolf appeared. The boy screamed for help, but nobody came. They thought he was lying again. The wolf chased the sheep away.",
+      "wordCount": 78,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Why did the boy shout \"Wolf\"?",
+          "options": ["He saw a wolf", "He was scared", "He was bored", "He wanted to go home"],
+          "correctAnswer": "2",
+          "explanation": "\"He got bored and shouted, 'Wolf! Wolf!'\"",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What happened when the real wolf came?",
+          "options": ["The villagers saved the sheep", "The boy ran away", "Nobody came to help", "The wolf ran away"],
+          "correctAnswer": "2",
+          "explanation": "\"The boy screamed for help, but nobody came. They thought he was lying again.\"",
+          "evidenceSentenceIndex": 6
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "The villagers always believed the boy.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "No, after being tricked twice, \"They thought he was lying again\" when the real wolf came.",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence where the villagers stop believing the boy.",
+          "options": null,
+          "correctAnswer": "7",
+          "explanation": "\"They thought he was lying again.\"",
+          "evidenceSentenceIndex": 7
+        }
+      ]
+    },
+    {
+      "id": "en_t2_nature_01",
+      "language": "EN",
+      "tier": 2,
+      "theme": "NATURE",
+      "title": "The North Wind and the Sun",
+      "source": "PUBLIC_DOMAIN",
+      "sourceAttribution": "Adapted from Aesop's Fables",
+      "passage": "The North Wind and the Sun had an argument about who was stronger. They saw a traveller walking on the road wearing a thick coat. They agreed: whoever could make the traveller take off his coat would win. The North Wind blew as hard as he could. But the traveller just wrapped his coat tighter. Then the Sun shone warmly. The traveller felt hot and took off his coat. The Sun won. Kindness works better than force.",
+      "wordCount": 76,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What was the contest between the Wind and the Sun?",
+          "options": ["Who could run faster", "Who could make the traveller take off his coat", "Who could make it rain", "Who was louder"],
+          "correctAnswer": "1",
+          "explanation": "\"Whoever could make the traveller take off his coat would win.\"",
+          "evidenceSentenceIndex": 3
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What happened when the Wind blew?",
+          "options": ["The coat flew away", "The traveller took off his coat", "The traveller wrapped his coat tighter", "The traveller ran away"],
+          "correctAnswer": "2",
+          "explanation": "\"The traveller just wrapped his coat tighter.\"",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "The North Wind won the contest.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "No, \"The Sun won\" because the traveller took off his coat when the Sun shone warmly.",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that tells the lesson of the story.",
+          "options": null,
+          "correctAnswer": "9",
+          "explanation": "\"Kindness works better than force.\"",
+          "evidenceSentenceIndex": 9
+        }
+      ]
+    },
+    {
+      "id": "en_t1_family_01",
+      "language": "EN",
+      "tier": 1,
+      "theme": "FAMILY",
+      "title": "Pancake Sunday",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Every Sunday, Lily and her dad make pancakes. Lily cracks the eggs and her dad mixes the batter. They cook the pancakes together on the big pan. Lily likes hers with maple syrup. Her little brother Ben likes his with jam. They eat breakfast at the kitchen table and tell jokes. It is their favourite time of the week.",
+      "wordCount": 55,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "When do Lily and her dad make pancakes?",
+          "options": ["Every Monday", "Every Saturday", "Every Sunday", "Every morning"],
+          "correctAnswer": "2",
+          "explanation": "\"Every Sunday, Lily and her dad make pancakes.\"",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What does Ben put on his pancakes?",
+          "options": ["Maple syrup", "Butter", "Jam", "Sugar"],
+          "correctAnswer": "2",
+          "explanation": "\"Her little brother Ben likes his with jam.\"",
+          "evidenceSentenceIndex": 4
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Lily likes her pancakes with jam.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "No, \"Lily likes hers with maple syrup.\" It's Ben who likes jam.",
+          "evidenceSentenceIndex": 3
+        }
+      ]
+    },
+    {
+      "id": "en_t1_school_01",
+      "language": "EN",
+      "tier": 1,
+      "theme": "SCHOOL",
+      "title": "Show and Tell",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Today was Show and Tell day at school. Sam brought his toy robot. It could walk and flash its lights. His classmates clapped. Mia showed a seashell from the beach. She said her grandpa found it. The teacher said everyone did a great job. Sam felt proud and happy.",
+      "wordCount": 47,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What did Sam bring to school?",
+          "options": ["A book", "A toy robot", "A drawing", "A seashell"],
+          "correctAnswer": "1",
+          "explanation": "\"Sam brought his toy robot.\"",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Who gave Mia the seashell?",
+          "options": ["Her mom", "Her teacher", "Her grandpa", "Her friend Sam"],
+          "correctAnswer": "2",
+          "explanation": "\"She said her grandpa found it.\"",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Sam's robot could fly.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "The robot could walk and flash its lights, not fly.",
+          "evidenceSentenceIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "en_t2_nature_02",
+      "language": "EN",
+      "tier": 2,
+      "theme": "NATURE",
+      "title": "The Butterfly Garden",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Ava and her mom planted flowers in the backyard to attract butterflies. They chose bright purple and orange flowers. After a few weeks, a yellow butterfly landed on one of the flowers. Ava watched it very carefully. The butterfly unrolled its long tongue to drink nectar from the flower. More butterflies came every day after that. By summer, the garden was full of colour and movement.",
+      "wordCount": 63,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Why did Ava and her mom plant flowers?",
+          "options": ["To sell them", "To win a prize", "To attract butterflies", "To give to neighbours"],
+          "correctAnswer": "2",
+          "explanation": "They \"planted flowers in the backyard to attract butterflies.\"",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What colour was the first butterfly?",
+          "options": ["Purple", "Orange", "Blue", "Yellow"],
+          "correctAnswer": "3",
+          "explanation": "\"A yellow butterfly landed on one of the flowers.\"",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "Only one butterfly ever visited the garden.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\"More butterflies came every day after that.\"",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that describes how the butterfly drinks.",
+          "options": null,
+          "correctAnswer": "4",
+          "explanation": "\"The butterfly unrolled its long tongue to drink nectar from the flower.\"",
+          "evidenceSentenceIndex": 4
+        }
+      ]
+    },
+    {
+      "id": "en_t3_science_01",
+      "language": "EN",
+      "tier": 3,
+      "theme": "SCIENCE",
+      "title": "How Bees Make Honey",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Bees visit flowers to collect a sweet liquid called nectar. A single bee visits hundreds of flowers every day. The bee stores the nectar in a special honey stomach. Back at the hive, it passes the nectar to other bees. They chew it and spread it into honeycomb cells. The bees fan their wings to dry the nectar. Slowly, it thickens and becomes honey. The bees seal each cell with wax to keep the honey fresh. One jar of honey takes thousands of bee trips to make.",
+      "wordCount": 85,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What do bees collect from flowers?",
+          "options": ["Pollen", "Water", "Nectar", "Seeds"],
+          "correctAnswer": "2",
+          "explanation": "\"Bees visit flowers to collect a sweet liquid called nectar.\"",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "How do bees dry the nectar?",
+          "options": ["They leave it in the sun", "They fan their wings", "They heat it up", "They blow on it"],
+          "correctAnswer": "1",
+          "explanation": "\"The bees fan their wings to dry the nectar.\"",
+          "evidenceSentenceIndex": 5
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "A bee only visits a few flowers each day.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "\"A single bee visits hundreds of flowers every day.\"",
+          "evidenceSentenceIndex": 1
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that explains how bees store the honey.",
+          "options": null,
+          "correctAnswer": "7",
+          "explanation": "\"The bees seal each cell with wax to keep the honey fresh.\"",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that tells where the bee stores nectar while flying.",
+          "options": null,
+          "correctAnswer": "2",
+          "explanation": "\"The bee stores the nectar in a special honey stomach.\"",
+          "evidenceSentenceIndex": 2
+        }
+      ]
+    },
+    {
+      "id": "en_t3_adventure_01",
+      "language": "EN",
+      "tier": 3,
+      "theme": "ADVENTURE",
+      "title": "The Raft Builders",
+      "source": "ORIGINAL",
+      "sourceAttribution": null,
+      "passage": "Tom and Zara wanted to cross the stream behind their house. The water was too deep to walk through. They decided to build a raft from old wooden planks and rope. It took them all morning. When they pushed the raft into the water, it floated! They climbed on carefully. Tom used a long stick to push them forward. Halfway across, water started leaking through the planks. They paddled fast and reached the other side just in time. They were wet but laughing. Next time, they would use better planks.",
+      "wordCount": 92,
+      "questions": [
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "Why did Tom and Zara build a raft?",
+          "options": ["To go fishing", "To cross the stream", "To play pirates", "To win a race"],
+          "correctAnswer": "1",
+          "explanation": "\"Tom and Zara wanted to cross the stream behind their house.\"",
+          "evidenceSentenceIndex": 0
+        },
+        {
+          "type": "MULTIPLE_CHOICE",
+          "questionText": "What went wrong during the crossing?",
+          "options": ["The stick broke", "They forgot the rope", "Water leaked through the planks", "The raft sank"],
+          "correctAnswer": "2",
+          "explanation": "\"Halfway across, water started leaking through the planks.\"",
+          "evidenceSentenceIndex": 7
+        },
+        {
+          "type": "TRUE_FALSE",
+          "questionText": "The raft sank before they reached the other side.",
+          "options": null,
+          "correctAnswer": "false",
+          "explanation": "No, \"They paddled fast and reached the other side just in time.\"",
+          "evidenceSentenceIndex": 8
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that describes what the raft was made of.",
+          "options": null,
+          "correctAnswer": "2",
+          "explanation": "\"They decided to build a raft from old wooden planks and rope.\"",
+          "evidenceSentenceIndex": 2
+        },
+        {
+          "type": "FIND_IN_TEXT",
+          "questionText": "Find the sentence that tells what they learned from the adventure.",
+          "options": null,
+          "correctAnswer": "10",
+          "explanation": "\"Next time, they would use better planks.\"",
+          "evidenceSentenceIndex": 10
+        }
+      ]
+    }
+  ]
+}

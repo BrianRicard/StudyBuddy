@@ -26,6 +26,10 @@ import com.studybuddy.feature.onboarding.OnboardingScreen
 import com.studybuddy.feature.poems.PoemDetailScreen
 import com.studybuddy.feature.poems.PoemsScreen
 import com.studybuddy.feature.poems.create.PoemCreateScreen
+import com.studybuddy.feature.reading.detail.ReadingDetailScreen
+import com.studybuddy.feature.reading.home.ReadingHomeScreen
+import com.studybuddy.feature.reading.questions.QuestionsScreen
+import com.studybuddy.feature.reading.results.ReadingResultsScreen
 import com.studybuddy.feature.rewards.RewardsShopScreen
 import com.studybuddy.feature.settings.SettingsScreen
 import com.studybuddy.feature.stats.StatsScreen
@@ -106,6 +110,11 @@ fun StudyBuddyNavHost(
                 },
                 onNavigateToPoems = {
                     navController.navigate(StudyBuddyRoutes.POEMS) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToReading = {
+                    navController.navigate(StudyBuddyRoutes.READING) {
                         launchSingleTop = true
                     }
                 },
@@ -333,6 +342,85 @@ fun StudyBuddyNavHost(
         ) {
             PoemDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+            )
+        }
+
+        // Reading Comprehension
+        composable(route = StudyBuddyRoutes.READING) {
+            ReadingHomeScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToPassage = { passageId ->
+                    navController.navigate(StudyBuddyRoutes.readingDetail(passageId))
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.READING_DETAIL,
+            arguments = listOf(navArgument("passageId") { type = NavType.StringType }),
+        ) {
+            ReadingDetailScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToQuestions = { passageId, readingTimeMs ->
+                    navController.navigate(
+                        StudyBuddyRoutes.readingQuestions(passageId, readingTimeMs),
+                    ) {
+                        popUpTo(StudyBuddyRoutes.READING)
+                    }
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.READING_QUESTIONS,
+            arguments = listOf(
+                navArgument("passageId") { type = NavType.StringType },
+                navArgument("readingTimeMs") { type = NavType.LongType },
+            ),
+        ) {
+            QuestionsScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToResults = { passageId, score, total, readTime, qTime, firstTry, tier ->
+                    navController.navigate(
+                        StudyBuddyRoutes.readingResults(
+                            passageId,
+                            score,
+                            total,
+                            readTime,
+                            qTime,
+                            firstTry,
+                            tier,
+                        ),
+                    ) {
+                        popUpTo(StudyBuddyRoutes.READING)
+                    }
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.READING_RESULTS,
+            arguments = listOf(
+                navArgument("passageId") { type = NavType.StringType },
+                navArgument("score") { type = NavType.IntType },
+                navArgument("totalQuestions") { type = NavType.IntType },
+                navArgument("readingTimeMs") { type = NavType.LongType },
+                navArgument("questionsTimeMs") { type = NavType.LongType },
+                navArgument("allCorrectFirstTry") { type = NavType.BoolType },
+                navArgument("tier") { type = NavType.IntType },
+            ),
+        ) {
+            ReadingResultsScreen(
+                onNavigateToPassage = { passageId ->
+                    navController.navigate(StudyBuddyRoutes.readingDetail(passageId)) {
+                        popUpTo(StudyBuddyRoutes.READING)
+                    }
+                },
+                onNavigateHome = {
+                    navController.navigate(StudyBuddyRoutes.HOME) {
+                        popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
+                    }
+                },
             )
         }
 

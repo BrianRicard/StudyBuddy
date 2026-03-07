@@ -89,4 +89,72 @@ object Migrations {
             )
         }
     }
+
+    /**
+     * v2 -> v3: Add reading comprehension tables.
+     *
+     * Tables added:
+     * - `reading_passages`  - bundled reading passages
+     * - `reading_questions`  - questions for each passage
+     * - `reading_results`   - user's completed reading sessions
+     */
+    val MIGRATION_2_3 = object : Migration(2, 3) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `reading_passages` (
+                    `id` TEXT NOT NULL,
+                    `language` TEXT NOT NULL,
+                    `tier` INTEGER NOT NULL,
+                    `theme` TEXT NOT NULL,
+                    `title` TEXT NOT NULL,
+                    `passage` TEXT NOT NULL,
+                    `wordCount` INTEGER NOT NULL,
+                    `source` TEXT NOT NULL,
+                    `sourceAttribution` TEXT,
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `reading_questions` (
+                    `id` TEXT NOT NULL,
+                    `passageId` TEXT NOT NULL,
+                    `questionIndex` INTEGER NOT NULL,
+                    `type` TEXT NOT NULL,
+                    `questionText` TEXT NOT NULL,
+                    `options` TEXT,
+                    `correctAnswer` TEXT NOT NULL,
+                    `explanation` TEXT NOT NULL,
+                    `evidenceSentenceIndex` INTEGER NOT NULL,
+                    PRIMARY KEY(`id`),
+                    FOREIGN KEY(`passageId`) REFERENCES `reading_passages`(`id`)
+                        ON UPDATE NO ACTION ON DELETE CASCADE
+                )
+                """.trimIndent(),
+            )
+
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_reading_questions_passageId` ON `reading_questions` (`passageId`)",
+            )
+
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `reading_results` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `passageId` TEXT NOT NULL,
+                    `score` INTEGER NOT NULL,
+                    `totalQuestions` INTEGER NOT NULL,
+                    `pointsEarned` INTEGER NOT NULL,
+                    `readingTimeMs` INTEGER NOT NULL,
+                    `questionsTimeMs` INTEGER NOT NULL,
+                    `completedAt` INTEGER NOT NULL,
+                    `allCorrectFirstTry` INTEGER NOT NULL
+                )
+                """.trimIndent(),
+            )
+        }
+    }
 }

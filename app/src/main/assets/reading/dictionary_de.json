@@ -1,0 +1,18 @@
+{
+  "words": [
+    {"word": "Schildkröte", "language": "DE", "definition": "Ein Tier mit einem harten Panzer, das sehr langsam läuft.", "translations": {"FR": "tortue", "EN": "tortoise"}, "passageIds": ["de_t1_animals_01"]},
+    {"word": "Hügel", "language": "DE", "definition": "Ein kleiner Berg.", "translations": {"FR": "colline", "EN": "hill"}, "passageIds": ["de_t2_adventure_01"]},
+    {"word": "Schafe", "language": "DE", "definition": "Tiere mit weichem Fell, die auf Wiesen leben.", "translations": {"FR": "moutons", "EN": "sheep"}, "passageIds": ["de_t2_adventure_01"]},
+    {"word": "Getreide", "language": "DE", "definition": "Pflanzen wie Weizen und Hafer, aus denen man Brot macht.", "translations": {"FR": "céréales", "EN": "grain"}, "passageIds": ["de_t2_animals_01"]},
+    {"word": "Eichhörnchen", "language": "DE", "definition": "Ein kleines, flinkes Tier mit einem buschigen Schwanz, das auf Bäume klettert.", "translations": {"FR": "écureuil", "EN": "squirrel"}, "passageIds": ["de_t2_animals_02"]},
+    {"word": "Wildtiere", "language": "DE", "definition": "Tiere, die in der Natur leben und nicht zu Menschen gehören.", "translations": {"FR": "animaux sauvages", "EN": "wild animals"}, "passageIds": ["de_t2_animals_02"]},
+    {"word": "Chlorophyll", "language": "DE", "definition": "Ein grüner Stoff in Blättern, der ihnen hilft, Energie aus Sonnenlicht zu machen.", "translations": {"FR": "chlorophylle", "EN": "chlorophyll"}, "passageIds": ["de_t3_science_01"]},
+    {"word": "Energie", "language": "DE", "definition": "Kraft, die man braucht, um etwas zu tun.", "translations": {"FR": "énergie", "EN": "energy"}, "passageIds": ["de_t3_science_01"]},
+    {"word": "Pfad", "language": "DE", "definition": "Ein schmaler Weg.", "translations": {"FR": "sentier", "EN": "path"}, "passageIds": ["de_t3_adventure_01"]},
+    {"word": "Taschenlampe", "language": "DE", "definition": "Eine kleine Lampe, die man in der Hand hält.", "translations": {"FR": "lampe de poche", "EN": "flashlight"}, "passageIds": ["de_t3_adventure_01"]},
+    {"word": "geglitzert", "language": "DE", "definition": "Hell und funkelnd geleuchtet.", "translations": {"FR": "scintillé", "EN": "sparkled"}, "passageIds": ["de_t3_adventure_01"]},
+    {"word": "Kerzen", "language": "DE", "definition": "Stäbe aus Wachs mit einem Faden, die brennen und Licht geben.", "translations": {"FR": "bougies", "EN": "candles"}, "passageIds": ["de_t1_family_01"]},
+    {"word": "aufgeregt", "language": "DE", "definition": "Wenn man sich sehr freut und kaum warten kann.", "translations": {"FR": "excité", "EN": "excited"}, "passageIds": ["de_t1_school_01"]},
+    {"word": "gewatschelt", "language": "DE", "definition": "So gelaufen wie eine Ente, mit kurzen Schritten hin und her.", "translations": {"FR": "dandiné", "EN": "waddled"}, "passageIds": ["de_t1_school_01"]}
+  ]
+}

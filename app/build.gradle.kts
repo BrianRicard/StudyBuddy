@@ -53,6 +53,7 @@ dependencies {
     implementation(project(":feature:feature-backup"))
     implementation(project(":feature:feature-onboarding"))
     implementation(project(":feature:feature-poems"))
+    implementation(project(":feature:feature-reading"))
 
     implementation(project(":shared:shared-points"))
     implementation(project(":shared:shared-tts"))
