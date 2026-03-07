@@ -49,14 +49,35 @@ jobs:
           converted=false
           if [ -n "$KEYSTORE_BASE64" ]; then
             echo "$KEYSTORE_BASE64" | base64 -d > app/release-src.keystore
-            # Convert to JKS to work around AGP 8.x BouncyCastle "Tag number over 30" error
+            echo "Decoded keystore size: $(wc -c < app/release-src.keystore) bytes"
+            echo "Keystore type: $(keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype PKCS12 2>&1 | head -1 || echo 'not PKCS12')"
+            echo "Keystore type (JKS): $(keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype JKS 2>&1 | head -1 || echo 'not JKS')"
+
+            # Try PKCS12 → JKS conversion first (most common)
             if keytool -importkeystore \
+                 -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" -srcstoretype PKCS12 \
+                 -destkeystore app/release.keystore -deststoretype JKS \
+                 -deststorepass "$STORE_PASS" -noprompt 2>&1; then
+              echo "Converted PKCS12 keystore to JKS"
+              converted=true
+            # Try JKS → JKS (already JKS, just copy)
+            elif keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype JKS >/dev/null 2>&1; then
+              echo "Keystore is already JKS, using directly"
+              cp app/release-src.keystore app/release.keystore
+              converted=true
+            # Try auto-detect source type
+            elif keytool -importkeystore \
                  -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" \
                  -destkeystore app/release.keystore -deststoretype JKS \
-                 -deststorepass "$STORE_PASS" -noprompt 2>/dev/null; then
+                 -deststorepass "$STORE_PASS" -noprompt 2>&1; then
+              echo "Converted keystore to JKS (auto-detected source type)"
               converted=true
+            else
+              echo "::error::Failed to convert keystore. Check KEYSTORE_BASE64 and KEYSTORE_PASSWORD secrets."
             fi
             rm -f app/release-src.keystore
+          else
+            echo "::warning::KEYSTORE_BASE64 secret is not set"
           fi
 
           if [ "$converted" != "true" ]; then
