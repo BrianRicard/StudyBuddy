@@ -238,6 +238,26 @@ JSON with schema version. See `studybuddy-setup/build-instructions.md` section 1
 
 Required GitHub Secrets: `KEYSTORE_BASE64`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`, `FIREBASE_APP_ID` (optional).
 
+## Crash Report Handling
+
+When analyzing a crash report issue (labeled `crash-report`):
+
+1. Read the full stacktrace and identify the exception type and source location.
+2. Check the **Custom Data** section for context (last_section, difficulty, language, db_version).
+3. Search the codebase for the crash location and understand the surrounding logic.
+4. If it's a Room migration issue, check `core/core-data/schemas/` for schema diffs between versions.
+5. Propose a minimal, targeted fix — don't refactor unrelated code.
+6. Include a test that covers the crash scenario if feasible.
+7. Create the fix on a branch named `fix/crash-<fingerprint>` where the fingerprint comes from the issue's `fingerprint:` label.
+8. Open a PR referencing the crash issue number.
+
+### Do NOT when fixing crashes
+- Modify the reward calculation formula without explicit approval.
+- Change avatar asset filenames (database references them by name).
+- Remove or rename SharedPreferences/DataStore keys without a migration.
+- Add new dependencies without checking compatibility with minSdk 26.
+- Refactor code unrelated to the crash.
+
 ## Important Warnings
 
 - **Read `studybuddy-setup/build-instructions.md` in full** before starting any implementation work

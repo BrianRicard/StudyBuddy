@@ -34,8 +34,11 @@ class GitHubIssuesSender(
         val existingIssueNumber = findExistingIssue(fingerprintLabel)
 
         if (existingIssueNumber != null) {
-            addComment(existingIssueNumber, body)
-            reopenIssueIfClosed(existingIssueNumber)
+            val wasClosed = isIssueClosed(existingIssueNumber)
+            addComment(existingIssueNumber, body, tagClaude = wasClosed)
+            if (wasClosed) {
+                reopenIssueIfClosed(existingIssueNumber)
+            }
         } else {
             val exceptionLine = stackTrace.lines().firstOrNull()?.trim() ?: "Unknown crash"
             val title = "\uD83D\uDCA5 Crash: ${exceptionLine.take(120)}"
@@ -102,6 +105,24 @@ class GitHubIssuesSender(
                 appendLine()
                 appendLine("</details>")
             }
+
+            appendLine()
+            appendLine("---")
+            appendLine()
+            appendLine("## Auto-Fix Request")
+            appendLine()
+            appendLine("@claude Analyze this crash report and attempt a fix:")
+            appendLine()
+            appendLine("1. Identify the root cause from the stacktrace above.")
+            appendLine("2. Search the codebase for the crash location.")
+            appendLine("3. If this is a Room migration issue, check `core/core-data/schemas/` for schema changes.")
+            appendLine("4. Propose a minimal, targeted fix.")
+            appendLine("5. Create a PR on branch `fix/crash-$fingerprint` with:")
+            appendLine("   - The code fix")
+            appendLine("   - A test that covers the crash scenario if feasible")
+            appendLine("   - A clear PR description referencing this issue")
+            appendLine()
+            appendLine("Context from the crash: check the **Custom Data** and **Stacktrace** sections above.")
         }
     }
 
@@ -136,11 +157,36 @@ class GitHubIssuesSender(
     private fun addComment(
         issueNumber: Int,
         body: String,
+        tagClaude: Boolean = false,
     ) {
+        val commentBody = buildString {
+            appendLine("## Additional Occurrence")
+            appendLine()
+            append(body)
+            if (tagClaude) {
+                appendLine()
+                appendLine("---")
+                appendLine()
+                appendLine(
+                    "@claude This crash has reoccurred after the issue was closed. " +
+                        "Please re-analyze and attempt another fix.",
+                )
+            }
+        }
         val json = JSONObject().apply {
-            put("body", "## Additional Occurrence\n\n$body")
+            put("body", commentBody)
         }
         httpPost("$baseUrl/issues/$issueNumber/comments", json.toString())
+    }
+
+    private fun isIssueClosed(issueNumber: Int): Boolean {
+        return try {
+            val response = httpGet("$baseUrl/issues/$issueNumber")
+            val json = JSONObject(response)
+            json.optString("state") == "closed"
+        } catch (_: Exception) {
+            false
+        }
     }
 
     private fun reopenIssueIfClosed(issueNumber: Int) {
