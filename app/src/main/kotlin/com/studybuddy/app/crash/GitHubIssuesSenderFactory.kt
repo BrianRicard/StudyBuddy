@@ -7,7 +7,10 @@ import org.acra.sender.ReportSenderFactory
 
 class GitHubIssuesSenderFactory : ReportSenderFactory {
 
-    override fun create(context: Context, config: CoreConfiguration): ReportSender {
+    override fun create(
+        context: Context,
+        config: CoreConfiguration,
+    ): ReportSender {
         return GitHubIssuesSender(
             context = context,
             repoOwner = CrashReportConfig.REPO_OWNER,

@@ -4,11 +4,11 @@ import android.app.Application
 import android.content.Context
 import com.studybuddy.shared.tts.TtsManager
 import dagger.hilt.android.HiltAndroidApp
+import javax.inject.Inject
 import org.acra.ACRA
 import org.acra.ReportField
 import org.acra.config.CoreConfigurationBuilder
 import org.acra.data.StringFormat
-import javax.inject.Inject
 
 @HiltAndroidApp
 class StudyBuddyApp : Application() {

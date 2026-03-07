@@ -2,15 +2,15 @@ package com.studybuddy.app.crash
 
 import android.content.Context
 import android.os.Build
+import java.io.OutputStreamWriter
+import java.net.HttpURLConnection
+import java.net.URL
 import org.acra.ReportField
 import org.acra.data.CrashReportData
 import org.acra.sender.ReportSender
 import org.acra.sender.ReportSenderException
 import org.json.JSONArray
 import org.json.JSONObject
-import java.io.OutputStreamWriter
-import java.net.HttpURLConnection
-import java.net.URL
 
 class GitHubIssuesSender(
     @Suppress("UNUSED_PARAMETER") context: Context,
@@ -21,7 +21,10 @@ class GitHubIssuesSender(
 
     private val baseUrl = "https://api.github.com/repos/$repoOwner/$repoName"
 
-    override fun send(context: Context, errorContent: CrashReportData) {
+    override fun send(
+        context: Context,
+        errorContent: CrashReportData,
+    ) {
         val stackTrace = errorContent.getString(ReportField.STACK_TRACE) ?: "No stacktrace"
         val fingerprint = CrashFingerprint.generate(stackTrace)
         val fingerprintLabel = "fingerprint:$fingerprint"
@@ -40,7 +43,10 @@ class GitHubIssuesSender(
         }
     }
 
-    private fun buildReportBody(data: CrashReportData, fingerprint: String): String {
+    private fun buildReportBody(
+        data: CrashReportData,
+        fingerprint: String,
+    ): String {
         val versionName = data.getString(ReportField.APP_VERSION_NAME) ?: "?"
         val versionCode = data.getString(ReportField.APP_VERSION_CODE) ?: "?"
         val androidVersion = data.getString(ReportField.ANDROID_VERSION) ?: Build.VERSION.RELEASE
@@ -114,7 +120,11 @@ class GitHubIssuesSender(
         }
     }
 
-    private fun createIssue(title: String, body: String, labels: List<String>) {
+    private fun createIssue(
+        title: String,
+        body: String,
+        labels: List<String>,
+    ) {
         val json = JSONObject().apply {
             put("title", title)
             put("body", body)
@@ -123,7 +133,10 @@ class GitHubIssuesSender(
         httpPost("$baseUrl/issues", json.toString())
     }
 
-    private fun addComment(issueNumber: Int, body: String) {
+    private fun addComment(
+        issueNumber: Int,
+        body: String,
+    ) {
         val json = JSONObject().apply {
             put("body", "## Additional Occurrence\n\n$body")
         }
@@ -153,7 +166,10 @@ class GitHubIssuesSender(
         }
     }
 
-    private fun httpPost(url: String, body: String): String {
+    private fun httpPost(
+        url: String,
+        body: String,
+    ): String {
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             setRequestProperty("Authorization", "Bearer $token")
@@ -171,7 +187,7 @@ class GitHubIssuesSender(
             } else {
                 val errorBody = conn.errorStream?.bufferedReader()?.readText() ?: ""
                 throw ReportSenderException(
-                    "GitHub API error ${conn.responseCode}: $errorBody"
+                    "GitHub API error ${conn.responseCode}: $errorBody",
                 )
             }
         } finally {
@@ -179,7 +195,10 @@ class GitHubIssuesSender(
         }
     }
 
-    private fun httpPatch(url: String, body: String): String {
+    private fun httpPatch(
+        url: String,
+        body: String,
+    ): String {
         val conn = (URL(url).openConnection() as HttpURLConnection).apply {
             requestMethod = "POST"
             setRequestProperty("X-HTTP-Method-Override", "PATCH")
