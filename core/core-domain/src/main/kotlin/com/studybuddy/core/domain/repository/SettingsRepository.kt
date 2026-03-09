@@ -19,6 +19,8 @@ interface SettingsRepository {
     suspend fun setParentPinHash(hash: Int?)
     fun isDicteeSeeded(): Flow<Boolean>
     suspend fun setDicteeSeeded(seeded: Boolean)
+    fun getWhisperModel(): Flow<String>
+    suspend fun setWhisperModel(modelFileName: String)
     suspend fun clearAll()
     suspend fun sync()
 }

@@ -23,6 +23,7 @@ class FakeSettingsRepository : SettingsRepository {
     private val onboardingComplete = MutableStateFlow(false)
     private val parentPinHash = MutableStateFlow<Int?>(null)
     private val dicteeSeeded = MutableStateFlow(false)
+    private val whisperModel = MutableStateFlow("")
 
     override fun getAppLocale(): Flow<String> = locale
     override suspend fun setAppLocale(locale: String) {
@@ -55,6 +56,10 @@ class FakeSettingsRepository : SettingsRepository {
     override fun isDicteeSeeded(): Flow<Boolean> = dicteeSeeded
     override suspend fun setDicteeSeeded(seeded: Boolean) {
         dicteeSeeded.value = seeded
+    }
+    override fun getWhisperModel(): Flow<String> = whisperModel
+    override suspend fun setWhisperModel(modelFileName: String) {
+        whisperModel.value = modelFileName
     }
     override suspend fun clearAll() {
         onboardingComplete.value = false

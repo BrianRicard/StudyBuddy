@@ -321,6 +321,21 @@
     <string name="settings_gift_confirm">Offrir les points</string>
     <string name="settings_gift_points_success">Points offerts avec succès !</string>
 
+    <!-- Speech Recognition -->
+    <string name="settings_speech_recognition">Reconnaissance vocale</string>
+    <string name="settings_speech_description">Télécharge un modèle vocal pour vérifier la prononciation dans la section Poèmes. Les modèles plus grands sont plus précis pour les voix d\'enfants mais nécessitent plus d\'espace.</string>
+    <string name="settings_model_active">Actif</string>
+    <string name="settings_model_use">Utiliser</string>
+    <string name="settings_model_download">Télécharger</string>
+    <string name="settings_model_size">Taille : %s</string>
+    <string name="settings_model_storage_used">Espace total utilisé : %s</string>
+    <string name="settings_model_downloaded">Modèle téléchargé !</string>
+    <string name="settings_model_download_failed">Échec du téléchargement. Vérifie ta connexion et réessaie.</string>
+    <string name="settings_model_last_cannot_delete">C\'est ton seul modèle vocal. Télécharge-en un autre avant de supprimer celui-ci.</string>
+    <string name="settings_model_no_model_title">Modèle vocal requis</string>
+    <string name="settings_model_no_model_body">Pour vérifier la prononciation, un modèle de reconnaissance vocale doit d\'abord être téléchargé. Un parent peut le configurer dans les Paramètres.</string>
+    <string name="settings_model_go_to_settings">Aller aux Paramètres</string>
+
     <!-- Backup additions -->
     <string name="backup_section">Sauvegarde</string>
     <string name="backup_export">Export</string>

@@ -98,12 +98,38 @@ class WhisperEngine @Inject constructor() {
             )
 
             try {
-                val result = json.decodeFromString<TranscriptionResult>(jsonStr)
-                Result.success(result)
+                val raw = json.decodeFromString<TranscriptionResult>(jsonStr)
+                val cleaned = raw.copy(text = filterHallucinations(raw.text))
+                Result.success(cleaned)
             } catch (e: Exception) {
                 Result.failure(e)
             }
         }
+    }
+
+    companion object {
+        private val HALLUCINATION_PATTERNS = listOf(
+            Regex("(?i)thank(s| you).*?(watching|listening|subscribing).*"),
+            Regex("(?i)subscribe.*?channel.*"),
+            Regex("(?i)please (like|share|comment).*"),
+            Regex("(?i)see you (next|in the).*"),
+            Regex("(?i)sous-titr(age|es).*"),
+            Regex("(?i)merci d'avoir regard.*"),
+            // Repeated fragments (same phrase 3+ times)
+            Regex("(.{10,})\\1{2,}"),
+        )
+    }
+
+    /**
+     * Remove common Whisper hallucination artifacts (e.g., "Thanks for watching",
+     * repeated fragments generated during silence).
+     */
+    private fun filterHallucinations(text: String): String {
+        var cleaned = text
+        for (pattern in HALLUCINATION_PATTERNS) {
+            cleaned = cleaned.replace(pattern, "")
+        }
+        return cleaned.trim()
     }
 
     /**

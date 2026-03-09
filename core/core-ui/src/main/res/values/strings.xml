@@ -321,6 +321,21 @@
     <string name="settings_gift_confirm">Gift Points</string>
     <string name="settings_gift_points_success">Points gifted successfully!</string>
 
+    <!-- Speech Recognition -->
+    <string name="settings_speech_recognition">Speech Recognition</string>
+    <string name="settings_speech_description">Download a speech model to enable pronunciation checking in the Poems section. Larger models are more accurate for children\'s voices but need more storage space.</string>
+    <string name="settings_model_active">Active</string>
+    <string name="settings_model_use">Use</string>
+    <string name="settings_model_download">Download</string>
+    <string name="settings_model_size">Size: %s</string>
+    <string name="settings_model_storage_used">Total storage used: %s</string>
+    <string name="settings_model_downloaded">Model downloaded!</string>
+    <string name="settings_model_download_failed">Model download failed. Check your connection and try again.</string>
+    <string name="settings_model_last_cannot_delete">This is your only speech model. Download another before deleting this one.</string>
+    <string name="settings_model_no_model_title">Speech Model Needed</string>
+    <string name="settings_model_no_model_body">To check pronunciation, a speech recognition model needs to be downloaded first. A parent can set this up in the app Settings.</string>
+    <string name="settings_model_go_to_settings">Go to Settings</string>
+
     <!-- Backup additions -->
     <string name="backup_section">Backup</string>
     <string name="backup_export">Export</string>

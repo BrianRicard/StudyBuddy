@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PoemSource
+import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
 import com.studybuddy.core.domain.usecase.poem.SaveReadingSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
@@ -13,6 +14,7 @@ import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
 import com.studybuddy.shared.whisper.ModelDownloadManager
 import com.studybuddy.shared.whisper.WhisperEngine
+import com.studybuddy.shared.whisper.WhisperModel
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -43,6 +45,7 @@ class PoemDetailViewModelTest {
     private val whisperEngine: WhisperEngine = mockk(relaxed = true)
     private val audioRecorder: AudioRecorder = mockk(relaxed = true)
     private val modelDownloadManager: ModelDownloadManager = mockk(relaxed = true)
+    private val settingsRepository: SettingsRepository = mockk(relaxed = true)
     private val ttsManager: TtsManager = mockk(relaxed = true)
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
 
@@ -62,9 +65,11 @@ class PoemDetailViewModelTest {
         coEvery { toggleFavouriteUseCase(any(), any(), any()) } returns Unit
         coEvery { saveReadingSessionUseCase(any()) } returns Unit
         every { modelDownloadManager.getModelPath(any()) } returns null
+        every { modelDownloadManager.bestAvailableModel(any()) } returns null
         every { whisperEngine.isInitialized } returns false
         coEvery { modelDownloadManager.downloadModel(any(), any()) } returns Result.failure(Exception("test"))
         every { ttsManager.state } returns kotlinx.coroutines.flow.MutableStateFlow(TtsState.Ready)
+        every { settingsRepository.getWhisperModel() } returns kotlinx.coroutines.flow.MutableStateFlow("")
     }
 
     @AfterEach
@@ -82,6 +87,7 @@ class PoemDetailViewModelTest {
             whisperEngine = whisperEngine,
             audioRecorder = audioRecorder,
             modelDownloadManager = modelDownloadManager,
+            settingsRepository = settingsRepository,
             ttsManager = ttsManager,
             awardPointsUseCase = awardPointsUseCase,
             rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
@@ -158,22 +164,21 @@ class PoemDetailViewModelTest {
     }
 
     @Test
-    fun `start recording without model triggers download attempt`() = runTest {
+    fun `start recording without model emits NavigateToSettings`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(PoemDetailIntent.StartRecording)
-        advanceUntilIdle()
-
-        // Download fails (mocked to return failure), so model is not loaded
-        // but the download was attempted
-        assertFalse(viewModel.state.value.isModelLoaded)
-        coVerify { modelDownloadManager.downloadModel(any(), any()) }
+        viewModel.effects.test {
+            viewModel.onIntent(PoemDetailIntent.StartRecording)
+            val effect = awaitItem()
+            assertTrue(effect is PoemDetailEffect.NavigateToSettings)
+        }
     }
 
     @Test
     fun `start recording without permission emits RequestAudioPermission`() = runTest {
         every { modelDownloadManager.getModelPath(any()) } returns "/path/to/model"
+        every { modelDownloadManager.bestAvailableModel(any()) } returns WhisperModel.SMALL
         coEvery { whisperEngine.initialize(any()) } returns Result.success(Unit)
 
         val viewModel = createViewModel()

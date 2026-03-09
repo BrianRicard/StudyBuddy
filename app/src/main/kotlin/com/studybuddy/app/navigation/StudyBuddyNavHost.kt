@@ -342,6 +342,9 @@ fun StudyBuddyNavHost(
         ) {
             PoemDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
+                onNavigateToSettings = {
+                    navController.navigate(StudyBuddyRoutes.SETTINGS)
+                },
             )
         }
 

@@ -92,4 +92,26 @@ class ModelDownloadManager @Inject constructor(
     fun deleteModel(model: WhisperModel) {
         File(modelsDir, model.fileName).delete()
     }
+
+    /**
+     * Returns which models are currently downloaded.
+     */
+    fun downloadedModels(): List<WhisperModel> = WhisperModel.entries.filter { getModelPath(it) != null }
+
+    /**
+     * Returns the best available model: the preferred model from settings if downloaded,
+     * otherwise the largest downloaded model, or null if nothing is available.
+     */
+    fun bestAvailableModel(preferredFileName: String): WhisperModel? {
+        val preferred = WhisperModel.fromFileName(preferredFileName)
+        if (preferred != null && getModelPath(preferred) != null) return preferred
+        return downloadedModels().maxByOrNull { it.sizeMb }
+    }
+
+    /**
+     * Total disk space used by all downloaded models in bytes.
+     */
+    fun totalStorageUsed(): Long = WhisperModel.entries.sumOf {
+        File(modelsDir, it.fileName).let { f -> if (f.exists()) f.length() else 0L }
+    }
 }

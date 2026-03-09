@@ -68,6 +68,11 @@ Java_com_studybuddy_shared_whisper_WhisperJni_fullTranscribe(
     params.single_segment = false;
     params.initial_prompt = initial_prompt;
 
+    // Child speech tuning: lower threshold so pauses aren't classified as end-of-speech.
+    // Default is 0.6 which is too aggressive for children who pause to think/breathe.
+    params.no_speech_thold = 0.3f;
+    params.suppress_blank = true;
+
     LOGI("Starting transcription: lang=%s, samples=%d, threads=%d", language, num_samples, num_threads);
 
     whisper_reset_timings(context);

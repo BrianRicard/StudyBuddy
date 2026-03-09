@@ -88,6 +88,7 @@ private const val SKIPPED_ALPHA = 0.35f
 @Composable
 fun PoemDetailScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToSettings: () -> Unit = {},
     viewModel: PoemDetailViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -105,6 +106,9 @@ fun PoemDetailScreen(
             when (effect) {
                 is PoemDetailEffect.RequestAudioPermission -> {
                     permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+                }
+                is PoemDetailEffect.NavigateToSettings -> {
+                    onNavigateToSettings()
                 }
                 is PoemDetailEffect.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(context.getString(effect.messageResId))
