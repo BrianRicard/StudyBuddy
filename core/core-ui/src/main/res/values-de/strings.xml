@@ -321,6 +321,21 @@
     <string name="settings_gift_confirm">Punkte schenken</string>
     <string name="settings_gift_points_success">Punkte erfolgreich geschenkt!</string>
 
+    <!-- Speech Recognition -->
+    <string name="settings_speech_recognition">Spracherkennung</string>
+    <string name="settings_speech_description">Lade ein Sprachmodell herunter, um die Aussprache im Gedichte-Bereich zu überprüfen. Größere Modelle sind genauer für Kinderstimmen, benötigen aber mehr Speicherplatz.</string>
+    <string name="settings_model_active">Aktiv</string>
+    <string name="settings_model_use">Verwenden</string>
+    <string name="settings_model_download">Herunterladen</string>
+    <string name="settings_model_size">Größe: %s</string>
+    <string name="settings_model_storage_used">Gesamter Speicherverbrauch: %s</string>
+    <string name="settings_model_downloaded">Modell heruntergeladen!</string>
+    <string name="settings_model_download_failed">Download fehlgeschlagen. Überprüfe deine Verbindung und versuche es erneut.</string>
+    <string name="settings_model_last_cannot_delete">Dies ist dein einziges Sprachmodell. Lade ein anderes herunter, bevor du dieses löschst.</string>
+    <string name="settings_model_no_model_title">Sprachmodell erforderlich</string>
+    <string name="settings_model_no_model_body">Um die Aussprache zu prüfen, muss zuerst ein Spracherkennungsmodell heruntergeladen werden. Ein Elternteil kann dies in den Einstellungen einrichten.</string>
+    <string name="settings_model_go_to_settings">Zu den Einstellungen</string>
+
     <!-- Backup additions -->
     <string name="backup_section">Sicherung</string>
     <string name="backup_export">Export</string>

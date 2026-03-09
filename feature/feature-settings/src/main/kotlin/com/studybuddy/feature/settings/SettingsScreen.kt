@@ -58,6 +58,7 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.shared.whisper.WhisperModel
 
 /**
  * Entry-point composable for the Settings screen.
@@ -164,9 +165,25 @@ private fun SettingsContent(
                     )
                 }
 
-                // -- Parent Zone Section --
+                // -- Speech Recognition Section --
                 item {
                     Column(modifier = Modifier.animateItemAppearance(6)) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SectionHeader(
+                            title = stringResource(CoreUiR.string.settings_speech_recognition),
+                        )
+                    }
+                }
+                item {
+                    SpeechModelSection(
+                        state = state,
+                        onIntent = onIntent,
+                    )
+                }
+
+                // -- Parent Zone Section --
+                item {
+                    Column(modifier = Modifier.animateItemAppearance(7)) {
                         Spacer(modifier = Modifier.height(12.dp))
                         SectionHeader(title = stringResource(CoreUiR.string.settings_parent_zone_section))
                     }
@@ -595,6 +612,146 @@ private fun VersionInfoRow(
             )
             .padding(vertical = 16.dp),
     )
+}
+
+@Composable
+private fun SpeechModelSection(
+    state: SettingsState,
+    onIntent: (SettingsIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier = modifier) {
+        Text(
+            text = stringResource(CoreUiR.string.settings_speech_description),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(vertical = 4.dp),
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        WhisperModel.entries.forEach { model ->
+            val isDownloaded = model in state.downloadedModels
+            val isSelected = model == state.selectedModel
+            val isDownloading = state.downloadingModel == model
+            SpeechModelRow(
+                model = model,
+                isDownloaded = isDownloaded,
+                isSelected = isSelected,
+                isDownloading = isDownloading,
+                downloadProgress = if (isDownloading) state.modelDownloadProgress else null,
+                onDownload = { onIntent(SettingsIntent.DownloadModel(model)) },
+                onSelect = { onIntent(SettingsIntent.SelectModel(model)) },
+                onDelete = { onIntent(SettingsIntent.DeleteModel(model)) },
+            )
+        }
+        if (state.totalModelStorageMb > 0) {
+            Text(
+                text = stringResource(
+                    CoreUiR.string.settings_model_storage_used,
+                    "${state.totalModelStorageMb} MB",
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SpeechModelRow(
+    model: WhisperModel,
+    isDownloaded: Boolean,
+    isSelected: Boolean,
+    isDownloading: Boolean,
+    downloadProgress: Float?,
+    onDownload: () -> Unit,
+    onSelect: () -> Unit,
+    onDelete: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    androidx.compose.material3.Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        colors = androidx.compose.material3.CardDefaults.cardColors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant
+            },
+        ),
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = model.displayName,
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(
+                        text = model.description,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    Text(
+                        text = stringResource(CoreUiR.string.settings_model_size, "${model.sizeMb} MB"),
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                when {
+                    isDownloading -> {
+                        androidx.compose.material3.CircularProgressIndicator(
+                            progress = { downloadProgress ?: 0f },
+                            modifier = Modifier.size(36.dp),
+                        )
+                    }
+                    isDownloaded && isSelected -> {
+                        Text(
+                            text = stringResource(CoreUiR.string.settings_model_active),
+                            color = MaterialTheme.colorScheme.primary,
+                            style = MaterialTheme.typography.labelMedium,
+                        )
+                    }
+                    isDownloaded -> {
+                        Row {
+                            TextButton(onClick = onSelect) {
+                                Text(stringResource(CoreUiR.string.settings_model_use))
+                            }
+                            TextButton(onClick = onDelete) {
+                                Text(
+                                    text = "✕",
+                                    color = MaterialTheme.colorScheme.error,
+                                )
+                            }
+                        }
+                    }
+                    else -> {
+                        StudyBuddyButton(
+                            text = stringResource(CoreUiR.string.settings_model_download),
+                            onClick = onDownload,
+                        )
+                    }
+                }
+            }
+            if (isDownloading && downloadProgress != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                androidx.compose.material3.LinearProgressIndicator(
+                    progress = { downloadProgress },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                Text(
+                    text = "${(downloadProgress * 100).toInt()}%",
+                    style = MaterialTheme.typography.labelSmall,
+                    modifier = Modifier.align(Alignment.End),
+                )
+            }
+        }
+    }
 }
 
 // endregion

@@ -9,6 +9,7 @@ import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.whisper.ModelDownloadManager
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
@@ -39,6 +40,7 @@ class SettingsViewModelTest {
     private val backupRepository: BackupRepository = mockk(relaxed = true)
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
     private val pointsRepository: PointsRepository = mockk()
+    private val modelDownloadManager: ModelDownloadManager = mockk(relaxed = true)
 
     private val testProfile = Profile(
         id = "default",
@@ -61,6 +63,7 @@ class SettingsViewModelTest {
         every { settingsRepository.isAccentStrict() } returns flowOf(false)
         every { settingsRepository.getSelectedTheme() } returns flowOf("sunset")
         every { settingsRepository.getParentPinHash() } returns flowOf(null)
+        every { settingsRepository.getWhisperModel() } returns flowOf("")
         every { pointsRepository.getTotalPoints(any()) } returns flowOf(500L)
     }
 
@@ -76,6 +79,7 @@ class SettingsViewModelTest {
         backupRepository = backupRepository,
         awardPointsUseCase = awardPointsUseCase,
         pointsRepository = pointsRepository,
+        modelDownloadManager = modelDownloadManager,
     )
 
     @Test

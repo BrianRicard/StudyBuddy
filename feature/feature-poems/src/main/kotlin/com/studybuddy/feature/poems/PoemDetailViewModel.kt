@@ -9,6 +9,7 @@ import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.ReadingSession
+import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
 import com.studybuddy.core.domain.usecase.poem.SaveReadingSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
@@ -25,7 +26,6 @@ import com.studybuddy.shared.tts.TtsState
 import com.studybuddy.shared.whisper.AudioRecorder
 import com.studybuddy.shared.whisper.ModelDownloadManager
 import com.studybuddy.shared.whisper.WhisperEngine
-import com.studybuddy.shared.whisper.WhisperModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.UUID
 import javax.inject.Inject
@@ -97,6 +97,7 @@ sealed interface PoemDetailIntent {
 
 sealed interface PoemDetailEffect {
     data object RequestAudioPermission : PoemDetailEffect
+    data object NavigateToSettings : PoemDetailEffect
     data class ShowSnackbar(@StringRes val messageResId: Int) : PoemDetailEffect
 }
 
@@ -109,6 +110,7 @@ class PoemDetailViewModel @Inject constructor(
     private val whisperEngine: WhisperEngine,
     private val audioRecorder: AudioRecorder,
     private val modelDownloadManager: ModelDownloadManager,
+    private val settingsRepository: SettingsRepository,
     private val ttsManager: TtsManager,
     private val awardPointsUseCase: AwardPointsUseCase,
     private val rewardCalculator: RewardCalculator,
@@ -176,9 +178,12 @@ class PoemDetailViewModel @Inject constructor(
     }
 
     private fun checkModelAvailability() {
-        val modelPath = modelDownloadManager.getModelPath(WhisperModel.TINY)
-        if (modelPath != null) {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            val preferredFileName = settingsRepository.getWhisperModel()
+                .first()
+            val model = modelDownloadManager.bestAvailableModel(preferredFileName)
+            if (model != null) {
+                val modelPath = modelDownloadManager.getModelPath(model)!!
                 whisperEngine.initialize(modelPath).onSuccess {
                     _state.update { it.copy(isModelLoaded = true) }
                 }
@@ -284,21 +289,8 @@ class PoemDetailViewModel @Inject constructor(
     }
 
     private fun downloadAndInitModel() {
-        _state.update { it.copy(showModelDownload = true, modelDownloadProgress = 0f) }
         viewModelScope.launch {
-            modelDownloadManager.downloadModel(WhisperModel.TINY) { progress ->
-                _state.update { it.copy(modelDownloadProgress = progress) }
-            }.onSuccess { path ->
-                whisperEngine.initialize(path).onSuccess {
-                    _state.update { it.copy(isModelLoaded = true, showModelDownload = false) }
-                }.onFailure {
-                    _state.update { it.copy(showModelDownload = false) }
-                    _effects.emit(PoemDetailEffect.ShowSnackbar(CoreUiR.string.poems_model_download_failed))
-                }
-            }.onFailure {
-                _state.update { it.copy(showModelDownload = false) }
-                _effects.emit(PoemDetailEffect.ShowSnackbar(CoreUiR.string.poems_model_download_failed))
-            }
+            _effects.emit(PoemDetailEffect.NavigateToSettings)
         }
     }
 

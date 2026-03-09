@@ -31,6 +31,7 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val ONBOARDING_COMPLETE = booleanPreferencesKey("onboarding_complete")
         val PARENT_PIN_HASH = intPreferencesKey("parent_pin_hash")
         val DICTEE_SEEDED = booleanPreferencesKey("dictee_seeded")
+        val WHISPER_MODEL = stringPreferencesKey("whisper_model")
     }
 
     override fun getAppLocale(): Flow<String> = context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
@@ -87,6 +88,12 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
 
     override suspend fun setDicteeSeeded(seeded: Boolean) {
         context.dataStore.edit { it[Keys.DICTEE_SEEDED] = seeded }
+    }
+
+    override fun getWhisperModel(): Flow<String> = context.dataStore.data.map { it[Keys.WHISPER_MODEL] ?: "" }
+
+    override suspend fun setWhisperModel(modelFileName: String) {
+        context.dataStore.edit { it[Keys.WHISPER_MODEL] = modelFileName }
     }
 
     override suspend fun clearAll() {

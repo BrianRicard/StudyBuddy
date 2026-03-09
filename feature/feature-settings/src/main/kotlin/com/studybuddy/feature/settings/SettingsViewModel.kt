@@ -12,6 +12,8 @@ import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.shared.points.AwardPointsUseCase
+import com.studybuddy.shared.whisper.ModelDownloadManager
+import com.studybuddy.shared.whisper.WhisperModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -43,6 +46,12 @@ data class SettingsState(
     val showGiftPointsDialog: Boolean = false,
     val currentPointBalance: Long = 0,
     val isLoading: Boolean = true,
+    // Speech model management
+    val downloadedModels: Set<WhisperModel> = emptySet(),
+    val selectedModel: WhisperModel? = null,
+    val downloadingModel: WhisperModel? = null,
+    val modelDownloadProgress: Float = 0f,
+    val totalModelStorageMb: Long = 0,
 )
 
 /**
@@ -66,6 +75,9 @@ sealed interface SettingsIntent {
     data object OpenGiftPoints : SettingsIntent
     data class ConfirmGiftPoints(val amount: Int) : SettingsIntent
     data object DismissGiftPointsDialog : SettingsIntent
+    data class DownloadModel(val model: WhisperModel) : SettingsIntent
+    data class SelectModel(val model: WhisperModel) : SettingsIntent
+    data class DeleteModel(val model: WhisperModel) : SettingsIntent
 }
 
 /**
@@ -85,6 +97,7 @@ class SettingsViewModel @Inject constructor(
     private val backupRepository: BackupRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
     private val pointsRepository: PointsRepository,
+    private val modelDownloadManager: ModelDownloadManager,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(SettingsState())
@@ -102,6 +115,7 @@ class SettingsViewModel @Inject constructor(
         observeProfile()
         observePinHash()
         observePoints()
+        refreshModelState()
     }
 
     fun onIntent(intent: SettingsIntent) {
@@ -123,6 +137,9 @@ class SettingsViewModel @Inject constructor(
             is SettingsIntent.OpenGiftPoints -> openGiftPoints()
             is SettingsIntent.ConfirmGiftPoints -> confirmGiftPoints(intent.amount)
             is SettingsIntent.DismissGiftPointsDialog -> dismissGiftPointsDialog()
+            is SettingsIntent.DownloadModel -> downloadModel(intent.model)
+            is SettingsIntent.SelectModel -> selectModel(intent.model)
+            is SettingsIntent.DeleteModel -> deleteModel(intent.model)
         }
     }
 
@@ -369,6 +386,66 @@ class SettingsViewModel @Inject constructor(
 
     private fun dismissGiftPointsDialog() {
         _state.update { it.copy(showGiftPointsDialog = false) }
+    }
+
+    private fun refreshModelState() {
+        val downloaded = modelDownloadManager.downloadedModels().toSet()
+        val storageMb = modelDownloadManager.totalStorageUsed() / 1_048_576L
+        viewModelScope.launch {
+            val preferredFileName = settingsRepository.getWhisperModel()
+                .first()
+            val selected = modelDownloadManager.bestAvailableModel(preferredFileName)
+            _state.update {
+                it.copy(
+                    downloadedModels = downloaded,
+                    selectedModel = selected,
+                    totalModelStorageMb = storageMb,
+                )
+            }
+        }
+    }
+
+    private fun downloadModel(model: WhisperModel) {
+        if (_state.value.downloadingModel != null) return
+        _state.update { it.copy(downloadingModel = model, modelDownloadProgress = 0f) }
+        viewModelScope.launch {
+            modelDownloadManager.downloadModel(model) { progress ->
+                _state.update { it.copy(modelDownloadProgress = progress) }
+            }.onSuccess {
+                settingsRepository.setWhisperModel(model.fileName)
+                _state.update { it.copy(downloadingModel = null) }
+                refreshModelState()
+                _effects.emit(
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_model_downloaded),
+                )
+            }.onFailure {
+                _state.update { it.copy(downloadingModel = null) }
+                _effects.emit(
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_model_download_failed),
+                )
+            }
+        }
+    }
+
+    private fun selectModel(model: WhisperModel) {
+        viewModelScope.launch {
+            settingsRepository.setWhisperModel(model.fileName)
+            _state.update { it.copy(selectedModel = model) }
+        }
+    }
+
+    private fun deleteModel(model: WhisperModel) {
+        val downloaded = _state.value.downloadedModels
+        if (downloaded.size <= 1 && model in downloaded) {
+            viewModelScope.launch {
+                _effects.emit(
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_model_last_cannot_delete),
+                )
+            }
+            return
+        }
+        modelDownloadManager.deleteModel(model)
+        refreshModelState()
     }
 
     private fun navigateTo(route: String) {
