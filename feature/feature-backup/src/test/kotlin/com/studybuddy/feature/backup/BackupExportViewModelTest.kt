@@ -1,8 +1,8 @@
 package com.studybuddy.feature.backup
 
+import android.content.ContentResolver
 import android.content.Context
 import android.net.Uri
-import androidx.core.content.FileProvider
 import androidx.work.WorkManager
 import app.cash.turbine.test
 import com.studybuddy.core.domain.usecase.backup.CreateBackupUseCase
@@ -14,9 +14,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.mockkStatic
-import io.mockk.unmockkStatic
-import java.io.File
+import java.io.ByteArrayOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -32,17 +30,14 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.io.TempDir
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class BackupExportViewModelTest {
 
     private val testDispatcher = StandardTestDispatcher()
 
-    @TempDir
-    lateinit var tempDir: File
-
     private val context: Context = mockk(relaxed = true)
+    private val contentResolver: ContentResolver = mockk(relaxed = true)
     private val createBackupUseCase: CreateBackupUseCase = mockk()
     private val restoreBackupUseCase: RestoreBackupUseCase = mockk()
     private val exportProgressReportUseCase: ExportProgressReportUseCase = mockk()
@@ -53,16 +48,12 @@ class BackupExportViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        every { context.cacheDir } returns tempDir
-        every { context.packageName } returns "com.studybuddy.app"
-        mockkStatic(FileProvider::class)
-        every { FileProvider.getUriForFile(any(), any(), any()) } returns mockUri
+        every { context.contentResolver } returns contentResolver
     }
 
     @AfterEach
     fun tearDown() {
         Dispatchers.resetMain()
-        unmockkStatic(FileProvider::class)
     }
 
     private fun createViewModel() = BackupExportViewModel(
@@ -72,7 +63,9 @@ class BackupExportViewModelTest {
         exportProgressReportUseCase = exportProgressReportUseCase,
         importWordListUseCase = importWordListUseCase,
         workManager = workManager,
-    )
+    ).also {
+        it.ioDispatcher = testDispatcher
+    }
 
     @Test
     fun `initial state has expected defaults`() {
@@ -90,7 +83,7 @@ class BackupExportViewModelTest {
     }
 
     @Test
-    fun `create backup sets success state and emits effect`() = runTest {
+    fun `create backup emits export picker effect`() = runTest {
         coEvery { createBackupUseCase() } returns "{\"version\":1}"
         val viewModel = createViewModel()
 
@@ -100,12 +93,54 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isBackingUp)
-            assertNotNull(state.lastBackupDate)
-            assertEquals(CoreUiR.string.backup_created_success, state.statusMessageResId)
 
             val effect = awaitItem()
-            assertTrue(effect is BackupExportEffect.ShareFile)
-            assertEquals("application/json", (effect as BackupExportEffect.ShareFile).mimeType)
+            assertTrue(effect is BackupExportEffect.LaunchExportPicker)
+            val picker = effect as BackupExportEffect.LaunchExportPicker
+            assertEquals("application/json", picker.mimeType)
+            assertTrue(picker.suggestedFileName.startsWith("studybuddy-backup-"))
+            assertTrue(picker.suggestedFileName.endsWith(".json"))
+        }
+    }
+
+    @Test
+    fun `export location chosen writes data and sets success`() = runTest {
+        coEvery { createBackupUseCase() } returns "{\"version\":1}"
+        val outputStream = ByteArrayOutputStream()
+        every { contentResolver.openOutputStream(mockUri) } returns outputStream
+        val viewModel = createViewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(BackupExportIntent.CreateBackup)
+            advanceUntilIdle()
+            awaitItem() // consume LaunchExportPicker
+
+            viewModel.onIntent(BackupExportIntent.ExportLocationChosen(mockUri))
+            advanceUntilIdle()
+
+            val state = viewModel.state.value
+            assertNotNull(state.lastBackupDate)
+            assertEquals(CoreUiR.string.backup_created_success, state.statusMessageResId)
+            assertEquals("{\"version\":1}", outputStream.toString(Charsets.UTF_8.name()))
+        }
+    }
+
+    @Test
+    fun `export location chosen with null uri clears pending state`() = runTest {
+        coEvery { createBackupUseCase() } returns "{\"version\":1}"
+        val viewModel = createViewModel()
+
+        viewModel.effects.test {
+            viewModel.onIntent(BackupExportIntent.CreateBackup)
+            advanceUntilIdle()
+            awaitItem() // consume LaunchExportPicker
+
+            viewModel.onIntent(BackupExportIntent.ExportLocationChosen(null))
+            advanceUntilIdle()
+
+            val state = viewModel.state.value
+            assertNull(state.statusMessageResId)
+            assertNull(state.errorResId)
         }
     }
 
@@ -190,7 +225,7 @@ class BackupExportViewModelTest {
     }
 
     @Test
-    fun `export pdf calls use case and emits share effect`() = runTest {
+    fun `export pdf emits export picker effect`() = runTest {
         coEvery { exportProgressReportUseCase.exportPdf(any()) } returns byteArrayOf()
         val viewModel = createViewModel()
 
@@ -200,16 +235,17 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals(CoreUiR.string.backup_pdf_generated, state.statusMessageResId)
 
             val effect = awaitItem()
-            assertTrue(effect is BackupExportEffect.ShareFile)
-            assertEquals("application/pdf", (effect as BackupExportEffect.ShareFile).mimeType)
+            assertTrue(effect is BackupExportEffect.LaunchExportPicker)
+            val picker = effect as BackupExportEffect.LaunchExportPicker
+            assertEquals("application/pdf", picker.mimeType)
+            assertTrue(picker.suggestedFileName.endsWith(".pdf"))
         }
     }
 
     @Test
-    fun `export json calls create backup and emits share effect`() = runTest {
+    fun `export json emits export picker effect`() = runTest {
         coEvery { createBackupUseCase() } returns "{\"version\":1}"
         val viewModel = createViewModel()
 
@@ -219,16 +255,17 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals(CoreUiR.string.backup_json_exported, state.statusMessageResId)
 
             val effect = awaitItem()
-            assertTrue(effect is BackupExportEffect.ShareFile)
-            assertEquals("application/json", (effect as BackupExportEffect.ShareFile).mimeType)
+            assertTrue(effect is BackupExportEffect.LaunchExportPicker)
+            val picker = effect as BackupExportEffect.LaunchExportPicker
+            assertEquals("application/json", picker.mimeType)
+            assertTrue(picker.suggestedFileName.endsWith(".json"))
         }
     }
 
     @Test
-    fun `export csv calls use case and emits share effect`() = runTest {
+    fun `export csv emits export picker effect`() = runTest {
         coEvery { exportProgressReportUseCase.exportCsv(any()) } returns "word,mastered\nhello,true"
         val viewModel = createViewModel()
 
@@ -238,11 +275,12 @@ class BackupExportViewModelTest {
 
             val state = viewModel.state.value
             assertFalse(state.isExporting)
-            assertEquals(CoreUiR.string.backup_csv_exported, state.statusMessageResId)
 
             val effect = awaitItem()
-            assertTrue(effect is BackupExportEffect.ShareFile)
-            assertEquals("text/csv", (effect as BackupExportEffect.ShareFile).mimeType)
+            assertTrue(effect is BackupExportEffect.LaunchExportPicker)
+            val picker = effect as BackupExportEffect.LaunchExportPicker
+            assertEquals("text/csv", picker.mimeType)
+            assertTrue(picker.suggestedFileName.endsWith(".csv"))
         }
     }
 
@@ -253,7 +291,6 @@ class BackupExportViewModelTest {
 
         viewModel.onIntent(BackupExportIntent.CreateBackup)
         advanceUntilIdle()
-        assertNotNull(viewModel.state.value.statusMessageResId)
 
         viewModel.onIntent(BackupExportIntent.DismissStatus)
         advanceUntilIdle()

@@ -65,7 +65,7 @@ fun BackupExportScreen(
     val context = LocalContext.current
 
     val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let {
             val json = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
@@ -76,7 +76,7 @@ fun BackupExportScreen(
     }
 
     val csvPickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent(),
+        contract = ActivityResultContracts.OpenDocument(),
     ) { uri ->
         uri?.let {
             val csv = context.contentResolver.openInputStream(it)?.bufferedReader()?.readText()
@@ -86,29 +86,20 @@ fun BackupExportScreen(
         }
     }
 
+    val exportSaveLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CreateDocument("*/*"),
+    ) { uri ->
+        viewModel.onIntent(BackupExportIntent.ExportLocationChosen(uri))
+    }
+
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                is BackupExportEffect.ShareFile -> {
-                    val shareIntent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                        type = effect.mimeType
-                        putExtra(android.content.Intent.EXTRA_STREAM, effect.uri)
-                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                        clipData = android.content.ClipData.newRawUri(null, effect.uri)
-                    }
-                    val chooser = android.content.Intent.createChooser(
-                        shareIntent,
-                        context.getString(CoreUiR.string.backup_share_export),
-                    ).apply {
-                        addFlags(android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                    }
-                    context.startActivity(chooser)
+                is BackupExportEffect.LaunchExportPicker -> {
+                    exportSaveLauncher.launch(effect.suggestedFileName)
                 }
                 is BackupExportEffect.ShowToast -> {
                     snackbarHostState.showSnackbar(context.getString(effect.messageResId))
-                }
-                is BackupExportEffect.FileCreated -> {
-                    snackbarHostState.showSnackbar(context.getString(CoreUiR.string.backup_saved))
                 }
             }
         }
@@ -134,8 +125,8 @@ fun BackupExportScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
-        onOpenFilePicker = { filePickerLauncher.launch("application/json") },
-        onOpenCsvPicker = { csvPickerLauncher.launch("text/*") },
+        onOpenFilePicker = { filePickerLauncher.launch(arrayOf("application/json")) },
+        onOpenCsvPicker = { csvPickerLauncher.launch(arrayOf("text/*")) },
         snackbarHostState = snackbarHostState,
     )
 }
