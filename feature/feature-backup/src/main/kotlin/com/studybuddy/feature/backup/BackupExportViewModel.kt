@@ -3,7 +3,6 @@ package com.studybuddy.feature.backup
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.StringRes
-import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -17,11 +16,13 @@ import com.studybuddy.core.domain.usecase.dictee.ImportWordListUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import java.io.File
+import java.io.IOException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * Available export formats for user data.
@@ -78,6 +80,7 @@ sealed interface BackupExportIntent {
     data object ExportPdf : BackupExportIntent
     data object ExportJson : BackupExportIntent
     data object ExportCsv : BackupExportIntent
+    data class ExportLocationChosen(val uri: Uri?) : BackupExportIntent
     data class ImportCsv(val csvContent: String) : BackupExportIntent
     data object DismissStatus : BackupExportIntent
     data class SetAutoBackupEnabled(val enabled: Boolean) : BackupExportIntent
@@ -88,9 +91,11 @@ sealed interface BackupExportIntent {
  * One-shot side effects emitted by the Backup & Export ViewModel.
  */
 sealed interface BackupExportEffect {
-    data class ShareFile(val uri: Uri, val mimeType: String) : BackupExportEffect
+    data class LaunchExportPicker(
+        val suggestedFileName: String,
+        val mimeType: String,
+    ) : BackupExportEffect
     data class ShowToast(@StringRes val messageResId: Int) : BackupExportEffect
-    data class FileCreated(val path: String) : BackupExportEffect
 }
 
 @HiltViewModel
@@ -112,6 +117,11 @@ class BackupExportViewModel @Inject constructor(
     private val profileId = AppConstants.DEFAULT_PROFILE_ID
 
     private val dateTimeFormatter = DateTimeFormatter.ofPattern("MMM d, yyyy 'at' h:mm a")
+    private val fileTimestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HHmmss")
+
+    internal var ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    private var pendingExportData: ByteArray? = null
 
     fun onIntent(intent: BackupExportIntent) {
         when (intent) {
@@ -122,6 +132,9 @@ class BackupExportViewModel @Inject constructor(
             is BackupExportIntent.ExportPdf -> handleExportPdf()
             is BackupExportIntent.ExportJson -> handleExportJson()
             is BackupExportIntent.ExportCsv -> handleExportCsv()
+            is BackupExportIntent.ExportLocationChosen -> {
+                handleExportLocationChosen(intent.uri)
+            }
             is BackupExportIntent.ImportCsv -> handleImportCsv(intent.csvContent)
             is BackupExportIntent.DismissStatus -> handleDismissStatus()
             is BackupExportIntent.SetAutoBackupEnabled -> {
@@ -141,23 +154,17 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val backupJson = createBackupUseCase()
-                val file = writeExportFile(
-                    "studybuddy_backup.json",
-                    backupJson.toByteArray(Charsets.UTF_8),
-                )
-                val uri = getFileProviderUri(file)
-                val now = LocalDateTime.now().format(dateTimeFormatter)
+                pendingExportData = backupJson.toByteArray(Charsets.UTF_8)
+                val timestamp = LocalDateTime.now().format(fileTimestampFormatter)
                 _state.update {
                     it.copy(
                         isBackingUp = false,
-                        lastBackupDate = now,
-                        statusMessageResId = CoreUiR.string.backup_created_success,
-                        statusMessageArgs = emptyArray(),
+                        exportFormat = ExportFormat.JSON,
                     )
                 }
                 _effects.emit(
-                    BackupExportEffect.ShareFile(
-                        uri = uri,
+                    BackupExportEffect.LaunchExportPicker(
+                        suggestedFileName = "studybuddy-backup-$timestamp.json",
                         mimeType = "application/json",
                     ),
                 )
@@ -242,18 +249,14 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val pdfBytes = exportProgressReportUseCase.exportPdf(profileId)
-                val file = writeExportFile("studybuddy_progress_report.pdf", pdfBytes)
-                val uri = getFileProviderUri(file)
+                pendingExportData = pdfBytes
+                val timestamp = LocalDateTime.now().format(fileTimestampFormatter)
                 _state.update {
-                    it.copy(
-                        isExporting = false,
-                        statusMessageResId = CoreUiR.string.backup_pdf_generated,
-                        statusMessageArgs = emptyArray(),
-                    )
+                    it.copy(isExporting = false)
                 }
                 _effects.emit(
-                    BackupExportEffect.ShareFile(
-                        uri = uri,
+                    BackupExportEffect.LaunchExportPicker(
+                        suggestedFileName = "studybuddy-progress-$timestamp.pdf",
                         mimeType = "application/pdf",
                     ),
                 )
@@ -282,21 +285,14 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val json = createBackupUseCase()
-                val file = writeExportFile(
-                    "studybuddy_backup.json",
-                    json.toByteArray(Charsets.UTF_8),
-                )
-                val uri = getFileProviderUri(file)
+                pendingExportData = json.toByteArray(Charsets.UTF_8)
+                val timestamp = LocalDateTime.now().format(fileTimestampFormatter)
                 _state.update {
-                    it.copy(
-                        isExporting = false,
-                        statusMessageResId = CoreUiR.string.backup_json_exported,
-                        statusMessageArgs = emptyArray(),
-                    )
+                    it.copy(isExporting = false)
                 }
                 _effects.emit(
-                    BackupExportEffect.ShareFile(
-                        uri = uri,
+                    BackupExportEffect.LaunchExportPicker(
+                        suggestedFileName = "studybuddy-backup-$timestamp.json",
                         mimeType = "application/json",
                     ),
                 )
@@ -325,21 +321,14 @@ class BackupExportViewModel @Inject constructor(
 
             try {
                 val csv = exportProgressReportUseCase.exportCsv(profileId)
-                val file = writeExportFile(
-                    "studybuddy_word_lists.csv",
-                    csv.toByteArray(Charsets.UTF_8),
-                )
-                val uri = getFileProviderUri(file)
+                pendingExportData = csv.toByteArray(Charsets.UTF_8)
+                val timestamp = LocalDateTime.now().format(fileTimestampFormatter)
                 _state.update {
-                    it.copy(
-                        isExporting = false,
-                        statusMessageResId = CoreUiR.string.backup_csv_exported,
-                        statusMessageArgs = emptyArray(),
-                    )
+                    it.copy(isExporting = false)
                 }
                 _effects.emit(
-                    BackupExportEffect.ShareFile(
-                        uri = uri,
+                    BackupExportEffect.LaunchExportPicker(
+                        suggestedFileName = "studybuddy-wordlists-$timestamp.csv",
                         mimeType = "text/csv",
                     ),
                 )
@@ -349,6 +338,51 @@ class BackupExportViewModel @Inject constructor(
                         isExporting = false,
                         errorResId = CoreUiR.string.backup_csv_failed,
                     )
+                }
+            }
+        }
+    }
+
+    private fun handleExportLocationChosen(uri: Uri?) {
+        if (uri == null) {
+            pendingExportData = null
+            return
+        }
+
+        val data = pendingExportData ?: return
+        val isBackup = _state.value.exportFormat == ExportFormat.JSON
+
+        viewModelScope.launch {
+            try {
+                writeToUri(uri, data)
+                pendingExportData = null
+
+                if (isBackup) {
+                    val now = LocalDateTime.now().format(dateTimeFormatter)
+                    _state.update {
+                        it.copy(
+                            lastBackupDate = now,
+                            statusMessageResId = CoreUiR.string.backup_created_success,
+                            statusMessageArgs = emptyArray(),
+                        )
+                    }
+                } else {
+                    val messageResId = when (_state.value.exportFormat) {
+                        ExportFormat.PDF -> CoreUiR.string.backup_pdf_generated
+                        ExportFormat.JSON -> CoreUiR.string.backup_json_exported
+                        ExportFormat.CSV -> CoreUiR.string.backup_csv_exported
+                    }
+                    _state.update {
+                        it.copy(
+                            statusMessageResId = messageResId,
+                            statusMessageArgs = emptyArray(),
+                        )
+                    }
+                }
+            } catch (e: Exception) {
+                pendingExportData = null
+                _state.update {
+                    it.copy(errorResId = CoreUiR.string.backup_failed_generic)
                 }
             }
         }
@@ -420,22 +454,17 @@ class BackupExportViewModel @Inject constructor(
         )
     }
 
-    private fun writeExportFile(
-        filename: String,
+    private suspend fun writeToUri(
+        uri: Uri,
         data: ByteArray,
-    ): File {
-        val exportsDir = File(context.cacheDir, "exports")
-        exportsDir.mkdirs()
-        val file = File(exportsDir, filename)
-        file.writeBytes(data)
-        return file
+    ) {
+        withContext(ioDispatcher) {
+            context.contentResolver.openOutputStream(uri)?.use { outputStream ->
+                outputStream.write(data)
+                outputStream.flush()
+            } ?: throw IOException("Could not open output stream for $uri")
+        }
     }
-
-    private fun getFileProviderUri(file: File): Uri = FileProvider.getUriForFile(
-        context,
-        "${context.packageName}.fileprovider",
-        file,
-    )
 
     companion object {
         private const val AUTO_BACKUP_WORK_NAME = "studybuddy_auto_backup"
