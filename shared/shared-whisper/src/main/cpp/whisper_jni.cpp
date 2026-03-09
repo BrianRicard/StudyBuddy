@@ -72,7 +72,6 @@ Java_com_studybuddy_shared_whisper_WhisperJni_fullTranscribe(
     // Default is 0.6 which is too aggressive for children who pause to think/breathe.
     params.no_speech_thold = 0.3f;
     params.suppress_blank = true;
-    params.suppress_non_speech_tokens = true;
 
     LOGI("Starting transcription: lang=%s, samples=%d, threads=%d", language, num_samples, num_threads);
 
