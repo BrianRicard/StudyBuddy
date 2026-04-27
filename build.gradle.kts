@@ -42,13 +42,10 @@ dependencyCheck {
     analyzers.nugetconfEnabled = false
     analyzers.nodeEnabled = false
     analyzers.nodeAuditEnabled = false
-    analyzers.yarnAuditEnabled = false
-    analyzers.pnpmAuditEnabled = false
     analyzers.composerEnabled = false
     analyzers.cpanEnabled = false
     analyzers.cocoapodsEnabled = false
     analyzers.swiftEnabled = false
-    analyzers.swiftPackageManagerEnabled = false
     analyzers.bundleAuditEnabled = false
     analyzers.golangDepEnabled = false
     analyzers.golangModEnabled = false
