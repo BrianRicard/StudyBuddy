@@ -15,6 +15,12 @@ jobs:
     name: Build Release APK & AAB
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    # Signing secrets (KEYSTORE_BASE64, KEYSTORE_PASSWORD, KEY_ALIAS,
+    # KEY_PASSWORD) live in this environment, not at repo level. Without
+    # this declaration, the job sees them as empty and silently signs
+    # releases with an ephemeral keystore, producing APKs that cannot be
+    # installed as upgrades over previous releases.
+    environment: GITHUB_CRASH_TOKEN
     permissions:
       contents: write
     steps:
@@ -42,55 +48,64 @@ jobs:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
         run: |
-          STORE_PASS="${KEYSTORE_PASSWORD:-android}"
-          ALIAS="${KEY_ALIAS:-release}"
-          ALIAS_PASS="${KEY_PASSWORD:-android}"
+          set -euo pipefail
+
+          # Fail fast if any required signing secret is missing. Without these,
+          # the workflow used to silently generate an ephemeral keystore on every
+          # run, producing APKs that could not be installed as upgrades over
+          # previous releases ("App Not Installed" / INSTALL_FAILED_UPDATE_INCOMPATIBLE).
+          missing=()
+          [ -z "${KEYSTORE_BASE64:-}" ] && missing+=("KEYSTORE_BASE64")
+          [ -z "${KEYSTORE_PASSWORD:-}" ] && missing+=("KEYSTORE_PASSWORD")
+          [ -z "${KEY_ALIAS:-}" ] && missing+=("KEY_ALIAS")
+          [ -z "${KEY_PASSWORD:-}" ] && missing+=("KEY_PASSWORD")
+          if [ ${#missing[@]} -gt 0 ]; then
+            echo "::error::Missing required signing secrets: ${missing[*]}"
+            echo "::error::These must be set on the 'GITHUB_CRASH_TOKEN' environment in repository settings."
+            echo "::error::Repository-level secrets will NOT be visible to this job."
+            exit 1
+          fi
+
+          STORE_PASS="$KEYSTORE_PASSWORD"
+
+          echo "$KEYSTORE_BASE64" | base64 -d > app/release-src.keystore
+          echo "Decoded keystore size: $(wc -c < app/release-src.keystore) bytes"
 
           converted=false
-          if [ -n "$KEYSTORE_BASE64" ]; then
-            echo "$KEYSTORE_BASE64" | base64 -d > app/release-src.keystore
-            echo "Decoded keystore size: $(wc -c < app/release-src.keystore) bytes"
-            echo "Keystore type: $(keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype PKCS12 2>&1 | head -1 || echo 'not PKCS12')"
-            echo "Keystore type (JKS): $(keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype JKS 2>&1 | head -1 || echo 'not JKS')"
-
-            # Try PKCS12 → JKS conversion first (most common)
-            if keytool -importkeystore \
-                 -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" -srcstoretype PKCS12 \
-                 -destkeystore app/release.keystore -deststoretype JKS \
-                 -deststorepass "$STORE_PASS" -noprompt 2>&1; then
-              echo "Converted PKCS12 keystore to JKS"
-              converted=true
-            # Try JKS → JKS (already JKS, just copy)
-            elif keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype JKS >/dev/null 2>&1; then
-              echo "Keystore is already JKS, using directly"
-              cp app/release-src.keystore app/release.keystore
-              converted=true
-            # Try auto-detect source type
-            elif keytool -importkeystore \
-                 -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" \
-                 -destkeystore app/release.keystore -deststoretype JKS \
-                 -deststorepass "$STORE_PASS" -noprompt 2>&1; then
-              echo "Converted keystore to JKS (auto-detected source type)"
-              converted=true
-            else
-              echo "::error::Failed to convert keystore. Check KEYSTORE_BASE64 and KEYSTORE_PASSWORD secrets."
-            fi
-            rm -f app/release-src.keystore
-          else
-            echo "::warning::KEYSTORE_BASE64 secret is not set"
+          # Try PKCS12 -> JKS conversion first (most common)
+          if keytool -importkeystore \
+               -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" -srcstoretype PKCS12 \
+               -destkeystore app/release.keystore -deststoretype JKS \
+               -deststorepass "$STORE_PASS" -noprompt 2>&1; then
+            echo "Converted PKCS12 keystore to JKS"
+            converted=true
+          # Try JKS -> JKS (already JKS, just copy)
+          elif keytool -list -keystore app/release-src.keystore -storepass "$STORE_PASS" -storetype JKS >/dev/null 2>&1; then
+            echo "Keystore is already JKS, using directly"
+            cp app/release-src.keystore app/release.keystore
+            converted=true
+          # Try auto-detect source type
+          elif keytool -importkeystore \
+               -srckeystore app/release-src.keystore -srcstorepass "$STORE_PASS" \
+               -destkeystore app/release.keystore -deststoretype JKS \
+               -deststorepass "$STORE_PASS" -noprompt 2>&1; then
+            echo "Converted keystore to JKS (auto-detected source type)"
+            converted=true
           fi
+          rm -f app/release-src.keystore
 
           if [ "$converted" != "true" ]; then
-            echo "::warning::Generating a temporary JKS release keystore for CI"
-            keytool -genkeypair -v \
-              -keystore app/release.keystore \
-              -storetype JKS \
-              -alias "$ALIAS" \
-              -keyalg RSA -keysize 2048 -validity 10000 \
-              -storepass "$STORE_PASS" \
-              -keypass "$ALIAS_PASS" \
-              -dname "CN=StudyBuddy CI,O=StudyBuddy,L=CI,C=CA"
+            echo "::error::Failed to load KEYSTORE_BASE64 as PKCS12 or JKS. Check the secret value and KEYSTORE_PASSWORD."
+            exit 1
           fi
+
+          # Print the cert SHA-256 fingerprint so any future cert change is
+          # immediately visible in the build log. A drift here means upgrades
+          # will break for installed users.
+          echo "::group::Release signing certificate fingerprint"
+          keytool -list -v -keystore app/release.keystore -storepass "$STORE_PASS" -alias "$KEY_ALIAS" \
+            | grep -E "SHA256:|Owner:|Valid from:" || true
+          echo "::endgroup::"
 
       - name: Build Release APK
         env:
