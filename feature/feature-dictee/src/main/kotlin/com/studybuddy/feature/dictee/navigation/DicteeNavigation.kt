@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
+import com.studybuddy.core.ui.navigation.navigateSafely
 import com.studybuddy.feature.dictee.add.AddDicteeScreen
 import com.studybuddy.feature.dictee.list.DicteeListScreen
 import com.studybuddy.feature.dictee.practice.DicteePracticeScreen
@@ -19,16 +20,16 @@ fun NavGraphBuilder.dicteeNavGraph(navController: NavController) {
         composable(StudyBuddyRoutes.DICTEE_LISTS) {
             DicteeListScreen(
                 onNavigateToPractice = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteePractice(listId))
                 },
                 onNavigateToChallenge = { listIds ->
-                    navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteeChallenge(listIds))
                 },
                 onNavigateToAdd = {
-                    navController.navigate(StudyBuddyRoutes.DICTEE_ADD)
+                    navController.navigateSafely(StudyBuddyRoutes.DICTEE_ADD)
                 },
                 onNavigateToEdit = { setId ->
-                    navController.navigate(StudyBuddyRoutes.dicteeEdit(setId))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteeEdit(setId))
                 },
                 onNavigateBack = { navController.popBackStack() },
             )
