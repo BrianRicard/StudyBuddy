@@ -31,9 +31,29 @@ dependencyCheck {
     formats = listOf("HTML", "JSON", "SARIF")
     failBuildOnCVSS = 7.0f
     suppressionFile = "$rootDir/owasp-suppressions.xml"
+
+    // Persist the NVD cache to a stable, cacheable location across CI runs.
+    data.directory = "$rootDir/.gradle/dependency-check-data"
+
+    // Disable analyzers irrelevant to an Android/Kotlin project to speed up scans
+    // and reduce false positives.
     analyzers.assemblyEnabled = false
     analyzers.nuspecEnabled = false
     analyzers.nugetconfEnabled = false
+    analyzers.nodeEnabled = false
+    analyzers.nodeAuditEnabled = false
+    analyzers.yarnAuditEnabled = false
+    analyzers.pnpmAuditEnabled = false
+    analyzers.composerEnabled = false
+    analyzers.cpanEnabled = false
+    analyzers.cocoapodsEnabled = false
+    analyzers.swiftEnabled = false
+    analyzers.swiftPackageManagerEnabled = false
+    analyzers.bundleAuditEnabled = false
+    analyzers.golangDepEnabled = false
+    analyzers.golangModEnabled = false
+    analyzers.rubygemsEnabled = false
+
     nvd.apiKey = System.getenv("NVD_API_KEY") ?: ""
 }
 

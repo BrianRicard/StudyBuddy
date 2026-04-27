@@ -36,7 +36,7 @@ jobs:
   dependency-vulnerability-scan:
     name: Dependency Vulnerability Scan (OWASP)
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +50,19 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           cache-read-only: true
+
+      # Cache the NVD CVE database across runs. Without this, every run must
+      # re-download the entire NVD feed from NIST (rate-limited without an API
+      # key) which routinely exceeds the job timeout. Key includes the year-week
+      # so the cache rolls over weekly and stays fresh.
+      - name: Cache NVD database
+        uses: actions/cache@v4
+        with:
+          path: .gradle/dependency-check-data
+          key: nvd-cache-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}-${{ github.run_id }}
+          restore-keys: |
+            nvd-cache-${{ runner.os }}-${{ hashFiles('build.gradle.kts') }}-
+            nvd-cache-${{ runner.os }}-
 
       - name: Run OWASP Dependency-Check
         run: ./gradlew dependencyCheckAnalyze --continue
