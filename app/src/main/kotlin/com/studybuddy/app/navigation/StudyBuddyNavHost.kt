@@ -12,6 +12,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
+import com.studybuddy.core.ui.navigation.navigateSafely
 import com.studybuddy.feature.avatar.AvatarClosetScreen
 import com.studybuddy.feature.backup.BackupExportScreen
 import com.studybuddy.feature.dictee.add.AddDicteeScreen
@@ -79,7 +80,7 @@ fun StudyBuddyNavHost(
         ) {
             OnboardingScreen(
                 onNavigateToHome = {
-                    navController.navigate(StudyBuddyRoutes.HOME) {
+                    navController.navigateSafely(StudyBuddyRoutes.HOME) {
                         popUpTo(StudyBuddyRoutes.ONBOARDING) { inclusive = true }
                     }
                 },
@@ -94,47 +95,47 @@ fun StudyBuddyNavHost(
         ) {
             HomeScreen(
                 onNavigateToDictee = {
-                    navController.navigate(StudyBuddyRoutes.DICTEE_LISTS) {
+                    navController.navigateSafely(StudyBuddyRoutes.DICTEE_LISTS) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToMath = {
-                    navController.navigate(StudyBuddyRoutes.MATH_SETUP) {
+                    navController.navigateSafely(StudyBuddyRoutes.MATH_SETUP) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToMathChallenge = {
-                    navController.navigate(StudyBuddyRoutes.MATH_CHALLENGE) {
+                    navController.navigateSafely(StudyBuddyRoutes.MATH_CHALLENGE) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToPoems = {
-                    navController.navigate(StudyBuddyRoutes.POEMS) {
+                    navController.navigateSafely(StudyBuddyRoutes.POEMS) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToReading = {
-                    navController.navigate(StudyBuddyRoutes.READING) {
+                    navController.navigateSafely(StudyBuddyRoutes.READING) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToAvatar = {
-                    navController.navigate(StudyBuddyRoutes.AVATAR) {
+                    navController.navigateSafely(StudyBuddyRoutes.AVATAR) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToStats = {
-                    navController.navigate(StudyBuddyRoutes.STATS) {
+                    navController.navigateSafely(StudyBuddyRoutes.STATS) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToRewards = {
-                    navController.navigate(StudyBuddyRoutes.REWARDS) {
+                    navController.navigateSafely(StudyBuddyRoutes.REWARDS) {
                         launchSingleTop = true
                     }
                 },
                 onNavigateToSettings = {
-                    navController.navigate(StudyBuddyRoutes.SETTINGS) {
+                    navController.navigateSafely(StudyBuddyRoutes.SETTINGS) {
                         launchSingleTop = true
                     }
                 },
@@ -145,16 +146,16 @@ fun StudyBuddyNavHost(
         composable(route = StudyBuddyRoutes.DICTEE_LISTS) {
             DicteeListScreen(
                 onNavigateToPractice = { listId ->
-                    navController.navigate(StudyBuddyRoutes.dicteePractice(listId))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteePractice(listId))
                 },
                 onNavigateToChallenge = { listIds ->
-                    navController.navigate(StudyBuddyRoutes.dicteeChallenge(listIds))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteeChallenge(listIds))
                 },
                 onNavigateToAdd = {
-                    navController.navigate(StudyBuddyRoutes.DICTEE_ADD)
+                    navController.navigateSafely(StudyBuddyRoutes.DICTEE_ADD)
                 },
                 onNavigateToEdit = { setId ->
-                    navController.navigate(StudyBuddyRoutes.dicteeEdit(setId))
+                    navController.navigateSafely(StudyBuddyRoutes.dicteeEdit(setId))
                 },
                 onNavigateBack = { navController.popBackStack() },
             )
@@ -200,7 +201,7 @@ fun StudyBuddyNavHost(
                 onStartGame = { setupState ->
                     val operatorsStr = setupState.selectedOperators
                         .joinToString(",") { it.name }
-                    navController.navigate(
+                    navController.navigateSafely(
                         StudyBuddyRoutes.mathPlay(
                             operators = operatorsStr,
                             rangeMin = setupState.numberRangeMin,
@@ -225,7 +226,7 @@ fun StudyBuddyNavHost(
         ) {
             MathPlayScreen(
                 onGameComplete = { total, correct, streak, avgMs, score, ops, rMin, rMax ->
-                    navController.navigate(
+                    navController.navigateSafely(
                         StudyBuddyRoutes.mathResults(
                             totalProblems = total,
                             correctCount = correct,
@@ -258,12 +259,12 @@ fun StudyBuddyNavHost(
         ) {
             MathResultsScreen(
                 onPlayAgain = {
-                    navController.navigate(StudyBuddyRoutes.MATH_SETUP) {
+                    navController.navigateSafely(StudyBuddyRoutes.MATH_SETUP) {
                         popUpTo(StudyBuddyRoutes.HOME)
                     }
                 },
                 onHome = {
-                    navController.navigate(StudyBuddyRoutes.HOME) {
+                    navController.navigateSafely(StudyBuddyRoutes.HOME) {
                         popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
                     }
                 },
@@ -275,7 +276,7 @@ fun StudyBuddyNavHost(
             MathChallengeScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateHome = {
-                    navController.navigate(StudyBuddyRoutes.HOME) {
+                    navController.navigateSafely(StudyBuddyRoutes.HOME) {
                         popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
                     }
                 },
@@ -307,10 +308,10 @@ fun StudyBuddyNavHost(
         composable(route = StudyBuddyRoutes.SETTINGS) {
             SettingsScreen(
                 onNavigate = { route ->
-                    navController.navigate(route)
+                    navController.navigateSafely(route)
                 },
                 onAppReset = {
-                    navController.navigate(StudyBuddyRoutes.ONBOARDING) {
+                    navController.navigateSafely(StudyBuddyRoutes.ONBOARDING) {
                         popUpTo(0) { inclusive = true }
                     }
                 },
@@ -322,10 +323,10 @@ fun StudyBuddyNavHost(
             PoemsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToDetail = { poemId ->
-                    navController.navigate(StudyBuddyRoutes.poemDetail(poemId))
+                    navController.navigateSafely(StudyBuddyRoutes.poemDetail(poemId))
                 },
                 onNavigateToCreate = {
-                    navController.navigate(StudyBuddyRoutes.POEM_CREATE)
+                    navController.navigateSafely(StudyBuddyRoutes.POEM_CREATE)
                 },
             )
         }
@@ -343,7 +344,7 @@ fun StudyBuddyNavHost(
             PoemDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToSettings = {
-                    navController.navigate(StudyBuddyRoutes.SETTINGS)
+                    navController.navigateSafely(StudyBuddyRoutes.SETTINGS)
                 },
             )
         }
@@ -353,7 +354,7 @@ fun StudyBuddyNavHost(
             ReadingHomeScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToPassage = { passageId ->
-                    navController.navigate(StudyBuddyRoutes.readingDetail(passageId))
+                    navController.navigateSafely(StudyBuddyRoutes.readingDetail(passageId))
                 },
             )
         }
@@ -365,7 +366,7 @@ fun StudyBuddyNavHost(
             ReadingDetailScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToQuestions = { passageId, readingTimeMs ->
-                    navController.navigate(
+                    navController.navigateSafely(
                         StudyBuddyRoutes.readingQuestions(passageId, readingTimeMs),
                     ) {
                         popUpTo(StudyBuddyRoutes.READING)
@@ -384,7 +385,7 @@ fun StudyBuddyNavHost(
             QuestionsScreen(
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToResults = { passageId, score, total, readTime, qTime, firstTry, tier ->
-                    navController.navigate(
+                    navController.navigateSafely(
                         StudyBuddyRoutes.readingResults(
                             passageId,
                             score,
@@ -415,12 +416,12 @@ fun StudyBuddyNavHost(
         ) {
             ReadingResultsScreen(
                 onNavigateToPassage = { passageId ->
-                    navController.navigate(StudyBuddyRoutes.readingDetail(passageId)) {
+                    navController.navigateSafely(StudyBuddyRoutes.readingDetail(passageId)) {
                         popUpTo(StudyBuddyRoutes.READING)
                     }
                 },
                 onNavigateHome = {
-                    navController.navigate(StudyBuddyRoutes.HOME) {
+                    navController.navigateSafely(StudyBuddyRoutes.HOME) {
                         popUpTo(StudyBuddyRoutes.HOME) { inclusive = true }
                     }
                 },

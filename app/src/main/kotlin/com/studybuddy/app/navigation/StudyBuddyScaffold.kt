@@ -42,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.adaptive.LayoutType
+import com.studybuddy.core.ui.navigation.navigateSafely
 
 private val DRAWER_WIDTH = 240.dp
 
@@ -381,7 +382,7 @@ private fun navigateTopLevel(
     navController: NavHostController,
     destination: NavDestination,
 ) {
-    navController.navigate(destination.route) {
+    navController.navigateSafely(destination.route) {
         popUpTo(navController.graph.findStartDestination().id) {
             saveState = true
         }
