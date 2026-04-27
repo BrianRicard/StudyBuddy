@@ -68,7 +68,28 @@ jobs:
 
           STORE_PASS="$KEYSTORE_PASSWORD"
 
-          echo "$KEYSTORE_BASE64" | base64 -d > app/release-src.keystore
+          # Strip any whitespace/newlines that may have been introduced when
+          # copying the base64 value into the GitHub secret (common on Windows).
+          # Then sanity-check that the cleaned value is at least plausibly
+          # base64 before invoking base64 -d, so we can give a clear diagnostic
+          # instead of a cryptic "base64: invalid input".
+          cleaned=$(printf '%s' "$KEYSTORE_BASE64" | tr -d ' \t\r\n')
+          cleaned_len=${#cleaned}
+          echo "Sanitized KEYSTORE_BASE64 length: $cleaned_len chars"
+
+          if [ "$cleaned_len" -lt 100 ]; then
+            echo "::error::KEYSTORE_BASE64 looks too short ($cleaned_len chars). A base64-encoded keystore is typically 3000+ chars."
+            exit 1
+          fi
+          if ! printf '%s' "$cleaned" | grep -qE '^[A-Za-z0-9+/=]+$'; then
+            echo "::error::KEYSTORE_BASE64 contains characters that are not valid base64 (allowed: A-Z a-z 0-9 + / =). The secret was likely stored as raw binary or includes a BOM. Re-encode with: base64 -w 0 yourkey.jks"
+            exit 1
+          fi
+
+          if ! printf '%s' "$cleaned" | base64 -d > app/release-src.keystore 2>/dev/null; then
+            echo "::error::Failed to base64-decode KEYSTORE_BASE64 even after whitespace stripping. Re-encode the keystore with 'base64 -w 0' and update the secret."
+            exit 1
+          fi
           echo "Decoded keystore size: $(wc -c < app/release-src.keystore) bytes"
 
           converted=false
