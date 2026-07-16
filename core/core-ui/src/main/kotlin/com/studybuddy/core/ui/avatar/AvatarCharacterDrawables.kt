@@ -51,4 +51,11 @@ object AvatarCharacterDrawables {
      * Returns the drawable resource ID for the given character, or the fox fallback.
      */
     fun getDrawable(characterId: String): Int = drawableMap[characterId] ?: drawableMap["fox"]!!
+
+    /**
+     * Returns the drawable resource ID for the given character, or null when the
+     * character has no vector asset yet and should be Canvas-drawn instead
+     * (see [CreatureCanvas]).
+     */
+    fun getDrawableOrNull(characterId: String): Int? = drawableMap[characterId]
 }

@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.AutoStories
 import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Bolt
 import androidx.compose.material.icons.filled.Calculate
+import androidx.compose.material.icons.filled.Castle
 import androidx.compose.material.icons.filled.CrueltyFree
 import androidx.compose.material.icons.filled.Draw
 import androidx.compose.material.icons.filled.Home
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.outlined.AutoStories
 import androidx.compose.material.icons.outlined.BarChart
 import androidx.compose.material.icons.outlined.Bolt
 import androidx.compose.material.icons.outlined.Calculate
+import androidx.compose.material.icons.outlined.Castle
 import androidx.compose.material.icons.outlined.CrueltyFree
 import androidx.compose.material.icons.outlined.Draw
 import androidx.compose.material.icons.outlined.Home
@@ -51,6 +53,12 @@ enum class NavDestination(
         labelResId = CoreUiR.string.nav_dictee,
         selectedIcon = Icons.Filled.Draw,
         unselectedIcon = Icons.Outlined.Draw,
+    ),
+    CONJUGATION(
+        route = StudyBuddyRoutes.CONJUGATION,
+        labelResId = CoreUiR.string.nav_conjugation,
+        selectedIcon = Icons.Filled.Castle,
+        unselectedIcon = Icons.Outlined.Castle,
     ),
     SPEED_MATH(
         route = StudyBuddyRoutes.MATH_SETUP,
@@ -107,6 +115,7 @@ val LEARNING_DESTINATIONS = listOf(
     NavDestination.POEMS,
     NavDestination.READING,
     NavDestination.DICTEE,
+    NavDestination.CONJUGATION,
     NavDestination.SPEED_MATH,
     NavDestination.MATH_CHALLENGE,
 )
@@ -130,6 +139,7 @@ fun resolveActiveDestination(currentRoute: String?): NavDestination? = when {
     currentRoute.startsWith("poems") -> NavDestination.POEMS
     currentRoute.startsWith("reading") -> NavDestination.READING
     currentRoute.startsWith("dictee") -> NavDestination.DICTEE
+    currentRoute.startsWith("conjugation") -> NavDestination.CONJUGATION
     currentRoute == StudyBuddyRoutes.MATH_CHALLENGE -> NavDestination.MATH_CHALLENGE
     currentRoute.startsWith("math") -> NavDestination.SPEED_MATH
     currentRoute == StudyBuddyRoutes.AVATAR -> NavDestination.AVATAR
@@ -145,6 +155,11 @@ private val ACTIVE_SESSION_PREFIXES = listOf(
     "dictee/practice/",
     "dictee/challenge/",
     "math/play/",
+    "conjugation/learn/",
+    "conjugation/write/",
+    "conjugation/speak/",
+    "conjugation/battle/",
+    "conjugation/boss/",
 )
 
 private val ACTIVE_SESSION_EXACT = setOf(

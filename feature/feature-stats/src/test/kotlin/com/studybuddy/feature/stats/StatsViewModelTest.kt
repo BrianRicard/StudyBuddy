@@ -6,9 +6,12 @@ import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
+import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
+import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +41,7 @@ class StatsViewModelTest {
     private val pointsRepository: PointsRepository = mockk()
     private val mathRepository: MathRepository = mockk()
     private val dicteeRepository: DicteeRepository = mockk()
+    private val conjugationRepository: ConjugationRepository = mockk()
 
     @BeforeEach
     fun setup() {
@@ -59,12 +63,15 @@ class StatsViewModelTest {
         every { pointsRepository.getPointsForProfile("default") } returns flowOf(pointEvents)
         every { mathRepository.getSessionsForProfile("default") } returns flowOf(mathSessions)
         every { dicteeRepository.getListsForProfile("default") } returns flowOf(dicteeLists)
+        every { conjugationRepository.getProgressForProfile("default") } returns flowOf(emptyList())
     }
 
     private fun createViewModel() = StatsViewModel(
         pointsRepository = pointsRepository,
         mathRepository = mathRepository,
         dicteeRepository = dicteeRepository,
+        getConjugationPath = GetConjugationPathUseCase(conjugationRepository),
+        getConjugationMilestones = GetConjugationMilestonesUseCase(),
     )
 
     private fun createPointEvent(

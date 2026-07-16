@@ -9,6 +9,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.studybuddy.core.ui.avatar.AvatarCharacterDrawables
+import com.studybuddy.core.ui.avatar.AvatarCharacterRegistry
+import com.studybuddy.core.ui.avatar.CreatureCanvas
 import com.studybuddy.core.ui.avatar.drawFaceAccessory
 import com.studybuddy.core.ui.avatar.drawHat
 import com.studybuddy.core.ui.avatar.drawOutfit
@@ -39,7 +41,8 @@ fun AccessoryPreview(
 }
 
 /**
- * Renders a character body from its vector drawable resource.
+ * Renders a character body from its vector drawable resource, falling back
+ * to the Canvas renderer for characters without a vector asset yet.
  */
 @Composable
 fun CharacterPreview(
@@ -47,9 +50,18 @@ fun CharacterPreview(
     modifier: Modifier = Modifier,
     size: Dp = 36.dp,
 ) {
-    Image(
-        painter = painterResource(id = AvatarCharacterDrawables.getDrawable(characterId)),
-        contentDescription = characterId,
-        modifier = modifier.size(size),
-    )
+    val drawable = AvatarCharacterDrawables.getDrawableOrNull(characterId)
+    if (drawable != null) {
+        Image(
+            painter = painterResource(id = drawable),
+            contentDescription = characterId,
+            modifier = modifier.size(size),
+        )
+    } else {
+        CreatureCanvas(
+            spec = AvatarCharacterRegistry.getSpec(characterId),
+            modifier = modifier,
+            size = size,
+        )
+    }
 }

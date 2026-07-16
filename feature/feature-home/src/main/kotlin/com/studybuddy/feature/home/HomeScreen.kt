@@ -72,6 +72,7 @@ fun HomeScreen(
     onNavigateToMathChallenge: () -> Unit = {},
     onNavigateToPoems: () -> Unit = {},
     onNavigateToReading: () -> Unit = {},
+    onNavigateToConjugation: () -> Unit = {},
     onNavigateToAvatar: () -> Unit = {},
     onNavigateToStats: () -> Unit = {},
     onNavigateToRewards: () -> Unit = {},
@@ -87,6 +88,7 @@ fun HomeScreen(
                 HomeEffect.OpenMathChallenge -> onNavigateToMathChallenge()
                 HomeEffect.OpenPoems -> onNavigateToPoems()
                 HomeEffect.OpenReading -> onNavigateToReading()
+                HomeEffect.OpenConjugation -> onNavigateToConjugation()
                 HomeEffect.OpenAvatar -> onNavigateToAvatar()
                 HomeEffect.OpenStats -> onNavigateToStats()
                 HomeEffect.OpenRewards -> onNavigateToRewards()
@@ -167,6 +169,7 @@ private fun HomeContent(
                     onMathChallengeClick = { onIntent(HomeIntent.NavigateToMathChallenge) },
                     onPoemsClick = { onIntent(HomeIntent.NavigateToPoems) },
                     onReadingClick = { onIntent(HomeIntent.NavigateToReading) },
+                    onConjugationClick = { onIntent(HomeIntent.NavigateToConjugation) },
                     layoutType = layoutType,
                     modifier = Modifier.animateItemAppearance(3),
                 )
@@ -452,6 +455,7 @@ private fun ModeCardsGrid(
     onMathChallengeClick: () -> Unit,
     onPoemsClick: () -> Unit,
     onReadingClick: () -> Unit,
+    onConjugationClick: () -> Unit,
     layoutType: LayoutType,
     modifier: Modifier = Modifier,
 ) {
@@ -522,7 +526,16 @@ private fun ModeCardsGrid(
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 4,
             )
-            Spacer(modifier = Modifier.weight(1f))
+            ModeCard(
+                title = stringResource(CoreUiR.string.mode_conjugation),
+                subtitle = stringResource(CoreUiR.string.label_conjugation),
+                onClick = onConjugationClick,
+                modifier = Modifier.weight(1f),
+                iconRes = CoreUiR.drawable.ic_dictee_illustration,
+                containerColor = ModeCardColor.Tertiary,
+                infiniteTransition = infiniteTransition,
+                animationDelay = BOB_ANIMATION_DELAY * 5,
+            )
         }
     }
 }
@@ -689,6 +702,7 @@ private fun RecentActivityRow(activity: RecentActivity) {
                         PointSource.DICTEE -> CoreUiR.drawable.ic_dictee_illustration
                         PointSource.MATH -> CoreUiR.drawable.ic_math_illustration
                         PointSource.POEMS -> CoreUiR.drawable.ic_poems_notepad
+                        PointSource.CONJUGATION -> CoreUiR.drawable.ic_dictee_illustration
                         else -> CoreUiR.drawable.ic_milestone_star
                     },
                 ),

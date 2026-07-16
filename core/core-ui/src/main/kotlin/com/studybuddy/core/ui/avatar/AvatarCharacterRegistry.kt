@@ -290,6 +290,68 @@ object AvatarCharacterRegistry {
             ),
         ),
 
+        // ── Verb Quest creatures ────────────────────────────────────────────
+
+        CharacterSpec(
+            id = "frog",
+            primaryColor = Color(0xFF66BB6A),
+            secondaryColor = Color(0xFFC8E6C9),
+            accentColor = Color(0xFF2E7D32),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Frog eyes bulge above the head — the hat sits between them
+                hatAnchor = Offset(0.50f, 0.10f),
+                faceAnchor = Offset(0.50f, 0.32f),
+                chestAnchor = Offset(0.50f, 0.62f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "snail",
+            primaryColor = Color(0xFFBCAAA4),
+            secondaryColor = Color(0xFFFF8A65),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Snail head is on the left; the shell fills the right side
+                hatAnchor = Offset(0.30f, 0.14f),
+                faceAnchor = Offset(0.30f, 0.34f),
+                chestAnchor = Offset(0.35f, 0.60f),
+                petAnchor = Offset(0.88f, 0.85f),
+                hatScale = 0.75f,
+                hatRotation = -8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "ladybug",
+            primaryColor = Color(0xFFE53935),
+            secondaryColor = Color(0xFF212121),
+            accentColor = Color(0xFFF5F5F5),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.08f),
+                faceAnchor = Offset(0.50f, 0.24f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "lion",
+            primaryColor = Color(0xFFFFB74D),
+            secondaryColor = Color(0xFFE65100),
+            accentColor = Color(0xFF4E342E),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Big mane — hats sit slightly larger and higher
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.62f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.15f,
+            ),
+        ),
+
         // ── Epic skins ──────────────────────────────────────────────────────
 
         CharacterSpec(

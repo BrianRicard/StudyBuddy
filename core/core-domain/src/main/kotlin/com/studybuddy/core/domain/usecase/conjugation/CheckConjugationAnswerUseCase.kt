@@ -8,6 +8,10 @@ import javax.inject.Inject
  * Grades a typed conjugation form. Accent-lenient by default ("etes" passes
  * for "êtes") because the write step is about memorizing the forms, not
  * keyboard gymnastics — a hint shows the accented spelling either way.
+ *
+ * Kept separate from dictée's CheckSpellingUseCase (same logic today) so
+ * conjugation grading can diverge — e.g. accepting "j'aime" for "aime" —
+ * without touching dictée.
  */
 class CheckConjugationAnswerUseCase @Inject constructor() {
     operator fun invoke(

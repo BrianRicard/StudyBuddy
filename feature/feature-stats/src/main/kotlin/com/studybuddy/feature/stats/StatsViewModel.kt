@@ -6,9 +6,14 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.model.conjugation.ConjugationPathStage
+import com.studybuddy.core.domain.model.conjugation.ConjugationStages
+import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
+import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
+import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.format.TextStyle
 import java.util.Locale
@@ -44,6 +49,10 @@ data class StatsState(
     val dicteeAccuracyTrend: Float? = null,
     val mathAvgSpeed: Long? = null,
     val mathSpeedTrend: Long? = null,
+    val verbsMastered: Int = 0,
+    val verbsTotal: Int = ConjugationStages.all.size,
+    val conjugationGamesDone: Int = 0,
+    val milestones: List<MilestoneStatus> = emptyList(),
     val isLoading: Boolean = true,
 )
 
@@ -52,6 +61,8 @@ class StatsViewModel @Inject constructor(
     private val pointsRepository: PointsRepository,
     private val mathRepository: MathRepository,
     private val dicteeRepository: DicteeRepository,
+    private val getConjugationPath: GetConjugationPathUseCase,
+    private val getConjugationMilestones: GetConjugationMilestonesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(StatsState())
@@ -68,7 +79,8 @@ class StatsViewModel @Inject constructor(
                 pointsRepository.getPointsForProfile(AppConstants.DEFAULT_PROFILE_ID),
                 mathRepository.getSessionsForProfile(AppConstants.DEFAULT_PROFILE_ID),
                 dicteeRepository.getListsForProfile(AppConstants.DEFAULT_PROFILE_ID),
-            ) { totalPoints, pointEvents, mathSessions, dicteeLists ->
+                getConjugationPath(AppConstants.DEFAULT_PROFILE_ID),
+            ) { totalPoints, pointEvents, mathSessions, dicteeLists, conjugationPath ->
                 val dayStreak = calculateDayStreak(pointEvents)
                 val totalSessions = countTotalSessions(pointEvents)
                 val weeklyData = buildWeeklyData(pointEvents)
@@ -86,6 +98,9 @@ class StatsViewModel @Inject constructor(
                     dicteeAccuracyTrend = dicteeAccuracyTrend,
                     mathAvgSpeed = mathAvgSpeed,
                     mathSpeedTrend = mathSpeedTrend,
+                    verbsMastered = conjugationPath.count { it.isCompleted },
+                    conjugationGamesDone = countConjugationGames(conjugationPath),
+                    milestones = getConjugationMilestones(conjugationPath),
                     isLoading = false,
                 )
             }.collect { newState ->
@@ -134,6 +149,10 @@ class StatsViewModel @Inject constructor(
      */
     private fun countTotalSessions(events: List<PointEvent>): Int =
         events.count { it.source == PointSource.DICTEE || it.source == PointSource.MATH }
+
+    /** Counts completed quest games (steps) across all stages. */
+    private fun countConjugationGames(path: List<ConjugationPathStage>): Int =
+        path.sumOf { it.completedStepCount }
 
     /**
      * Builds weekly data for the chart by grouping point events into each day
