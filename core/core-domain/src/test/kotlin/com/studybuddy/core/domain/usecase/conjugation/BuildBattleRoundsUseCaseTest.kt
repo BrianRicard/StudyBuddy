@@ -40,6 +40,28 @@ class BuildBattleRoundsUseCaseTest {
         }
     }
 
+    @RepeatedTest(20)
+    fun `review rounds never repeat a question`(repetitionInfo: RepetitionInfo) {
+        val random = Random(repetitionInfo.currentRepetition.toLong())
+
+        ConjugationStages.all.forEach { stage ->
+            val reviewKeys = useCase(stage, random)
+                .filter { it.isReview }
+                .map { it.verb.id to it.person }
+            assertEquals(reviewKeys.size, reviewKeys.toSet().size, "duplicate review question")
+        }
+    }
+
+    @Test
+    fun `every verb has enough distinct forms for a full option set`() {
+        ConjugationStages.all.forEach { stage ->
+            assertTrue(
+                stage.verb.forms.values.distinct().size >= BuildBattleRoundsUseCase.OPTION_COUNT,
+                "${stage.verb.infinitive} cannot fill ${BuildBattleRoundsUseCase.OPTION_COUNT} options",
+            )
+        }
+    }
+
     @Test
     fun `same seed produces the same rounds`() {
         val stage = ConjugationStages.all.last()

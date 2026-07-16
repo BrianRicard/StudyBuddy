@@ -2,8 +2,8 @@ package com.studybuddy.core.data.di
 
 import com.studybuddy.core.data.repository.DataStoreSettingsRepository
 import com.studybuddy.core.data.repository.LocalAvatarRepository
-import com.studybuddy.core.data.repository.LocalConjugationRepository
 import com.studybuddy.core.data.repository.LocalBackupRepository
+import com.studybuddy.core.data.repository.LocalConjugationRepository
 import com.studybuddy.core.data.repository.LocalDicteeRepository
 import com.studybuddy.core.data.repository.LocalMathRepository
 import com.studybuddy.core.data.repository.LocalPoemRepository

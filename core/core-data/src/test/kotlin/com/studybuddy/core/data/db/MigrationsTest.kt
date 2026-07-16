@@ -141,11 +141,10 @@ class MigrationsTest {
                     "conjugation_progress should have column '$col'",
                 )
             }
+        val expectedIndex = "CREATE UNIQUE INDEX IF NOT EXISTS " +
+            "`index_conjugation_progress_profileId_stageId_step`"
         assertTrue(
-            sql.any {
-                it.contains("CREATE UNIQUE INDEX IF NOT EXISTS " +
-                    "`index_conjugation_progress_profileId_stageId_step`")
-            },
+            sql.any { it.contains(expectedIndex) },
             "MIGRATION_3_4 should create the unique (profileId, stageId, step) index",
         )
     }

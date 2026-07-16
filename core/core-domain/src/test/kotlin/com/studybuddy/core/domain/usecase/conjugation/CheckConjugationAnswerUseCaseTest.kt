@@ -1,6 +1,7 @@
 package com.studybuddy.core.domain.usecase.conjugation
 
 import com.studybuddy.core.domain.model.Feedback
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
@@ -35,6 +36,11 @@ class CheckConjugationAnswerUseCaseTest {
             assertTrue(result is Feedback.Correct, "Expected Correct for '$input' vs '$correctForm'")
         } else {
             assertTrue(result is Feedback.Incorrect, "Expected Incorrect for '$input' vs '$correctForm'")
+            assertEquals(
+                correctForm,
+                (result as Feedback.Incorrect).correctAnswer,
+                "The hint must carry the accented spelling",
+            )
         }
     }
 }

@@ -13,4 +13,8 @@ data class BattleRound(
     val isReview: Boolean,
 ) {
     val correctForm: String get() = verb.form(person)
+
+    /** Pronoun as shown in the prompt, elided for JE where needed ("j' ___"). */
+    val promptPronoun: String
+        get() = if (verb.display(person).startsWith("j'")) "j'" else person.pronoun
 }

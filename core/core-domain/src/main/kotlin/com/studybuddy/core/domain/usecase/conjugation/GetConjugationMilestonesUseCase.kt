@@ -25,11 +25,16 @@ class GetConjugationMilestonesUseCase @Inject constructor() {
             .mapNotNull { stage -> stage.stepProgress.values.mapNotNull { it.completedAt }.maxOrNull() }
             .sorted()
 
-        val perfectSteps = setOf(ConjugationStep.WRITE, ConjugationStep.BATTLE, ConjugationStep.BOSS)
-        val perfectStageCount = completedStages.count { stage ->
-            perfectSteps.all { stage.stepProgress[it]?.isPerfect == true }
+        val perfectStages = completedStages.filter { stage ->
+            SCORED_STEPS.all { stage.stepProgress[it]?.isPerfect == true }
         }
-        val isPerfectQuest = completedStages.size == stageCount && perfectStageCount == stageCount
+        val isPerfectQuest = completedStages.size == stageCount && perfectStages.size == stageCount
+
+        // A stage can become perfect on a replay long after it was completed,
+        // so the timestamp comes from when the winning scores were achieved.
+        val perfectAt = perfectStages
+            .flatMap { stage -> SCORED_STEPS.mapNotNull { stage.stepProgress[it]?.updatedAt } }
+            .maxOrNull()
 
         return listOf(
             MilestoneStatus(
@@ -38,14 +43,26 @@ class GetConjugationMilestonesUseCase @Inject constructor() {
                 target = 1,
                 achievedAt = firstStepAt,
             ),
-            stageMilestone(ConjugationMilestone.FIRST_VERB, target = 1, stageCompletionTimes),
-            stageMilestone(ConjugationMilestone.THREE_VERBS, target = 3, stageCompletionTimes),
-            stageMilestone(ConjugationMilestone.ALL_VERBS, target = stageCount, stageCompletionTimes),
+            stageMilestone(
+                milestone = ConjugationMilestone.FIRST_VERB,
+                target = 1,
+                completionTimes = stageCompletionTimes,
+            ),
+            stageMilestone(
+                milestone = ConjugationMilestone.THREE_VERBS,
+                target = 3,
+                completionTimes = stageCompletionTimes,
+            ),
+            stageMilestone(
+                milestone = ConjugationMilestone.ALL_VERBS,
+                target = stageCount,
+                completionTimes = stageCompletionTimes,
+            ),
             MilestoneStatus(
                 milestone = ConjugationMilestone.PERFECT_QUEST,
-                current = perfectStageCount,
+                current = perfectStages.size,
                 target = stageCount,
-                achievedAt = if (isPerfectQuest) stageCompletionTimes.lastOrNull() else null,
+                achievedAt = if (isPerfectQuest) perfectAt else null,
             ),
         )
     }
@@ -60,4 +77,9 @@ class GetConjugationMilestonesUseCase @Inject constructor() {
         target = target,
         achievedAt = completionTimes.getOrNull(target - 1),
     )
+
+    private companion object {
+        /** Steps whose scores count toward a perfect quest. */
+        val SCORED_STEPS = setOf(ConjugationStep.WRITE, ConjugationStep.BATTLE, ConjugationStep.BOSS)
+    }
 }

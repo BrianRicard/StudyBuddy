@@ -16,23 +16,29 @@ class GetConjugationMilestonesUseCaseTest {
 
     private val useCase = GetConjugationMilestonesUseCase()
 
+    /**
+     * Builds a stage where step N completes at `completedAtMs + N * 100`,
+     * so tests can tell "first step" from "last step" derivations apart.
+     */
     private fun stage(
         order: Int,
         completedSteps: Int,
         completedAtMs: Long = order * 1_000L,
         perfect: Boolean = true,
+        updatedAtMs: Long? = null,
     ): ConjugationPathStage {
         val stage = ConjugationStages.all[order - 1]
-        val steps = ConjugationStep.entries.take(completedSteps).associateWith { step ->
-            ConjugationProgress(
+        val steps = ConjugationStep.entries.take(completedSteps).withIndex().associate { (index, step) ->
+            val stepTime = completedAtMs + index * 100L
+            step to ConjugationProgress(
                 id = "${stage.id}-$step",
                 profileId = "default",
                 stageId = stage.id,
                 step = step,
                 bestCorrect = if (perfect) 6 else 4,
                 bestTotal = 6,
-                completedAt = Instant.fromEpochMilliseconds(completedAtMs),
-                updatedAt = Instant.fromEpochMilliseconds(completedAtMs),
+                completedAt = Instant.fromEpochMilliseconds(stepTime),
+                updatedAt = Instant.fromEpochMilliseconds(updatedAtMs ?: stepTime),
             )
         }
         return ConjugationPathStage(stage = stage, stepProgress = steps, isUnlocked = true)
@@ -78,12 +84,28 @@ class GetConjugationMilestonesUseCaseTest {
     }
 
     @Test
-    fun `third stage completion time stamps the three verbs milestone`() {
+    fun `three verbs milestone is stamped when the third stage's LAST step finished`() {
         val stages = (1..6).map { stage(it, completedSteps = ConjugationStep.entries.size) }
 
+        // Stage 3's steps finish at 3000..3400; completion is the last one.
         assertEquals(
-            Instant.fromEpochMilliseconds(3_000),
+            Instant.fromEpochMilliseconds(3_400),
             status(ConjugationMilestone.THREE_VERBS, stages).achievedAt,
+        )
+    }
+
+    @Test
+    fun `perfect quest achieved on replay is stamped when the winning score happened`() {
+        val stages = (1..5).map { stage(it, completedSteps = ConjugationStep.entries.size) } +
+            stage(
+                6,
+                completedSteps = ConjugationStep.entries.size,
+                updatedAtMs = 99_999L,
+            )
+
+        assertEquals(
+            Instant.fromEpochMilliseconds(99_999L),
+            status(ConjugationMilestone.PERFECT_QUEST, stages).achievedAt,
         )
     }
 

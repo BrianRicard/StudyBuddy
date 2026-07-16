@@ -14,13 +14,17 @@ data class ConjugationPathStage(
     val isCompleted: Boolean
         get() = completedStepCount == ConjugationStep.entries.size
 
-    /** The next step to play, or null when the stage is fully completed. */
+    /** The next step to play, or null when the stage is locked or fully completed. */
     val nextStep: ConjugationStep?
-        get() = ConjugationStep.entries.firstOrNull { stepProgress[it]?.isCompleted != true }
+        get() = if (isUnlocked) {
+            ConjugationStep.entries.firstOrNull { stepProgress[it]?.isCompleted != true }
+        } else {
+            null
+        }
 
     /** A step is playable once every step before it is completed. */
-    fun isStepUnlocked(step: ConjugationStep): Boolean =
-        isUnlocked && ConjugationStep.entries
+    fun isStepUnlocked(step: ConjugationStep): Boolean = isUnlocked &&
+        ConjugationStep.entries
             .takeWhile { it != step }
             .all { stepProgress[it]?.isCompleted == true }
 }

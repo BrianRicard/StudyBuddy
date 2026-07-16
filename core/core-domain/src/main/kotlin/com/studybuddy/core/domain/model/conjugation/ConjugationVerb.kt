@@ -1,11 +1,15 @@
 package com.studybuddy.core.domain.model.conjugation
 
-private val VOWELS = setOf('a', 'e', 'i', 'o', 'u', 'é', 'è', 'ê', 'h')
+// NOTE: 'h' is deliberately excluded — elision before 'h' depends on h muet vs
+// h aspiré and must be modelled per-verb if an h-verb is ever added.
+private val VOWELS = setOf('a', 'e', 'i', 'o', 'u', 'é', 'è', 'ê')
 
 /**
  * A verb with its present-tense forms for all six persons.
  *
  * @property id Stable identifier used for persistence and navigation (e.g. "etre").
+ * Progress rows reference this id — treat it like a database column name and
+ * never rename it.
  * @property infinitive Display form of the verb (e.g. "être").
  * @property forms The conjugated form (without pronoun) for each person.
  * @property bossSentences Short, kid-friendly sentences the stage boss raps.

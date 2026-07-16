@@ -1,11 +1,5 @@
 package com.studybuddy.core.domain.model.conjugation
 
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.ILS_ELLES
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.IL_ELLE
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.JE
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.NOUS
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.TU
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson.VOUS
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -92,15 +86,26 @@ class FrenchVerbsTest {
     }
 
     @Test
-    fun `every boss sentence contains a form of its verb`() {
+    fun `every boss sentence starts with a correct pronoun and form of its verb`() {
         FrenchVerbs.all.forEach { verb ->
             verb.bossSentences.forEach { sentence ->
-                val words = sentence.lowercase().split(" ", "'")
                 assertTrue(
-                    verb.forms.values.any { it in words },
-                    "\"$sentence\" has no form of ${verb.infinitive}",
+                    ConjugationPerson.entries.any {
+                        sentence.lowercase().startsWith(verb.display(it).lowercase())
+                    },
+                    "\"$sentence\" does not start with a pronoun+form of ${verb.infinitive}",
                 )
             }
+        }
+    }
+
+    @Test
+    fun `no form starts with h — the elision rule assumes none does`() {
+        FrenchVerbs.all.forEach { verb ->
+            assertTrue(
+                verb.forms.values.none { it.first() == 'h' },
+                "${verb.infinitive} has an h-form; model h muet/aspiré before adding it",
+            )
         }
     }
 

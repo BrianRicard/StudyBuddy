@@ -21,23 +21,16 @@ class BuildBattleRoundsUseCase @Inject constructor() {
     ): List<BattleRound> {
         val mainRounds = ConjugationPerson.entries
             .shuffled(random)
-            .map { person -> round(stage.verb, person, isReview = false, random) }
+            .map { person -> round(verb = stage.verb, person = person, isReview = false, random = random) }
 
-        val earlierVerbs = ConjugationStages.all
+        val reviewRounds = ConjugationStages.all
             .filter { it.order < stage.order }
-            .map { it.verb }
+            .flatMap { earlier -> ConjugationPerson.entries.map { earlier.verb to it } }
+            .shuffled(random)
+            .take(REVIEW_ROUND_COUNT)
+            .map { (verb, person) -> round(verb = verb, person = person, isReview = true, random = random) }
 
-        val reviewRounds = if (earlierVerbs.isEmpty()) {
-            emptyList()
-        } else {
-            List(REVIEW_ROUND_COUNT) {
-                val verb = earlierVerbs.random(random)
-                val person = ConjugationPerson.entries.random(random)
-                round(verb, person, isReview = true, random)
-            }
-        }
-
-        return mainRounds + reviewRounds
+        return (mainRounds + reviewRounds).shuffled(random)
     }
 
     private fun round(
@@ -52,10 +45,14 @@ class BuildBattleRoundsUseCase @Inject constructor() {
             .filter { it != correct }
             .shuffled(random)
             .take(OPTION_COUNT - 1)
+        val options = (distractors + correct).shuffled(random)
+        require(options.size == OPTION_COUNT) {
+            "${verb.infinitive} has too few distinct forms for $OPTION_COUNT options"
+        }
         return BattleRound(
             verb = verb,
             person = person,
-            options = (distractors + correct).shuffled(random),
+            options = options,
             isReview = isReview,
         )
     }
