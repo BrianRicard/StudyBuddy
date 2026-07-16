@@ -126,6 +126,51 @@ class MigrationsTest {
         }
     }
 
+    @Test
+    fun `MIGRATION_3_4 creates conjugation_progress table with unique index`() {
+        val sql = getMigration34Sql()
+        assertTrue(
+            sql.any { it.contains("CREATE TABLE IF NOT EXISTS `conjugation_progress`") },
+            "MIGRATION_3_4 should create conjugation_progress table",
+        )
+        val tableSql = sql.first { it.contains("CREATE TABLE IF NOT EXISTS `conjugation_progress`") }
+        listOf("id", "profileId", "stageId", "step", "bestCorrect", "bestTotal", "completedAt", "updatedAt")
+            .forEach { col ->
+                assertTrue(
+                    tableSql.contains("`$col`"),
+                    "conjugation_progress should have column '$col'",
+                )
+            }
+        assertTrue(
+            sql.any {
+                it.contains("CREATE UNIQUE INDEX IF NOT EXISTS " +
+                    "`index_conjugation_progress_profileId_stageId_step`")
+            },
+            "MIGRATION_3_4 should create the unique (profileId, stageId, step) index",
+        )
+    }
+
+    @Test
+    fun `MIGRATION_3_4 does not touch existing tables`() {
+        val sql = getMigration34Sql()
+        assertTrue(
+            sql.none { it.contains("ALTER TABLE") || it.contains("DROP TABLE") },
+            "MIGRATION_3_4 should only create new objects",
+        )
+    }
+
+    private fun getMigration34Sql(): List<String> {
+        val statements = mutableListOf<String>()
+        val sqlSlot = slot<String>()
+        val fakeDb = mockk<SupportSQLiteDatabase> {
+            every { execSQL(capture(sqlSlot)) } answers {
+                statements.add(sqlSlot.captured)
+            }
+        }
+        Migrations.MIGRATION_3_4.migrate(fakeDb)
+        return statements
+    }
+
     private fun getMigrationSql(): List<String> {
         val statements = mutableListOf<String>()
         val sqlSlot = slot<String>()

@@ -157,4 +157,33 @@ object Migrations {
             )
         }
     }
+
+    /**
+     * v3 -> v4: Add the conjugation quest progress table.
+     * One row per (profile, stage, step) storing the child's best result.
+     */
+    val MIGRATION_3_4 = object : Migration(3, 4) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `conjugation_progress` (
+                    `id` TEXT NOT NULL,
+                    `profileId` TEXT NOT NULL,
+                    `stageId` TEXT NOT NULL,
+                    `step` TEXT NOT NULL,
+                    `bestCorrect` INTEGER NOT NULL,
+                    `bestTotal` INTEGER NOT NULL,
+                    `completedAt` INTEGER,
+                    `updatedAt` INTEGER NOT NULL,
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_conjugation_progress_profileId_stageId_step` " +
+                    "ON `conjugation_progress` (`profileId`, `stageId`, `step`)",
+            )
+        }
+    }
 }

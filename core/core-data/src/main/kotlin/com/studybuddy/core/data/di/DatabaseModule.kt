@@ -78,7 +78,7 @@ object DatabaseModule {
                 }
             },
         )
-        .addMigrations(Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3)
+        .addMigrations(Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3, Migrations.MIGRATION_3_4)
         .build()
 
     @Provides
@@ -107,6 +107,9 @@ object DatabaseModule {
 
     @Provides
     fun provideReadingDao(db: StudyBuddyDatabase) = db.readingDao()
+
+    @Provides
+    fun provideConjugationDao(db: StudyBuddyDatabase) = db.conjugationDao()
 
     @Provides
     @Singleton
