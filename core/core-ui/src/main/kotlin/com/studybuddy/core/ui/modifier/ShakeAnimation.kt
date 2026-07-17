@@ -23,3 +23,27 @@ fun Modifier.shake(trigger: Boolean): Modifier = composed {
 
     graphicsLayer { this.translationX = translationX.value }
 }
+
+/**
+ * Event-keyed variant: shakes whenever [eventKey] changes while [active] is
+ * true, so repeated triggers on the same element (same boolean state) still
+ * animate every time.
+ */
+fun Modifier.shake(
+    eventKey: Int,
+    active: Boolean,
+): Modifier = composed {
+    val translationX = remember { Animatable(0f) }
+
+    LaunchedEffect(eventKey, active) {
+        if (active && eventKey > 0) {
+            repeat(3) {
+                translationX.animateTo(8f, animationSpec = spring(stiffness = 5000f))
+                translationX.animateTo(-8f, animationSpec = spring(stiffness = 5000f))
+            }
+            translationX.animateTo(0f, animationSpec = spring())
+        }
+    }
+
+    graphicsLayer { this.translationX = translationX.value }
+}

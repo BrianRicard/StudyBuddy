@@ -50,6 +50,10 @@ fun DrawScope.drawCreature(spec: CharacterSpec) {
         "canada_goose" -> drawCanadaGoose(spec)
         "turkey" -> drawTurkey(spec)
         "squirrel" -> drawSquirrel(spec)
+        "frog" -> drawFrog(spec)
+        "snail" -> drawSnail(spec)
+        "ladybug" -> drawLadybug(spec)
+        "lion" -> drawLion(spec)
         else -> drawFox(spec)
     }
 }
@@ -1026,6 +1030,208 @@ private fun DrawScope.drawSquirrel(spec: CharacterSpec) {
     )
 }
 
+private fun DrawScope.drawFrog(spec: CharacterSpec) {
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+    val c3 = spec.accentColor
+
+    // Back feet
+    oval(c3, w * 0.24f, h * 0.90f, w * 0.12f, h * 0.05f)
+    oval(c3, w * 0.76f, h * 0.90f, w * 0.12f, h * 0.05f)
+
+    // Body
+    oval(c1, w * 0.50f, h * 0.66f, w * 0.30f, h * 0.26f)
+
+    // Belly
+    oval(c2, w * 0.50f, h * 0.72f, w * 0.19f, h * 0.17f)
+
+    // Head
+    oval(c1, w * 0.50f, h * 0.36f, w * 0.28f, h * 0.22f)
+
+    // Bulging eyes on top
+    drawCircle(c1, w * 0.10f, Offset(w * 0.32f, h * 0.18f))
+    drawCircle(c1, w * 0.10f, Offset(w * 0.68f, h * 0.18f))
+    eye(Offset(w * 0.32f, h * 0.17f), w * 0.07f)
+    eye(Offset(w * 0.68f, h * 0.17f), w * 0.07f)
+
+    // Nostrils
+    drawCircle(c3, w * 0.012f, Offset(w * 0.44f, h * 0.34f))
+    drawCircle(c3, w * 0.012f, Offset(w * 0.56f, h * 0.34f))
+
+    // Wide happy mouth
+    smile(c3, w * 0.50f, h * 0.42f, w * 0.30f, h * 0.09f, w * 0.02f)
+    blush(Offset(w * 0.26f, h * 0.42f), w * 0.055f)
+    blush(Offset(w * 0.74f, h * 0.42f), w * 0.055f)
+
+    // Front feet
+    oval(c1, w * 0.36f, h * 0.88f, w * 0.09f, h * 0.05f)
+    oval(c1, w * 0.64f, h * 0.88f, w * 0.09f, h * 0.05f)
+}
+
+private fun DrawScope.drawSnail(spec: CharacterSpec) {
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+    val c3 = spec.accentColor
+
+    // Foot / body sliding along the ground
+    oval(c1, w * 0.48f, h * 0.86f, w * 0.40f, h * 0.09f)
+
+    // Neck up to the head
+    oval(c1, w * 0.26f, h * 0.62f, w * 0.10f, h * 0.24f)
+
+    // Head
+    drawCircle(c1, w * 0.13f, Offset(w * 0.28f, h * 0.40f))
+
+    // Antennae with little ball tips
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.22f, h * 0.32f)
+            cubicTo(w * 0.18f, h * 0.24f, w * 0.16f, h * 0.20f, w * 0.15f, h * 0.16f)
+        },
+        c1,
+        style = Stroke(w * 0.02f, cap = StrokeCap.Round),
+    )
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.34f, h * 0.30f)
+            cubicTo(w * 0.37f, h * 0.22f, w * 0.38f, h * 0.18f, w * 0.39f, h * 0.14f)
+        },
+        c1,
+        style = Stroke(w * 0.02f, cap = StrokeCap.Round),
+    )
+    drawCircle(c3, w * 0.03f, Offset(w * 0.15f, h * 0.14f))
+    drawCircle(c3, w * 0.03f, Offset(w * 0.39f, h * 0.12f))
+
+    eye(Offset(w * 0.24f, h * 0.38f), w * 0.05f)
+    eye(Offset(w * 0.34f, h * 0.38f), w * 0.05f)
+    smile(c3, w * 0.29f, h * 0.45f, w * 0.09f, h * 0.04f, w * 0.015f)
+    blush(Offset(w * 0.20f, h * 0.45f), w * 0.04f)
+
+    // Spiral shell
+    drawCircle(c2, w * 0.26f, Offset(w * 0.64f, h * 0.58f))
+    drawCircle(c3, w * 0.26f, Offset(w * 0.64f, h * 0.58f), style = Stroke(w * 0.02f))
+    drawCircle(c3, w * 0.17f, Offset(w * 0.66f, h * 0.56f), style = Stroke(w * 0.018f))
+    drawCircle(c3, w * 0.09f, Offset(w * 0.68f, h * 0.54f), style = Stroke(w * 0.016f))
+    drawCircle(c3, w * 0.03f, Offset(w * 0.70f, h * 0.52f))
+}
+
+private fun DrawScope.drawLadybug(spec: CharacterSpec) {
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+
+    // Antennae
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.42f, h * 0.16f)
+            cubicTo(w * 0.38f, h * 0.10f, w * 0.36f, h * 0.08f, w * 0.34f, h * 0.05f)
+        },
+        c2,
+        style = Stroke(w * 0.018f, cap = StrokeCap.Round),
+    )
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.58f, h * 0.16f)
+            cubicTo(w * 0.62f, h * 0.10f, w * 0.64f, h * 0.08f, w * 0.66f, h * 0.05f)
+        },
+        c2,
+        style = Stroke(w * 0.018f, cap = StrokeCap.Round),
+    )
+    drawCircle(c2, w * 0.025f, Offset(w * 0.34f, h * 0.05f))
+    drawCircle(c2, w * 0.025f, Offset(w * 0.66f, h * 0.05f))
+
+    // Head
+    drawCircle(c2, w * 0.14f, Offset(w * 0.50f, h * 0.24f))
+    eye(Offset(w * 0.44f, h * 0.22f), w * 0.05f)
+    eye(Offset(w * 0.56f, h * 0.22f), w * 0.05f)
+    smile(spec.accentColor, w * 0.50f, h * 0.28f, w * 0.10f, h * 0.04f, w * 0.015f)
+
+    // Round wing shell
+    oval(c1, w * 0.50f, h * 0.62f, w * 0.33f, h * 0.30f)
+
+    // Wing split line
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.50f, h * 0.34f)
+            lineTo(w * 0.50f, h * 0.92f)
+        },
+        c2,
+        style = Stroke(w * 0.02f),
+    )
+
+    // Spots
+    drawCircle(c2, w * 0.05f, Offset(w * 0.34f, h * 0.50f))
+    drawCircle(c2, w * 0.05f, Offset(w * 0.66f, h * 0.50f))
+    drawCircle(c2, w * 0.045f, Offset(w * 0.28f, h * 0.68f))
+    drawCircle(c2, w * 0.045f, Offset(w * 0.72f, h * 0.68f))
+    drawCircle(c2, w * 0.04f, Offset(w * 0.40f, h * 0.80f))
+    drawCircle(c2, w * 0.04f, Offset(w * 0.60f, h * 0.80f))
+}
+
+private fun DrawScope.drawLion(spec: CharacterSpec) {
+    val w = size.width
+    val h = size.height
+    val c1 = spec.primaryColor
+    val c2 = spec.secondaryColor
+    val c3 = spec.accentColor
+
+    // Tail with tuft
+    drawPath(
+        Path().apply {
+            moveTo(w * 0.76f, h * 0.86f)
+            cubicTo(w * 0.96f, h * 0.80f, w * 0.94f, h * 0.66f, w * 0.86f, h * 0.64f)
+        },
+        c1,
+        style = Stroke(w * 0.05f, cap = StrokeCap.Round),
+    )
+    drawCircle(c2, w * 0.05f, Offset(w * 0.86f, h * 0.63f))
+
+    // Body
+    oval(c1, w * 0.50f, h * 0.74f, w * 0.24f, h * 0.20f)
+    oval(Color(0xFFFFE0B2), w * 0.50f, h * 0.78f, w * 0.13f, h * 0.12f)
+
+    // Mane — a ring of petals around the head, kept inside the canvas
+    val maneCenterY = h * 0.37f
+    val maneRadius = w * 0.26f
+    repeat(12) { index ->
+        val angle = index * (2 * Math.PI / 12).toFloat()
+        val cx = w * 0.50f + maneRadius * kotlin.math.cos(angle)
+        val cy = maneCenterY + maneRadius * kotlin.math.sin(angle)
+        drawCircle(c2, w * 0.09f, Offset(cx, cy))
+    }
+    drawCircle(c2, maneRadius, Offset(w * 0.50f, maneCenterY))
+
+    // Head
+    drawCircle(c1, w * 0.21f, Offset(w * 0.50f, h * 0.37f))
+
+    // Muzzle
+    oval(Color(0xFFFFE0B2), w * 0.50f, h * 0.45f, w * 0.12f, h * 0.08f)
+
+    eye(Offset(w * 0.41f, h * 0.33f), w * 0.06f)
+    eye(Offset(w * 0.59f, h * 0.33f), w * 0.06f)
+
+    // Nose
+    tri(
+        Offset(w * 0.46f, h * 0.41f),
+        Offset(w * 0.54f, h * 0.41f),
+        Offset(w * 0.50f, h * 0.46f),
+        c3,
+    )
+
+    smile(c3, w * 0.50f, h * 0.48f, w * 0.10f, h * 0.04f, w * 0.015f)
+    blush(Offset(w * 0.32f, h * 0.41f), w * 0.05f)
+    blush(Offset(w * 0.68f, h * 0.41f), w * 0.05f)
+
+    // Front paws
+    oval(c1, w * 0.40f, h * 0.92f, w * 0.08f, h * 0.05f)
+    oval(c1, w * 0.60f, h * 0.92f, w * 0.08f, h * 0.05f)
+}
+
 // ─── Previews ─────────────────────────────────────────────────────────────────
 
 @Preview(showBackground = true)
@@ -1050,4 +1256,28 @@ private fun CanadaGoosePreview() {
 @Composable
 private fun OctopusPreview() {
     CreatureCanvas(AvatarCharacterRegistry.getSpec("octopus"), size = 130.dp)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FrogPreview() {
+    CreatureCanvas(AvatarCharacterRegistry.getSpec("frog"), size = 130.dp)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SnailPreview() {
+    CreatureCanvas(AvatarCharacterRegistry.getSpec("snail"), size = 130.dp)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LadybugPreview() {
+    CreatureCanvas(AvatarCharacterRegistry.getSpec("ladybug"), size = 130.dp)
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun LionPreview() {
+    CreatureCanvas(AvatarCharacterRegistry.getSpec("lion"), size = 130.dp)
 }

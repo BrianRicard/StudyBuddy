@@ -11,10 +11,17 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.core.ui.navigation.navigateSafely
 import com.studybuddy.feature.avatar.AvatarClosetScreen
 import com.studybuddy.feature.backup.BackupExportScreen
+import com.studybuddy.feature.conjugation.battle.BattleScreen
+import com.studybuddy.feature.conjugation.boss.BossScreen
+import com.studybuddy.feature.conjugation.learn.LearnScreen
+import com.studybuddy.feature.conjugation.path.ConjugationPathScreen
+import com.studybuddy.feature.conjugation.speak.SpeakScreen
+import com.studybuddy.feature.conjugation.write.WriteScreen
 import com.studybuddy.feature.dictee.add.AddDicteeScreen
 import com.studybuddy.feature.dictee.list.DicteeListScreen
 import com.studybuddy.feature.dictee.practice.DicteePracticeScreen
@@ -116,6 +123,11 @@ fun StudyBuddyNavHost(
                 },
                 onNavigateToReading = {
                     navController.navigateSafely(StudyBuddyRoutes.READING) {
+                        launchSingleTop = true
+                    }
+                },
+                onNavigateToConjugation = {
+                    navController.navigateSafely(StudyBuddyRoutes.CONJUGATION) {
                         launchSingleTop = true
                     }
                 },
@@ -426,6 +438,58 @@ fun StudyBuddyNavHost(
                     }
                 },
             )
+        }
+
+        // Conjugation Quest
+        composable(route = StudyBuddyRoutes.CONJUGATION) {
+            ConjugationPathScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToStep = { stageId, step ->
+                    val route = when (step) {
+                        ConjugationStep.LEARN -> StudyBuddyRoutes.conjugationLearn(stageId)
+                        ConjugationStep.WRITE -> StudyBuddyRoutes.conjugationWrite(stageId)
+                        ConjugationStep.SPEAK -> StudyBuddyRoutes.conjugationSpeak(stageId)
+                        ConjugationStep.BATTLE -> StudyBuddyRoutes.conjugationBattle(stageId)
+                        ConjugationStep.BOSS -> StudyBuddyRoutes.conjugationBoss(stageId)
+                    }
+                    navController.navigateSafely(route)
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_LEARN,
+            arguments = listOf(navArgument("stageId") { type = NavType.StringType }),
+        ) {
+            LearnScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_WRITE,
+            arguments = listOf(navArgument("stageId") { type = NavType.StringType }),
+        ) {
+            WriteScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_SPEAK,
+            arguments = listOf(navArgument("stageId") { type = NavType.StringType }),
+        ) {
+            SpeakScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_BATTLE,
+            arguments = listOf(navArgument("stageId") { type = NavType.StringType }),
+        ) {
+            BattleScreen(onNavigateBack = { navController.popBackStack() })
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_BOSS,
+            arguments = listOf(navArgument("stageId") { type = NavType.StringType }),
+        ) {
+            BossScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // Backup & Export

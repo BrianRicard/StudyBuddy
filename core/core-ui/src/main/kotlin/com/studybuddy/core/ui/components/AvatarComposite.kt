@@ -19,6 +19,7 @@ import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.ui.avatar.AvatarCharacterDrawables
 import com.studybuddy.core.ui.avatar.AvatarCharacterRegistry
+import com.studybuddy.core.ui.avatar.CreatureCanvas
 import com.studybuddy.core.ui.avatar.drawFaceAccessory
 import com.studybuddy.core.ui.avatar.drawHat
 import com.studybuddy.core.ui.avatar.drawOutfit
@@ -66,13 +67,18 @@ fun AvatarComposite(
         }
 
     Box(modifier = semanticsModifier) {
-        // ── Body — polished vector drawable ─────────────────────────────
-        Image(
-            painter = painterResource(AvatarCharacterDrawables.getDrawable(config.bodyId)),
-            contentDescription = null,
-            modifier = Modifier.size(size),
-            contentScale = ContentScale.Fit,
-        )
+        // ── Body — vector drawable, or Canvas for characters without one ─
+        val bodyDrawable = AvatarCharacterDrawables.getDrawableOrNull(config.bodyId)
+        if (bodyDrawable != null) {
+            Image(
+                painter = painterResource(bodyDrawable),
+                contentDescription = null,
+                modifier = Modifier.size(size),
+                contentScale = ContentScale.Fit,
+            )
+        } else {
+            CreatureCanvas(spec = spec, size = size)
+        }
 
         // ── Accessories — Canvas overlay at attachment points ───────────
         Canvas(modifier = Modifier.size(size)) {
@@ -95,8 +101,8 @@ fun AvatarComposite(
                 drawFaceAccessory(face.id, cx, cy, s / 2)
             }
 
-            // Hat (with rotation)
-            if (hat != null && hat.id != "hat_none") {
+            // Hat (with rotation); skipped for characters with baked-in headgear
+            if (ap.supportsHat && hat != null && hat.id != "hat_none") {
                 val s = w * HAT_SCALE * ap.hatScale
                 val cx = w * ap.hatAnchor.x
                 val cy = h * ap.hatAnchor.y

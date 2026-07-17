@@ -98,6 +98,7 @@ sealed interface HomeIntent {
     data object NavigateToMathChallenge : HomeIntent
     data object NavigateToPoems : HomeIntent
     data object NavigateToReading : HomeIntent
+    data object NavigateToConjugation : HomeIntent
     data object NavigateToAvatar : HomeIntent
     data object NavigateToStats : HomeIntent
     data object NavigateToRewards : HomeIntent
@@ -113,6 +114,7 @@ sealed interface HomeEffect {
     data object OpenMathChallenge : HomeEffect
     data object OpenPoems : HomeEffect
     data object OpenReading : HomeEffect
+    data object OpenConjugation : HomeEffect
     data object OpenAvatar : HomeEffect
     data object OpenStats : HomeEffect
     data object OpenRewards : HomeEffect
@@ -146,6 +148,7 @@ class HomeViewModel @Inject constructor(
                 HomeIntent.NavigateToMathChallenge -> _effects.emit(HomeEffect.OpenMathChallenge)
                 HomeIntent.NavigateToPoems -> _effects.emit(HomeEffect.OpenPoems)
                 HomeIntent.NavigateToReading -> _effects.emit(HomeEffect.OpenReading)
+                HomeIntent.NavigateToConjugation -> _effects.emit(HomeEffect.OpenConjugation)
                 HomeIntent.NavigateToAvatar -> _effects.emit(HomeEffect.OpenAvatar)
                 HomeIntent.NavigateToStats -> _effects.emit(HomeEffect.OpenStats)
                 HomeIntent.NavigateToRewards -> _effects.emit(HomeEffect.OpenRewards)
@@ -285,6 +288,7 @@ class HomeViewModel @Inject constructor(
                     PointSource.DICTEE -> CoreUiR.string.mode_dictee
                     PointSource.MATH -> CoreUiR.string.mode_math
                     PointSource.READING -> CoreUiR.string.nav_reading
+                    PointSource.CONJUGATION -> CoreUiR.string.mode_conjugation
                     else -> CoreUiR.string.mode_activity
                 }
                 val elapsed = now - event.timestamp

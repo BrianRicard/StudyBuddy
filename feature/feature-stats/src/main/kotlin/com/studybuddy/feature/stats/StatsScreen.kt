@@ -1,5 +1,6 @@
 package com.studybuddy.feature.stats
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
@@ -16,9 +17,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.EmojiEvents
+import androidx.compose.material.icons.outlined.EmojiEvents
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -45,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
+import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.LoadingState
@@ -54,6 +60,13 @@ import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StreakOrange
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toLocalDateTime
 
 @Composable
 fun StatsScreen(
@@ -137,6 +150,21 @@ internal fun StatsContent(
                         mathAvgSpeed = state.mathAvgSpeed,
                         mathSpeedTrend = state.mathSpeedTrend,
                         modifier = Modifier.animateItemAppearance(2),
+                    )
+                }
+
+                // 4. Verb Quest progress + parent-facing milestones
+                item {
+                    ConjugationSection(
+                        state = state,
+                        modifier = Modifier.animateItemAppearance(3),
+                    )
+                }
+
+                item {
+                    MilestonesSection(
+                        milestones = state.milestones,
+                        modifier = Modifier.animateItemAppearance(4),
                     )
                 }
 
@@ -497,6 +525,142 @@ private fun formatPercentage(value: Float): String = "${(value * PERCENTAGE_MULT
 private fun formatResponseTime(ms: Long): String {
     val seconds = ms / MS_PER_SECOND.toDouble()
     return "%.1fs".format(seconds)
+}
+
+// endregion
+
+// region Conjugation Quest
+
+@Composable
+private fun ConjugationSection(
+    state: StatsState,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_conjugation_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_conjugation_verbs_mastered),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.verbsMastered} / ${state.verbsTotal}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = {
+                    if (state.verbsTotal == 0) 0f else state.verbsMastered.toFloat() / state.verbsTotal
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp),
+                color = CorrectGreen,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_conjugation_games_done),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.conjugationGamesDone}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MilestonesSection(
+    milestones: List<MilestoneStatus>,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_milestones_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            milestones.forEach { milestone ->
+                MilestoneRow(milestone = milestone)
+            }
+        }
+    }
+}
+
+@Composable
+private fun MilestoneRow(milestone: MilestoneStatus) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = if (milestone.isAchieved) {
+                Icons.Filled.EmojiEvents
+            } else {
+                Icons.Outlined.EmojiEvents
+            },
+            contentDescription = null,
+            tint = if (milestone.isAchieved) PointsGold else MaterialTheme.colorScheme.outline,
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(milestoneLabelRes(milestone.milestone)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = milestone.achievedAt
+                    ?.let { stringResource(CoreUiR.string.milestone_achieved_on, formatMilestoneDate(it)) }
+                    ?: stringResource(
+                        CoreUiR.string.milestone_progress,
+                        milestone.current,
+                        milestone.target,
+                    ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@StringRes
+private fun milestoneLabelRes(milestone: ConjugationMilestone): Int = when (milestone) {
+    ConjugationMilestone.FIRST_STEP -> CoreUiR.string.milestone_first_step
+    ConjugationMilestone.FIRST_VERB -> CoreUiR.string.milestone_first_verb
+    ConjugationMilestone.THREE_VERBS -> CoreUiR.string.milestone_three_verbs
+    ConjugationMilestone.ALL_VERBS -> CoreUiR.string.milestone_all_verbs
+    ConjugationMilestone.PERFECT_QUEST -> CoreUiR.string.milestone_perfect_quest
+}
+
+private fun formatMilestoneDate(instant: Instant): String {
+    val date = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+    return date.toJavaLocalDate().format(
+        DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(Locale.getDefault()),
+    )
 }
 
 // endregion

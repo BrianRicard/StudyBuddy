@@ -69,6 +69,7 @@ include(":feature:feature-backup")
 include(":feature:feature-onboarding")
 include(":feature:feature-poems")
 include(":feature:feature-reading")
+include(":feature:feature-conjugation")
 
 // Shared
 include(":shared:shared-points")

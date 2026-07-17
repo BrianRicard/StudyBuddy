@@ -3,11 +3,9 @@ package com.studybuddy.core.ui.avatar
 import com.studybuddy.core.ui.R
 
 /**
- * Maps character IDs to their vector drawable resource IDs.
- *
- * The hybrid avatar system renders creature bodies from polished vector
- * drawable XMLs (with gradients and smooth curves) while accessories
- * are still drawn via Canvas at attachment-point anchors.
+ * Maps character IDs to their drawable resource IDs — vector XMLs for the
+ * original roster, generated PNGs (drawable-nodpi) for the newer characters.
+ * Accessories are drawn via Canvas at attachment-point anchors either way.
  */
 object AvatarCharacterDrawables {
 
@@ -37,6 +35,18 @@ object AvatarCharacterDrawables {
         "pirate_panda" to R.drawable.avatar_pirate_panda,
         "ninja_squirrel" to R.drawable.avatar_ninja_squirrel,
         "dj_hedgehog" to R.drawable.avatar_dj_hedgehog,
+        // Verb Quest creatures (Flux-generated PNGs)
+        "frog" to R.drawable.avatar_frog,
+        "snail" to R.drawable.avatar_snail,
+        "ladybug" to R.drawable.avatar_ladybug,
+        "lion" to R.drawable.avatar_lion,
+        // Generated hero roster (Flux-generated PNGs)
+        "hockey_duck" to R.drawable.avatar_hockey_duck,
+        "business_demon" to R.drawable.avatar_business_demon,
+        "hero_gecko" to R.drawable.avatar_hero_gecko,
+        "atomic_tardigrade" to R.drawable.avatar_atomic_tardigrade,
+        "gadget_octopus" to R.drawable.avatar_gadget_octopus,
+        "arcade_goose" to R.drawable.avatar_arcade_goose,
         // Legendary skins
         "elder_dragon" to R.drawable.avatar_elder_dragon,
         "wizard_owl" to R.drawable.avatar_wizard_owl,
@@ -51,4 +61,12 @@ object AvatarCharacterDrawables {
      * Returns the drawable resource ID for the given character, or the fox fallback.
      */
     fun getDrawable(characterId: String): Int = drawableMap[characterId] ?: drawableMap["fox"]!!
+
+    /**
+     * Returns the drawable resource ID for the given character, or null when
+     * the character has no image asset and should be Canvas-drawn instead
+     * (see [CreatureCanvas]). Currently every catalog character has an asset;
+     * the null path is a safety net for unknown ids.
+     */
+    fun getDrawableOrNull(characterId: String): Int? = drawableMap[characterId]
 }

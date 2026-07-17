@@ -36,4 +36,11 @@ data class AvatarAttachmentPoints(
      * Wide faces (e.g. octopus) get 1.2f; narrow faces get 0.9f.
      */
     val faceScale: Float = 1.0f,
+
+    /**
+     * False for characters whose art has baked-in headgear (helmet, detective
+     * hat, headband) — stacking an equipped hat on top looks broken, so the
+     * hat slot is simply not rendered for them.
+     */
+    val supportsHat: Boolean = true,
 )

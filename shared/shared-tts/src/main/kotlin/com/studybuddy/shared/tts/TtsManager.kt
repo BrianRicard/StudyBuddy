@@ -24,6 +24,9 @@ class TtsManager @Inject constructor(@ApplicationContext private val context: Co
     val state: StateFlow<TtsState> = _state.asStateFlow()
 
     fun initialize() {
+        // Idempotent: the engine is app-wide; re-creating it would leak the
+        // previous TextToSpeech instance and go silent while the new one binds.
+        if (tts != null) return
         tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 _state.value = TtsState.Ready

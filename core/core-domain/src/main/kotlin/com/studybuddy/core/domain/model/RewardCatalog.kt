@@ -3,7 +3,8 @@ package com.studybuddy.core.domain.model
 object RewardCatalog {
 
     // ── Characters (bodies) ────────────────────────────────────────────────────
-    // emoji field is kept as a text fallback; actual rendering uses CreatureCanvas.
+    // emoji field is kept as a text fallback; actual rendering uses drawable art
+    // (vector XMLs or generated PNGs) via AvatarCharacterDrawables.
     val characters = listOf(
         // Free starter characters
         CharacterBody("bunny", "Bunny", "\uD83D\uDC30"),
@@ -25,6 +26,18 @@ object RewardCatalog {
         CharacterBody("moose", "Moose", "\uD83E\uDEAB"),
         CharacterBody("canada_goose", "Canada Goose", "\uD83E\uDD9A"),
         CharacterBody("turkey", "Turkey", "\uD83E\uDD83"),
+        // Verb Quest characters
+        CharacterBody("frog", "Frog", "\uD83D\uDC38"),
+        CharacterBody("snail", "Snail", "\uD83D\uDC0C"),
+        CharacterBody("ladybug", "Ladybug", "\uD83D\uDC1E"),
+        CharacterBody("lion", "Lion", "\uD83E\uDD81"),
+        // Generated hero roster
+        CharacterBody("hockey_duck", "Hockey Duck", "\uD83C\uDFD2"),
+        CharacterBody("business_demon", "Business Demon", "\uD83D\uDE08"),
+        CharacterBody("hero_gecko", "Hero Gecko", "\uD83E\uDD8E"),
+        CharacterBody("atomic_tardigrade", "Atomic Tardigrade", "\uD83E\uDDA0"),
+        CharacterBody("gadget_octopus", "Gadget Octopus", "\uD83D\uDC19"),
+        CharacterBody("arcade_goose", "Arcade Goose", "\uD83D\uDD79\uFE0F"),
         // Epic characters
         CharacterBody("cyberpunk_bunny", "Cyberpunk Bunny", "\uD83D\uDC30"),
         CharacterBody("engineer_cat", "Engineer Cat", "\uD83D\uDC31"),
@@ -59,12 +72,15 @@ object RewardCatalog {
         RewardItem("char_dog", RewardCategory.CHARACTER, "Dog", "\uD83D\uDC36", 0, AvatarTier.STARTER),
         // Common
         RewardItem("char_cat", RewardCategory.CHARACTER, "Cat", "\uD83D\uDC31", 40, AvatarTier.COMMON),
+        RewardItem("char_snail", RewardCategory.CHARACTER, "Snail", "\uD83D\uDC0C", 45, AvatarTier.COMMON),
+        RewardItem("char_frog", RewardCategory.CHARACTER, "Frog", "\uD83D\uDC38", 55, AvatarTier.COMMON),
         RewardItem("char_shrimp", RewardCategory.CHARACTER, "Shrimp", "\uD83E\uDDE4", 45, AvatarTier.COMMON),
         RewardItem("char_turkey", RewardCategory.CHARACTER, "Turkey", "\uD83E\uDD83", 50, AvatarTier.COMMON),
         RewardItem("char_owl", RewardCategory.CHARACTER, "Owl", "\uD83E\uDD89", 60, AvatarTier.COMMON),
         RewardItem("char_fox", RewardCategory.CHARACTER, "Fox", "\uD83E\uDD8A", 65, AvatarTier.COMMON),
         // Rare
         RewardItem("char_bear", RewardCategory.CHARACTER, "Bear", "\uD83D\uDC3B", 100, AvatarTier.RARE),
+        RewardItem("char_ladybug", RewardCategory.CHARACTER, "Ladybug", "\uD83D\uDC1E", 110, AvatarTier.RARE),
         RewardItem("char_butterfly", RewardCategory.CHARACTER, "Butterfly", "\uD83E\uDD8B", 120, AvatarTier.RARE),
         RewardItem("char_panda", RewardCategory.CHARACTER, "Panda", "\uD83D\uDC3C", 140, AvatarTier.RARE),
         RewardItem("char_canada_goose", RewardCategory.CHARACTER, "Canada Goose", "\uD83E\uDD9A", 150, AvatarTier.RARE),
@@ -74,8 +90,57 @@ object RewardCatalog {
         RewardItem("char_octopus", RewardCategory.CHARACTER, "Octopus", "\uD83D\uDC19", 300, AvatarTier.EPIC),
         RewardItem("char_blue_monster", RewardCategory.CHARACTER, "Blue Monster", "\uD83D\uDC7E", 350, AvatarTier.EPIC),
         RewardItem("char_unicorn", RewardCategory.CHARACTER, "Unicorn", "\uD83E\uDD84", 400, AvatarTier.EPIC),
+        RewardItem("char_lion", RewardCategory.CHARACTER, "Lion", "\uD83E\uDD81", 450, AvatarTier.EPIC),
+        RewardItem(
+            "char_hockey_duck",
+            RewardCategory.CHARACTER,
+            "Hockey Duck",
+            "\uD83C\uDFD2",
+            350,
+            AvatarTier.EPIC,
+        ),
+        RewardItem(
+            "char_business_demon",
+            RewardCategory.CHARACTER,
+            "Business Demon",
+            "\uD83D\uDE08",
+            400,
+            AvatarTier.EPIC,
+        ),
         // Legendary
         RewardItem("char_dragon", RewardCategory.CHARACTER, "Dragon", "\uD83D\uDC09", 750, AvatarTier.LEGENDARY),
+        RewardItem(
+            "char_hero_gecko",
+            RewardCategory.CHARACTER,
+            "Hero Gecko",
+            "\uD83E\uDD8E",
+            800,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem(
+            "char_atomic_tardigrade",
+            RewardCategory.CHARACTER,
+            "Atomic Tardigrade",
+            "\uD83E\uDDA0",
+            950,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem(
+            "char_gadget_octopus",
+            RewardCategory.CHARACTER,
+            "Gadget Octopus",
+            "\uD83D\uDC19",
+            1100,
+            AvatarTier.LEGENDARY,
+        ),
+        RewardItem(
+            "char_arcade_goose",
+            RewardCategory.CHARACTER,
+            "Arcade Goose",
+            "\uD83D\uDD79\uFE0F",
+            1300,
+            AvatarTier.LEGENDARY,
+        ),
         // Epic — new skins
         RewardItem(
             "char_engineer_cat",

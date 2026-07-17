@@ -4,6 +4,7 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.studybuddy.core.data.db.dao.AvatarDao
+import com.studybuddy.core.data.db.dao.ConjugationDao
 import com.studybuddy.core.data.db.dao.DicteeDao
 import com.studybuddy.core.data.db.dao.MathDao
 import com.studybuddy.core.data.db.dao.PoemDao
@@ -14,6 +15,7 @@ import com.studybuddy.core.data.db.dao.RewardsDao
 import com.studybuddy.core.data.db.dao.VoicePackDao
 import com.studybuddy.core.data.db.entity.AvatarConfigEntity
 import com.studybuddy.core.data.db.entity.CachedPoemEntity
+import com.studybuddy.core.data.db.entity.ConjugationProgressEntity
 import com.studybuddy.core.data.db.entity.DicteeListEntity
 import com.studybuddy.core.data.db.entity.DicteeWordEntity
 import com.studybuddy.core.data.db.entity.FavouritePoemEntity
@@ -45,8 +47,9 @@ import com.studybuddy.core.data.db.entity.VoicePackEntity
         ReadingPassageEntity::class,
         ReadingQuestionEntity::class,
         ReadingResultEntity::class,
+        ConjugationProgressEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -60,4 +63,5 @@ abstract class StudyBuddyDatabase : RoomDatabase() {
     abstract fun voicePackDao(): VoicePackDao
     abstract fun poemDao(): PoemDao
     abstract fun readingDao(): ReadingDao
+    abstract fun conjugationDao(): ConjugationDao
 }

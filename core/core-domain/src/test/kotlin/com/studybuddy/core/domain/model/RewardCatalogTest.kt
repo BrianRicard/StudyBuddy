@@ -288,6 +288,17 @@ class RewardCatalogTest {
             "char_unicorn", "char_panda", "char_butterfly", "char_owl", "char_dragon",
             "char_bear", "char_blue_monster", "char_shrimp", "char_shark", "char_octopus",
             "char_moose", "char_canada_goose", "char_turkey",
+            // Verb Quest characters
+            "char_frog", "char_snail", "char_ladybug", "char_lion",
+            // Generated hero roster
+            "char_hockey_duck", "char_business_demon", "char_hero_gecko",
+            "char_atomic_tardigrade", "char_gadget_octopus", "char_arcade_goose",
+            // Epic and legendary skins
+            "char_cyberpunk_bunny", "char_engineer_cat", "char_samurai_fox",
+            "char_pirate_panda", "char_ninja_squirrel", "char_dj_hedgehog",
+            "char_elder_dragon", "char_wizard_owl", "char_royal_unicorn",
+            "char_robot_dog", "char_phoenix_butterfly", "char_steampunk_hamster",
+            "char_space_penguin",
             // Hats
             "hat_none", "hat_tophat", "hat_party", "hat_crown", "hat_wizard",
             // Face

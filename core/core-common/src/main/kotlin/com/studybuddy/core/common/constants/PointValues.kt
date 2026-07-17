@@ -21,6 +21,17 @@ object PointValues {
     const val POEM_RECITED = 15
     const val POEM_GREAT_RECITATION = 25
 
+    // Conjugation quest
+    const val CONJUGATION_LISTEN_COMPLETE = 10
+    const val CONJUGATION_FORM_WRITTEN = 10
+    const val CONJUGATION_FORM_SPOKEN = 15
+    const val CONJUGATION_FORM_ECHOED = 5
+    const val CONJUGATION_BATTLE_WIN = 30
+    const val CONJUGATION_BOSS_WIN = 50
+    const val CONJUGATION_BOSS_SPOKEN_BONUS = 10
+    const val CONJUGATION_STAGE_COMPLETE = 50
+    const val CONJUGATION_PERFECT_BONUS = 25
+
     // General
     const val DAILY_LOGIN = 10
     const val FIRST_SESSION_OF_DAY = 20

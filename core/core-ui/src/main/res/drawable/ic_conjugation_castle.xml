@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <!-- Castle body -->
+    <path android:pathData="M10,20 L38,20 L38,42 L10,42 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="24"
+                android:startY="20"
+                android:endX="24"
+                android:endY="42">
+                <item android:offset="0" android:color="#FFB89AE8"/>
+                <item android:offset="1" android:color="#FF8B5CD6"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Left tower -->
+    <path android:pathData="M6,14 L14,14 L14,42 L6,42 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="10"
+                android:startY="14"
+                android:endX="10"
+                android:endY="42">
+                <item android:offset="0" android:color="#FFA07CE0"/>
+                <item android:offset="1" android:color="#FF7A4BC8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Right tower -->
+    <path android:pathData="M34,14 L42,14 L42,42 L34,42 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="38"
+                android:startY="14"
+                android:endX="38"
+                android:endY="42">
+                <item android:offset="0" android:color="#FFA07CE0"/>
+                <item android:offset="1" android:color="#FF7A4BC8"/>
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Battlements -->
+    <path
+        android:pathData="M6,14 L8,14 L8,11 L10,11 L10,14 L12,14 L12,11 L14,11 L14,14 M34,14 L36,14 L36,11 L38,11 L38,14 L40,14 L40,11 L42,11 L42,14 M18,20 L20,20 L20,17 L22,17 L22,20 L26,20 L26,17 L28,17 L28,20 L30,20"
+        android:fillColor="#00000000"
+        android:strokeColor="#FF7A4BC8"
+        android:strokeWidth="1.5" />
+    <!-- Gate -->
+    <path
+        android:pathData="M20,42 L20,32 A4,4 0 0,1 28,32 L28,42 Z"
+        android:fillColor="#FF5D3A99" />
+    <!-- Flag pole + flag -->
+    <path
+        android:pathData="M24,17 L24,7"
+        android:strokeColor="#FF5D3A99"
+        android:strokeWidth="1.5"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M24,7 L32,9.5 L24,12 Z"
+        android:fillColor="#FFFFC93C" />
+    <!-- Tower windows -->
+    <path
+        android:pathData="M9,20 L11,20 A1,1 0 0,1 11,20 L11,24 L9,24 Z M37,20 L39,20 L39,24 L37,24 Z"
+        android:fillColor="#FFFFE9A0" />
+    <!-- Star above the gate: the quest reward -->
+    <path
+        android:pathData="M24,23 L25.1,25.6 L27.9,25.8 L25.8,27.7 L26.4,30.4 L24,29 L21.6,30.4 L22.2,27.7 L20.1,25.8 L22.9,25.6 Z"
+        android:fillColor="#FFFFC93C" />
+</vector>

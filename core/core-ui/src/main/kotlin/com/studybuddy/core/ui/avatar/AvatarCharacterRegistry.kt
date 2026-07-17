@@ -290,6 +290,159 @@ object AvatarCharacterRegistry {
             ),
         ),
 
+        // ── Verb Quest creatures ────────────────────────────────────────────
+
+        CharacterSpec(
+            id = "frog",
+            primaryColor = Color(0xFF66BB6A),
+            secondaryColor = Color(0xFFC8E6C9),
+            accentColor = Color(0xFF2E7D32),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: big eyes at the very top of the head
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.17f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "snail",
+            primaryColor = Color(0xFFBCAAA4),
+            secondaryColor = Color(0xFFFF8A65),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: head on the RIGHT, shell on the left.
+                hatAnchor = Offset(0.72f, 0.28f),
+                faceAnchor = Offset(0.70f, 0.50f),
+                chestAnchor = Offset(0.65f, 0.68f),
+                petAnchor = Offset(0.15f, 0.85f),
+                hatScale = 0.75f,
+                hatRotation = 8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "ladybug",
+            primaryColor = Color(0xFFE53935),
+            secondaryColor = Color(0xFF212121),
+            accentColor = Color(0xFFF5F5F5),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.08f),
+                faceAnchor = Offset(0.50f, 0.24f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "lion",
+            primaryColor = Color(0xFFFFB74D),
+            secondaryColor = Color(0xFFE65100),
+            accentColor = Color(0xFF4E342E),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Big mane — hats sit slightly larger and higher
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.62f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.15f,
+            ),
+        ),
+
+        // ── Generated hero roster (Flux PNG art) ────────────────────────────
+
+        CharacterSpec(
+            id = "hockey_duck",
+            primaryColor = Color(0xFFFFD54F),
+            secondaryColor = Color(0xFF1E5AA8),
+            accentColor = Color(0xFFD32F2F),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in hockey helmet — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "business_demon",
+            primaryColor = Color(0xFFC62828),
+            secondaryColor = Color(0xFF9E9E9E),
+            accentColor = Color(0xFF1E5AA8),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Hat sits between the little horns
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.52f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "hero_gecko",
+            primaryColor = Color(0xFFB0BEC5),
+            secondaryColor = Color(0xFFD32F2F),
+            accentColor = Color(0xFF66BB6A),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in armored crest — the hat slot is not rendered
+                hatAnchor = Offset(0.55f, 0.05f),
+                faceAnchor = Offset(0.57f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.42f),
+                petAnchor = Offset(0.85f, 0.82f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "atomic_tardigrade",
+            primaryColor = Color(0xFF8FBCB4),
+            secondaryColor = Color(0xFF9CFF57),
+            accentColor = Color(0xFF2E7D32),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.05f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "gadget_octopus",
+            primaryColor = Color(0xFFB39DDB),
+            secondaryColor = Color(0xFFD7CCC8),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in detective hat — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.31f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.85f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "arcade_goose",
+            primaryColor = Color(0xFF795548),
+            secondaryColor = Color(0xFF212121),
+            accentColor = Color(0xFFD32F2F),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Head is top-RIGHT in the art; baked-in headband — no hat slot
+                hatAnchor = Offset(0.60f, 0.03f),
+                faceAnchor = Offset(0.60f, 0.09f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.85f),
+                supportsHat = false,
+            ),
+        ),
+
         // ── Epic skins ──────────────────────────────────────────────────────
 
         CharacterSpec(

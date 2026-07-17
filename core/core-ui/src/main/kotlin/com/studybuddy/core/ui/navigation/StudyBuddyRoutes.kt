@@ -29,6 +29,12 @@ object StudyBuddyRoutes {
     const val DICTEE_ADD = "dictee/add"
     const val DICTEE_EDIT = "dictee/edit/{setId}"
     const val READING = "reading"
+    const val CONJUGATION = "conjugation"
+    const val CONJUGATION_LEARN = "conjugation/learn/{stageId}"
+    const val CONJUGATION_WRITE = "conjugation/write/{stageId}"
+    const val CONJUGATION_SPEAK = "conjugation/speak/{stageId}"
+    const val CONJUGATION_BATTLE = "conjugation/battle/{stageId}"
+    const val CONJUGATION_BOSS = "conjugation/boss/{stageId}"
     const val READING_DETAIL = "reading/detail/{passageId}"
     const val READING_QUESTIONS =
         "reading/questions/{passageId}/{readingTimeMs}"
@@ -41,6 +47,12 @@ object StudyBuddyRoutes {
     const val ONBOARDING = "onboarding"
 
     fun readingDetail(passageId: String) = "reading/detail/$passageId"
+
+    fun conjugationLearn(stageId: String) = "conjugation/learn/$stageId"
+    fun conjugationWrite(stageId: String) = "conjugation/write/$stageId"
+    fun conjugationSpeak(stageId: String) = "conjugation/speak/$stageId"
+    fun conjugationBattle(stageId: String) = "conjugation/battle/$stageId"
+    fun conjugationBoss(stageId: String) = "conjugation/boss/$stageId"
     fun readingQuestions(
         passageId: String,
         readingTimeMs: Long,
