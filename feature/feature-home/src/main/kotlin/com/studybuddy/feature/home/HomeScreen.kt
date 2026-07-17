@@ -531,7 +531,7 @@ private fun ModeCardsGrid(
                 subtitle = stringResource(CoreUiR.string.label_conjugation),
                 onClick = onConjugationClick,
                 modifier = Modifier.weight(1f),
-                iconRes = CoreUiR.drawable.ic_dictee_illustration,
+                iconRes = CoreUiR.drawable.ic_conjugation_castle,
                 containerColor = ModeCardColor.Tertiary,
                 infiniteTransition = infiniteTransition,
                 animationDelay = BOB_ANIMATION_DELAY * 5,
@@ -702,7 +702,7 @@ private fun RecentActivityRow(activity: RecentActivity) {
                         PointSource.DICTEE -> CoreUiR.drawable.ic_dictee_illustration
                         PointSource.MATH -> CoreUiR.drawable.ic_math_illustration
                         PointSource.POEMS -> CoreUiR.drawable.ic_poems_notepad
-                        PointSource.CONJUGATION -> CoreUiR.drawable.ic_dictee_illustration
+                        PointSource.CONJUGATION -> CoreUiR.drawable.ic_conjugation_castle
                         else -> CoreUiR.drawable.ic_milestone_star
                     },
                 ),

@@ -145,14 +145,16 @@ class StatsViewModel @Inject constructor(
     }
 
     /**
-     * Counts total study sessions by counting point events from DICTEE and MATH sources.
+     * Counts total study sessions by counting point events from learning sources.
      */
-    private fun countTotalSessions(events: List<PointEvent>): Int =
-        events.count { it.source == PointSource.DICTEE || it.source == PointSource.MATH }
+    private fun countTotalSessions(events: List<PointEvent>): Int = events.count {
+        it.source == PointSource.DICTEE ||
+            it.source == PointSource.MATH ||
+            it.source == PointSource.CONJUGATION
+    }
 
     /** Counts completed quest games (steps) across all stages. */
-    private fun countConjugationGames(path: List<ConjugationPathStage>): Int =
-        path.sumOf { it.completedStepCount }
+    private fun countConjugationGames(path: List<ConjugationPathStage>): Int = path.sumOf { it.completedStepCount }
 
     /**
      * Builds weekly data for the chart by grouping point events into each day

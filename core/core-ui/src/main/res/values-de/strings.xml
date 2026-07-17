@@ -589,7 +589,6 @@
     <string name="nav_conjugation">Verben</string>
     <string name="mode_conjugation">Verben-Quest</string>
     <string name="label_conjugation">Verben-Abenteuer</string>
-    <string name="home_conjugation_desc">Bring dem König sein Lächeln zurück!</string>
     <string name="conjugation_title">Verben-Quest</string>
     <string name="conjugation_subtitle">Der Brummkönig hat sein Lächeln verloren. Meistere die Zauberverben, um es zurückzubringen!</string>
     <string name="conjugation_stage_title_1">Die verzauberte Brücke</string>
@@ -606,8 +605,10 @@
     <string name="conjugation_stage_story_6">Da ist es — das Schloss! Sprich mit dem Verb „dire“ die Zauberworte, die den König wieder lächeln lassen.</string>
     <string name="conjugation_stage_verb">Verb: %1$s</string>
     <string name="conjugation_stage_locked">Beende zuerst die vorherige Etappe</string>
-    <string name="conjugation_steps_done">%1$d von %2$d Spielen geschafft</string>
-    <string name="conjugation_start">Spielen</string>
+    <plurals name="conjugation_steps_done">
+        <item quantity="one">%1$d von %2$d Spielen geschafft</item>
+        <item quantity="other">%1$d von %2$d Spielen geschafft</item>
+    </plurals>
     <string name="conjugation_quest_complete">Du hast es geschafft! Der König lächelt und das ganze Königreich feiert!</string>
     <string name="conjugation_step_learn">Hören</string>
     <string name="conjugation_step_write">Schreiben</string>
@@ -615,7 +616,6 @@
     <string name="conjugation_step_battle">Duell</string>
     <string name="conjugation_step_boss">Boss</string>
     <string name="conjugation_next">Weiter</string>
-    <string name="conjugation_back">Zurück</string>
     <string name="conjugation_learn_title">Hör zu und lerne</string>
     <string name="conjugation_learn_instruction">Tippe auf jede Zeile, um sie zu hören, und sprich sie laut nach!</string>
     <string name="conjugation_learn_done">Ich habe alles gehört!</string>
@@ -655,7 +655,6 @@
     <string name="conjugation_boss_intro_final">Der Brummkönig persönlich fordert dich zum großen Finale heraus!</string>
     <string name="conjugation_boss_listen">Rap anhören</string>
     <string name="conjugation_boss_rebuild">Baue jetzt den Satz wieder zusammen!</string>
-    <string name="conjugation_boss_word_bank">Wörterkiste</string>
     <string name="conjugation_boss_encourage">Das Wort gehört woanders hin — bleib im Takt!</string>
     <string name="conjugation_boss_sentence_done">Du hast die ganze Zeile geschafft!</string>
     <string name="conjugation_boss_won">Du hast das Rap-Battle gewonnen!</string>

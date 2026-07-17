@@ -47,6 +47,8 @@ data class SpeakState(
     /** True when a whisper model is loaded and the mic flow can be used. */
     val isMicMode: Boolean = false,
     val hasAudioPermission: Boolean = false,
+    /** True when mic permission was denied: explain it and offer echo mode. */
+    val showPermissionHint: Boolean = false,
     val spokenCount: Int = 0,
     val attemptsOnCurrent: Int = 0,
     val isSaving: Boolean = false,
@@ -61,6 +63,11 @@ sealed interface SpeakIntent {
     data object StartRecording : SpeakIntent
     data object StopRecording : SpeakIntent
     data object ConfirmEcho : SpeakIntent
+
+    /** Initial permission state read by the screen — never auto-starts recording. */
+    data class PermissionSeeded(val granted: Boolean) : SpeakIntent
+
+    /** Result of an in-flow permission request — starts recording when granted. */
     data class AudioPermissionResult(val granted: Boolean) : SpeakIntent
     data object Next : SpeakIntent
 }
@@ -92,7 +99,6 @@ class SpeakViewModel @Inject constructor(
     val effects: SharedFlow<SpeakEffect> = _effects.asSharedFlow()
 
     init {
-        ttsManager.initialize()
         loadWhisperModelIfAvailable()
     }
 
@@ -102,6 +108,9 @@ class SpeakViewModel @Inject constructor(
             is SpeakIntent.StartRecording -> startRecording()
             is SpeakIntent.StopRecording -> stopRecording()
             is SpeakIntent.ConfirmEcho -> confirmEcho()
+            is SpeakIntent.PermissionSeeded ->
+                _state.update { it.copy(hasAudioPermission = intent.granted) }
+
             is SpeakIntent.AudioPermissionResult -> onPermissionResult(intent.granted)
             is SpeakIntent.Next -> next()
         }
@@ -184,7 +193,9 @@ class SpeakViewModel @Inject constructor(
     /** Echo mode: the child says the form out loud and self-confirms. */
     private fun confirmEcho() {
         val current = _state.value
-        if (current.isMicMode || current.phase == SpeakPhase.HEARD) return
+        if (current.phase == SpeakPhase.HEARD) return
+        // Echo is the fallback when there is no model or the mic was denied.
+        if (current.isMicMode && !current.showPermissionHint) return
         _state.update { it.copy(phase = SpeakPhase.HEARD, spokenCount = it.spokenCount + 1) }
         viewModelScope.launch {
             awardPointsUseCase(
@@ -198,9 +209,10 @@ class SpeakViewModel @Inject constructor(
     }
 
     private fun onPermissionResult(granted: Boolean) {
-        _state.update {
-            // Without permission the mic flow can't work; echo mode takes over.
-            it.copy(hasAudioPermission = granted, isMicMode = it.isMicMode && granted)
+        _state.update { it.copy(hasAudioPermission = granted, showPermissionHint = !granted) }
+        if (granted) {
+            // The child already tapped the mic — don't make them tap twice.
+            startRecording()
         }
     }
 
@@ -234,7 +246,9 @@ class SpeakViewModel @Inject constructor(
     override fun onCleared() {
         recordingJob?.cancel()
         audioRecorder.release()
-        whisperEngine.release()
+        // Deliberately NOT releasing whisperEngine: it is a singleton shared
+        // with the poems screen, and freeing the native context here could
+        // race an in-flight transcription.
         ttsManager.stop()
         super.onCleared()
     }

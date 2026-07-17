@@ -6,6 +6,9 @@ import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
+import com.studybuddy.core.domain.model.conjugation.ConjugationProgress
+import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
@@ -261,5 +264,52 @@ class StatsViewModelTest {
         val weeklyData = viewModel.buildWeeklyData(events)
         val today = weeklyData.first { it.isToday }
         assertEquals(30, today.points)
+    }
+
+    @Test
+    fun `conjugation progress feeds verbs mastered, games done and milestones`() = runTest {
+        setupDefaultMocks()
+        val allSteps = ConjugationStep.entries.map { step ->
+            ConjugationProgress(
+                id = "etre-$step",
+                profileId = "default",
+                stageId = "etre",
+                step = step,
+                bestCorrect = 6,
+                bestTotal = 6,
+                completedAt = Instant.fromEpochMilliseconds(1_000),
+                updatedAt = Instant.fromEpochMilliseconds(1_000),
+            )
+        }
+        every { conjugationRepository.getProgressForProfile("default") } returns
+            flowOf(allSteps + allSteps.first().copy(id = "avoir-LEARN", stageId = "avoir"))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.verbsMastered)
+        assertEquals(6, state.verbsTotal)
+        assertEquals(6, state.conjugationGamesDone)
+        val firstVerb = state.milestones.first { it.milestone == ConjugationMilestone.FIRST_VERB }
+        assertTrue(firstVerb.isAchieved)
+        val allVerbs = state.milestones.first { it.milestone == ConjugationMilestone.ALL_VERBS }
+        assertFalse(allVerbs.isAchieved)
+        assertEquals(1, allVerbs.current)
+    }
+
+    @Test
+    fun `conjugation point events count as sessions`() = runTest {
+        setupDefaultMocks(
+            pointEvents = listOf(
+                createPointEvent(source = PointSource.MATH),
+                createPointEvent(source = PointSource.CONJUGATION),
+                createPointEvent(source = PointSource.PURCHASE),
+            ),
+        )
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.state.value.totalSessions)
     }
 }

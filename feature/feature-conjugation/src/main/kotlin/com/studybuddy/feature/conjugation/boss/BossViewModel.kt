@@ -47,6 +47,8 @@ data class BossState(
     val phase: BossPhase = BossPhase.INTRO,
     val mistakes: Int = 0,
     val shakeChipId: Int? = null,
+    /** Bumped on every wrong tap so re-tapping the same chip re-triggers the shake. */
+    val shakeEvent: Int = 0,
     val isSaving: Boolean = false,
 ) {
     val sentences: List<String> get() = stage?.verb?.bossSentences.orEmpty()
@@ -84,10 +86,6 @@ class BossViewModel @Inject constructor(
 
     private val _effects = MutableSharedFlow<BossEffect>()
     val effects: SharedFlow<BossEffect> = _effects.asSharedFlow()
-
-    init {
-        ttsManager.initialize()
-    }
 
     fun onIntent(intent: BossIntent) {
         when (intent) {
@@ -138,7 +136,13 @@ class BossViewModel @Inject constructor(
             }
         } else {
             // Gentle nudge only: the chip shakes, nothing is lost.
-            _state.update { it.copy(mistakes = it.mistakes + 1, shakeChipId = chipId) }
+            _state.update {
+                it.copy(
+                    mistakes = it.mistakes + 1,
+                    shakeChipId = chipId,
+                    shakeEvent = it.shakeEvent + 1,
+                )
+            }
         }
     }
 

@@ -589,7 +589,6 @@
     <string name="nav_conjugation">Verbes</string>
     <string name="mode_conjugation">La Quête des Verbes</string>
     <string name="label_conjugation">Aventure des verbes</string>
-    <string name="home_conjugation_desc">Pars à l\'aventure pour redonner le sourire au Roi !</string>
     <string name="conjugation_title">La Quête des Verbes</string>
     <string name="conjugation_subtitle">Le Roi Grognon a perdu son sourire. Maîtrise les verbes magiques pour le retrouver !</string>
     <string name="conjugation_stage_title_1">Le Pont Enchanté</string>
@@ -606,8 +605,10 @@
     <string name="conjugation_stage_story_6">Le voilà — le château ! Utilise le verbe « dire » pour dire les mots magiques qui redonneront le sourire au Roi.</string>
     <string name="conjugation_stage_verb">Verbe : %1$s</string>
     <string name="conjugation_stage_locked">Termine l\'étape précédente pour débloquer celle-ci</string>
-    <string name="conjugation_steps_done">%1$d jeux terminés sur %2$d</string>
-    <string name="conjugation_start">Jouer</string>
+    <plurals name="conjugation_steps_done">
+        <item quantity="one">%1$d jeu terminé sur %2$d</item>
+        <item quantity="other">%1$d jeux terminés sur %2$d</item>
+    </plurals>
     <string name="conjugation_quest_complete">Tu as réussi ! Le Roi sourit et tout le royaume fait la fête !</string>
     <string name="conjugation_step_learn">Écoute</string>
     <string name="conjugation_step_write">Écris</string>
@@ -615,7 +616,6 @@
     <string name="conjugation_step_battle">Duel</string>
     <string name="conjugation_step_boss">Boss</string>
     <string name="conjugation_next">Suivant</string>
-    <string name="conjugation_back">Retour</string>
     <string name="conjugation_learn_title">Écoute et apprends</string>
     <string name="conjugation_learn_instruction">Touche chaque ligne pour l\'entendre, puis répète à voix haute !</string>
     <string name="conjugation_learn_done">J\'ai tout écouté !</string>
@@ -655,7 +655,6 @@
     <string name="conjugation_boss_intro_final">Le Roi Grognon en personne te défie dans la bataille de rap finale !</string>
     <string name="conjugation_boss_listen">Écouter le rap</string>
     <string name="conjugation_boss_rebuild">Maintenant, reconstruis la phrase !</string>
-    <string name="conjugation_boss_word_bank">Banque de mots</string>
     <string name="conjugation_boss_encourage">Ce mot va ailleurs — garde le rythme !</string>
     <string name="conjugation_boss_sentence_done">Tu as trouvé toute la phrase !</string>
     <string name="conjugation_boss_won">Tu as gagné la bataille de rap !</string>

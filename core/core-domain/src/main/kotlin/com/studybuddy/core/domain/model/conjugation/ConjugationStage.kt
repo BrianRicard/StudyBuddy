@@ -37,7 +37,8 @@ object ConjugationStages {
         ConjugationStage(order = 3, verb = FrenchVerbs.AIMER, friendCharacterId = "cat", bossCharacterId = "snail"),
         ConjugationStage(order = 4, verb = FrenchVerbs.ALLER, friendCharacterId = "dog", bossCharacterId = "shark"),
         ConjugationStage(order = 5, verb = FrenchVerbs.FAIRE, friendCharacterId = "panda", bossCharacterId = "dragon"),
-        ConjugationStage(order = 6, verb = FrenchVerbs.DIRE, friendCharacterId = "ladybug", bossCharacterId = "lion"),
+        // Friend is deliberately NOT the ladybug: the battle's gift is a ladybug.
+        ConjugationStage(order = 6, verb = FrenchVerbs.DIRE, friendCharacterId = "bear", bossCharacterId = "lion"),
     )
 
     fun byId(stageId: String): ConjugationStage? = all.firstOrNull { it.id == stageId }

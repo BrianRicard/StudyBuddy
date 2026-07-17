@@ -3,7 +3,7 @@ package com.studybuddy.feature.conjugation.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,10 +12,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.studybuddy.core.ui.R as CoreUiR
-import com.studybuddy.core.ui.avatar.AvatarCharacterRegistry
-import com.studybuddy.core.ui.avatar.CreatureCanvas
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
+import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.components.CharacterPreview
 
 /** Title of a quest stage, keyed by its order on the path. */
 @StringRes
@@ -57,15 +56,19 @@ fun praiseRes(seed: Int): Int = when (seed % 3) {
     else -> CoreUiR.string.conjugation_correct_3
 }
 
-/** A quest creature (friend or boss) drawn with the shared canvas renderer. */
+/**
+ * A quest creature (friend or boss). Delegates to [CharacterPreview] so
+ * characters with polished vector art look the same here as in the closet,
+ * while canvas-only characters (frog, snail, ladybug, lion) still render.
+ */
 @Composable
 fun QuestCreature(
     characterId: String,
     modifier: Modifier = Modifier,
     size: Dp = 120.dp,
 ) {
-    CreatureCanvas(
-        spec = AvatarCharacterRegistry.getSpec(characterId),
+    CharacterPreview(
+        characterId = characterId,
         modifier = modifier,
         size = size,
     )
@@ -87,7 +90,7 @@ fun StepProgressBar(
             progress = { if (total == 0) 0f else current.toFloat() / total },
             modifier = Modifier
                 .weight(1f)
-                .size(height = 10.dp, width = 0.dp),
+                .height(10.dp),
         )
         Text(
             text = "$current / $total",

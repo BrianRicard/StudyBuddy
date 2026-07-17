@@ -42,7 +42,6 @@ data class WriteState(
     val feedback: WriteFeedback = WriteFeedback.Idle,
     val attemptsOnCurrent: Int = 0,
     val firstTryCorrect: Int = 0,
-    val isFinished: Boolean = false,
     val isSaving: Boolean = false,
 ) {
     val person: ConjugationPerson get() = ConjugationPerson.entries[index]
@@ -82,10 +81,6 @@ class WriteViewModel @Inject constructor(
 
     private val _effects = MutableSharedFlow<WriteEffect>()
     val effects: SharedFlow<WriteEffect> = _effects.asSharedFlow()
-
-    init {
-        ttsManager.initialize()
-    }
 
     fun onIntent(intent: WriteIntent) {
         when (intent) {
@@ -166,7 +161,7 @@ class WriteViewModel @Inject constructor(
     private fun finish() {
         val current = _state.value
         if (current.isSaving) return
-        _state.update { it.copy(isSaving = true, isFinished = true) }
+        _state.update { it.copy(isSaving = true) }
         viewModelScope.launch {
             conjugationRepository.recordStepResult(
                 profileId = AppConstants.DEFAULT_PROFILE_ID,

@@ -1,7 +1,10 @@
 package com.studybuddy.feature.conjugation.boss
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,7 +15,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -24,13 +26,13 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.layout.FlowRow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.ui.R as CoreUiR
@@ -88,22 +90,31 @@ private fun BossContent(
     ) { padding ->
         val stage = state.stage ?: return@Scaffold
 
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+                .padding(padding),
         ) {
-            QuestCreature(characterId = stage.bossCharacterId, size = 120.dp)
-            Spacer(Modifier.height(12.dp))
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                QuestCreature(characterId = stage.bossCharacterId, size = 120.dp)
+                Spacer(Modifier.height(12.dp))
 
-            when (state.phase) {
-                BossPhase.INTRO -> IntroSection(state = state, onIntent = onIntent)
-                BossPhase.BUILD, BossPhase.SENTENCE_DONE -> BuildSection(state = state, onIntent = onIntent)
-                BossPhase.WON -> WonSection(state = state, onIntent = onIntent)
+                when (state.phase) {
+                    BossPhase.INTRO -> IntroSection(state = state, onIntent = onIntent)
+                    BossPhase.BUILD, BossPhase.SENTENCE_DONE ->
+                        BuildSection(state = state, onIntent = onIntent)
+
+                    BossPhase.WON -> WonSection(state = state, onIntent = onIntent)
+                }
             }
+
+            CelebrationOverlay(visible = state.phase == BossPhase.WON)
         }
     }
 }
@@ -201,13 +212,18 @@ private fun BuildSection(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
             ) {
                 state.bank.filterNot { it.isUsed }.forEach { chip ->
-                    AssistChip(
-                        onClick = { onIntent(BossIntent.TapChip(chip.id)) },
-                        label = {
-                            Text(chip.text, style = MaterialTheme.typography.titleMedium)
-                        },
-                        modifier = Modifier.shake(trigger = state.shakeChipId == chip.id),
-                    )
+                    key(chip.id) {
+                        AssistChip(
+                            onClick = { onIntent(BossIntent.TapChip(chip.id)) },
+                            label = {
+                                Text(chip.text, style = MaterialTheme.typography.titleMedium)
+                            },
+                            modifier = Modifier.shake(
+                                eventKey = state.shakeEvent,
+                                active = state.shakeChipId == chip.id,
+                            ),
+                        )
+                    }
                 }
             }
             if (state.shakeChipId != null) {
@@ -226,7 +242,6 @@ private fun WonSection(
     state: BossState,
     onIntent: (BossIntent) -> Unit,
 ) {
-    CelebrationOverlay(visible = true)
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(12.dp),

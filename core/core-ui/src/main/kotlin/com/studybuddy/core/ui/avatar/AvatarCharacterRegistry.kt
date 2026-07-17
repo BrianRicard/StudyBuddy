@@ -313,8 +313,9 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFFFF8A65),
             accentColor = Color(0xFF5D4037),
             attachmentPoints = AvatarAttachmentPoints(
-                // Snail head is on the left; the shell fills the right side
-                hatAnchor = Offset(0.30f, 0.14f),
+                // Snail head is on the left; the shell fills the right side.
+                // Anchor sits below the antennae ball tips.
+                hatAnchor = Offset(0.29f, 0.20f),
                 faceAnchor = Offset(0.30f, 0.34f),
                 chestAnchor = Offset(0.35f, 0.60f),
                 petAnchor = Offset(0.88f, 0.85f),

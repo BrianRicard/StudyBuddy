@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -46,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.domain.model.conjugation.ConjugationPathStage
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.modifier.accessibleClickable
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
@@ -156,12 +158,13 @@ private fun StageNode(
     onIntent: (ConjugationPathIntent) -> Unit,
 ) {
     val stage = pathStage.stage
+    val reducedMotion = isReducedMotionEnabled()
 
     StudyBuddyCard(
         modifier = Modifier
             .fillMaxWidth()
             .alpha(if (pathStage.isUnlocked) 1f else 0.55f)
-            .animateContentSize(),
+            .then(if (reducedMotion) Modifier else Modifier.animateContentSize()),
         onClick = { onIntent(ConjugationPathIntent.ToggleStage(stage.id)) },
     ) {
         Row(
@@ -181,8 +184,9 @@ private fun StageNode(
                     color = MaterialTheme.colorScheme.primary,
                 )
                 Text(
-                    text = stringResource(
-                        CoreUiR.string.conjugation_steps_done,
+                    text = pluralStringResource(
+                        CoreUiR.plurals.conjugation_steps_done,
+                        pathStage.completedStepCount,
                         pathStage.completedStepCount,
                         ConjugationStep.entries.size,
                     ),

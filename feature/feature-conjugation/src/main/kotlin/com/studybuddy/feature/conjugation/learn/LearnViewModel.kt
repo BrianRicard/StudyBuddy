@@ -13,6 +13,7 @@ import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
+import com.studybuddy.shared.tts.TtsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
@@ -60,7 +61,14 @@ class LearnViewModel @Inject constructor(
     val effects: SharedFlow<LearnEffect> = _effects.asSharedFlow()
 
     init {
-        ttsManager.initialize()
+        // Clear the "playing" highlight once TTS finishes the line.
+        viewModelScope.launch {
+            ttsManager.state.collect { ttsState ->
+                if (ttsState !is TtsState.Speaking) {
+                    _state.update { it.copy(playingPerson = null) }
+                }
+            }
+        }
     }
 
     fun onIntent(intent: LearnIntent) {

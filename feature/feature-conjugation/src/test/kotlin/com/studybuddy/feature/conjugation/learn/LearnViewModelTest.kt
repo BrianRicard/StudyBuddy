@@ -8,12 +8,15 @@ import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.StepResultOutcome
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
+import com.studybuddy.shared.tts.TtsState
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -37,6 +40,7 @@ class LearnViewModelTest {
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
+        every { ttsManager.state } returns MutableStateFlow(TtsState.Ready)
         coEvery {
             conjugationRepository.recordStepResult(any(), any(), any(), any(), any())
         } returns StepResultOutcome(firstCompletion = true, newBest = true)

@@ -87,10 +87,6 @@ class BattleViewModel @Inject constructor(
     private val _effects = MutableSharedFlow<BattleEffect>()
     val effects: SharedFlow<BattleEffect> = _effects.asSharedFlow()
 
-    init {
-        ttsManager.initialize()
-    }
-
     fun onIntent(intent: BattleIntent) {
         when (intent) {
             is BattleIntent.SelectOption -> selectOption(intent.option)
@@ -156,6 +152,9 @@ class BattleViewModel @Inject constructor(
                     )
                 }
             }
+
+            // The gift moment can be skipped — no forced waiting.
+            BattlePhase.GIFT -> _state.update { it.copy(phase = BattlePhase.WON) }
 
             else -> Unit
         }

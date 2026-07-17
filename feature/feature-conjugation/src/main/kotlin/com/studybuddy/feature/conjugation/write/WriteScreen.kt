@@ -120,13 +120,16 @@ private fun WriteContent(
             )
             Spacer(Modifier.height(24.dp))
 
+            // Show the elided pronoun ("j'" for j'ai/j'aime), fused to the field
+            // so the child never reads wrong French like "je ai".
+            val isElided = stage.verb.display(state.person).startsWith("j'")
             CorrectAnswerAnimation(isCorrect = isCorrect) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = state.person.pronoun,
+                        text = if (isElided) "j'" else state.person.pronoun,
                         style = MaterialTheme.typography.headlineMedium,
                     )
-                    Spacer(Modifier.width(12.dp))
+                    Spacer(Modifier.width(if (isElided) 2.dp else 12.dp))
                     OutlinedTextField(
                         value = state.input,
                         onValueChange = { onIntent(WriteIntent.InputChanged(it)) },

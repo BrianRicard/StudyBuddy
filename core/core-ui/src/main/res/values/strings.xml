@@ -590,7 +590,6 @@
     <string name="nav_conjugation">Verbs</string>
     <string name="mode_conjugation">Verb Quest</string>
     <string name="label_conjugation">Verb adventure</string>
-    <string name="home_conjugation_desc">Join the quest to bring back the King\'s smile!</string>
     <string name="conjugation_title">Verb Quest</string>
     <string name="conjugation_subtitle">The Grumpy King lost his smile. Master the magic verbs to bring it back!</string>
     <string name="conjugation_stage_title_1">The Enchanted Bridge</string>
@@ -606,9 +605,11 @@
     <string name="conjugation_stage_story_5">Stars glitter on the cave walls. Help a panda build a big surprise with the verb “faire”.</string>
     <string name="conjugation_stage_story_6">Here it is — the castle! Use the verb “dire” to say the magic words that will make the King smile again.</string>
     <string name="conjugation_stage_verb">Verb: %1$s</string>
-    <string name="conjugation_stage_locked">Finish the stage before to unlock this one</string>
-    <string name="conjugation_steps_done">%1$d of %2$d games finished</string>
-    <string name="conjugation_start">Play</string>
+    <string name="conjugation_stage_locked">Finish the previous stage to unlock this one</string>
+    <plurals name="conjugation_steps_done">
+        <item quantity="one">%1$d of %2$d games finished</item>
+        <item quantity="other">%1$d of %2$d games finished</item>
+    </plurals>
     <string name="conjugation_quest_complete">You did it! The King is smiling and the whole kingdom is having a party!</string>
     <string name="conjugation_step_learn">Listen</string>
     <string name="conjugation_step_write">Write</string>
@@ -616,7 +617,6 @@
     <string name="conjugation_step_battle">Duel</string>
     <string name="conjugation_step_boss">Boss</string>
     <string name="conjugation_next">Next</string>
-    <string name="conjugation_back">Back</string>
     <string name="conjugation_learn_title">Listen &amp; Learn</string>
     <string name="conjugation_learn_instruction">Tap each line to hear it, then say it out loud!</string>
     <string name="conjugation_learn_done">I heard them all!</string>
@@ -656,7 +656,6 @@
     <string name="conjugation_boss_intro_final">The Grumpy King himself challenges you to the final rap battle!</string>
     <string name="conjugation_boss_listen">Hear the rap</string>
     <string name="conjugation_boss_rebuild">Now build the sentence back!</string>
-    <string name="conjugation_boss_word_bank">Word bank</string>
     <string name="conjugation_boss_encourage">That word goes somewhere else — keep grooving!</string>
     <string name="conjugation_boss_sentence_done">You got the whole line!</string>
     <string name="conjugation_boss_won">You won the rap battle!</string>
