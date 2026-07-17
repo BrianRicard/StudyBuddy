@@ -21,6 +21,7 @@ import com.studybuddy.shared.whisper.WhisperEngine
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.math.sqrt
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,10 +45,10 @@ data class SpeakState(
     val stage: ConjugationStage? = null,
     val index: Int = 0,
     val phase: SpeakPhase = SpeakPhase.IDLE,
-    /** True when a whisper model is loaded and the mic flow can be used. */
-    val isMicMode: Boolean = false,
+    /** True when a whisper model is loaded — spoken words are actually scored. */
+    val whisperScoring: Boolean = false,
     val hasAudioPermission: Boolean = false,
-    /** True when mic permission was denied: explain it and offer echo mode. */
+    /** True when mic permission was denied: explain it and offer a self-report tap. */
     val showPermissionHint: Boolean = false,
     val spokenCount: Int = 0,
     val attemptsOnCurrent: Int = 0,
@@ -62,7 +63,9 @@ sealed interface SpeakIntent {
     data object PlayForm : SpeakIntent
     data object StartRecording : SpeakIntent
     data object StopRecording : SpeakIntent
-    data object ConfirmEcho : SpeakIntent
+
+    /** Self-report tap, only offered when mic permission was denied. */
+    data object ConfirmWithoutMic : SpeakIntent
 
     /** Initial permission state read by the screen — never auto-starts recording. */
     data class PermissionSeeded(val granted: Boolean) : SpeakIntent
@@ -107,7 +110,7 @@ class SpeakViewModel @Inject constructor(
             is SpeakIntent.PlayForm -> playForm()
             is SpeakIntent.StartRecording -> startRecording()
             is SpeakIntent.StopRecording -> stopRecording()
-            is SpeakIntent.ConfirmEcho -> confirmEcho()
+            is SpeakIntent.ConfirmWithoutMic -> confirmWithoutMic()
             is SpeakIntent.PermissionSeeded ->
                 _state.update { it.copy(hasAudioPermission = intent.granted) }
 
@@ -116,14 +119,14 @@ class SpeakViewModel @Inject constructor(
         }
     }
 
-    /** Mic scoring is a bonus: without a downloaded model we fall back to echo mode. */
+    /** With a downloaded whisper model the spoken word is actually scored. */
     private fun loadWhisperModelIfAvailable() {
         viewModelScope.launch {
             val preferredFileName = settingsRepository.getWhisperModel().first()
             val model = modelDownloadManager.bestAvailableModel(preferredFileName) ?: return@launch
             val modelPath = modelDownloadManager.getModelPath(model) ?: return@launch
             whisperEngine.initialize(modelPath).onSuccess {
-                _state.update { it.copy(isMicMode = true) }
+                _state.update { it.copy(whisperScoring = true) }
             }
         }
     }
@@ -137,7 +140,7 @@ class SpeakViewModel @Inject constructor(
     @Suppress("MissingPermission")
     private fun startRecording() {
         val current = _state.value
-        if (!current.isMicMode || current.phase == SpeakPhase.RECORDING) return
+        if (current.phase == SpeakPhase.RECORDING) return
         if (!current.hasAudioPermission) {
             viewModelScope.launch { _effects.emit(SpeakEffect.RequestAudioPermission) }
             return
@@ -157,34 +160,53 @@ class SpeakViewModel @Inject constructor(
         _state.update { it.copy(phase = SpeakPhase.PROCESSING) }
 
         viewModelScope.launch {
-            val expected = stage.verb.display(current.person)
-            val result = whisperEngine.transcribe(
-                samples = samples,
-                language = "fr",
-                initialPrompt = expected,
-            )
-            val similarity = result.getOrNull()
-                ?.let { PronunciationChecker.similarity(expected, it.text) }
-                ?: 0f
-            if (similarity >= PASS_THRESHOLD) {
-                onSpokenWell()
+            if (current.whisperScoring) {
+                scoreWithWhisper(stage, current.person, samples)
             } else {
-                _state.update {
-                    it.copy(
-                        phase = SpeakPhase.ENCOURAGE,
-                        attemptsOnCurrent = it.attemptsOnCurrent + 1,
-                    )
+                // No scoring model: require that the child actually spoke, so a
+                // silent tap can never pass, then accept generously.
+                if (heardSpeech(samples)) {
+                    onSpokenWell(PointValues.CONJUGATION_FORM_ECHOED)
+                } else {
+                    encourage()
                 }
             }
         }
     }
 
-    private fun onSpokenWell() {
+    private suspend fun scoreWithWhisper(
+        stage: ConjugationStage,
+        person: ConjugationPerson,
+        samples: FloatArray,
+    ) {
+        if (!heardSpeech(samples)) {
+            encourage()
+            return
+        }
+        val expected = stage.verb.display(person)
+        val result = whisperEngine.transcribe(samples = samples, language = "fr", initialPrompt = expected)
+        val similarity = result.getOrNull()
+            ?.let { PronunciationChecker.similarity(expected, it.text) }
+            ?: 0f
+        if (similarity >= PASS_THRESHOLD) {
+            onSpokenWell(PointValues.CONJUGATION_FORM_SPOKEN)
+        } else {
+            encourage()
+        }
+    }
+
+    private fun encourage() {
+        _state.update {
+            it.copy(phase = SpeakPhase.ENCOURAGE, attemptsOnCurrent = it.attemptsOnCurrent + 1)
+        }
+    }
+
+    private fun onSpokenWell(points: Int) {
         _state.update { it.copy(phase = SpeakPhase.HEARD, spokenCount = it.spokenCount + 1) }
         viewModelScope.launch {
             awardPointsUseCase(
                 profileId = AppConstants.DEFAULT_PROFILE_ID,
-                basePoints = PointValues.CONJUGATION_FORM_SPOKEN,
+                basePoints = points,
                 streak = 0,
                 source = PointSource.CONJUGATION,
                 reason = "Conjugation spoken: $stageId",
@@ -192,22 +214,11 @@ class SpeakViewModel @Inject constructor(
         }
     }
 
-    /** Echo mode: the child says the form out loud and self-confirms. */
-    private fun confirmEcho() {
+    /** Self-report path, only reachable when mic permission was denied. */
+    private fun confirmWithoutMic() {
         val current = _state.value
-        if (current.phase == SpeakPhase.HEARD) return
-        // Echo is the fallback when there is no model or the mic was denied.
-        if (current.isMicMode && !current.showPermissionHint) return
-        _state.update { it.copy(phase = SpeakPhase.HEARD, spokenCount = it.spokenCount + 1) }
-        viewModelScope.launch {
-            awardPointsUseCase(
-                profileId = AppConstants.DEFAULT_PROFILE_ID,
-                basePoints = PointValues.CONJUGATION_FORM_ECHOED,
-                streak = 0,
-                source = PointSource.CONJUGATION,
-                reason = "Conjugation echoed: $stageId",
-            )
-        }
+        if (!current.showPermissionHint || current.phase == SpeakPhase.HEARD) return
+        onSpokenWell(PointValues.CONJUGATION_FORM_ECHOED)
     }
 
     private fun onPermissionResult(granted: Boolean) {
@@ -245,6 +256,15 @@ class SpeakViewModel @Inject constructor(
         }
     }
 
+    /** True when the recording actually contains speech (not silence or an instant tap). */
+    private fun heardSpeech(samples: FloatArray): Boolean {
+        if (samples.size < MIN_SPEECH_SAMPLES) return false
+        var sumSquares = 0.0
+        for (sample in samples) sumSquares += (sample * sample).toDouble()
+        val rms = sqrt(sumSquares / samples.size)
+        return rms >= SPEECH_RMS_THRESHOLD
+    }
+
     override fun onCleared() {
         recordingJob?.cancel()
         audioRecorder.release()
@@ -258,5 +278,11 @@ class SpeakViewModel @Inject constructor(
     private companion object {
         /** Generous on purpose: hearing the child try matters more than precision. */
         const val PASS_THRESHOLD = 0.5f
+
+        /** Minimum RMS loudness that counts as "the child spoke". */
+        const val SPEECH_RMS_THRESHOLD = 0.015f
+
+        /** At least ~0.3s of audio, so an instant start/stop tap never counts. */
+        const val MIN_SPEECH_SAMPLES = AudioRecorder.SAMPLE_RATE * 3 / 10
     }
 }

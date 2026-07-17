@@ -649,7 +649,8 @@
     <string name="conjugation_battle_correct">Sparkles of joy!</string>
     <string name="conjugation_battle_encourage">Almost! Your friend believes in you — try this one!</string>
     <string name="conjugation_battle_won">Your friend is smiling again!</string>
-    <string name="conjugation_battle_gift">You gave them a lucky ladybug as a present!</string>
+    <string name="conjugation_battle_gift">You cheered up your friend with a lucky ladybug!</string>
+    <string name="conjugation_battle_ladybug_unlocked">A lucky Ladybug joined you too! Find it in your Avatar Closet.</string>
     <string name="conjugation_battle_cheer_meter">Cheer meter</string>
     <string name="conjugation_boss_title">Boss Rap</string>
     <string name="conjugation_boss_intro">The stage guardian challenges you to a rap battle!</string>

@@ -12,6 +12,7 @@ import com.studybuddy.core.domain.model.conjugation.ConjugationStage
 import com.studybuddy.core.domain.model.conjugation.ConjugationStages
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.repository.ConjugationRepository
+import com.studybuddy.core.domain.usecase.avatar.GrantCharacterUseCase
 import com.studybuddy.core.domain.usecase.conjugation.BuildBattleRoundsUseCase
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
@@ -46,6 +47,8 @@ data class BattleState(
     val firstTryCorrect: Int = 0,
     /** Rounds missed at least once, keyed by (verb, person) — a retry is not a first try. */
     val missedRoundKeys: Set<Pair<String, ConjugationPerson>> = emptySet(),
+    /** True once the lucky ladybug has been unlocked into the child's closet. */
+    val ladybugUnlocked: Boolean = false,
     val isSaving: Boolean = false,
 ) {
     val currentRound: BattleRound? get() = queue.firstOrNull()
@@ -71,6 +74,7 @@ class BattleViewModel @Inject constructor(
     buildBattleRounds: BuildBattleRoundsUseCase,
     private val conjugationRepository: ConjugationRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val grantCharacterUseCase: GrantCharacterUseCase,
     private val ttsManager: TtsManager,
 ) : ViewModel() {
 
@@ -163,6 +167,9 @@ class BattleViewModel @Inject constructor(
     private fun winBattle() {
         _state.update { it.copy(phase = BattlePhase.GIFT) }
         viewModelScope.launch {
+            // The lucky ladybug from the gift also joins the child's closet.
+            val newlyUnlocked = grantCharacterUseCase(AppConstants.DEFAULT_PROFILE_ID, LADYBUG_BODY_ID)
+            _state.update { it.copy(ladybugUnlocked = newlyUnlocked) }
             delay(GIFT_ANIMATION_MS)
             _state.update { it.copy(phase = BattlePhase.WON) }
         }
@@ -198,5 +205,6 @@ class BattleViewModel @Inject constructor(
 
     private companion object {
         const val GIFT_ANIMATION_MS = 2_200L
+        const val LADYBUG_BODY_ID = "ladybug"
     }
 }

@@ -648,7 +648,8 @@
     <string name="conjugation_battle_correct">Freudenfunken!</string>
     <string name="conjugation_battle_encourage">Fast! Dein Freund glaubt an dich — probier diese!</string>
     <string name="conjugation_battle_won">Dein Freund lächelt wieder!</string>
-    <string name="conjugation_battle_gift">Du hast ihm einen Glücks-Marienkäfer geschenkt!</string>
+    <string name="conjugation_battle_gift">Du hast deinen Freund mit einem Glücks-Marienkäfer aufgemuntert!</string>
+    <string name="conjugation_battle_ladybug_unlocked">Ein Glücks-Marienkäfer ist auch zu dir gekommen! Du findest ihn in deinem Avatar-Schrank.</string>
     <string name="conjugation_battle_cheer_meter">Freude-Anzeige</string>
     <string name="conjugation_boss_title">Boss-Rap</string>
     <string name="conjugation_boss_intro">Der Wächter der Etappe fordert dich zum Rap-Battle heraus!</string>

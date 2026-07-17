@@ -16,6 +16,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.random.Random
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -27,6 +28,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -42,6 +44,12 @@ class SpeakViewModelTest {
     private val modelDownloadManager: ModelDownloadManager = mockk()
     private val settingsRepository: SettingsRepository = mockk()
 
+    private val loudSamples = FloatArray(AudioRecorder.SAMPLE_RATE) {
+        // ~0.3 RMS: clearly "the child spoke".
+        if (Random(it).nextBoolean()) 0.3f else -0.3f
+    }
+    private val silentSamples = FloatArray(AudioRecorder.SAMPLE_RATE) { 0.0001f }
+
     @BeforeEach
     fun setup() {
         Dispatchers.setMain(testDispatcher)
@@ -49,8 +57,9 @@ class SpeakViewModelTest {
             conjugationRepository.recordStepResult(any(), any(), any(), any(), any())
         } returns StepResultOutcome(firstCompletion = true, newBest = true)
         every { settingsRepository.getWhisperModel() } returns flowOf("ggml-tiny.bin")
-        // No downloaded model: the screen falls back to echo mode.
+        // Default: no downloaded model, so the mic path verifies loudness only.
         every { modelDownloadManager.bestAvailableModel(any()) } returns null
+        every { audioRecorder.stopRecording() } returns loudSamples
     }
 
     @AfterEach
@@ -69,20 +78,26 @@ class SpeakViewModelTest {
         awardPointsUseCase = awardPointsUseCase,
     )
 
-    @Test
-    fun `without a whisper model the screen stays in echo mode`() = runTest {
-        val viewModel = createViewModel()
-        advanceUntilIdle()
-
-        assertFalse(viewModel.state.value.isMicMode)
+    private fun grantedViewModel() = createViewModel().also {
+        it.onIntent(SpeakIntent.PermissionSeeded(granted = true))
     }
 
     @Test
-    fun `echo confirmation praises and awards the echo points`() = runTest {
+    fun `without a whisper model spoken words are not scored`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.onIntent(SpeakIntent.ConfirmEcho)
+        assertFalse(viewModel.state.value.whisperScoring)
+    }
+
+    @Test
+    fun `recording that contains speech is accepted and awards points`() = runTest {
+        val viewModel = grantedViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SpeakIntent.StartRecording)
+        advanceUntilIdle()
+        viewModel.onIntent(SpeakIntent.StopRecording)
         advanceUntilIdle()
 
         assertEquals(SpeakPhase.HEARD, viewModel.state.value.phase)
@@ -99,13 +114,45 @@ class SpeakViewModelTest {
     }
 
     @Test
-    fun `echoing all six forms completes the step`() = runTest {
-        val viewModel = createViewModel()
+    fun `a silent recording is not accepted — the free pass is closed`() = runTest {
+        every { audioRecorder.stopRecording() } returns silentSamples
+        val viewModel = grantedViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SpeakIntent.StartRecording)
+        advanceUntilIdle()
+        viewModel.onIntent(SpeakIntent.StopRecording)
+        advanceUntilIdle()
+
+        assertEquals(SpeakPhase.ENCOURAGE, viewModel.state.value.phase)
+        assertEquals(0, viewModel.state.value.spokenCount)
+        coVerify(exactly = 0) { awardPointsUseCase(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `an instant tap with no audio is rejected`() = runTest {
+        every { audioRecorder.stopRecording() } returns FloatArray(0)
+        val viewModel = grantedViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(SpeakIntent.StartRecording)
+        advanceUntilIdle()
+        viewModel.onIntent(SpeakIntent.StopRecording)
+        advanceUntilIdle()
+
+        assertEquals(SpeakPhase.ENCOURAGE, viewModel.state.value.phase)
+    }
+
+    @Test
+    fun `speaking all six forms completes the step`() = runTest {
+        val viewModel = grantedViewModel()
         advanceUntilIdle()
 
         viewModel.effects.test {
             repeat(6) {
-                viewModel.onIntent(SpeakIntent.ConfirmEcho)
+                viewModel.onIntent(SpeakIntent.StartRecording)
+                advanceUntilIdle()
+                viewModel.onIntent(SpeakIntent.StopRecording)
                 advanceUntilIdle()
                 viewModel.onIntent(SpeakIntent.Next)
                 advanceUntilIdle()
@@ -125,12 +172,37 @@ class SpeakViewModelTest {
     }
 
     @Test
-    fun `recording without permission asks for it in mic mode`() = runTest {
+    fun `the whisper path scores the transcription and awards spoken points`() = runTest {
         every { modelDownloadManager.bestAvailableModel(any()) } returns
             com.studybuddy.shared.whisper.WhisperModel.TINY
         every { modelDownloadManager.getModelPath(any()) } returns "/models/tiny.bin"
         coEvery { whisperEngine.initialize(any()) } returns Result.success(Unit)
+        coEvery { whisperEngine.transcribe(any(), any(), any()) } returns
+            Result.success(com.studybuddy.shared.whisper.TranscriptionResult("je suis", emptyList()))
 
+        val viewModel = grantedViewModel()
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.whisperScoring)
+
+        viewModel.onIntent(SpeakIntent.StartRecording)
+        advanceUntilIdle()
+        viewModel.onIntent(SpeakIntent.StopRecording)
+        advanceUntilIdle()
+
+        assertEquals(SpeakPhase.HEARD, viewModel.state.value.phase)
+        coVerify {
+            awardPointsUseCase(
+                profileId = "default",
+                basePoints = PointValues.CONJUGATION_FORM_SPOKEN,
+                streak = 0,
+                source = any(),
+                reason = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `recording without permission asks for it`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
@@ -139,5 +211,24 @@ class SpeakViewModelTest {
             advanceUntilIdle()
             assertEquals(SpeakEffect.RequestAudioPermission, awaitItem())
         }
+    }
+
+    @Test
+    fun `self-report is only allowed after mic permission is denied`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // With permission not denied, a self-report tap does nothing.
+        viewModel.onIntent(SpeakIntent.ConfirmWithoutMic)
+        advanceUntilIdle()
+        assertEquals(SpeakPhase.IDLE, viewModel.state.value.phase)
+
+        viewModel.onIntent(SpeakIntent.AudioPermissionResult(granted = false))
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.showPermissionHint)
+
+        viewModel.onIntent(SpeakIntent.ConfirmWithoutMic)
+        advanceUntilIdle()
+        assertEquals(SpeakPhase.HEARD, viewModel.state.value.phase)
     }
 }
