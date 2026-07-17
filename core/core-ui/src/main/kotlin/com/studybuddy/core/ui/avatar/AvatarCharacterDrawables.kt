@@ -37,6 +37,18 @@ object AvatarCharacterDrawables {
         "pirate_panda" to R.drawable.avatar_pirate_panda,
         "ninja_squirrel" to R.drawable.avatar_ninja_squirrel,
         "dj_hedgehog" to R.drawable.avatar_dj_hedgehog,
+        // Verb Quest creatures (Flux-generated PNGs)
+        "frog" to R.drawable.avatar_frog,
+        "snail" to R.drawable.avatar_snail,
+        "ladybug" to R.drawable.avatar_ladybug,
+        "lion" to R.drawable.avatar_lion,
+        // Generated hero roster (Flux-generated PNGs)
+        "hockey_duck" to R.drawable.avatar_hockey_duck,
+        "business_demon" to R.drawable.avatar_business_demon,
+        "ultraman_gecko" to R.drawable.avatar_ultraman_gecko,
+        "atomic_tardigrade" to R.drawable.avatar_atomic_tardigrade,
+        "gadget_octopus" to R.drawable.avatar_gadget_octopus,
+        "arcade_goose" to R.drawable.avatar_arcade_goose,
         // Legendary skins
         "elder_dragon" to R.drawable.avatar_elder_dragon,
         "wizard_owl" to R.drawable.avatar_wizard_owl,

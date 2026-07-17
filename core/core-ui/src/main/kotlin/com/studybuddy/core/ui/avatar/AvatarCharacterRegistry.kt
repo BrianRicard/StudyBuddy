@@ -353,6 +353,96 @@ object AvatarCharacterRegistry {
             ),
         ),
 
+        // ── Generated hero roster (Flux PNG art) ────────────────────────────
+
+        CharacterSpec(
+            id = "hockey_duck",
+            primaryColor = Color(0xFFFFD54F),
+            secondaryColor = Color(0xFF1E5AA8),
+            accentColor = Color(0xFFD32F2F),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Already wears a helmet — hats perch on top of it
+                hatAnchor = Offset(0.50f, 0.02f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "business_demon",
+            primaryColor = Color(0xFFC62828),
+            secondaryColor = Color(0xFF9E9E9E),
+            accentColor = Color(0xFF1E5AA8),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Hat sits between the little horns
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.52f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "ultraman_gecko",
+            primaryColor = Color(0xFFB0BEC5),
+            secondaryColor = Color(0xFFD32F2F),
+            accentColor = Color(0xFF66BB6A),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.44f, 0.04f),
+                faceAnchor = Offset(0.44f, 0.16f),
+                chestAnchor = Offset(0.50f, 0.42f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.75f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "atomic_tardigrade",
+            primaryColor = Color(0xFF8FBCB4),
+            secondaryColor = Color(0xFF9CFF57),
+            accentColor = Color(0xFF2E7D32),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.05f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "gadget_octopus",
+            primaryColor = Color(0xFFB39DDB),
+            secondaryColor = Color(0xFFD7CCC8),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Already wears a detective hat — hats replace it visually on top
+                hatAnchor = Offset(0.50f, 0.03f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.50f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "arcade_goose",
+            primaryColor = Color(0xFF795548),
+            secondaryColor = Color(0xFF212121),
+            accentColor = Color(0xFFD32F2F),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Goose head sits high and slightly left
+                hatAnchor = Offset(0.42f, 0.04f),
+                faceAnchor = Offset(0.45f, 0.16f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 0.8f,
+            ),
+        ),
+
         // ── Epic skins ──────────────────────────────────────────────────────
 
         CharacterSpec(
