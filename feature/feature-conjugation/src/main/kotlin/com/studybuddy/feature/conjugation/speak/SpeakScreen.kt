@@ -202,20 +202,18 @@ private fun PracticeSection(
         )
     }
 
-    when {
-        // Mic denied: explain kindly and fall back to echo mode.
-        state.showPermissionHint -> {
-            Text(
-                text = stringResource(CoreUiR.string.conjugation_speak_mic_permission),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center,
-            )
-            EchoSection(onIntent = onIntent)
-        }
-
-        state.isMicMode -> MicButton(state = state, onIntent = onIntent)
-        else -> EchoSection(onIntent = onIntent)
+    if (state.showPermissionHint) {
+        // Mic denied: explain kindly and fall back to a self-report tap.
+        Text(
+            text = stringResource(CoreUiR.string.conjugation_speak_mic_permission),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
+        EchoSection(onIntent = onIntent)
+    } else {
+        // Mic is the primary path — silence never passes.
+        MicButton(state = state, onIntent = onIntent)
     }
 
     if (state.phase == SpeakPhase.ENCOURAGE) {
@@ -273,7 +271,7 @@ private fun EchoSection(onIntent: (SpeakIntent) -> Unit) {
         textAlign = TextAlign.Center,
     )
     FilledIconButton(
-        onClick = { onIntent(SpeakIntent.ConfirmEcho) },
+        onClick = { onIntent(SpeakIntent.ConfirmWithoutMic) },
         modifier = Modifier.size(88.dp),
     ) {
         Icon(

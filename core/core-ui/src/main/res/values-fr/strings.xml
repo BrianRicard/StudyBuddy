@@ -648,7 +648,8 @@
     <string name="conjugation_battle_correct">Des étincelles de joie !</string>
     <string name="conjugation_battle_encourage">Presque ! Ton ami croit en toi — essaie celle-ci !</string>
     <string name="conjugation_battle_won">Ton ami sourit à nouveau !</string>
-    <string name="conjugation_battle_gift">Tu lui as offert une coccinelle porte-bonheur !</string>
+    <string name="conjugation_battle_gift">Tu as remonté le moral de ton ami avec une coccinelle porte-bonheur !</string>
+    <string name="conjugation_battle_ladybug_unlocked">Une coccinelle porte-bonheur t\'a rejoint aussi ! Retrouve-la dans ton Placard d\'Avatars.</string>
     <string name="conjugation_battle_cheer_meter">Jauge de joie</string>
     <string name="conjugation_boss_title">Rap du Boss</string>
     <string name="conjugation_boss_intro">Le gardien de l\'étape te défie dans une bataille de rap !</string>

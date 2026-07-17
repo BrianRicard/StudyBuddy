@@ -5,6 +5,7 @@ import app.cash.turbine.test
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.StepResultOutcome
+import com.studybuddy.core.domain.usecase.avatar.GrantCharacterUseCase
 import com.studybuddy.core.domain.usecase.conjugation.BuildBattleRoundsUseCase
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
@@ -20,6 +21,7 @@ import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -30,6 +32,7 @@ class BattleViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val conjugationRepository: ConjugationRepository = mockk()
     private val awardPointsUseCase: AwardPointsUseCase = mockk(relaxed = true)
+    private val grantCharacterUseCase: GrantCharacterUseCase = mockk()
     private val ttsManager: TtsManager = mockk(relaxed = true)
 
     @BeforeEach
@@ -38,6 +41,7 @@ class BattleViewModelTest {
         coEvery {
             conjugationRepository.recordStepResult(any(), any(), any(), any(), any())
         } returns StepResultOutcome(firstCompletion = true, newBest = true)
+        coEvery { grantCharacterUseCase(any(), any()) } returns true
     }
 
     @AfterEach
@@ -50,6 +54,7 @@ class BattleViewModelTest {
         buildBattleRounds = BuildBattleRoundsUseCase(),
         conjugationRepository = conjugationRepository,
         awardPointsUseCase = awardPointsUseCase,
+        grantCharacterUseCase = grantCharacterUseCase,
         ttsManager = ttsManager,
     )
 
@@ -159,6 +164,36 @@ class BattleViewModelTest {
             )
         }
         coVerify { awardPointsUseCase(any(), any(), any(), any(), any()) }
+    }
+
+    @Test
+    fun `winning the battle unlocks the ladybug character`() = runTest {
+        val viewModel = createViewModel()
+
+        repeat(6) {
+            val round = viewModel.state.value.currentRound!!
+            viewModel.onIntent(BattleIntent.SelectOption(round.correctForm))
+            viewModel.onIntent(BattleIntent.Continue)
+        }
+        advanceUntilIdle()
+
+        assertTrue(viewModel.state.value.ladybugUnlocked)
+        coVerify { grantCharacterUseCase("default", "ladybug") }
+    }
+
+    @Test
+    fun `an already-owned ladybug is not reported as a new unlock`() = runTest {
+        coEvery { grantCharacterUseCase(any(), any()) } returns false
+        val viewModel = createViewModel()
+
+        repeat(6) {
+            val round = viewModel.state.value.currentRound!!
+            viewModel.onIntent(BattleIntent.SelectOption(round.correctForm))
+            viewModel.onIntent(BattleIntent.Continue)
+        }
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.ladybugUnlocked)
     }
 
     @Test

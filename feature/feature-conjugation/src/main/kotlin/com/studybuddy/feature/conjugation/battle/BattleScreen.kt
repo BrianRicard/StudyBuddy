@@ -303,11 +303,21 @@ private fun WonSection(
             color = MaterialTheme.colorScheme.tertiary,
             textAlign = TextAlign.Center,
         )
-        Text(
-            text = stringResource(CoreUiR.string.conjugation_battle_gift),
-            style = MaterialTheme.typography.bodyLarge,
-            textAlign = TextAlign.Center,
-        )
+        if (state.ladybugUnlocked) {
+            QuestCreature(characterId = "ladybug", size = 64.dp)
+            Text(
+                text = stringResource(CoreUiR.string.conjugation_battle_ladybug_unlocked),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+            )
+        } else {
+            Text(
+                text = stringResource(CoreUiR.string.conjugation_battle_gift),
+                style = MaterialTheme.typography.bodyLarge,
+                textAlign = TextAlign.Center,
+            )
+        }
         StudyBuddyButton(
             text = stringResource(CoreUiR.string.conjugation_next),
             onClick = { onIntent(BattleIntent.Finish) },
