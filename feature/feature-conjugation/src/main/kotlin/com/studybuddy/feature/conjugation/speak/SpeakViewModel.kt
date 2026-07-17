@@ -133,6 +133,8 @@ class SpeakViewModel @Inject constructor(
         ttsManager.speak(stage.verb.display(_state.value.person), Locale.FRENCH)
     }
 
+    // Permission is verified via hasAudioPermission before reaching the call.
+    @Suppress("MissingPermission")
     private fun startRecording() {
         val current = _state.value
         if (!current.isMicMode || current.phase == SpeakPhase.RECORDING) return
