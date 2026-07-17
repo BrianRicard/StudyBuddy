@@ -3,11 +3,9 @@ package com.studybuddy.core.ui.avatar
 import com.studybuddy.core.ui.R
 
 /**
- * Maps character IDs to their vector drawable resource IDs.
- *
- * The hybrid avatar system renders creature bodies from polished vector
- * drawable XMLs (with gradients and smooth curves) while accessories
- * are still drawn via Canvas at attachment-point anchors.
+ * Maps character IDs to their drawable resource IDs — vector XMLs for the
+ * original roster, generated PNGs (drawable-nodpi) for the newer characters.
+ * Accessories are drawn via Canvas at attachment-point anchors either way.
  */
 object AvatarCharacterDrawables {
 
@@ -45,7 +43,7 @@ object AvatarCharacterDrawables {
         // Generated hero roster (Flux-generated PNGs)
         "hockey_duck" to R.drawable.avatar_hockey_duck,
         "business_demon" to R.drawable.avatar_business_demon,
-        "ultraman_gecko" to R.drawable.avatar_ultraman_gecko,
+        "hero_gecko" to R.drawable.avatar_hero_gecko,
         "atomic_tardigrade" to R.drawable.avatar_atomic_tardigrade,
         "gadget_octopus" to R.drawable.avatar_gadget_octopus,
         "arcade_goose" to R.drawable.avatar_arcade_goose,
@@ -65,9 +63,10 @@ object AvatarCharacterDrawables {
     fun getDrawable(characterId: String): Int = drawableMap[characterId] ?: drawableMap["fox"]!!
 
     /**
-     * Returns the drawable resource ID for the given character, or null when the
-     * character has no vector asset yet and should be Canvas-drawn instead
-     * (see [CreatureCanvas]).
+     * Returns the drawable resource ID for the given character, or null when
+     * the character has no image asset and should be Canvas-drawn instead
+     * (see [CreatureCanvas]). Currently every catalog character has an asset;
+     * the null path is a safety net for unknown ids.
      */
     fun getDrawableOrNull(characterId: String): Int? = drawableMap[characterId]
 }

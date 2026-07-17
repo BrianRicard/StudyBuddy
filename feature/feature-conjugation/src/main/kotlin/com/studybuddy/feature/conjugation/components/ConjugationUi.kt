@@ -57,9 +57,8 @@ fun praiseRes(seed: Int): Int = when (seed % 3) {
 }
 
 /**
- * A quest creature (friend or boss). Delegates to [CharacterPreview] so
- * characters with polished vector art look the same here as in the closet,
- * while canvas-only characters (frog, snail, ladybug, lion) still render.
+ * A quest creature (friend or boss). Delegates to [CharacterPreview] so every
+ * character renders exactly as it does in the closet and shop.
  */
 @Composable
 fun QuestCreature(

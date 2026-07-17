@@ -101,8 +101,8 @@ fun AvatarComposite(
                 drawFaceAccessory(face.id, cx, cy, s / 2)
             }
 
-            // Hat (with rotation)
-            if (hat != null && hat.id != "hat_none") {
+            // Hat (with rotation); skipped for characters with baked-in headgear
+            if (ap.supportsHat && hat != null && hat.id != "hat_none") {
                 val s = w * HAT_SCALE * ap.hatScale
                 val cx = w * ap.hatAnchor.x
                 val cy = h * ap.hatAnchor.y

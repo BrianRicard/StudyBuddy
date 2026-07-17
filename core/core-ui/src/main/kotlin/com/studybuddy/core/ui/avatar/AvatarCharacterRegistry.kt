@@ -298,10 +298,10 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFFC8E6C9),
             accentColor = Color(0xFF2E7D32),
             attachmentPoints = AvatarAttachmentPoints(
-                // Frog eyes bulge above the head — the hat sits between them
-                hatAnchor = Offset(0.50f, 0.10f),
-                faceAnchor = Offset(0.50f, 0.32f),
-                chestAnchor = Offset(0.50f, 0.62f),
+                // Generated art: big eyes at the very top of the head
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.17f),
+                chestAnchor = Offset(0.50f, 0.60f),
                 petAnchor = Offset(0.85f, 0.82f),
                 hatScale = 0.85f,
             ),
@@ -313,14 +313,13 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFFFF8A65),
             accentColor = Color(0xFF5D4037),
             attachmentPoints = AvatarAttachmentPoints(
-                // Snail head is on the left; the shell fills the right side.
-                // Anchor sits below the antennae ball tips.
-                hatAnchor = Offset(0.29f, 0.20f),
-                faceAnchor = Offset(0.30f, 0.34f),
-                chestAnchor = Offset(0.35f, 0.60f),
-                petAnchor = Offset(0.88f, 0.85f),
+                // Generated art: head on the RIGHT, shell on the left.
+                hatAnchor = Offset(0.72f, 0.28f),
+                faceAnchor = Offset(0.70f, 0.50f),
+                chestAnchor = Offset(0.65f, 0.68f),
+                petAnchor = Offset(0.15f, 0.85f),
                 hatScale = 0.75f,
-                hatRotation = -8f,
+                hatRotation = 8f,
             ),
         ),
 
@@ -361,12 +360,12 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFF1E5AA8),
             accentColor = Color(0xFFD32F2F),
             attachmentPoints = AvatarAttachmentPoints(
-                // Already wears a helmet — hats perch on top of it
-                hatAnchor = Offset(0.50f, 0.02f),
+                // Baked-in hockey helmet — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
                 faceAnchor = Offset(0.50f, 0.22f),
                 chestAnchor = Offset(0.50f, 0.55f),
                 petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 0.85f,
+                supportsHat = false,
             ),
         ),
 
@@ -386,16 +385,17 @@ object AvatarCharacterRegistry {
         ),
 
         CharacterSpec(
-            id = "ultraman_gecko",
+            id = "hero_gecko",
             primaryColor = Color(0xFFB0BEC5),
             secondaryColor = Color(0xFFD32F2F),
             accentColor = Color(0xFF66BB6A),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.44f, 0.04f),
-                faceAnchor = Offset(0.44f, 0.16f),
+                // Baked-in armored crest — the hat slot is not rendered
+                hatAnchor = Offset(0.55f, 0.05f),
+                faceAnchor = Offset(0.57f, 0.22f),
                 chestAnchor = Offset(0.50f, 0.42f),
                 petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 0.75f,
+                supportsHat = false,
             ),
         ),
 
@@ -419,12 +419,12 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFFD7CCC8),
             accentColor = Color(0xFF5D4037),
             attachmentPoints = AvatarAttachmentPoints(
-                // Already wears a detective hat — hats replace it visually on top
-                hatAnchor = Offset(0.50f, 0.03f),
-                faceAnchor = Offset(0.50f, 0.20f),
-                chestAnchor = Offset(0.50f, 0.50f),
+                // Baked-in detective hat — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.31f),
+                chestAnchor = Offset(0.50f, 0.55f),
                 petAnchor = Offset(0.85f, 0.85f),
-                hatScale = 0.85f,
+                supportsHat = false,
             ),
         ),
 
@@ -434,12 +434,12 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFF212121),
             accentColor = Color(0xFFD32F2F),
             attachmentPoints = AvatarAttachmentPoints(
-                // Goose head sits high and slightly left
-                hatAnchor = Offset(0.42f, 0.04f),
-                faceAnchor = Offset(0.45f, 0.16f),
+                // Head is top-RIGHT in the art; baked-in headband — no hat slot
+                hatAnchor = Offset(0.60f, 0.03f),
+                faceAnchor = Offset(0.60f, 0.09f),
                 chestAnchor = Offset(0.50f, 0.55f),
                 petAnchor = Offset(0.85f, 0.85f),
-                hatScale = 0.8f,
+                supportsHat = false,
             ),
         ),
 

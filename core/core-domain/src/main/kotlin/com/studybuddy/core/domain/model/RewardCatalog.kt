@@ -3,7 +3,8 @@ package com.studybuddy.core.domain.model
 object RewardCatalog {
 
     // ── Characters (bodies) ────────────────────────────────────────────────────
-    // emoji field is kept as a text fallback; actual rendering uses CreatureCanvas.
+    // emoji field is kept as a text fallback; actual rendering uses drawable art
+    // (vector XMLs or generated PNGs) via AvatarCharacterDrawables.
     val characters = listOf(
         // Free starter characters
         CharacterBody("bunny", "Bunny", "\uD83D\uDC30"),
@@ -33,7 +34,7 @@ object RewardCatalog {
         // Generated hero roster
         CharacterBody("hockey_duck", "Hockey Duck", "\uD83C\uDFD2"),
         CharacterBody("business_demon", "Business Demon", "\uD83D\uDE08"),
-        CharacterBody("ultraman_gecko", "Ultraman Gecko", "\uD83E\uDD8E"),
+        CharacterBody("hero_gecko", "Hero Gecko", "\uD83E\uDD8E"),
         CharacterBody("atomic_tardigrade", "Atomic Tardigrade", "\uD83E\uDDA0"),
         CharacterBody("gadget_octopus", "Gadget Octopus", "\uD83D\uDC19"),
         CharacterBody("arcade_goose", "Arcade Goose", "\uD83D\uDD79\uFE0F"),
@@ -109,9 +110,9 @@ object RewardCatalog {
         // Legendary
         RewardItem("char_dragon", RewardCategory.CHARACTER, "Dragon", "\uD83D\uDC09", 750, AvatarTier.LEGENDARY),
         RewardItem(
-            "char_ultraman_gecko",
+            "char_hero_gecko",
             RewardCategory.CHARACTER,
-            "Ultraman Gecko",
+            "Hero Gecko",
             "\uD83E\uDD8E",
             800,
             AvatarTier.LEGENDARY,
