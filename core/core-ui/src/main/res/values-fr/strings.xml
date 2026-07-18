@@ -672,4 +672,22 @@
     <string name="milestone_perfect_quest">Quête parfaite — tous les jeux sans faute</string>
     <string name="milestone_achieved_on">Réussi le %1$s</string>
     <string name="milestone_progress">%1$d sur %2$d</string>
+
+    <!-- Atelier des Verbes (conjugation drills) -->
+    <string name="atelier_title">L\'Atelier des Verbes</string>
+    <string name="atelier_subtitle">Écoute, écris, fais pousser ton jardin !</string>
+    <string name="atelier_entry_title">L\'Atelier des Verbes</string>
+    <string name="atelier_entry_subtitle">Entraîne ta mémoire avec des petits exercices</string>
+    <string name="atelier_revision">Révision</string>
+    <string name="atelier_surprise">Surprise !</string>
+    <string name="atelier_all_watered">Tout est arrosé !</string>
+    <string name="atelier_coming_soon">Les exercices poussent — ils arrivent très bientôt !</string>
+    <plurals name="atelier_due_cards_plural">
+        <item quantity="one">%d carte à arroser</item>
+        <item quantity="other">%d cartes à arroser</item>
+    </plurals>
+    <plurals name="atelier_verbs_to_water_plural">
+        <item quantity="one">%d verbe à arroser</item>
+        <item quantity="other">%d verbes à arroser</item>
+    </plurals>
 </resources>

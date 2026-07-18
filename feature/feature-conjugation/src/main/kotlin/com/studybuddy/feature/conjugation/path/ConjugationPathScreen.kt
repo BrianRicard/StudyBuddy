@@ -60,6 +60,7 @@ import com.studybuddy.feature.conjugation.components.stepLabelRes
 fun ConjugationPathScreen(
     onNavigateBack: () -> Unit,
     onNavigateToStep: (String, ConjugationStep) -> Unit,
+    onNavigateToAtelier: () -> Unit,
     viewModel: ConjugationPathViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -77,6 +78,7 @@ fun ConjugationPathScreen(
         state = state,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
+        onNavigateToAtelier = onNavigateToAtelier,
     )
 }
 
@@ -86,6 +88,7 @@ private fun ConjugationPathContent(
     state: ConjugationPathState,
     onIntent: (ConjugationPathIntent) -> Unit,
     onNavigateBack: () -> Unit,
+    onNavigateToAtelier: () -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -140,6 +143,10 @@ private fun ConjugationPathContent(
                 )
             }
 
+            item(key = "atelier-entry") {
+                AtelierEntryCard(onClick = onNavigateToAtelier)
+            }
+
             items(state.stages, key = { it.stage.id }) { pathStage ->
                 StageNode(
                     pathStage = pathStage,
@@ -147,6 +154,41 @@ private fun ConjugationPathContent(
                     onIntent = onIntent,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun AtelierEntryCard(onClick: () -> Unit) {
+    StudyBuddyCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "🌱",
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(CoreUiR.string.atelier_entry_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(CoreUiR.string.atelier_entry_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
         }
     }
 }
@@ -320,6 +362,7 @@ private fun ConjugationPathPreview() {
             state = ConjugationPathState(isLoading = true),
             onIntent = {},
             onNavigateBack = {},
+            onNavigateToAtelier = {},
         )
     }
 }

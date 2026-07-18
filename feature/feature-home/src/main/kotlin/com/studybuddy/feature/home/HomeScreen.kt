@@ -170,6 +170,7 @@ private fun HomeContent(
                     onPoemsClick = { onIntent(HomeIntent.NavigateToPoems) },
                     onReadingClick = { onIntent(HomeIntent.NavigateToReading) },
                     onConjugationClick = { onIntent(HomeIntent.NavigateToConjugation) },
+                    atelierDueVerbs = state.atelierDueVerbs,
                     layoutType = layoutType,
                     modifier = Modifier.animateItemAppearance(3),
                 )
@@ -456,6 +457,7 @@ private fun ModeCardsGrid(
     onPoemsClick: () -> Unit,
     onReadingClick: () -> Unit,
     onConjugationClick: () -> Unit,
+    atelierDueVerbs: Int,
     layoutType: LayoutType,
     modifier: Modifier = Modifier,
 ) {
@@ -528,7 +530,15 @@ private fun ModeCardsGrid(
             )
             ModeCard(
                 title = stringResource(CoreUiR.string.mode_conjugation),
-                subtitle = stringResource(CoreUiR.string.label_conjugation),
+                subtitle = if (atelierDueVerbs > 0) {
+                    pluralStringResource(
+                        CoreUiR.plurals.atelier_verbs_to_water_plural,
+                        atelierDueVerbs,
+                        atelierDueVerbs,
+                    )
+                } else {
+                    stringResource(CoreUiR.string.label_conjugation)
+                },
                 onClick = onConjugationClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_conjugation_castle,

@@ -10,6 +10,7 @@ import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -76,6 +77,7 @@ data class HomeState(
     val sessionsToday: Int = 0,
     val dailyGoal: Int = 5,
     val recentActivities: List<RecentActivity> = emptyList(),
+    val atelierDueVerbs: Int = 0,
     val isLoading: Boolean = true,
 ) {
     val dailyProgress: Float
@@ -127,6 +129,7 @@ class HomeViewModel @Inject constructor(
     private val avatarRepository: AvatarRepository,
     private val pointsRepository: PointsRepository,
     private val settingsRepository: SettingsRepository,
+    private val getAtelierGarden: GetAtelierGardenUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -168,7 +171,8 @@ class HomeViewModel @Inject constructor(
                         pointsRepository.getTotalPoints(profile.id),
                         pointsRepository.getPointsForProfile(profile.id),
                         pointsRepository.getSessionsToday(profile.id),
-                    ) { avatarConfig, totalPoints, pointEvents, sessionsToday ->
+                        getAtelierGarden(profile.id, Clock.System.now()),
+                    ) { avatarConfig, totalPoints, pointEvents, sessionsToday, atelierGarden ->
                         val timeZone = TimeZone.currentSystemDefault()
                         val streak = calculateDayStreak(pointEvents, timeZone)
                         val weekDots = calculateWeekDots(pointEvents, timeZone)
@@ -182,6 +186,7 @@ class HomeViewModel @Inject constructor(
                             weekDots = weekDots,
                             sessionsToday = sessionsToday,
                             recentActivities = recentActivities,
+                            atelierDueVerbs = atelierGarden.dueVerbCount,
                             isLoading = false,
                         )
                     }
