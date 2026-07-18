@@ -79,6 +79,7 @@ data class DrillState(
     val inputMode: DrillInputMode = DrillInputMode.KEYBOARD,
     val isRecognizingInk: Boolean = false,
     val inkFailed: Boolean = false,
+    val isInkModelReady: Boolean = false,
     val feedback: DrillFeedback = DrillFeedback.Idle,
     val wrongAttempts: Int = 0,
     val combo: Int = 0,
@@ -127,7 +128,23 @@ class DrillViewModel @Inject constructor(
     private val requeuedKeys = mutableSetOf<Triple<String, ConjugationTense, String>>()
 
     init {
+        prepareInkRecognizer()
         loadSession()
+    }
+
+    /**
+     * The Atelier is French-only, so the handwriting recognizer is set up for
+     * French up front. Without this the recognizer stays null and every stylus
+     * submission fails with "could not read it", no matter how it was written.
+     */
+    private fun prepareInkRecognizer() {
+        viewModelScope.launch {
+            val ready = inkRecognitionManager.ensureModelReady(INK_LANGUAGE_TAG)
+            if (ready) {
+                inkRecognitionManager.initialize(INK_LANGUAGE_TAG)
+            }
+            _state.update { it.copy(isInkModelReady = ready) }
+        }
     }
 
     fun onIntent(intent: DrillIntent) {
@@ -380,5 +397,8 @@ class DrillViewModel @Inject constructor(
 
     companion object {
         const val SLOW_SPEECH_RATE = 0.7f
+
+        /** French-only handwriting model — same tag the dictée feature uses. */
+        const val INK_LANGUAGE_TAG = "fr"
     }
 }

@@ -709,6 +709,7 @@
     <string name="drill_points_chip">+%d ⭐</string>
     <string name="drill_combo">×%d 🔥</string>
     <string name="drill_ink_failed">I could not read it — try writing bigger!</string>
+    <string name="drill_ink_preparing">Getting handwriting ready… ✍️</string>
     <string name="drill_input_hint">pronoun + verb…</string>
     <string name="drill_results_title">Well done!</string>
     <string name="drill_results_stars">%d ⭐ earned</string>
