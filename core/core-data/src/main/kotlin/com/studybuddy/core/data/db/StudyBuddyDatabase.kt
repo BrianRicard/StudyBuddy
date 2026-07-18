@@ -3,6 +3,7 @@ package com.studybuddy.core.data.db
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.studybuddy.core.data.db.dao.AtelierReviewDao
 import com.studybuddy.core.data.db.dao.AvatarDao
 import com.studybuddy.core.data.db.dao.ConjugationDao
 import com.studybuddy.core.data.db.dao.DicteeDao
@@ -13,6 +14,7 @@ import com.studybuddy.core.data.db.dao.ProfileDao
 import com.studybuddy.core.data.db.dao.ReadingDao
 import com.studybuddy.core.data.db.dao.RewardsDao
 import com.studybuddy.core.data.db.dao.VoicePackDao
+import com.studybuddy.core.data.db.entity.AtelierReviewEntity
 import com.studybuddy.core.data.db.entity.AvatarConfigEntity
 import com.studybuddy.core.data.db.entity.CachedPoemEntity
 import com.studybuddy.core.data.db.entity.ConjugationProgressEntity
@@ -48,8 +50,9 @@ import com.studybuddy.core.data.db.entity.VoicePackEntity
         ReadingQuestionEntity::class,
         ReadingResultEntity::class,
         ConjugationProgressEntity::class,
+        AtelierReviewEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -64,4 +67,5 @@ abstract class StudyBuddyDatabase : RoomDatabase() {
     abstract fun poemDao(): PoemDao
     abstract fun readingDao(): ReadingDao
     abstract fun conjugationDao(): ConjugationDao
+    abstract fun atelierReviewDao(): AtelierReviewDao
 }

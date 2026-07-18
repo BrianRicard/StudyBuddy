@@ -186,4 +186,40 @@ object Migrations {
             )
         }
     }
+
+    /**
+     * v4 -> v5: Add the Atelier des Verbes review table.
+     * One Leitner-scheduled row per (profile, verb, tense, person) card,
+     * created the first time the card is answered in a drill.
+     */
+    val MIGRATION_4_5 = object : Migration(4, 5) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `atelier_review` (
+                    `id` TEXT NOT NULL,
+                    `profileId` TEXT NOT NULL,
+                    `verbId` TEXT NOT NULL,
+                    `tense` TEXT NOT NULL,
+                    `person` TEXT NOT NULL,
+                    `box` INTEGER NOT NULL,
+                    `dueAt` INTEGER NOT NULL,
+                    `lapses` INTEGER NOT NULL,
+                    `updatedAt` INTEGER NOT NULL,
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS `index_atelier_review_profileId_verbId_tense_person` " +
+                    "ON `atelier_review` (`profileId`, `verbId`, `tense`, `person`)",
+            )
+
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_atelier_review_profileId_dueAt` " +
+                    "ON `atelier_review` (`profileId`, `dueAt`)",
+            )
+        }
+    }
 }
