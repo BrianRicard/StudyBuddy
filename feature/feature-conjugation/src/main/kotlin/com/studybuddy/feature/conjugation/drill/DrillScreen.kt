@@ -330,8 +330,14 @@ private fun StylusInput(
                 }
             },
         )
-        if (state.inkFailed) {
-            Text(
+        when {
+            !state.isInkModelReady -> Text(
+                text = stringResource(CoreUiR.string.drill_ink_preparing),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+
+            state.inkFailed -> Text(
                 text = stringResource(CoreUiR.string.drill_ink_failed),
                 style = MaterialTheme.typography.bodyMedium,
                 color = TimeoutAmber,

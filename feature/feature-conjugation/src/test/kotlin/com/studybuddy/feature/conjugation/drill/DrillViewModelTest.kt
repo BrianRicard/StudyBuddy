@@ -15,11 +15,13 @@ import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.tts.TtsManager
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.slot
+import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -55,6 +57,9 @@ class DrillViewModelTest {
         recordedAnswers.clear()
         every { reviewRepository.getReviews(any()) } returns flowOf(emptyList())
         coEvery { pointsRepository.addPointEvent(any()) } just runs
+        // The drill sets up the French handwriting recognizer on load.
+        coEvery { inkRecognitionManager.ensureModelReady(any()) } returns true
+        every { inkRecognitionManager.initialize(any()) } just runs
 
         val verbSlot = slot<String>()
         val correctSlot = slot<Boolean>()
@@ -119,6 +124,41 @@ class DrillViewModelTest {
         assertEquals(DrillPhase.DRILLING, state.phase)
         assertEquals(6, state.total)
         assertTrue(state.cards.all { it.verb.id == "etre" })
+    }
+
+    @Test
+    fun `the french handwriting recognizer is prepared on load`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Regression: without this the recognizer stays null and every stylus
+        // submission fails with "could not read it".
+        coVerify { inkRecognitionManager.ensureModelReady("fr") }
+        verify { inkRecognitionManager.initialize("fr") }
+        assertTrue(viewModel.state.value.isInkModelReady)
+    }
+
+    @Test
+    fun `a stylus submission that recognizes fills the input`() = runTest {
+        coEvery { inkRecognitionManager.recognize(any()) } returns Result.success("Sont")
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.onIntent(DrillIntent.RecognizeInk(mockk()))
+        advanceUntilIdle()
+
+        assertEquals("sont", viewModel.state.value.input)
+        assertFalse(viewModel.state.value.inkFailed)
+    }
+
+    @Test
+    fun `when the ink model fails to download the stylus is marked not ready`() = runTest {
+        coEvery { inkRecognitionManager.ensureModelReady(any()) } returns false
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isInkModelReady)
+        verify(exactly = 0) { inkRecognitionManager.initialize(any()) }
     }
 
     @Test
