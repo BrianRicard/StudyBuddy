@@ -19,6 +19,7 @@ import com.studybuddy.feature.backup.BackupExportScreen
 import com.studybuddy.feature.conjugation.atelier.AtelierScreen
 import com.studybuddy.feature.conjugation.battle.BattleScreen
 import com.studybuddy.feature.conjugation.boss.BossScreen
+import com.studybuddy.feature.conjugation.drill.DrillScreen
 import com.studybuddy.feature.conjugation.learn.LearnScreen
 import com.studybuddy.feature.conjugation.path.ConjugationPathScreen
 import com.studybuddy.feature.conjugation.speak.SpeakScreen
@@ -462,7 +463,31 @@ fun StudyBuddyNavHost(
         }
 
         composable(route = StudyBuddyRoutes.CONJUGATION_ATELIER) {
-            AtelierScreen(onNavigateBack = { navController.popBackStack() })
+            AtelierScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDrill = { mode, verbId, tense ->
+                    navController.navigateSafely(
+                        StudyBuddyRoutes.conjugationDrill(mode = mode, verbId = verbId, tense = tense),
+                    )
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.CONJUGATION_DRILL,
+            arguments = listOf(
+                navArgument("mode") { type = NavType.StringType },
+                navArgument("verbId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("tense") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+            ),
+        ) {
+            DrillScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(

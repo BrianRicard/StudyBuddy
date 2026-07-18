@@ -52,16 +52,17 @@ import com.studybuddy.core.ui.theme.StudyBuddyTheme
 @Composable
 fun AtelierScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToDrill: (mode: String, verbId: String?, tense: String?) -> Unit,
     viewModel: AtelierViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
-    val comingSoonMessage = stringResource(CoreUiR.string.atelier_coming_soon)
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                AtelierEffect.ShowComingSoon -> snackbarHostState.showSnackbar(comingSoonMessage)
+                is AtelierEffect.NavigateToDrill ->
+                    onNavigateToDrill(effect.mode.name, effect.verbId, effect.tense?.name)
             }
         }
     }

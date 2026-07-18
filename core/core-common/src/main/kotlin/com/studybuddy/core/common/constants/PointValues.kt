@@ -32,6 +32,14 @@ object PointValues {
     const val CONJUGATION_STAGE_COMPLETE = 50
     const val CONJUGATION_PERFECT_BONUS = 25
 
+    // Atelier des Verbes drills. Never zero — writing the word at all earns
+    // something, even after a reveal-and-copy.
+    const val CONJUGATION_DRILL_FIRST_TRY = 10
+    const val CONJUGATION_DRILL_RETRY = 5
+    const val CONJUGATION_DRILL_COPY = 2
+    const val CONJUGATION_DRILL_STYLUS_BONUS = 5
+    const val CONJUGATION_DRILL_SESSION_COMPLETE = 25
+
     // General
     const val DAILY_LOGIN = 10
     const val FIRST_SESSION_OF_DAY = 20

@@ -36,6 +36,7 @@ object StudyBuddyRoutes {
     const val CONJUGATION_BATTLE = "conjugation/battle/{stageId}"
     const val CONJUGATION_BOSS = "conjugation/boss/{stageId}"
     const val CONJUGATION_ATELIER = "conjugation/atelier"
+    const val CONJUGATION_DRILL = "conjugation/drill/{mode}?verbId={verbId}&tense={tense}"
     const val READING_DETAIL = "reading/detail/{passageId}"
     const val READING_QUESTIONS =
         "reading/questions/{passageId}/{readingTimeMs}"
@@ -54,6 +55,19 @@ object StudyBuddyRoutes {
     fun conjugationSpeak(stageId: String) = "conjugation/speak/$stageId"
     fun conjugationBattle(stageId: String) = "conjugation/battle/$stageId"
     fun conjugationBoss(stageId: String) = "conjugation/boss/$stageId"
+
+    fun conjugationDrill(
+        mode: String,
+        verbId: String? = null,
+        tense: String? = null,
+    ) = buildString {
+        append("conjugation/drill/$mode")
+        val params = listOfNotNull(
+            verbId?.let { "verbId=$it" },
+            tense?.let { "tense=$it" },
+        )
+        if (params.isNotEmpty()) append("?${params.joinToString("&")}")
+    }
     fun readingQuestions(
         passageId: String,
         readingTimeMs: Long,

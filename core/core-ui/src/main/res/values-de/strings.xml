@@ -681,7 +681,6 @@
     <string name="atelier_revision">Wiederholen</string>
     <string name="atelier_surprise">Überraschung!</string>
     <string name="atelier_all_watered">Alles ist gegossen!</string>
-    <string name="atelier_coming_soon">Die Übungen sprießen — sie kommen ganz bald!</string>
     <plurals name="atelier_due_cards_plural">
         <item quantity="one">%d Karte zu gießen</item>
         <item quantity="other">%d Karten zu gießen</item>
@@ -690,4 +689,30 @@
         <item quantity="one">%d Verb zu gießen</item>
         <item quantity="other">%d Verben zu gießen</item>
     </plurals>
+
+    <!-- Atelier drill screen -->
+    <string name="drill_prompt_title">Schreib, was du hörst</string>
+    <string name="drill_replay">Noch einmal hören</string>
+    <string name="drill_tab_keyboard">Tastatur</string>
+    <string name="drill_tab_stylus">Stift</string>
+    <string name="drill_stylus_bonus_note">✏️ +%d ⭐ mit dem Stift!</string>
+    <string name="drill_submit">Prüfen</string>
+    <string name="drill_next">Weiter</string>
+    <string name="drill_accent_glow">Fast! Schau auf die Akzente 👀</string>
+    <string name="drill_elision_glow">Fast! Prüfe Apostroph und Leerzeichen ✍️</string>
+    <string name="drill_listen_again">Hör noch einmal… 👂</string>
+    <string name="drill_locate">Fast! Schau auf den markierten Teil…</string>
+    <string name="drill_hint">So sieht es aus:</string>
+    <string name="drill_copy_prompt">Schreib es einmal, um es zu pflanzen 🌱</string>
+    <string name="drill_twin_note">Es könnte auch „%s“ sein 👯</string>
+    <string name="drill_points_chip">+%d ⭐</string>
+    <string name="drill_combo">×%d 🔥</string>
+    <string name="drill_ink_failed">Ich konnte es nicht lesen — schreib größer!</string>
+    <string name="drill_input_hint">Pronomen + Verb…</string>
+    <string name="drill_results_title">Super gemacht!</string>
+    <string name="drill_results_stars">%d ⭐ verdient</string>
+    <string name="drill_results_first_try">%1$d von %2$d beim ersten Versuch</string>
+    <string name="drill_results_growth_title">Dein Garten ist gewachsen:</string>
+    <string name="drill_play_again">Nochmal!</string>
+    <string name="drill_done">Zurück zum Garten</string>
 </resources>
