@@ -179,10 +179,8 @@ class SpeakViewModel @Inject constructor(
         person: ConjugationPerson,
         samples: FloatArray,
     ) {
-        if (!heardSpeech(samples)) {
-            encourage()
-            return
-        }
+        // No loudness gate here: whisper + similarity decide. Gating on RMS
+        // would falsely reject a quiet-but-correct utterance.
         val expected = stage.verb.display(person)
         val result = whisperEngine.transcribe(samples = samples, language = "fr", initialPrompt = expected)
         val similarity = result.getOrNull()
@@ -256,13 +254,31 @@ class SpeakViewModel @Inject constructor(
         }
     }
 
-    /** True when the recording actually contains speech (not silence or an instant tap). */
+    /**
+     * True when the recording actually contains speech (not silence or an instant tap).
+     *
+     * Uses the loudest short window rather than the whole-clip mean: a brief word
+     * spoken inside a longer, mostly-quiet recording would be averaged away by a
+     * mean over the full clip, so a real utterance must never be rejected.
+     */
     private fun heardSpeech(samples: FloatArray): Boolean {
         if (samples.size < MIN_SPEECH_SAMPLES) return false
-        var sumSquares = 0.0
-        for (sample in samples) sumSquares += (sample * sample).toDouble()
-        val rms = sqrt(sumSquares / samples.size)
-        return rms >= SPEECH_RMS_THRESHOLD
+        return loudestWindowRms(samples) >= SPEECH_RMS_THRESHOLD
+    }
+
+    /** RMS of the loudest ~[SPEECH_WINDOW_SAMPLES]-sample window (non-overlapping). */
+    private fun loudestWindowRms(samples: FloatArray): Double {
+        var loudest = 0.0
+        var index = 0
+        while (index < samples.size) {
+            val end = minOf(index + SPEECH_WINDOW_SAMPLES, samples.size)
+            var sumSquares = 0.0
+            for (i in index until end) sumSquares += (samples[i] * samples[i]).toDouble()
+            val rms = sqrt(sumSquares / (end - index))
+            if (rms > loudest) loudest = rms
+            index = end
+        }
+        return loudest
     }
 
     override fun onCleared() {
@@ -279,8 +295,11 @@ class SpeakViewModel @Inject constructor(
         /** Generous on purpose: hearing the child try matters more than precision. */
         const val PASS_THRESHOLD = 0.5f
 
-        /** Minimum RMS loudness that counts as "the child spoke". */
+        /** Minimum windowed RMS loudness that counts as "the child spoke". */
         const val SPEECH_RMS_THRESHOLD = 0.015f
+
+        /** ~100ms window: long enough to be stable, short enough to catch one word. */
+        const val SPEECH_WINDOW_SAMPLES = AudioRecorder.SAMPLE_RATE / 10
 
         /** At least ~0.3s of audio, so an instant start/stop tap never counts. */
         const val MIN_SPEECH_SAMPLES = AudioRecorder.SAMPLE_RATE * 3 / 10
