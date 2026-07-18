@@ -447,27 +447,29 @@ object AvatarCharacterRegistry {
 
         CharacterSpec(
             id = "cyberpunk_bunny",
-            primaryColor = Color(0xFF00E5FF),
-            secondaryColor = Color(0xFFE040FB),
-            accentColor = Color(0xFF1A1A1A),
+            primaryColor = Color(0xFFECEFF1),
+            secondaryColor = Color(0xFF00E5FF),
+            accentColor = Color(0xFFE91E8C),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.18f),
-                faceAnchor = Offset(0.50f, 0.36f),
-                chestAnchor = Offset(0.50f, 0.63f),
+                // Regenerated art: tall ears frame a wide visor across the face
+                hatAnchor = Offset(0.50f, 0.02f),
+                faceAnchor = Offset(0.50f, 0.35f),
+                chestAnchor = Offset(0.50f, 0.60f),
                 petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 0.85f,
+                hatScale = 0.8f,
             ),
         ),
 
         CharacterSpec(
             id = "engineer_cat",
-            primaryColor = Color(0xFFFF9800),
-            secondaryColor = Color(0xFF9E9E9E),
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFFFF9800),
             accentColor = Color(0xFF1A1A1A),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.05f),
-                faceAnchor = Offset(0.50f, 0.28f),
-                chestAnchor = Offset(0.50f, 0.58f),
+                // Regenerated art: hard hat sits high and centred
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.50f),
                 petAnchor = Offset(0.85f, 0.82f),
             ),
         ),
@@ -492,11 +494,12 @@ object AvatarCharacterRegistry {
             secondaryColor = Color(0xFF212121),
             accentColor = Color(0xFFFFD700),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.06f),
-                faceAnchor = Offset(0.50f, 0.30f),
-                chestAnchor = Offset(0.50f, 0.60f),
+                // Regenerated art: wide tricorn hat brim
+                hatAnchor = Offset(0.50f, 0.03f),
+                faceAnchor = Offset(0.50f, 0.26f),
+                chestAnchor = Offset(0.50f, 0.56f),
                 petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 1.05f,
+                hatScale = 1.1f,
             ),
         ),
 
@@ -516,13 +519,15 @@ object AvatarCharacterRegistry {
         CharacterSpec(
             id = "dj_hedgehog",
             primaryColor = Color(0xFF795548),
-            secondaryColor = Color(0xFFE040FB),
-            accentColor = Color(0xFF00E5FF),
+            secondaryColor = Color(0xFFF8BBD0),
+            accentColor = Color(0xFFB2DFDB),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.06f),
-                faceAnchor = Offset(0.50f, 0.28f),
-                chestAnchor = Offset(0.50f, 0.58f),
+                // Regenerated art: pastel headphones sit high, paws rest on the turntable below
+                hatAnchor = Offset(0.50f, 0.02f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.48f),
                 petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.75f,
             ),
         ),
 
@@ -530,14 +535,15 @@ object AvatarCharacterRegistry {
 
         CharacterSpec(
             id = "elder_dragon",
-            primaryColor = Color(0xFF6A1B9A),
-            secondaryColor = Color(0xFFFFD700),
-            accentColor = Color(0xFFFF6F00),
+            primaryColor = Color(0xFF7E57C2),
+            secondaryColor = Color(0xFFD4A843),
+            accentColor = Color(0xFFF5F5F5),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.06f),
-                faceAnchor = Offset(0.50f, 0.28f),
+                // Regenerated art: sitting cross-legged, curved horns above a tilted head
+                hatAnchor = Offset(0.52f, 0.03f),
+                faceAnchor = Offset(0.50f, 0.20f),
                 chestAnchor = Offset(0.50f, 0.58f),
-                petAnchor = Offset(0.85f, 0.82f),
+                petAnchor = Offset(0.85f, 0.85f),
                 hatRotation = -5f,
             ),
         ),
@@ -559,37 +565,40 @@ object AvatarCharacterRegistry {
             id = "royal_unicorn",
             primaryColor = Color(0xFFF8F8FF),
             secondaryColor = Color(0xFFFFD700),
-            accentColor = Color(0xFFE040FB),
+            accentColor = Color(0xFFF8BBD0),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.02f),
-                faceAnchor = Offset(0.50f, 0.28f),
-                chestAnchor = Offset(0.50f, 0.60f),
-                petAnchor = Offset(0.85f, 0.82f),
-                hatScale = 0.85f,
+                // Regenerated art: side profile, head and horn toward the upper-left
+                hatAnchor = Offset(0.38f, 0.02f),
+                faceAnchor = Offset(0.35f, 0.28f),
+                chestAnchor = Offset(0.45f, 0.55f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 0.8f,
             ),
         ),
 
         CharacterSpec(
             id = "robot_dog",
-            primaryColor = Color(0xFF90A4AE),
+            primaryColor = Color(0xFFCFD8DC),
             secondaryColor = Color(0xFF00E5FF),
-            accentColor = Color(0xFFFF1744),
+            accentColor = Color(0xFF607D8B),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.08f),
-                faceAnchor = Offset(0.50f, 0.30f),
-                chestAnchor = Offset(0.50f, 0.60f),
+                // Regenerated art: antenna at the very top, rounded ear-like panels
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.24f),
+                chestAnchor = Offset(0.50f, 0.48f),
                 petAnchor = Offset(0.85f, 0.82f),
             ),
         ),
 
         CharacterSpec(
             id = "phoenix_butterfly",
-            primaryColor = Color(0xFFFF6F00),
-            secondaryColor = Color(0xFFFF1744),
-            accentColor = Color(0xFFFFD700),
+            primaryColor = Color(0xFFFFC107),
+            secondaryColor = Color(0xFFFF5722),
+            accentColor = Color(0xFFD32F2F),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.10f),
-                faceAnchor = Offset(0.50f, 0.28f),
+                // Regenerated art: antennae at top, wide flame-wing span at the sides
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.26f),
                 chestAnchor = Offset(0.50f, 0.55f),
                 petAnchor = Offset(0.85f, 0.78f),
                 hatScale = 0.8f,
@@ -598,25 +607,27 @@ object AvatarCharacterRegistry {
 
         CharacterSpec(
             id = "steampunk_hamster",
-            primaryColor = Color(0xFFFFB74D),
-            secondaryColor = Color(0xFF8D6E63),
+            primaryColor = Color(0xFFE8C99A),
+            secondaryColor = Color(0xFF6D4C41),
             accentColor = Color(0xFFBF8040),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.07f),
-                faceAnchor = Offset(0.50f, 0.30f),
-                chestAnchor = Offset(0.50f, 0.60f),
+                // Regenerated art: goggles sit on the forehead between round ears
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.24f),
+                chestAnchor = Offset(0.50f, 0.55f),
                 petAnchor = Offset(0.85f, 0.82f),
             ),
         ),
 
         CharacterSpec(
             id = "space_penguin",
-            primaryColor = Color(0xFF263238),
-            secondaryColor = Color(0xFFECEFF1),
-            accentColor = Color(0xFF2196F3),
+            primaryColor = Color(0xFFECEFF1),
+            secondaryColor = Color(0xFFEF6C00),
+            accentColor = Color(0xFF81D4FA),
             attachmentPoints = AvatarAttachmentPoints(
-                hatAnchor = Offset(0.50f, 0.06f),
-                faceAnchor = Offset(0.50f, 0.28f),
+                // Regenerated art: antenna ball at the very top of the helmet
+                hatAnchor = Offset(0.50f, 0.02f),
+                faceAnchor = Offset(0.50f, 0.30f),
                 chestAnchor = Offset(0.50f, 0.58f),
                 petAnchor = Offset(0.85f, 0.82f),
             ),
