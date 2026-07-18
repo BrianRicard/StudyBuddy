@@ -78,7 +78,12 @@ object DatabaseModule {
                 }
             },
         )
-        .addMigrations(Migrations.MIGRATION_1_2, Migrations.MIGRATION_2_3, Migrations.MIGRATION_3_4)
+        .addMigrations(
+            Migrations.MIGRATION_1_2,
+            Migrations.MIGRATION_2_3,
+            Migrations.MIGRATION_3_4,
+            Migrations.MIGRATION_4_5,
+        )
         .build()
 
     @Provides
@@ -110,6 +115,9 @@ object DatabaseModule {
 
     @Provides
     fun provideConjugationDao(db: StudyBuddyDatabase) = db.conjugationDao()
+
+    @Provides
+    fun provideAtelierReviewDao(db: StudyBuddyDatabase) = db.atelierReviewDao()
 
     @Provides
     @Singleton

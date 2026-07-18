@@ -158,6 +158,60 @@ class MigrationsTest {
         )
     }
 
+    @Test
+    fun `MIGRATION_4_5 creates atelier_review table with all columns`() {
+        val sql = getMigration45Sql()
+        assertTrue(
+            sql.any { it.contains("CREATE TABLE IF NOT EXISTS `atelier_review`") },
+            "MIGRATION_4_5 should create atelier_review table",
+        )
+        val tableSql = sql.first { it.contains("`atelier_review`") && it.contains("CREATE TABLE") }
+        listOf("id", "profileId", "verbId", "tense", "person", "box", "dueAt", "lapses", "updatedAt")
+            .forEach { col ->
+                assertTrue(
+                    tableSql.contains("`$col`"),
+                    "atelier_review should have column '$col'",
+                )
+            }
+    }
+
+    @Test
+    fun `MIGRATION_4_5 creates the unique card index and the due-date index`() {
+        val sql = getMigration45Sql()
+        val uniqueIndex = "CREATE UNIQUE INDEX IF NOT EXISTS " +
+            "`index_atelier_review_profileId_verbId_tense_person`"
+        assertTrue(
+            sql.any { it.contains(uniqueIndex) },
+            "MIGRATION_4_5 should create the unique (profileId, verbId, tense, person) index",
+        )
+        val dueIndex = "CREATE INDEX IF NOT EXISTS `index_atelier_review_profileId_dueAt`"
+        assertTrue(
+            sql.any { it.contains(dueIndex) },
+            "MIGRATION_4_5 should create the (profileId, dueAt) index",
+        )
+    }
+
+    @Test
+    fun `MIGRATION_4_5 does not touch existing tables`() {
+        val sql = getMigration45Sql()
+        assertTrue(
+            sql.none { it.contains("ALTER TABLE") || it.contains("DROP TABLE") },
+            "MIGRATION_4_5 should only create new objects",
+        )
+    }
+
+    private fun getMigration45Sql(): List<String> {
+        val statements = mutableListOf<String>()
+        val sqlSlot = slot<String>()
+        val fakeDb = mockk<SupportSQLiteDatabase> {
+            every { execSQL(capture(sqlSlot)) } answers {
+                statements.add(sqlSlot.captured)
+            }
+        }
+        Migrations.MIGRATION_4_5.migrate(fakeDb)
+        return statements
+    }
+
     private fun getMigration34Sql(): List<String> {
         val statements = mutableListOf<String>()
         val sqlSlot = slot<String>()
