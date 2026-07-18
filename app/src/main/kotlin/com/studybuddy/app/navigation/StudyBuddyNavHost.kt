@@ -16,6 +16,7 @@ import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.core.ui.navigation.navigateSafely
 import com.studybuddy.feature.avatar.AvatarClosetScreen
 import com.studybuddy.feature.backup.BackupExportScreen
+import com.studybuddy.feature.conjugation.atelier.AtelierScreen
 import com.studybuddy.feature.conjugation.battle.BattleScreen
 import com.studybuddy.feature.conjugation.boss.BossScreen
 import com.studybuddy.feature.conjugation.learn.LearnScreen
@@ -454,7 +455,14 @@ fun StudyBuddyNavHost(
                     }
                     navController.navigateSafely(route)
                 },
+                onNavigateToAtelier = {
+                    navController.navigateSafely(StudyBuddyRoutes.CONJUGATION_ATELIER)
+                },
             )
+        }
+
+        composable(route = StudyBuddyRoutes.CONJUGATION_ATELIER) {
+            AtelierScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(

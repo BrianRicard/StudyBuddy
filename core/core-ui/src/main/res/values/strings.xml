@@ -673,4 +673,22 @@
     <string name="milestone_perfect_quest">Perfect quest — every game flawless</string>
     <string name="milestone_achieved_on">Reached on %1$s</string>
     <string name="milestone_progress">%1$d of %2$d</string>
+
+    <!-- Atelier des Verbes (conjugation drills) -->
+    <string name="atelier_title">Verb Workshop</string>
+    <string name="atelier_subtitle">Hear it, write it, grow your garden!</string>
+    <string name="atelier_entry_title">Verb Workshop</string>
+    <string name="atelier_entry_subtitle">Train your memory with quick drills</string>
+    <string name="atelier_revision">Review</string>
+    <string name="atelier_surprise">Surprise!</string>
+    <string name="atelier_all_watered">Everything is watered!</string>
+    <string name="atelier_coming_soon">The drills are sprouting — coming very soon!</string>
+    <plurals name="atelier_due_cards_plural">
+        <item quantity="one">%d card to water</item>
+        <item quantity="other">%d cards to water</item>
+    </plurals>
+    <plurals name="atelier_verbs_to_water_plural">
+        <item quantity="one">%d verb to water</item>
+        <item quantity="other">%d verbs to water</item>
+    </plurals>
 </resources>

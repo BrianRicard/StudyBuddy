@@ -35,6 +35,7 @@ object StudyBuddyRoutes {
     const val CONJUGATION_SPEAK = "conjugation/speak/{stageId}"
     const val CONJUGATION_BATTLE = "conjugation/battle/{stageId}"
     const val CONJUGATION_BOSS = "conjugation/boss/{stageId}"
+    const val CONJUGATION_ATELIER = "conjugation/atelier"
     const val READING_DETAIL = "reading/detail/{passageId}"
     const val READING_QUESTIONS =
         "reading/questions/{passageId}/{readingTimeMs}"

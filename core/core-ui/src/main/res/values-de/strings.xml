@@ -672,4 +672,22 @@
     <string name="milestone_perfect_quest">Perfekte Quest — jedes Spiel fehlerfrei</string>
     <string name="milestone_achieved_on">Erreicht am %1$s</string>
     <string name="milestone_progress">%1$d von %2$d</string>
+
+    <!-- Atelier des Verbes (conjugation drills) -->
+    <string name="atelier_title">Verben-Werkstatt</string>
+    <string name="atelier_subtitle">Hör zu, schreib es, lass deinen Garten wachsen!</string>
+    <string name="atelier_entry_title">Verben-Werkstatt</string>
+    <string name="atelier_entry_subtitle">Trainiere dein Gedächtnis mit kurzen Übungen</string>
+    <string name="atelier_revision">Wiederholen</string>
+    <string name="atelier_surprise">Überraschung!</string>
+    <string name="atelier_all_watered">Alles ist gegossen!</string>
+    <string name="atelier_coming_soon">Die Übungen sprießen — sie kommen ganz bald!</string>
+    <plurals name="atelier_due_cards_plural">
+        <item quantity="one">%d Karte zu gießen</item>
+        <item quantity="other">%d Karten zu gießen</item>
+    </plurals>
+    <plurals name="atelier_verbs_to_water_plural">
+        <item quantity="one">%d Verb zu gießen</item>
+        <item quantity="other">%d Verben zu gießen</item>
+    </plurals>
 </resources>
