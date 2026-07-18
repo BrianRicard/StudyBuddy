@@ -621,6 +621,385 @@ object AvatarCharacterRegistry {
                 petAnchor = Offset(0.85f, 0.82f),
             ),
         ),
+        // ── New expanded roster (Flux-generated PNGs, batch 3) ──────────────
+
+        CharacterSpec(
+            id = "raccoon",
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFF424242),
+            accentColor = Color(0xFF1A1A1A),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "koala",
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFFECEFF1),
+            accentColor = Color(0xFF212121),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Big fluffy ears extend wide but not much taller than the head
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.24f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.9f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "otter",
+            primaryColor = Color(0xFF795548),
+            secondaryColor = Color(0xFFD7B89C),
+            accentColor = Color(0xFF3E2723),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: big round head, eyes quite high
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.15f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "sloth",
+            primaryColor = Color(0xFFD7CCC8),
+            secondaryColor = Color(0xFF8D6E63),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Shaggy fur fringes above the head — hat sits slightly smaller
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.9f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "hedgehog",
+            primaryColor = Color(0xFF8D6E63),
+            secondaryColor = Color(0xFFFFCCBC),
+            accentColor = Color(0xFF4E342E),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Tall spiky back — hat scaled down so it doesn't clash with spikes
+                hatAnchor = Offset(0.50f, 0.08f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.50f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.8f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "flamingo",
+            primaryColor = Color(0xFFF48FB1),
+            secondaryColor = Color(0xFFE91E8C),
+            accentColor = Color(0xFF212121),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: head tilted up at the top-right, standing on one leg
+                hatAnchor = Offset(0.62f, 0.04f),
+                faceAnchor = Offset(0.62f, 0.10f),
+                chestAnchor = Offset(0.50f, 0.38f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatRotation = 10f,
+                hatScale = 0.75f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "red_panda",
+            primaryColor = Color(0xFFBF5A3E),
+            secondaryColor = Color(0xFFFFF3C7),
+            accentColor = Color(0xFF3E2723),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.9f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "narwhal",
+            primaryColor = Color(0xFF78909C),
+            secondaryColor = Color(0xFFCFD8DC),
+            accentColor = Color(0xFFFFF3C7),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Horizontal pose, head/eyes on the left; baked-in tusk — hat slot not rendered
+                hatAnchor = Offset(0.22f, 0.28f),
+                faceAnchor = Offset(0.22f, 0.32f),
+                chestAnchor = Offset(0.45f, 0.60f),
+                petAnchor = Offset(0.85f, 0.82f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "axolotl",
+            primaryColor = Color(0xFFFCE4EC),
+            secondaryColor = Color(0xFFF48FB1),
+            accentColor = Color(0xFF6A1B4D),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.95f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "peacock",
+            primaryColor = Color(0xFF5C7C99),
+            secondaryColor = Color(0xFF4CAF9E),
+            accentColor = Color(0xFFE0708C),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: fanned tail feathers dominate the frame — head is small
+                // and centred near the top of the fan, so hats are scaled well down.
+                hatAnchor = Offset(0.50f, 0.10f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.40f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 0.65f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "arctic_fox",
+            primaryColor = Color(0xFFECEFF1),
+            secondaryColor = Color(0xFFCFD8DC),
+            accentColor = Color(0xFF1A1A1A),
+            attachmentPoints = AvatarAttachmentPoints(
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+            ),
+        ),
+
+        CharacterSpec(
+            id = "dolphin",
+            primaryColor = Color(0xFF78909C),
+            secondaryColor = Color(0xFFECEFF1),
+            accentColor = Color(0xFF37474F),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: leaping diagonal pose, head/eye at the top-right
+                hatAnchor = Offset(0.62f, 0.08f),
+                faceAnchor = Offset(0.68f, 0.20f),
+                chestAnchor = Offset(0.45f, 0.45f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatRotation = -15f,
+                hatScale = 0.8f,
+            ),
+        ),
+
+        // ── Epic skins (batch 3) ────────────────────────────────────────────
+
+        CharacterSpec(
+            id = "astronaut_koala",
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFFF5F5F5),
+            accentColor = Color(0xFFB3E5FC),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in glass astronaut helmet — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.22f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "chef_raccoon",
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFFF5F5F5),
+            accentColor = Color(0xFF6D4C41),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in tall chef hat — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.10f),
+                faceAnchor = Offset(0.50f, 0.26f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.85f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "explorer_sloth",
+            primaryColor = Color(0xFFD7CCC8),
+            secondaryColor = Color(0xFF9E9159),
+            accentColor = Color(0xFF5D4037),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in safari hat and backpack — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.55f),
+                petAnchor = Offset(0.88f, 0.88f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "knight_hedgehog",
+            primaryColor = Color(0xFF8D6E63),
+            secondaryColor = Color(0xFFB0BEC5),
+            accentColor = Color(0xFFFFCCBC),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in knight helmet and shield — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.28f),
+                chestAnchor = Offset(0.45f, 0.55f),
+                petAnchor = Offset(0.88f, 0.85f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "pilot_narwhal",
+            primaryColor = Color(0xFFCFD8DC),
+            secondaryColor = Color(0xFF6D4C41),
+            accentColor = Color(0xFFB3E5FC),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Baked-in aviator goggles and pilot cap — the hat slot is not rendered
+                hatAnchor = Offset(0.50f, 0.08f),
+                faceAnchor = Offset(0.50f, 0.32f),
+                chestAnchor = Offset(0.50f, 0.62f),
+                petAnchor = Offset(0.85f, 0.88f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "artist_flamingo",
+            primaryColor = Color(0xFFF48FB1),
+            secondaryColor = Color(0xFFFFD54F),
+            accentColor = Color(0xFF212121),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Generated art: head at the top-left, baked-in beret — hat slot not rendered
+                hatAnchor = Offset(0.38f, 0.05f),
+                faceAnchor = Offset(0.38f, 0.13f),
+                chestAnchor = Offset(0.45f, 0.42f),
+                petAnchor = Offset(0.85f, 0.88f),
+                supportsHat = false,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "scientist_axolotl",
+            primaryColor = Color(0xFFFCE4EC),
+            secondaryColor = Color(0xFFF5F5F5),
+            accentColor = Color(0xFF212121),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Round glasses are baked into the face — face accessories will overlap slightly
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.58f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.9f,
+            ),
+        ),
+
+        // ── Legendary creatures (batch 3, new mythics) ──────────────────────
+
+        CharacterSpec(
+            id = "crystal_stag",
+            primaryColor = Color(0xFF3F51B5),
+            secondaryColor = Color(0xFFB3E5FC),
+            accentColor = Color(0xFFE1F5FE),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Huge crystalline antlers — hat anchored low so it sits BELOW them
+                hatAnchor = Offset(0.50f, 0.28f),
+                faceAnchor = Offset(0.50f, 0.38f),
+                chestAnchor = Offset(0.50f, 0.65f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 1.1f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "thunder_ram",
+            primaryColor = Color(0xFF9E9E9E),
+            secondaryColor = Color(0xFFD4AF37),
+            accentColor = Color(0xFF424242),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Large curled horns frame the head — hat scaled down slightly
+                hatAnchor = Offset(0.50f, 0.05f),
+                faceAnchor = Offset(0.50f, 0.20f),
+                chestAnchor = Offset(0.50f, 0.52f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "moon_wolf",
+            primaryColor = Color(0xFFB0BEC5),
+            secondaryColor = Color(0xFFB3E5FC),
+            accentColor = Color(0xFF546E7A),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Cropped from a night-sky scene (moon/stars removed) — head sits centre-top
+                hatAnchor = Offset(0.50f, 0.04f),
+                faceAnchor = Offset(0.50f, 0.17f),
+                chestAnchor = Offset(0.45f, 0.55f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 0.85f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "golden_griffin",
+            primaryColor = Color(0xFFE8C468),
+            secondaryColor = Color(0xFFFFF3C7),
+            accentColor = Color(0xFFB08040),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Quadruped side-profile — head/eagle face is at the top-left
+                hatAnchor = Offset(0.20f, 0.05f),
+                faceAnchor = Offset(0.20f, 0.15f),
+                chestAnchor = Offset(0.35f, 0.42f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatRotation = -10f,
+                hatScale = 0.7f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "abyss_kraken",
+            primaryColor = Color(0xFF5E4B8B),
+            secondaryColor = Color(0xFF7E57C2),
+            accentColor = Color(0xFF64FFDA),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Wide curling tentacles like the octopus — hat/face scaled up slightly
+                hatAnchor = Offset(0.50f, 0.06f),
+                faceAnchor = Offset(0.50f, 0.30f),
+                chestAnchor = Offset(0.50f, 0.52f),
+                petAnchor = Offset(0.85f, 0.82f),
+                hatScale = 1.1f,
+                faceScale = 1.1f,
+            ),
+        ),
+
+        CharacterSpec(
+            id = "mythic_pegasus",
+            primaryColor = Color(0xFFF8F8FF),
+            secondaryColor = Color(0xFFCE93D8),
+            accentColor = Color(0xFFFFD700),
+            attachmentPoints = AvatarAttachmentPoints(
+                // Side-profile pose, head at the top-left with flowing mane
+                hatAnchor = Offset(0.14f, 0.08f),
+                faceAnchor = Offset(0.14f, 0.20f),
+                chestAnchor = Offset(0.35f, 0.45f),
+                petAnchor = Offset(0.85f, 0.85f),
+                hatRotation = -15f,
+                hatScale = 0.7f,
+            ),
+        ),
     )
 
     private val specsById: Map<String, CharacterSpec> = allSpecs.associateBy { it.id }

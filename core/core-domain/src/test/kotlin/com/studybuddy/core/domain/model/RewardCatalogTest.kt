@@ -299,6 +299,13 @@ class RewardCatalogTest {
             "char_elder_dragon", "char_wizard_owl", "char_royal_unicorn",
             "char_robot_dog", "char_phoenix_butterfly", "char_steampunk_hamster",
             "char_space_penguin",
+            // New expanded roster (batch 3)
+            "char_raccoon", "char_koala", "char_otter", "char_sloth", "char_hedgehog", "char_flamingo",
+            "char_red_panda", "char_narwhal", "char_axolotl", "char_peacock", "char_arctic_fox", "char_dolphin",
+            "char_astronaut_koala", "char_chef_raccoon", "char_explorer_sloth", "char_knight_hedgehog",
+            "char_pilot_narwhal", "char_artist_flamingo", "char_scientist_axolotl",
+            "char_crystal_stag", "char_thunder_ram", "char_moon_wolf", "char_golden_griffin",
+            "char_abyss_kraken", "char_mythic_pegasus",
             // Hats
             "hat_none", "hat_tophat", "hat_party", "hat_crown", "hat_wizard",
             // Face
