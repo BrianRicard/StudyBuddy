@@ -32,6 +32,8 @@ private class FakeAtelierReviewDao : AtelierReviewDao {
     override fun getReviewsForProfile(profileId: String): Flow<List<AtelierReviewEntity>> =
         rows.map { all -> all.values.filter { it.profileId == profileId } }
 
+    override suspend fun getAllReviews(): List<AtelierReviewEntity> = rows.value.values.toList()
+
     override suspend fun getReview(
         profileId: String,
         verbId: String,

@@ -6,13 +6,20 @@ import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
+import com.studybuddy.core.domain.model.conjugation.AtelierReview
+import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
+import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationProgress
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
+import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
+import com.studybuddy.core.domain.usecase.conjugation.GetAtelierMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
 import io.mockk.every
@@ -45,6 +52,7 @@ class StatsViewModelTest {
     private val mathRepository: MathRepository = mockk()
     private val dicteeRepository: DicteeRepository = mockk()
     private val conjugationRepository: ConjugationRepository = mockk()
+    private val atelierReviewRepository: AtelierReviewRepository = mockk()
 
     @BeforeEach
     fun setup() {
@@ -61,12 +69,14 @@ class StatsViewModelTest {
         pointEvents: List<PointEvent> = emptyList(),
         mathSessions: List<MathSession> = emptyList(),
         dicteeLists: List<DicteeList> = emptyList(),
+        atelierReviews: List<AtelierReview> = emptyList(),
     ) {
         every { pointsRepository.getTotalPoints("default") } returns flowOf(totalPoints)
         every { pointsRepository.getPointsForProfile("default") } returns flowOf(pointEvents)
         every { mathRepository.getSessionsForProfile("default") } returns flowOf(mathSessions)
         every { dicteeRepository.getListsForProfile("default") } returns flowOf(dicteeLists)
         every { conjugationRepository.getProgressForProfile("default") } returns flowOf(emptyList())
+        every { atelierReviewRepository.getReviews("default") } returns flowOf(atelierReviews)
     }
 
     private fun createViewModel() = StatsViewModel(
@@ -75,6 +85,8 @@ class StatsViewModelTest {
         dicteeRepository = dicteeRepository,
         getConjugationPath = GetConjugationPathUseCase(conjugationRepository),
         getConjugationMilestones = GetConjugationMilestonesUseCase(),
+        atelierReviewRepository = atelierReviewRepository,
+        getAtelierMilestones = GetAtelierMilestonesUseCase(),
     )
 
     private fun createPointEvent(
@@ -311,5 +323,48 @@ class StatsViewModelTest {
         advanceUntilIdle()
 
         assertEquals(2, viewModel.state.value.totalSessions)
+    }
+
+    @Test
+    fun `atelier stats surface mastered verbs, due cards and milestones`() = runTest {
+        val masteredEtre = ConjugationTense.entries.flatMap { tense ->
+            ConjugationPerson.entries.map { person ->
+                AtelierReview(
+                    id = "etre-$tense-$person",
+                    profileId = "default",
+                    verbId = "etre",
+                    tense = tense,
+                    person = person,
+                    box = AtelierSchedule.MAX_BOX,
+                    dueAt = Clock.System.now().plus(kotlin.time.Duration.parse("5d")),
+                    lapses = 0,
+                    updatedAt = Clock.System.now(),
+                )
+            }
+        }
+        val dueCard = AtelierReview(
+            id = "avoir-due",
+            profileId = "default",
+            verbId = "avoir",
+            tense = ConjugationTense.PRESENT,
+            person = ConjugationPerson.JE,
+            box = 1,
+            dueAt = Clock.System.now().minus(kotlin.time.Duration.parse("1d")),
+            lapses = 0,
+            updatedAt = Clock.System.now(),
+        )
+        setupDefaultMocks(atelierReviews = masteredEtre + dueCard)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.atelierVerbsMastered)
+        assertEquals(1, state.atelierCardsDue)
+        assertTrue(
+            state.atelierMilestones.single {
+                it.milestone == AtelierMilestone.FIRST_VERB_MASTERED
+            }.isAchieved,
+        )
     }
 }

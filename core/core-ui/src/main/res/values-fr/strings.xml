@@ -715,4 +715,14 @@
     <string name="drill_results_growth_title">Ton jardin a poussé :</string>
     <string name="drill_play_again">Encore !</string>
     <string name="drill_done">Retour au jardin</string>
+
+    <!-- Atelier des Verbes stats -->
+    <string name="stats_atelier_title">L\'Atelier des Verbes</string>
+    <string name="stats_atelier_verbs_mastered">Verbes maîtrisés</string>
+    <string name="stats_atelier_cards_due">Cartes à réviser aujourd\'hui</string>
+    <string name="stats_atelier_milestones_title">Objectifs de l\'atelier</string>
+    <string name="atelier_milestone_first_card">Première forme maîtrisée</string>
+    <string name="atelier_milestone_first_verb">Premier verbe entièrement maîtrisé</string>
+    <string name="atelier_milestone_five_verbs">Cinq verbes entièrement maîtrisés</string>
+    <string name="atelier_milestone_all_verbs">Tous les verbes entièrement maîtrisés</string>
 </resources>

@@ -6,12 +6,17 @@ import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
+import com.studybuddy.core.domain.model.conjugation.AtelierMilestoneStatus
 import com.studybuddy.core.domain.model.conjugation.ConjugationPathStage
 import com.studybuddy.core.domain.model.conjugation.ConjugationStages
+import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
 import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
+import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
+import com.studybuddy.core.domain.usecase.conjugation.GetAtelierMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -53,6 +58,10 @@ data class StatsState(
     val verbsTotal: Int = ConjugationStages.all.size,
     val conjugationGamesDone: Int = 0,
     val milestones: List<MilestoneStatus> = emptyList(),
+    val atelierVerbsMastered: Int = 0,
+    val atelierVerbsTotal: Int = FrenchVerbs.all.size,
+    val atelierCardsDue: Int = 0,
+    val atelierMilestones: List<AtelierMilestoneStatus> = emptyList(),
     val isLoading: Boolean = true,
 )
 
@@ -63,6 +72,8 @@ class StatsViewModel @Inject constructor(
     private val dicteeRepository: DicteeRepository,
     private val getConjugationPath: GetConjugationPathUseCase,
     private val getConjugationMilestones: GetConjugationMilestonesUseCase,
+    private val atelierReviewRepository: AtelierReviewRepository,
+    private val getAtelierMilestones: GetAtelierMilestonesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(StatsState())
@@ -74,34 +85,42 @@ class StatsViewModel @Inject constructor(
 
     private fun observeStats() {
         viewModelScope.launch {
-            combine(
+            // combine() has typed overloads up to 5 flows, so the quest stats are
+            // built first and the Atelier review flow is folded in afterwards.
+            val questStats = combine(
                 pointsRepository.getTotalPoints(AppConstants.DEFAULT_PROFILE_ID),
                 pointsRepository.getPointsForProfile(AppConstants.DEFAULT_PROFILE_ID),
                 mathRepository.getSessionsForProfile(AppConstants.DEFAULT_PROFILE_ID),
                 dicteeRepository.getListsForProfile(AppConstants.DEFAULT_PROFILE_ID),
                 getConjugationPath(AppConstants.DEFAULT_PROFILE_ID),
             ) { totalPoints, pointEvents, mathSessions, dicteeLists, conjugationPath ->
-                val dayStreak = calculateDayStreak(pointEvents)
-                val totalSessions = countTotalSessions(pointEvents)
-                val weeklyData = buildWeeklyData(pointEvents)
-                val dicteeAccuracy = calculateDicteeAccuracy(dicteeLists)
-                val dicteeAccuracyTrend = calculateDicteeAccuracyTrend(dicteeLists)
-                val mathAvgSpeed = calculateMathAvgSpeed(mathSessions)
-                val mathSpeedTrend = calculateMathSpeedTrend(mathSessions)
-
                 StatsState(
                     totalStars = totalPoints,
-                    dayStreak = dayStreak,
-                    totalSessions = totalSessions,
-                    weeklyData = weeklyData,
-                    dicteeAccuracy = dicteeAccuracy,
-                    dicteeAccuracyTrend = dicteeAccuracyTrend,
-                    mathAvgSpeed = mathAvgSpeed,
-                    mathSpeedTrend = mathSpeedTrend,
+                    dayStreak = calculateDayStreak(pointEvents),
+                    totalSessions = countTotalSessions(pointEvents),
+                    weeklyData = buildWeeklyData(pointEvents),
+                    dicteeAccuracy = calculateDicteeAccuracy(dicteeLists),
+                    dicteeAccuracyTrend = calculateDicteeAccuracyTrend(dicteeLists),
+                    mathAvgSpeed = calculateMathAvgSpeed(mathSessions),
+                    mathSpeedTrend = calculateMathSpeedTrend(mathSessions),
                     verbsMastered = conjugationPath.count { it.isCompleted },
                     conjugationGamesDone = countConjugationGames(conjugationPath),
                     milestones = getConjugationMilestones(conjugationPath),
                     isLoading = false,
+                )
+            }
+
+            combine(
+                questStats,
+                atelierReviewRepository.getReviews(AppConstants.DEFAULT_PROFILE_ID),
+            ) { state, atelierReviews ->
+                val now = Clock.System.now()
+                val milestones = getAtelierMilestones(atelierReviews)
+                state.copy(
+                    atelierVerbsMastered = milestones
+                        .single { it.milestone == AtelierMilestone.ALL_VERBS_MASTERED }.current,
+                    atelierCardsDue = atelierReviews.count { it.dueAt <= now },
+                    atelierMilestones = milestones,
                 )
             }.collect { newState ->
                 _state.value = newState
