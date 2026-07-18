@@ -2,6 +2,7 @@ package com.studybuddy.core.data.backup
 
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.data.db.StudyBuddyDatabase
+import com.studybuddy.core.data.db.entity.AtelierReviewEntity
 import com.studybuddy.core.data.db.entity.AvatarConfigEntity
 import com.studybuddy.core.data.db.entity.DicteeListEntity
 import com.studybuddy.core.data.db.entity.DicteeWordEntity
@@ -27,6 +28,8 @@ data class BackupData(
     val pointEvents: List<PointEventBackup> = emptyList(),
     val avatarConfigs: List<AvatarConfigBackup> = emptyList(),
     val ownedRewards: List<OwnedRewardBackup> = emptyList(),
+    // Added in schema v2. Absent from v1 backups; defaults to empty on restore.
+    val atelierReviews: List<AtelierReviewBackup> = emptyList(),
 )
 
 @Serializable
@@ -111,6 +114,19 @@ data class OwnedRewardBackup(
     val rewardId: String,
     val category: String,
     val purchasedAt: Long,
+)
+
+@Serializable
+data class AtelierReviewBackup(
+    val id: String,
+    val profileId: String,
+    val verbId: String,
+    val tense: String,
+    val person: String,
+    val box: Int,
+    val dueAt: Long,
+    val lapses: Int,
+    val updatedAt: Long,
 )
 
 @Singleton
@@ -212,6 +228,20 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
             )
         }
 
+        val atelierReviews = database.atelierReviewDao().getAllReviews().map { entity ->
+            AtelierReviewBackup(
+                id = entity.id,
+                profileId = entity.profileId,
+                verbId = entity.verbId,
+                tense = entity.tense,
+                person = entity.person,
+                box = entity.box,
+                dueAt = entity.dueAt,
+                lapses = entity.lapses,
+                updatedAt = entity.updatedAt,
+            )
+        }
+
         val backup = BackupData(
             profiles = profiles,
             dicteeLists = dicteeLists,
@@ -220,6 +250,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
             pointEvents = pointEvents,
             avatarConfigs = avatarConfigs,
             ownedRewards = ownedRewards,
+            atelierReviews = atelierReviews,
         )
 
         return json.encodeToString(backup)
@@ -331,6 +362,22 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                     rewardId = reward.rewardId,
                     category = reward.category,
                     purchasedAt = reward.purchasedAt,
+                ),
+            )
+        }
+
+        backup.atelierReviews.forEach { r ->
+            database.atelierReviewDao().insert(
+                AtelierReviewEntity(
+                    id = r.id,
+                    profileId = r.profileId,
+                    verbId = r.verbId,
+                    tense = r.tense,
+                    person = r.person,
+                    box = r.box,
+                    dueAt = r.dueAt,
+                    lapses = r.lapses,
+                    updatedAt = r.updatedAt,
                 ),
             )
         }

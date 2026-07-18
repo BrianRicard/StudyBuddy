@@ -15,6 +15,10 @@ interface AtelierReviewDao {
     @Query("SELECT * FROM atelier_review WHERE profileId = :profileId")
     fun getReviewsForProfile(profileId: String): Flow<List<AtelierReviewEntity>>
 
+    /** Every row, for backup export. */
+    @Query("SELECT * FROM atelier_review")
+    suspend fun getAllReviews(): List<AtelierReviewEntity>
+
     @Query(
         """
         SELECT * FROM atelier_review

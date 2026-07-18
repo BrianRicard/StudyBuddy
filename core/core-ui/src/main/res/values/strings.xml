@@ -716,4 +716,14 @@
     <string name="drill_results_growth_title">Your garden grew:</string>
     <string name="drill_play_again">Play again!</string>
     <string name="drill_done">Back to the garden</string>
+
+    <!-- Atelier des Verbes stats -->
+    <string name="stats_atelier_title">Verb Workshop</string>
+    <string name="stats_atelier_verbs_mastered">Verbs mastered</string>
+    <string name="stats_atelier_cards_due">Cards to review today</string>
+    <string name="stats_atelier_milestones_title">Workshop milestones</string>
+    <string name="atelier_milestone_first_card">First form mastered</string>
+    <string name="atelier_milestone_first_verb">First verb fully mastered</string>
+    <string name="atelier_milestone_five_verbs">Five verbs fully mastered</string>
+    <string name="atelier_milestone_all_verbs">Every verb fully mastered</string>
 </resources>

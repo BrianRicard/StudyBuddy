@@ -49,6 +49,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
+import com.studybuddy.core.domain.model.conjugation.AtelierMilestoneStatus
 import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
 import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
 import com.studybuddy.core.ui.R as CoreUiR
@@ -165,6 +167,21 @@ internal fun StatsContent(
                     MilestonesSection(
                         milestones = state.milestones,
                         modifier = Modifier.animateItemAppearance(4),
+                    )
+                }
+
+                // 5. Atelier des Verbes progress + parent-facing milestones
+                item {
+                    AtelierSection(
+                        state = state,
+                        modifier = Modifier.animateItemAppearance(5),
+                    )
+                }
+
+                item {
+                    AtelierMilestonesSection(
+                        milestones = state.atelierMilestones,
+                        modifier = Modifier.animateItemAppearance(6),
                     )
                 }
 
@@ -654,6 +671,134 @@ private fun milestoneLabelRes(milestone: ConjugationMilestone): Int = when (mile
     ConjugationMilestone.THREE_VERBS -> CoreUiR.string.milestone_three_verbs
     ConjugationMilestone.ALL_VERBS -> CoreUiR.string.milestone_all_verbs
     ConjugationMilestone.PERFECT_QUEST -> CoreUiR.string.milestone_perfect_quest
+}
+
+// endregion
+
+// region Atelier des Verbes
+
+@Composable
+private fun AtelierSection(
+    state: StatsState,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_atelier_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_atelier_verbs_mastered),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.atelierVerbsMastered} / ${state.atelierVerbsTotal}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = {
+                    if (state.atelierVerbsTotal == 0) {
+                        0f
+                    } else {
+                        state.atelierVerbsMastered.toFloat() / state.atelierVerbsTotal
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp),
+                color = CorrectGreen,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_atelier_cards_due),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.atelierCardsDue}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AtelierMilestonesSection(
+    milestones: List<AtelierMilestoneStatus>,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_atelier_milestones_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            milestones.forEach { milestone ->
+                AtelierMilestoneRow(milestone = milestone)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AtelierMilestoneRow(milestone: AtelierMilestoneStatus) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = if (milestone.isAchieved) Icons.Filled.EmojiEvents else Icons.Outlined.EmojiEvents,
+            contentDescription = null,
+            tint = if (milestone.isAchieved) PointsGold else MaterialTheme.colorScheme.outline,
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(atelierMilestoneLabelRes(milestone.milestone)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = milestone.achievedAt
+                    ?.let { stringResource(CoreUiR.string.milestone_achieved_on, formatMilestoneDate(it)) }
+                    ?: stringResource(
+                        CoreUiR.string.milestone_progress,
+                        milestone.current,
+                        milestone.target,
+                    ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@StringRes
+private fun atelierMilestoneLabelRes(milestone: AtelierMilestone): Int = when (milestone) {
+    AtelierMilestone.FIRST_CARD_MASTERED -> CoreUiR.string.atelier_milestone_first_card
+    AtelierMilestone.FIRST_VERB_MASTERED -> CoreUiR.string.atelier_milestone_first_verb
+    AtelierMilestone.FIVE_VERBS_MASTERED -> CoreUiR.string.atelier_milestone_five_verbs
+    AtelierMilestone.ALL_VERBS_MASTERED -> CoreUiR.string.atelier_milestone_all_verbs
 }
 
 private fun formatMilestoneDate(instant: Instant): String {

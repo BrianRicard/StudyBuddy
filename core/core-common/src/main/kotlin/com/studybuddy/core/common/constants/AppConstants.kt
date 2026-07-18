@@ -23,5 +23,8 @@ object AppConstants {
     const val POWER_EXPONENT_MAX = 3
     const val POWER_RESULT_MAX = 125
     const val DATABASE_NAME = "studybuddy.db"
-    const val BACKUP_SCHEMA_VERSION = 1
+
+    // v2: adds Atelier des Verbes review rows. Older (v1) backups restore fine
+    // — the missing field decodes to an empty list.
+    const val BACKUP_SCHEMA_VERSION = 2
 }
