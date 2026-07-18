@@ -7,6 +7,7 @@ import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
+import com.studybuddy.core.domain.usecase.conjugation.DrillMode
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
 import io.mockk.every
 import io.mockk.mockk
@@ -98,19 +99,26 @@ class AtelierViewModelTest {
     }
 
     @Test
-    fun `every intent shows the coming-soon note until the drill ships`() = runTest {
+    fun `intents navigate to the matching drill mode`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.effects.test {
             viewModel.onIntent(AtelierIntent.StartRevision)
-            assertEquals(AtelierEffect.ShowComingSoon, awaitItem())
+            assertEquals(AtelierEffect.NavigateToDrill(DrillMode.REVISION), awaitItem())
 
             viewModel.onIntent(AtelierIntent.StartSurprise)
-            assertEquals(AtelierEffect.ShowComingSoon, awaitItem())
+            assertEquals(AtelierEffect.NavigateToDrill(DrillMode.SURPRISE), awaitItem())
 
             viewModel.onIntent(AtelierIntent.OpenCell("etre", ConjugationTense.FUTUR))
-            assertEquals(AtelierEffect.ShowComingSoon, awaitItem())
+            assertEquals(
+                AtelierEffect.NavigateToDrill(
+                    mode = DrillMode.CELL,
+                    verbId = "etre",
+                    tense = ConjugationTense.FUTUR,
+                ),
+                awaitItem(),
+            )
         }
     }
 }

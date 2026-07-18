@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.conjugation.AtelierVerbGarden
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.usecase.conjugation.DrillMode
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -32,8 +33,11 @@ sealed interface AtelierIntent {
 }
 
 sealed interface AtelierEffect {
-    /** The drill screen ships in the next update; until then taps sprout a gentle note. */
-    data object ShowComingSoon : AtelierEffect
+    data class NavigateToDrill(
+        val mode: DrillMode,
+        val verbId: String? = null,
+        val tense: ConjugationTense? = null,
+    ) : AtelierEffect
 }
 
 @HiltViewModel
@@ -63,11 +67,15 @@ class AtelierViewModel @Inject constructor(
     }
 
     fun onIntent(intent: AtelierIntent) {
-        when (intent) {
-            AtelierIntent.StartRevision,
-            AtelierIntent.StartSurprise,
-            is AtelierIntent.OpenCell,
-            -> viewModelScope.launch { _effects.emit(AtelierEffect.ShowComingSoon) }
+        val effect = when (intent) {
+            AtelierIntent.StartRevision -> AtelierEffect.NavigateToDrill(DrillMode.REVISION)
+            AtelierIntent.StartSurprise -> AtelierEffect.NavigateToDrill(DrillMode.SURPRISE)
+            is AtelierIntent.OpenCell -> AtelierEffect.NavigateToDrill(
+                mode = DrillMode.CELL,
+                verbId = intent.verbId,
+                tense = intent.tense,
+            )
         }
+        viewModelScope.launch { _effects.emit(effect) }
     }
 }

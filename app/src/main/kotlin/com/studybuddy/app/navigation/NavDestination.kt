@@ -160,6 +160,7 @@ private val ACTIVE_SESSION_PREFIXES = listOf(
     "conjugation/speak/",
     "conjugation/battle/",
     "conjugation/boss/",
+    "conjugation/drill/",
 )
 
 private val ACTIVE_SESSION_EXACT = setOf(
