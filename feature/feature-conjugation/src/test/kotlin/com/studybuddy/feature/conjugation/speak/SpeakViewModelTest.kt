@@ -230,5 +230,36 @@ class SpeakViewModelTest {
         viewModel.onIntent(SpeakIntent.ConfirmWithoutMic)
         advanceUntilIdle()
         assertEquals(SpeakPhase.HEARD, viewModel.state.value.phase)
+        coVerify {
+            awardPointsUseCase(
+                profileId = "default",
+                basePoints = PointValues.CONJUGATION_FORM_ECHOED,
+                streak = 0,
+                source = any(),
+                reason = any(),
+            )
+        }
+    }
+
+    @Test
+    fun `a whisper transcription failure encourages instead of crashing`() = runTest {
+        every { modelDownloadManager.bestAvailableModel(any()) } returns
+            com.studybuddy.shared.whisper.WhisperModel.TINY
+        every { modelDownloadManager.getModelPath(any()) } returns "/models/tiny.bin"
+        coEvery { whisperEngine.initialize(any()) } returns Result.success(Unit)
+        coEvery { whisperEngine.transcribe(any(), any(), any()) } returns
+            Result.failure(RuntimeException("transcription failed"))
+
+        val viewModel = grantedViewModel()
+        advanceUntilIdle()
+        assertTrue(viewModel.state.value.whisperScoring)
+
+        viewModel.onIntent(SpeakIntent.StartRecording)
+        advanceUntilIdle()
+        viewModel.onIntent(SpeakIntent.StopRecording)
+        advanceUntilIdle()
+
+        assertEquals(SpeakPhase.ENCOURAGE, viewModel.state.value.phase)
+        coVerify(exactly = 0) { awardPointsUseCase(any(), any(), any(), any(), any()) }
     }
 }
