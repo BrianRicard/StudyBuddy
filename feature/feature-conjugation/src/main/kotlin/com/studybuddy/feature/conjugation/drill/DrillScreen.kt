@@ -59,7 +59,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.common.constants.PointValues
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
@@ -494,7 +494,7 @@ private fun locateAnnotated(
 }
 
 private fun boxEmoji(box: Int): String = when {
-    box >= AtelierSchedule.MAX_BOX -> "🌳"
+    box >= LeitnerSchedule.MAX_BOX -> "🌳"
     box >= 3 -> "🌸"
     box >= 2 -> "🌿"
     else -> "🌱"

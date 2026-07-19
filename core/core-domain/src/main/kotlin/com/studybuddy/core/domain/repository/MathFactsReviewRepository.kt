@@ -1,8 +1,6 @@
 package com.studybuddy.core.domain.repository
 
-import com.studybuddy.core.domain.model.conjugation.AtelierReview
-import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
-import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.mathfacts.MathFactReview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.datetime.Instant
 
@@ -14,17 +12,17 @@ import kotlinx.datetime.Instant
  * was the card's very first sighting.
  * @property review The card's stored state after the answer.
  */
-data class AtelierAnswerOutcome(
+data class MathFactAnswerOutcome(
     val previousBox: Int?,
-    val review: AtelierReview,
+    val review: MathFactReview,
 )
 
-interface AtelierReviewRepository {
+interface MathFactsReviewRepository {
 
-    fun getReviews(profileId: String): Flow<List<AtelierReview>>
+    fun getReviews(profileId: String): Flow<List<MathFactReview>>
 
     /**
-     * Records one drill answer for a card and reschedules it per
+     * Records one drill answer for a fact and reschedules it per
      * [com.studybuddy.core.domain.model.srs.LeitnerSchedule].
      *
      * The card row is created on first sighting. Every answer updates the
@@ -33,12 +31,11 @@ interface AtelierReviewRepository {
      */
     suspend fun recordAnswer(
         profileId: String,
-        verbId: String,
-        tense: ConjugationTense,
-        person: ConjugationPerson,
+        table: Int,
+        multiplicand: Int,
         correct: Boolean,
         now: Instant,
-    ): AtelierAnswerOutcome
+    ): MathFactAnswerOutcome
 
     suspend fun sync() // Cloud migration hook
 }

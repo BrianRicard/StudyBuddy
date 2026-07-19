@@ -1,4 +1,4 @@
-package com.studybuddy.core.domain.model.conjugation
+package com.studybuddy.core.domain.model.srs
 
 import kotlin.time.Duration.Companion.days
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.CsvSource
 
-class AtelierScheduleTest {
+class LeitnerScheduleTest {
 
     @ParameterizedTest
     @CsvSource(
@@ -21,7 +21,7 @@ class AtelierScheduleTest {
         from: Int,
         expected: Int,
     ) {
-        assertEquals(expected, AtelierSchedule.answered(box = from, correct = true).box)
+        assertEquals(expected, LeitnerSchedule.answered(box = from, correct = true).box)
     }
 
     @ParameterizedTest
@@ -36,7 +36,7 @@ class AtelierScheduleTest {
         from: Int,
         expected: Int,
     ) {
-        assertEquals(expected, AtelierSchedule.answered(box = from, correct = false).box)
+        assertEquals(expected, LeitnerSchedule.answered(box = from, correct = false).box)
     }
 
     @ParameterizedTest
@@ -51,27 +51,27 @@ class AtelierScheduleTest {
         from: Int,
         expectedDays: Int,
     ) {
-        assertEquals(expectedDays.days, AtelierSchedule.answered(box = from, correct = true).nextDelay)
+        assertEquals(expectedDays.days, LeitnerSchedule.answered(box = from, correct = true).nextDelay)
     }
 
     @Test
     fun `a wrong answer always comes back tomorrow`() {
-        (0..AtelierSchedule.MAX_BOX).forEach { box ->
-            assertEquals(1.days, AtelierSchedule.answered(box = box, correct = false).nextDelay)
+        (0..LeitnerSchedule.MAX_BOX).forEach { box ->
+            assertEquals(1.days, LeitnerSchedule.answered(box = box, correct = false).nextDelay)
         }
     }
 
     @Test
     fun `intervals grow strictly from box 1 up`() {
-        AtelierSchedule.BOX_INTERVALS.drop(1).zipWithNext { shorter, longer ->
+        LeitnerSchedule.BOX_INTERVALS.drop(1).zipWithNext { shorter, longer ->
             assertTrue(shorter < longer, "intervals must grow: $shorter !< $longer")
         }
-        assertEquals(AtelierSchedule.MAX_BOX + 1, AtelierSchedule.BOX_INTERVALS.size)
+        assertEquals(LeitnerSchedule.MAX_BOX + 1, LeitnerSchedule.BOX_INTERVALS.size)
     }
 
     @Test
     fun `out-of-range boxes are clamped`() {
-        assertEquals(AtelierSchedule.MAX_BOX, AtelierSchedule.answered(box = 99, correct = true).box)
-        assertEquals(0, AtelierSchedule.answered(box = -1, correct = false).box)
+        assertEquals(LeitnerSchedule.MAX_BOX, LeitnerSchedule.answered(box = 99, correct = true).box)
+        assertEquals(0, LeitnerSchedule.answered(box = -1, correct = false).box)
     }
 }

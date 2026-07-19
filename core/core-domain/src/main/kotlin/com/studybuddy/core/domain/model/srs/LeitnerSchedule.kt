@@ -1,18 +1,19 @@
-package com.studybuddy.core.domain.model.conjugation
+package com.studybuddy.core.domain.model.srs
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 /**
- * Leitner-box scheduling for the Atelier des Verbes drills.
+ * Leitner-box scheduling shared by the app's spaced-repetition drills
+ * (Atelier des Verbes conjugation cards, Jardin des Tables math facts).
  *
- * Each (verb, tense, person) card lives in a box from 0 (new / not yet
- * planted) to [MAX_BOX] (fully grown). A correct answer promotes the card one
- * box and schedules it further away; a wrong answer demotes it a single box —
- * never all the way down, so a lapse costs one growth stage at most
- * (never-punishing) — and brings it back tomorrow.
+ * Each card lives in a box from 0 (new / not yet planted) to [MAX_BOX]
+ * (fully grown). A correct answer promotes the card one box and schedules it
+ * further away; a wrong answer demotes it a single box — never all the way
+ * down, so a lapse costs one growth stage at most (never-punishing) — and
+ * brings it back tomorrow.
  */
-object AtelierSchedule {
+object LeitnerSchedule {
 
     const val MAX_BOX = 4
 

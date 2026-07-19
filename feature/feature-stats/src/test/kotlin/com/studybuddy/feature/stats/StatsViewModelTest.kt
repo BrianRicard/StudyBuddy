@@ -8,12 +8,12 @@ import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationProgress
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
@@ -335,7 +335,7 @@ class StatsViewModelTest {
                     verbId = "etre",
                     tense = tense,
                     person = person,
-                    box = AtelierSchedule.MAX_BOX,
+                    box = LeitnerSchedule.MAX_BOX,
                     dueAt = Clock.System.now().plus(kotlin.time.Duration.parse("5d")),
                     lapses = 0,
                     updatedAt = Clock.System.now(),

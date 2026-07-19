@@ -1,11 +1,11 @@
 package com.studybuddy.feature.conjugation.atelier
 
 import app.cash.turbine.test
-import com.studybuddy.core.domain.model.conjugation.AtelierGrowth
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
+import com.studybuddy.core.domain.model.srs.LeitnerGrowth
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.usecase.conjugation.DrillMode
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
@@ -80,7 +80,7 @@ class AtelierViewModelTest {
         assertEquals(3, state.dueCardCount)
         assertEquals(2, state.dueVerbCount)
         assertEquals(
-            AtelierGrowth.SPROUT,
+            LeitnerGrowth.SPROUT,
             state.verbs.first { it.verb.id == "etre" }.growth[ConjugationTense.PRESENT],
         )
     }
@@ -94,7 +94,7 @@ class AtelierViewModelTest {
         assertTrue(!state.isLoading)
         assertEquals(0, state.dueCardCount)
         assertTrue(
-            state.verbs.all { row -> row.growth.values.all { it == AtelierGrowth.SEED } },
+            state.verbs.all { row -> row.growth.values.all { it == LeitnerGrowth.SEED } },
         )
     }
 

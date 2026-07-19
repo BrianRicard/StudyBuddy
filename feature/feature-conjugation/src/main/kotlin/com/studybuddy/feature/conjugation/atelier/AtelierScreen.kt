@@ -39,11 +39,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.studybuddy.core.domain.model.conjugation.AtelierGrowth
 import com.studybuddy.core.domain.model.conjugation.AtelierVerbGarden
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
 import com.studybuddy.core.domain.model.conjugation.VerbGroup
+import com.studybuddy.core.domain.model.srs.LeitnerGrowth
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyCard
 import com.studybuddy.core.ui.modifier.accessibleClickable
@@ -204,7 +204,7 @@ private fun VerbGardenRow(
             ConjugationTense.entries.forEach { tense ->
                 GardenCell(
                     tense = tense,
-                    growth = row.growth[tense] ?: AtelierGrowth.SEED,
+                    growth = row.growth[tense] ?: LeitnerGrowth.SEED,
                     onClick = { onIntent(AtelierIntent.OpenCell(row.verb.id, tense)) },
                     verbLabel = row.verb.infinitive,
                 )
@@ -216,7 +216,7 @@ private fun VerbGardenRow(
 @Composable
 private fun GardenCell(
     tense: ConjugationTense,
-    growth: AtelierGrowth,
+    growth: LeitnerGrowth,
     onClick: () -> Unit,
     verbLabel: String,
 ) {
@@ -241,12 +241,12 @@ private fun GardenCell(
     }
 }
 
-private val AtelierGrowth.emoji: String
+private val LeitnerGrowth.emoji: String
     get() = when (this) {
-        AtelierGrowth.SEED -> "🌱"
-        AtelierGrowth.SPROUT -> "🌿"
-        AtelierGrowth.FLOWER -> "🌸"
-        AtelierGrowth.TREE -> "🌳"
+        LeitnerGrowth.SEED -> "🌱"
+        LeitnerGrowth.SPROUT -> "🌿"
+        LeitnerGrowth.FLOWER -> "🌸"
+        LeitnerGrowth.TREE -> "🌳"
     }
 
 @Preview(showBackground = true)
@@ -260,7 +260,7 @@ private fun AtelierScreenPreview() {
                 verbs = FrenchVerbs.all.take(4).map { verb ->
                     AtelierVerbGarden(
                         verb = verb,
-                        growth = ConjugationTense.entries.associateWith { AtelierGrowth.SPROUT },
+                        growth = ConjugationTense.entries.associateWith { LeitnerGrowth.SPROUT },
                     )
                 },
                 isLoading = false,
