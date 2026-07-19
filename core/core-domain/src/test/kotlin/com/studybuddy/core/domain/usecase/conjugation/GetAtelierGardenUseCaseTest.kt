@@ -1,10 +1,10 @@
 package com.studybuddy.core.domain.usecase.conjugation
 
-import com.studybuddy.core.domain.model.conjugation.AtelierGrowth
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
+import com.studybuddy.core.domain.model.srs.LeitnerGrowth
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -30,9 +30,9 @@ class GetAtelierGardenUseCaseTest {
     )
     fun `growth stages derive from the six person boxes`(
         boxesCsv: String,
-        expected: AtelierGrowth,
+        expected: LeitnerGrowth,
     ) {
-        assertEquals(expected, AtelierGrowth.fromBoxes(boxesCsv.split(',').map { it.toInt() }))
+        assertEquals(expected, LeitnerGrowth.fromBoxes(boxesCsv.split(',').map { it.toInt() }))
     }
 
     @Test
@@ -44,7 +44,7 @@ class GetAtelierGardenUseCaseTest {
         assertEquals(FrenchVerbs.all.size, garden.verbs.size)
         assertTrue(
             garden.verbs.all { row ->
-                ConjugationTense.entries.all { row.growth[it] == AtelierGrowth.SEED }
+                ConjugationTense.entries.all { row.growth[it] == LeitnerGrowth.SEED }
             },
         )
     }
@@ -52,16 +52,16 @@ class GetAtelierGardenUseCaseTest {
     @Test
     fun `growth is per verb and tense, other cells stay seeds`() = runTest {
         repository.reviews = ConjugationPerson.entries.map { person ->
-            atelierReview("etre", person = person, box = AtelierSchedule.MAX_BOX, dueAt = ATELIER_TEST_NOW + 5.days)
+            atelierReview("etre", person = person, box = LeitnerSchedule.MAX_BOX, dueAt = ATELIER_TEST_NOW + 5.days)
         }
 
         val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
         val etre = garden.verbs.first { it.verb.id == "etre" }
 
-        assertEquals(AtelierGrowth.TREE, etre.growth[ConjugationTense.PRESENT])
-        assertEquals(AtelierGrowth.SEED, etre.growth[ConjugationTense.FUTUR])
+        assertEquals(LeitnerGrowth.TREE, etre.growth[ConjugationTense.PRESENT])
+        assertEquals(LeitnerGrowth.SEED, etre.growth[ConjugationTense.FUTUR])
         assertEquals(
-            AtelierGrowth.SEED,
+            LeitnerGrowth.SEED,
             garden.verbs.first { it.verb.id == "avoir" }.growth[ConjugationTense.PRESENT],
         )
     }

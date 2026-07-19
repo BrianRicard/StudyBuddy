@@ -1,12 +1,12 @@
 package com.studybuddy.core.domain.usecase.conjugation
 
 import com.studybuddy.core.domain.model.conjugation.AtelierGarden
-import com.studybuddy.core.domain.model.conjugation.AtelierGrowth
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
 import com.studybuddy.core.domain.model.conjugation.AtelierVerbGarden
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
+import com.studybuddy.core.domain.model.srs.LeitnerGrowth
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
@@ -37,7 +37,7 @@ class GetAtelierGardenUseCase @Inject constructor(
             AtelierVerbGarden(
                 verb = verb,
                 growth = ConjugationTense.entries.associateWith { tense ->
-                    AtelierGrowth.fromBoxes(
+                    LeitnerGrowth.fromBoxes(
                         ConjugationPerson.entries.map { person ->
                             byCard[Triple(verb.id, tense, person)]?.box ?: 0
                         },

@@ -2,10 +2,10 @@ package com.studybuddy.core.domain.usecase.conjugation
 
 import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import kotlinx.datetime.Instant
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -62,7 +62,7 @@ class GetAtelierMilestonesUseCaseTest {
     fun `one card at the top box clinches the first-card milestone only`() {
         val result = useCase(
             listOf(
-                review("etre", ConjugationTense.PRESENT, ConjugationPerson.JE, AtelierSchedule.MAX_BOX, 500),
+                review("etre", ConjugationTense.PRESENT, ConjugationPerson.JE, LeitnerSchedule.MAX_BOX, 500),
                 review("etre", ConjugationTense.PRESENT, ConjugationPerson.TU, box = 1),
             ),
         )
@@ -75,7 +75,7 @@ class GetAtelierMilestonesUseCaseTest {
 
     @Test
     fun `cards below the top box never count`() {
-        val result = useCase(fullVerb("etre", box = AtelierSchedule.MAX_BOX - 1, updatedAtMillis = 100))
+        val result = useCase(fullVerb("etre", box = LeitnerSchedule.MAX_BOX - 1, updatedAtMillis = 100))
 
         assertTrue(result.none { it.isAchieved })
         assertEquals(0, result.of(AtelierMilestone.FIRST_CARD_MASTERED).current)
@@ -83,7 +83,7 @@ class GetAtelierMilestonesUseCaseTest {
 
     @Test
     fun `all cards of a verb at the top box masters that verb`() {
-        val result = useCase(fullVerb("aimer", box = AtelierSchedule.MAX_BOX, updatedAtMillis = 900))
+        val result = useCase(fullVerb("aimer", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 900))
 
         val firstVerb = result.of(AtelierMilestone.FIRST_VERB_MASTERED)
         assertTrue(firstVerb.isAchieved)
@@ -94,9 +94,9 @@ class GetAtelierMilestonesUseCaseTest {
 
     @Test
     fun `a verb missing one top-box card is not mastered`() {
-        val cards = fullVerb("aimer", box = AtelierSchedule.MAX_BOX, updatedAtMillis = 900).toMutableList()
+        val cards = fullVerb("aimer", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 900).toMutableList()
         // Knock one card down a box.
-        val downgraded = cards.removeAt(0).copy(box = AtelierSchedule.MAX_BOX - 1)
+        val downgraded = cards.removeAt(0).copy(box = LeitnerSchedule.MAX_BOX - 1)
         cards.add(downgraded)
 
         val result = useCase(cards)
@@ -110,7 +110,7 @@ class GetAtelierMilestonesUseCaseTest {
     fun `five mastered verbs clinch the five-verbs milestone with the fifth timestamp`() {
         val verbs = FrenchVerbs.all.take(6).map { it.id }
         val reviews = verbs.flatMapIndexed { index, verbId ->
-            fullVerb(verbId, box = AtelierSchedule.MAX_BOX, updatedAtMillis = (index + 1) * 1_000L)
+            fullVerb(verbId, box = LeitnerSchedule.MAX_BOX, updatedAtMillis = (index + 1) * 1_000L)
         }
 
         val result = useCase(reviews)
@@ -127,7 +127,7 @@ class GetAtelierMilestonesUseCaseTest {
     @Test
     fun `mastering every verb clinches all milestones`() {
         val reviews = FrenchVerbs.all.flatMap { verb ->
-            fullVerb(verb.id, box = AtelierSchedule.MAX_BOX, updatedAtMillis = 2_000)
+            fullVerb(verb.id, box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 2_000)
         }
 
         val result = useCase(reviews)
@@ -138,7 +138,7 @@ class GetAtelierMilestonesUseCaseTest {
 
     @Test
     fun `unknown verb rows are ignored`() {
-        val result = useCase(fullVerb("licorne", box = AtelierSchedule.MAX_BOX, updatedAtMillis = 100))
+        val result = useCase(fullVerb("licorne", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 100))
 
         assertTrue(result.none { it.isAchieved })
     }

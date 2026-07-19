@@ -6,7 +6,7 @@ import kotlinx.datetime.Instant
  * Stored review state of one Atelier card: a (profile, verb, tense, person)
  * combination the child has answered at least once.
  *
- * @property box Leitner box, 0..[AtelierSchedule.MAX_BOX].
+ * @property box Leitner box, 0..[LeitnerSchedule.MAX_BOX].
  * @property dueAt When the card should next be reviewed.
  * @property lapses Total number of wrong answers ever given for this card.
  */

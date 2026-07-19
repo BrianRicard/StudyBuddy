@@ -4,9 +4,9 @@ import com.studybuddy.core.data.db.dao.AtelierReviewDao
 import com.studybuddy.core.data.db.entity.AtelierReviewEntity
 import com.studybuddy.core.data.mapper.toDomainOrNull
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.AtelierAnswerOutcome
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import java.util.UUID
@@ -36,7 +36,7 @@ class LocalAtelierReviewRepository @Inject constructor(
         var previousBox: Int? = null
         val merged = dao.recordAnswer(profileId, verbId, tense.name, person.name) { existing ->
             previousBox = existing?.box
-            val outcome = AtelierSchedule.answered(box = existing?.box ?: 0, correct = correct)
+            val outcome = LeitnerSchedule.answered(box = existing?.box ?: 0, correct = correct)
             AtelierReviewEntity(
                 id = existing?.id ?: UUID.randomUUID().toString(),
                 profileId = profileId,

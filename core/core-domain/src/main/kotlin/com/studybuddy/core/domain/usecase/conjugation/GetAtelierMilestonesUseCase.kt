@@ -3,10 +3,10 @@ package com.studybuddy.core.domain.usecase.conjugation
 import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
 import com.studybuddy.core.domain.model.conjugation.AtelierMilestoneStatus
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
-import com.studybuddy.core.domain.model.conjugation.AtelierSchedule
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import javax.inject.Inject
 import kotlinx.datetime.Instant
 
@@ -22,7 +22,7 @@ class GetAtelierMilestonesUseCase @Inject constructor() {
 
     operator fun invoke(reviews: List<AtelierReview>): List<AtelierMilestoneStatus> {
         val maxBoxCards = reviews.filter {
-            it.box >= AtelierSchedule.MAX_BOX && FrenchVerbs.byId(it.verbId) != null
+            it.box >= LeitnerSchedule.MAX_BOX && FrenchVerbs.byId(it.verbId) != null
         }
         val firstCardAt = maxBoxCards.minByOrNull { it.updatedAt }?.updatedAt
 
