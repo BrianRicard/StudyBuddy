@@ -78,6 +78,28 @@ class BackupDataSerializationTest {
     }
 
     @Test
+    fun `math fact reviews round-trip and older backups without them restore`() {
+        val fact = MathFactReviewBackup(
+            id = "m1",
+            profileId = "p1",
+            tableNumber = 7,
+            multiplicand = 8,
+            box = 4,
+            dueAt = 1_750_000_000_000,
+            lapses = 2,
+            updatedAt = 1_750_000_000_000,
+        )
+        val restored = json.decodeFromString<BackupData>(
+            json.encodeToString(BackupData(mathFactReviews = listOf(fact))),
+        )
+        assertEquals(listOf(fact), restored.mathFactReviews)
+
+        // A v2 backup has no mathFactReviews key at all.
+        val v2Json = """{"version": 2, "profiles": [], "atelierReviews": []}"""
+        assertTrue(json.decodeFromString<BackupData>(v2Json).mathFactReviews.isEmpty())
+    }
+
+    @Test
     fun `new backups declare the current schema version`() {
         assertEquals(AppConstants.BACKUP_SCHEMA_VERSION, BackupData().version)
     }
