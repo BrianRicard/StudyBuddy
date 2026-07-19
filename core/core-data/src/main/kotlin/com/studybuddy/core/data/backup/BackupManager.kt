@@ -6,6 +6,7 @@ import com.studybuddy.core.data.db.entity.AtelierReviewEntity
 import com.studybuddy.core.data.db.entity.AvatarConfigEntity
 import com.studybuddy.core.data.db.entity.DicteeListEntity
 import com.studybuddy.core.data.db.entity.DicteeWordEntity
+import com.studybuddy.core.data.db.entity.MathFactReviewEntity
 import com.studybuddy.core.data.db.entity.MathSessionEntity
 import com.studybuddy.core.data.db.entity.OwnedRewardEntity
 import com.studybuddy.core.data.db.entity.PointEventEntity
@@ -30,6 +31,8 @@ data class BackupData(
     val ownedRewards: List<OwnedRewardBackup> = emptyList(),
     // Added in schema v2. Absent from v1 backups; defaults to empty on restore.
     val atelierReviews: List<AtelierReviewBackup> = emptyList(),
+    // Added in schema v3. Absent from older backups; defaults to empty on restore.
+    val mathFactReviews: List<MathFactReviewBackup> = emptyList(),
 )
 
 @Serializable
@@ -114,6 +117,18 @@ data class OwnedRewardBackup(
     val rewardId: String,
     val category: String,
     val purchasedAt: Long,
+)
+
+@Serializable
+data class MathFactReviewBackup(
+    val id: String,
+    val profileId: String,
+    val tableNumber: Int,
+    val multiplicand: Int,
+    val box: Int,
+    val dueAt: Long,
+    val lapses: Int,
+    val updatedAt: Long,
 )
 
 @Serializable
@@ -246,6 +261,19 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
             )
         }
 
+        val mathFactReviews = database.mathFactsReviewDao().getAllReviews().map { entity ->
+            MathFactReviewBackup(
+                id = entity.id,
+                profileId = entity.profileId,
+                tableNumber = entity.tableNumber,
+                multiplicand = entity.multiplicand,
+                box = entity.box,
+                dueAt = entity.dueAt,
+                lapses = entity.lapses,
+                updatedAt = entity.updatedAt,
+            )
+        }
+
         val backup = BackupData(
             profiles = profiles,
             dicteeLists = dicteeLists,
@@ -255,6 +283,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
             avatarConfigs = avatarConfigs,
             ownedRewards = ownedRewards,
             atelierReviews = atelierReviews,
+            mathFactReviews = mathFactReviews,
         )
 
         return json.encodeToString(backup)
@@ -378,6 +407,21 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                     verbId = r.verbId,
                     tense = r.tense,
                     person = r.person,
+                    box = r.box,
+                    dueAt = r.dueAt,
+                    lapses = r.lapses,
+                    updatedAt = r.updatedAt,
+                ),
+            )
+        }
+
+        backup.mathFactReviews.forEach { r ->
+            database.mathFactsReviewDao().insert(
+                MathFactReviewEntity(
+                    id = r.id,
+                    profileId = r.profileId,
+                    tableNumber = r.tableNumber,
+                    multiplicand = r.multiplicand,
                     box = r.box,
                     dueAt = r.dueAt,
                     lapses = r.lapses,

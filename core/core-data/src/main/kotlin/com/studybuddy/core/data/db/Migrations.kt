@@ -222,4 +222,40 @@ object Migrations {
             )
         }
     }
+
+    /**
+     * v5 -> v6: Add the Jardin des Tables review table.
+     * One Leitner-scheduled row per (profile, table, multiplicand) fact,
+     * created the first time the fact is answered in a drill.
+     */
+    val MIGRATION_5_6 = object : Migration(5, 6) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                """
+                CREATE TABLE IF NOT EXISTS `math_facts_review` (
+                    `id` TEXT NOT NULL,
+                    `profileId` TEXT NOT NULL,
+                    `tableNumber` INTEGER NOT NULL,
+                    `multiplicand` INTEGER NOT NULL,
+                    `box` INTEGER NOT NULL,
+                    `dueAt` INTEGER NOT NULL,
+                    `lapses` INTEGER NOT NULL,
+                    `updatedAt` INTEGER NOT NULL,
+                    PRIMARY KEY(`id`)
+                )
+                """.trimIndent(),
+            )
+
+            db.execSQL(
+                "CREATE UNIQUE INDEX IF NOT EXISTS " +
+                    "`index_math_facts_review_profileId_tableNumber_multiplicand` " +
+                    "ON `math_facts_review` (`profileId`, `tableNumber`, `multiplicand`)",
+            )
+
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_math_facts_review_profileId_dueAt` " +
+                    "ON `math_facts_review` (`profileId`, `dueAt`)",
+            )
+        }
+    }
 }
