@@ -134,6 +134,10 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
     private val json = Json {
         prettyPrint = true
         ignoreUnknownKeys = true
+        // Without this, fields equal to their default — including the schema
+        // `version` — are omitted, leaving backup files effectively
+        // unversioned and future migrations unable to tell formats apart.
+        encodeDefaults = true
     }
 
     suspend fun createFullBackup(): String {

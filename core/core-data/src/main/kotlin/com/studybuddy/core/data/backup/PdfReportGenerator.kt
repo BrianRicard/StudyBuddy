@@ -40,7 +40,13 @@ class PdfReportGenerator @Inject constructor(
             } else {
                 0f
             },
-            totalPoints = profile?.totalPoints ?: 0L,
+            // The points ledger is the source of truth; profile.totalPoints
+            // can be stale (e.g. 0 after a restore) while Home shows the
+            // ledger sum.
+            totalPoints = database.pointsDao().getAllPoints()
+                .filter { it.profileId == profileId }
+                .sumOf { it.points }
+                .toLong(),
         )
 
         document.finishPage(page)
