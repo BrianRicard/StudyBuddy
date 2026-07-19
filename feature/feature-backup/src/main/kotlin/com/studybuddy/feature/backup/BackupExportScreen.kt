@@ -301,6 +301,7 @@ private fun BackupExportContent(
                     enabled = !state.isImporting,
                     onClick = onOpenCsvPicker,
                     modifier = Modifier.animateItemAppearance(8),
+                    busyText = stringResource(CoreUiR.string.backup_importing),
                 )
             }
             // endregion
@@ -427,6 +428,7 @@ private fun ExportOptionCard(
     enabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    busyText: String = stringResource(CoreUiR.string.backup_exporting),
 ) {
     StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
         Column(
@@ -461,7 +463,7 @@ private fun ExportOptionCard(
                     }
                 }
                 StudyBuddyOutlinedButton(
-                    text = if (isExporting) stringResource(CoreUiR.string.backup_exporting) else buttonText,
+                    text = if (isExporting) busyText else buttonText,
                     onClick = onClick,
                     enabled = enabled && !isExporting,
                 )

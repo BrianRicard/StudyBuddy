@@ -350,7 +350,7 @@
     <string name="backup_please_wait">Bitte warten</string>
     <string name="backup_no_backups">Noch keine Sicherungen</string>
     <string name="backup_pdf_title">PDF-Fortschrittsbericht</string>
-    <string name="backup_pdf_desc">Ein druckbarer Bericht mit Diagrammen, der deinen Lernfortschritt zeigt.</string>
+    <string name="backup_pdf_desc">Ein druckbarer Bericht, der deinen Lernfortschritt in allen Aktivitäten zusammenfasst.</string>
     <string name="backup_export_pdf_btn">PDF exportieren</string>
     <string name="backup_json_title">Rohdaten (JSON)</string>
     <string name="backup_json_desc">Vollständiger Datenexport zur Sicherung oder Übertragung. Enthält alle Profile und Einstellungen.</string>
@@ -367,6 +367,7 @@
     <string name="backup_daily">Täglich</string>
     <string name="backup_weekly">Wöchentlich</string>
     <string name="backup_exporting">Export läuft…</string>
+    <string name="backup_importing">Importiere…</string>
     <string name="backup_restore_title">Sicherung wiederherstellen?</string>
     <string name="backup_restore_warning">Alle aktuellen Daten werden durch die Sicherungsdaten ersetzt. Dies kann nicht rückgängig gemacht werden. Stelle sicher, dass du eine aktuelle Sicherung hast.</string>
     <string name="backup_restore_btn">Wiederherstellen</string>

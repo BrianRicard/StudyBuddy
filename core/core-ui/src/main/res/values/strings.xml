@@ -350,7 +350,7 @@
     <string name="backup_please_wait">Please wait</string>
     <string name="backup_no_backups">No backups yet</string>
     <string name="backup_pdf_title">PDF Progress Report</string>
-    <string name="backup_pdf_desc">A printable report with charts showing your learning progress across all activities.</string>
+    <string name="backup_pdf_desc">A printable report summarizing your learning progress across all activities.</string>
     <string name="backup_export_pdf_btn">Export PDF</string>
     <string name="backup_json_title">Raw Data (JSON)</string>
     <string name="backup_json_desc">Full data export for backup or transfer to another device. Includes all profiles and settings.</string>
@@ -367,6 +367,7 @@
     <string name="backup_daily">Daily</string>
     <string name="backup_weekly">Weekly</string>
     <string name="backup_exporting">Exporting…</string>
+    <string name="backup_importing">Importing…</string>
     <string name="backup_restore_title">Restore from Backup?</string>
     <string name="backup_restore_warning">This will replace all your current data with the backup data. This action cannot be undone. Make sure you have a recent backup of your current data before proceeding.</string>
     <string name="backup_restore_btn">Restore</string>

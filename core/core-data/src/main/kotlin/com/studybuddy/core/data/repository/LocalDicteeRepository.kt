@@ -82,7 +82,15 @@ class LocalDicteeRepository @Inject constructor(
 
     override suspend fun seedDefaultLists(profileId: String) {
         val now = Clock.System.now()
+        // Content-based guard: never touch a bundled list that already exists.
+        // The "seeded" DataStore flag is false on any fresh install, but a
+        // restored backup may already contain these exact list ids — and
+        // insertList uses ON CONFLICT REPLACE, whose delete cascades to every
+        // restored word. Re-seeding over restored data silently wiped all
+        // dictée progress (mastered flags, attempts) after a restore.
+        val existingListIds = dao.getAllLists().mapTo(mutableSetOf()) { it.id }
         bundledDicteeListLoader.loadFrenchLists().forEach { bundled ->
+            if (bundled.id in existingListIds) return@forEach
             val list = DicteeList(
                 id = bundled.id,
                 profileId = profileId,

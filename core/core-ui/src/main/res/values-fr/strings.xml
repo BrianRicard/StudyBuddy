@@ -350,7 +350,7 @@
     <string name="backup_please_wait">Veuillez patienter</string>
     <string name="backup_no_backups">Aucune sauvegarde</string>
     <string name="backup_pdf_title">Rapport PDF de progression</string>
-    <string name="backup_pdf_desc">Un rapport imprimable avec des graphiques montrant ta progression dans toutes les activités.</string>
+    <string name="backup_pdf_desc">Un rapport imprimable qui résume tes progrès dans toutes les activités.</string>
     <string name="backup_export_pdf_btn">Exporter en PDF</string>
     <string name="backup_json_title">Données brutes (JSON)</string>
     <string name="backup_json_desc">Export complet pour sauvegarde ou transfert vers un autre appareil. Inclut tous les profils et paramètres.</string>
@@ -367,6 +367,7 @@
     <string name="backup_daily">Quotidien</string>
     <string name="backup_weekly">Hebdomadaire</string>
     <string name="backup_exporting">Export en cours…</string>
+    <string name="backup_importing">Importation…</string>
     <string name="backup_restore_title">Restaurer la sauvegarde ?</string>
     <string name="backup_restore_warning">Cela remplacera toutes tes données actuelles par celles de la sauvegarde. Cette action est irréversible. Assure-toi d\'avoir une sauvegarde récente avant de continuer.</string>
     <string name="backup_restore_btn">Restaurer</string>

@@ -81,4 +81,18 @@ class BackupDataSerializationTest {
     fun `new backups declare the current schema version`() {
         assertEquals(AppConstants.BACKUP_SCHEMA_VERSION, BackupData().version)
     }
+
+    @Test
+    fun `the schema version is actually written to the file`() {
+        // Regression: with encodeDefaults=false the version field (equal to
+        // its default) was silently omitted, leaving backups unversioned.
+        val encoding = Json { encodeDefaults = true }
+        val encoded = encoding.encodeToString(BackupData())
+
+        assertTrue(
+            encoded.contains("\"version\": ${AppConstants.BACKUP_SCHEMA_VERSION}") ||
+                encoded.contains("\"version\":${AppConstants.BACKUP_SCHEMA_VERSION}"),
+            "backup JSON must contain the schema version, got: ${encoded.take(120)}",
+        )
+    }
 }
