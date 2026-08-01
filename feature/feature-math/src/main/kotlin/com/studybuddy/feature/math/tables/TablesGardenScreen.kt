@@ -34,6 +34,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,7 +59,11 @@ fun TablesGardenScreen(
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                TablesGardenEffect.ShowComingSoon -> snackbarHostState.showSnackbar(comingSoonMessage)
+                TablesGardenEffect.ShowComingSoon -> {
+                    // Replace rather than queue: eight taps must not mean eight waits.
+                    snackbarHostState.currentSnackbarData?.dismiss()
+                    snackbarHostState.showSnackbar(comingSoonMessage)
+                }
             }
         }
     }
@@ -171,9 +177,12 @@ private fun TableRow(
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f),
             )
+            // The emoji carries all the progress, so give TalkBack real words.
+            val growthLabel = stringResource(row.growth.labelRes)
             Text(
                 text = row.growth.emoji,
                 style = MaterialTheme.typography.headlineSmall,
+                modifier = Modifier.semantics { contentDescription = growthLabel },
             )
         }
     }
@@ -206,6 +215,14 @@ private val LeitnerGrowth.emoji: String
         LeitnerGrowth.SPROUT -> "🌿"
         LeitnerGrowth.FLOWER -> "🌸"
         LeitnerGrowth.TREE -> "🌳"
+    }
+
+private val LeitnerGrowth.labelRes: Int
+    get() = when (this) {
+        LeitnerGrowth.SEED -> CoreUiR.string.srs_growth_seed
+        LeitnerGrowth.SPROUT -> CoreUiR.string.srs_growth_sprout
+        LeitnerGrowth.FLOWER -> CoreUiR.string.srs_growth_flower
+        LeitnerGrowth.TREE -> CoreUiR.string.srs_growth_tree
     }
 
 @Preview(showBackground = true)

@@ -7,6 +7,7 @@ import com.studybuddy.core.domain.model.mathfacts.TableGarden
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -43,7 +44,12 @@ class TablesGardenViewModel @Inject constructor(
     private val _state = MutableStateFlow(TablesGardenState())
     val state: StateFlow<TablesGardenState> = _state.asStateFlow()
 
-    private val _effects = MutableSharedFlow<TablesGardenEffect>()
+    // Buffered so a child tapping several rows in a row never blocks on the
+    // snackbar that is still on screen; the note is the same either way.
+    private val _effects = MutableSharedFlow<TablesGardenEffect>(
+        extraBufferCapacity = 1,
+        onBufferOverflow = BufferOverflow.DROP_OLDEST,
+    )
     val effects: SharedFlow<TablesGardenEffect> = _effects.asSharedFlow()
 
     init {

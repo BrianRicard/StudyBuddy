@@ -678,6 +678,10 @@
     <string name="srs_revision">Révision</string>
     <string name="srs_surprise">Surprise !</string>
     <string name="srs_all_watered">Tout est arrosé !</string>
+    <string name="srs_growth_seed">Tout juste planté</string>
+    <string name="srs_growth_sprout">En train de pousser</string>
+    <string name="srs_growth_flower">En fleur</string>
+    <string name="srs_growth_tree">Arbre complet</string>
     <plurals name="srs_new_cards_plural">
         <item quantity="one">%d carte à planter</item>
         <item quantity="other">%d cartes à planter</item>
