@@ -7,6 +7,7 @@ import com.studybuddy.core.domain.model.srs.LeitnerGrowth
 import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.TablesMode
 import io.mockk.every
 import io.mockk.mockk
 import kotlin.time.Duration.Companion.days
@@ -147,19 +148,29 @@ class TablesGardenViewModelTest {
     }
 
     @Test
-    fun `every intent shows the coming-soon note until the drill ships`() = runTest {
+    fun `each entry point opens the drill in its own mode`() = runTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
         viewModel.effects.test {
             viewModel.onIntent(TablesGardenIntent.StartRevision)
-            assertEquals(TablesGardenEffect.ShowComingSoon, awaitItem())
+            assertEquals(
+                TablesGardenEffect.NavigateToDrill(TablesMode.REVISION),
+                awaitItem(),
+            )
 
             viewModel.onIntent(TablesGardenIntent.StartSurprise)
-            assertEquals(TablesGardenEffect.ShowComingSoon, awaitItem())
+            assertEquals(
+                TablesGardenEffect.NavigateToDrill(TablesMode.SURPRISE),
+                awaitItem(),
+            )
 
+            // Tapping a row drills that table specifically.
             viewModel.onIntent(TablesGardenIntent.OpenTable(7))
-            assertEquals(TablesGardenEffect.ShowComingSoon, awaitItem())
+            assertEquals(
+                TablesGardenEffect.NavigateToDrill(TablesMode.TABLE, table = 7),
+                awaitItem(),
+            )
         }
     }
 

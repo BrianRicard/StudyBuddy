@@ -40,6 +40,13 @@ object PointValues {
     const val CONJUGATION_DRILL_STYLUS_BONUS = 5
     const val CONJUGATION_DRILL_SESSION_COMPLETE = 25
 
+    // Jardin des Tables drills. Mirrors the Atelier ladder: answering at all
+    // earns something, even after the answer was revealed.
+    const val MATH_FACTS_FIRST_TRY = 10
+    const val MATH_FACTS_RETRY = 5
+    const val MATH_FACTS_COPY = 2
+    const val MATH_FACTS_SESSION_COMPLETE = 25
+
     // General
     const val DAILY_LOGIN = 10
     const val FIRST_SESSION_OF_DAY = 20

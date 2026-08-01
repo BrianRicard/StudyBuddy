@@ -33,6 +33,7 @@ import com.studybuddy.feature.math.play.MathPlayScreen
 import com.studybuddy.feature.math.results.MathResultsScreen
 import com.studybuddy.feature.math.setup.MathSetupScreen
 import com.studybuddy.feature.math.tables.TablesGardenScreen
+import com.studybuddy.feature.math.tables.drill.TablesDrillScreen
 import com.studybuddy.feature.onboarding.OnboardingScreen
 import com.studybuddy.feature.poems.PoemDetailScreen
 import com.studybuddy.feature.poems.PoemsScreen
@@ -233,7 +234,25 @@ fun StudyBuddyNavHost(
         }
 
         composable(route = StudyBuddyRoutes.MATH_TABLES) {
-            TablesGardenScreen(onNavigateBack = { navController.popBackStack() })
+            TablesGardenScreen(
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDrill = { mode, table ->
+                    navController.navigateSafely(StudyBuddyRoutes.tablesDrill(mode = mode, table = table))
+                },
+            )
+        }
+
+        composable(
+            route = StudyBuddyRoutes.MATH_TABLES_DRILL,
+            arguments = listOf(
+                navArgument("mode") { type = NavType.StringType },
+                navArgument("table") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+            ),
+        ) {
+            TablesDrillScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(

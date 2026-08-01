@@ -42,9 +42,9 @@ import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.CelebrationOverlay
 import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.StudyBuddyButton
+import com.studybuddy.core.ui.components.praiseRes
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.feature.conjugation.components.QuestCreature
-import com.studybuddy.feature.conjugation.components.praiseRes
 
 @Composable
 fun BattleScreen(

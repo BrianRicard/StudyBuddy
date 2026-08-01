@@ -48,14 +48,6 @@ fun stepLabelRes(step: ConjugationStep): Int = when (step) {
     ConjugationStep.BOSS -> CoreUiR.string.conjugation_step_boss
 }
 
-/** Rotating praise so correct answers never feel repetitive. */
-@StringRes
-fun praiseRes(seed: Int): Int = when (seed % 3) {
-    0 -> CoreUiR.string.conjugation_correct_1
-    1 -> CoreUiR.string.conjugation_correct_2
-    else -> CoreUiR.string.conjugation_correct_3
-}
-
 /**
  * A quest creature (friend or boss). Delegates to [CharacterPreview] so every
  * character renders exactly as it does in the closet and shop.
