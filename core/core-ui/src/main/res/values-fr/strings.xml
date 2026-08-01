@@ -750,6 +750,7 @@
     </plurals>
 
     <!-- Jardin des Tables drill -->
+    <string name="tables_drill_unavailable">Ce coin du jardin n\'est pas prêt. Essaie une autre table !</string>
     <string name="tables_drill_backspace">Effacer</string>
     <string name="tables_drill_nudge">Presque ! Essaie encore.</string>
     <string name="tables_drill_strategy">%1$s = %2$d… alors %3$s ?</string>

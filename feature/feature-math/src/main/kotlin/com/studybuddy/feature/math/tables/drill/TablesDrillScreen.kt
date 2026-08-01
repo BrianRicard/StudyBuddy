@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
@@ -72,7 +73,7 @@ private fun TablesDrillContent(
             TopAppBar(
                 title = {
                     if (state.phase == TablesDrillPhase.DRILLING) {
-                        Text("${(state.index + 1).coerceAtMost(state.total)} / ${state.total}")
+                        Text("${(state.index + 1).coerceAtMost(state.plannedTotal)} / ${state.plannedTotal}")
                     } else {
                         Text(stringResource(CoreUiR.string.tables_title))
                     }
@@ -98,6 +99,21 @@ private fun TablesDrillContent(
                 },
             )
         },
+        bottomBar = {
+            if (state.phase == TablesDrillPhase.DRILLING) {
+                // Above the keypad rather than below it: a small phone must
+                // never hide the button that submits the answer.
+                Surface(color = MaterialTheme.colorScheme.surface) {
+                    PrimaryAction(
+                        state = state,
+                        onIntent = onIntent,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                    )
+                }
+            }
+        },
     ) { padding ->
         when (state.phase) {
             TablesDrillPhase.LOADING -> Box(
@@ -112,6 +128,20 @@ private fun TablesDrillContent(
                 onIntent = onIntent,
                 modifier = Modifier.padding(padding),
             )
+
+            TablesDrillPhase.ERROR -> Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+                    .padding(24.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.tables_drill_unavailable),
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                )
+            }
 
             TablesDrillPhase.RESULTS -> ResultsBody(
                 state = state,
@@ -143,23 +173,32 @@ private fun DrillBody(
         FeedbackArea(state = state)
         Spacer(Modifier.height(12.dp))
 
-        if (state.isResolved) {
-            Button(
-                onClick = { onIntent(TablesDrillIntent.Next) },
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(CoreUiR.string.drill_next)) }
-        } else {
+        if (!state.isResolved) {
             NumericKeypad(
                 onDigit = { onIntent(TablesDrillIntent.Digit(it)) },
                 onBackspace = { onIntent(TablesDrillIntent.Backspace) },
             )
-            Spacer(Modifier.height(12.dp))
-            Button(
-                onClick = { onIntent(TablesDrillIntent.Submit) },
-                enabled = state.input.isNotBlank(),
-                modifier = Modifier.fillMaxWidth(),
-            ) { Text(stringResource(CoreUiR.string.drill_submit)) }
         }
+    }
+}
+
+@Composable
+private fun PrimaryAction(
+    state: TablesDrillState,
+    onIntent: (TablesDrillIntent) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    if (state.isResolved) {
+        Button(
+            onClick = { onIntent(TablesDrillIntent.Next) },
+            modifier = modifier,
+        ) { Text(stringResource(CoreUiR.string.drill_next)) }
+    } else {
+        Button(
+            onClick = { onIntent(TablesDrillIntent.Submit) },
+            enabled = state.input.isNotBlank(),
+            modifier = modifier,
+        ) { Text(stringResource(CoreUiR.string.drill_submit)) }
     }
 }
 
@@ -240,9 +279,10 @@ private fun FeedbackArea(state: TablesDrillState) {
             color = MaterialTheme.colorScheme.secondary,
         )
 
+        // A bonus lap earns nothing — it was already paid for — so praise alone.
         is TablesFeedback.Correct -> FeedbackText(
             text = stringResource(praiseRes(feedback.praiseSeed)) +
-                " +${feedback.pointsEarned}",
+                if (feedback.pointsEarned > 0) " +${feedback.pointsEarned}" else "",
             color = MaterialTheme.colorScheme.tertiary,
         )
     }
@@ -292,7 +332,7 @@ private fun ResultsBody(
                 text = stringResource(
                     CoreUiR.string.tables_drill_first_try,
                     state.firstTryCount,
-                    state.total,
+                    state.plannedTotal,
                 ),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

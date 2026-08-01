@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
-enum class TablesDrillPhase { LOADING, DRILLING, RESULTS }
+enum class TablesDrillPhase { LOADING, DRILLING, RESULTS, ERROR }
 
 /**
  * The gentle ladder. A wrong answer never scolds: it offers another go, then
@@ -65,6 +65,12 @@ data class TablesGrowth(
 data class TablesDrillState(
     val phase: TablesDrillPhase = TablesDrillPhase.LOADING,
     val cards: List<TablesCard> = emptyList(),
+    /**
+     * How many cards the session promised at the start. Requeued facts are
+     * appended beyond this, so the progress counter never moves further away
+     * from a child who is struggling.
+     */
+    val plannedTotal: Int = 0,
     val index: Int = 0,
     val input: String = "",
     val feedback: TablesFeedback = TablesFeedback.Idle,
@@ -80,6 +86,13 @@ data class TablesDrillState(
     val total: Int get() = cards.size
     val isCopyMode: Boolean get() = feedback is TablesFeedback.Copy
     val isResolved: Boolean get() = feedback is TablesFeedback.Correct
+
+    /**
+     * True while re-answering a fact that already stumbled earlier this
+     * session. It was scored and rescheduled the first time round, so this lap
+     * is for confidence only.
+     */
+    val isBonusLap: Boolean get() = index >= plannedTotal
 }
 
 sealed interface TablesDrillIntent {
@@ -102,7 +115,10 @@ class TablesDrillViewModel @Inject constructor(
     private val ttsManager: TtsManager,
 ) : ViewModel() {
 
-    private val mode: TablesMode = TablesMode.valueOf(checkNotNull(savedStateHandle["mode"]))
+    // The route is a public nav destination, so a bad argument must surface as
+    // a friendly screen rather than an exception in the ViewModel constructor.
+    private val mode: TablesMode? =
+        savedStateHandle.get<String>("mode")?.let { raw -> TablesMode.entries.firstOrNull { it.name == raw } }
     private val table: Int? = savedStateHandle.get<String>("table")?.toIntOrNull()
 
     private val _state = MutableStateFlow(TablesDrillState())
@@ -123,7 +139,7 @@ class TablesDrillViewModel @Inject constructor(
             }
 
             TablesDrillIntent.Submit -> submit()
-            TablesDrillIntent.Replay -> speakCurrent()
+            TablesDrillIntent.Replay -> replay()
             TablesDrillIntent.Next -> next()
             TablesDrillIntent.PlayAgain -> {
                 requeuedFacts.clear()
@@ -141,14 +157,33 @@ class TablesDrillViewModel @Inject constructor(
     }
 
     private fun loadSession() {
+        val drillMode = mode ?: run {
+            _state.update { it.copy(phase = TablesDrillPhase.ERROR) }
+            return
+        }
         viewModelScope.launch {
-            val cards = buildSession(
-                mode = mode,
-                profileId = AppConstants.DEFAULT_PROFILE_ID,
-                now = Clock.System.now(),
-                table = table,
-            )
-            _state.update { it.copy(phase = TablesDrillPhase.DRILLING, cards = cards) }
+            // The session builder rejects unknown tables and the repository can
+            // fail; either way the child gets a way out, not a crash.
+            val cards = runCatching {
+                buildSession(
+                    mode = drillMode,
+                    profileId = AppConstants.DEFAULT_PROFILE_ID,
+                    now = Clock.System.now(),
+                    table = table,
+                )
+            }.getOrDefault(emptyList())
+
+            if (cards.isEmpty()) {
+                _state.update { it.copy(phase = TablesDrillPhase.ERROR) }
+                return@launch
+            }
+            _state.update {
+                it.copy(
+                    phase = TablesDrillPhase.DRILLING,
+                    cards = cards,
+                    plannedTotal = cards.size,
+                )
+            }
             speakCurrent()
         }
     }
@@ -201,7 +236,10 @@ class TablesDrillViewModel @Inject constructor(
         val current = _state.value
         val firstTry = current.wrongAttempts == 0
         val viaCopy = current.isCopyMode
+        val bonusLap = current.isBonusLap
         val points = when {
+            // Paying again here would make stumbling worth more than knowing it.
+            bonusLap -> 0
             firstTry -> PointValues.MATH_FACTS_FIRST_TRY
             viaCopy -> PointValues.MATH_FACTS_COPY
             else -> PointValues.MATH_FACTS_RETRY
@@ -213,12 +251,17 @@ class TablesDrillViewModel @Inject constructor(
                 feedback = TablesFeedback.Correct(pointsEarned = points, praiseSeed = it.resolvedCount),
                 input = card.fact.product.toString(),
                 sessionPoints = it.sessionPoints + points,
-                firstTryCount = it.firstTryCount + if (firstTry) 1 else 0,
+                firstTryCount = it.firstTryCount + if (firstTry && !bonusLap) 1 else 0,
                 resolvedCount = it.resolvedCount + 1,
                 combo = if (firstTry) it.combo + 1 else it.combo,
                 comboPaused = !firstTry,
             )
         }
+
+        // Re-recording would undo the lapse the child just earned: the fact
+        // would be demoted and promoted back within the same minute, and
+        // spaced repetition needs the spacing.
+        if (bonusLap) return
 
         // A stumbled fact quietly returns near the end, so the last thing the
         // child does with it is answer it unaided.
@@ -258,7 +301,9 @@ class TablesDrillViewModel @Inject constructor(
 
     private fun next() {
         val current = _state.value
-        if (!current.isResolved) return
+        // Without the phase guard a fast double-tap on the last card runs
+        // finish() twice and awards the session bonus again.
+        if (current.phase != TablesDrillPhase.DRILLING || !current.isResolved) return
         if (current.index + 1 >= current.cards.size) {
             finish()
             return
@@ -275,6 +320,7 @@ class TablesDrillViewModel @Inject constructor(
     }
 
     private fun finish() {
+        if (_state.value.phase == TablesDrillPhase.RESULTS) return
         _state.update {
             it.copy(
                 phase = TablesDrillPhase.RESULTS,
@@ -287,8 +333,22 @@ class TablesDrillViewModel @Inject constructor(
                 basePoints = PointValues.MATH_FACTS_SESSION_COMPLETE,
                 streak = 0,
                 source = PointSource.MATH,
-                reason = "Tables drill session complete (${mode.name})",
+                reason = "Tables drill session complete (${mode?.name})",
             )
+        }
+    }
+
+    /**
+     * Replays whatever the child is currently being asked to work with. On the
+     * strategy rung that is the add-a-row scaffold, not the bare question —
+     * the child who needs it is exactly the one who needs to hear it twice.
+     */
+    private fun replay() {
+        val fact = _state.value.currentCard?.fact ?: return
+        when (val feedback = _state.value.feedback) {
+            is TablesFeedback.Strategy -> speakStrategy(feedback.neighbor, fact)
+            is TablesFeedback.Copy -> speakAnswer(fact)
+            else -> speakCurrent()
         }
     }
 
