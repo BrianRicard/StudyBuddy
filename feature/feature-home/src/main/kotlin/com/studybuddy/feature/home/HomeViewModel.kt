@@ -11,6 +11,7 @@ import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -78,6 +79,7 @@ data class HomeState(
     val dailyGoal: Int = 5,
     val recentActivities: List<RecentActivity> = emptyList(),
     val atelierDueVerbs: Int = 0,
+    val tablesDue: Int = 0,
     val isLoading: Boolean = true,
 ) {
     val dailyProgress: Float
@@ -130,6 +132,7 @@ class HomeViewModel @Inject constructor(
     private val pointsRepository: PointsRepository,
     private val settingsRepository: SettingsRepository,
     private val getAtelierGarden: GetAtelierGardenUseCase,
+    private val getTablesGarden: GetTablesGardenUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -166,7 +169,7 @@ class HomeViewModel @Inject constructor(
             profileRepository.getActiveProfile()
                 .filterNotNull()
                 .flatMapLatest { profile ->
-                    combine(
+                    val baseState = combine(
                         avatarRepository.getAvatarConfig(profile.id),
                         pointsRepository.getTotalPoints(profile.id),
                         pointsRepository.getPointsForProfile(profile.id),
@@ -189,6 +192,12 @@ class HomeViewModel @Inject constructor(
                             atelierDueVerbs = atelierGarden.dueVerbCount,
                             isLoading = false,
                         )
+                    }
+                    combine(
+                        baseState,
+                        getTablesGarden(profile.id, Clock.System.now()),
+                    ) { state, tablesGarden ->
+                        state.copy(tablesDue = tablesGarden.dueTableCount)
                     }
                 }
                 .collect { newState -> _state.value = newState }

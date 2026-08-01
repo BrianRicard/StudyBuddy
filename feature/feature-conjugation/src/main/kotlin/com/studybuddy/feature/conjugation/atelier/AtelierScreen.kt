@@ -160,15 +160,15 @@ private fun AtelierHeader(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(
-                text = stringResource(CoreUiR.string.atelier_revision) + " — " +
+                text = stringResource(CoreUiR.string.srs_revision) + " — " +
                     if (state.dueCardCount > 0) {
                         pluralStringResource(
-                            CoreUiR.plurals.atelier_due_cards_plural,
+                            CoreUiR.plurals.srs_due_cards_plural,
                             state.dueCardCount,
                             state.dueCardCount,
                         )
                     } else {
-                        stringResource(CoreUiR.string.atelier_all_watered)
+                        stringResource(CoreUiR.string.srs_all_watered)
                     },
                 style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.padding(vertical = 8.dp),
@@ -179,7 +179,7 @@ private fun AtelierHeader(
             onClick = { onIntent(AtelierIntent.StartSurprise) },
             modifier = Modifier.fillMaxWidth(),
         ) {
-            Text(stringResource(CoreUiR.string.atelier_surprise))
+            Text(stringResource(CoreUiR.string.srs_surprise))
         }
     }
 }

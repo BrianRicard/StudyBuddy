@@ -8,12 +8,15 @@ import com.studybuddy.core.domain.model.Profile
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.mathfacts.MathFactReview
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.AvatarRepository
+import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import io.mockk.every
 import io.mockk.mockk
@@ -45,6 +48,7 @@ class HomeViewModelTest {
     private val pointsRepository: PointsRepository = mockk()
     private val settingsRepository: SettingsRepository = mockk()
     private val atelierReviewRepository: AtelierReviewRepository = mockk()
+    private val mathFactsReviewRepository: MathFactsReviewRepository = mockk()
 
     private val testProfile = Profile(
         id = "test-id",
@@ -74,6 +78,7 @@ class HomeViewModelTest {
         locale: String = "en",
         dailyGoal: Int = 5,
         atelierReviews: List<AtelierReview> = emptyList(),
+        mathFactReviews: List<MathFactReview> = emptyList(),
     ) {
         every { profileRepository.getActiveProfile() } returns flowOf(profile)
         every { avatarRepository.getAvatarConfig(profile.id) } returns flowOf(profile.avatarConfig)
@@ -84,6 +89,7 @@ class HomeViewModelTest {
         every { settingsRepository.getAppLocale() } returns flowOf(locale)
         every { settingsRepository.getDailyGoal() } returns flowOf(dailyGoal)
         every { atelierReviewRepository.getReviews(profile.id) } returns flowOf(atelierReviews)
+        every { mathFactsReviewRepository.getReviews(profile.id) } returns flowOf(mathFactReviews)
     }
 
     private fun createViewModel() = HomeViewModel(
@@ -92,6 +98,7 @@ class HomeViewModelTest {
         pointsRepository = pointsRepository,
         settingsRepository = settingsRepository,
         getAtelierGarden = GetAtelierGardenUseCase(atelierReviewRepository),
+        getTablesGarden = GetTablesGardenUseCase(mathFactsReviewRepository),
     )
 
     @Test
@@ -277,6 +284,7 @@ class HomeViewModelTest {
         every { settingsRepository.getAppLocale() } returns flowOf("en")
         every { settingsRepository.getDailyGoal() } returns flowOf(5)
         every { atelierReviewRepository.getReviews(profile.id) } returns flowOf(emptyList())
+        every { mathFactsReviewRepository.getReviews(profile.id) } returns flowOf(emptyList())
 
         val viewModel = createViewModel()
         advanceUntilIdle()
@@ -311,6 +319,36 @@ class HomeViewModelTest {
 
         assertEquals(0, viewModel.state.value.atelierDueVerbs)
     }
+
+    @Test
+    fun `counts distinct due tables for the speed math nudge`() = runTest {
+        setupDefaultMocks(
+            mathFactReviews = listOf(
+                mathFactReview(2, 3),
+                mathFactReview(2, 4),
+                mathFactReview(7, 8),
+            ),
+        )
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.state.value.tablesDue)
+    }
+
+    private fun mathFactReview(
+        table: Int,
+        multiplicand: Int,
+    ) = MathFactReview(
+        id = "$table-$multiplicand",
+        profileId = testProfile.id,
+        table = table,
+        multiplicand = multiplicand,
+        box = 1,
+        // Long overdue, so the card counts as due whatever "now" is.
+        dueAt = Instant.fromEpochMilliseconds(0),
+        lapses = 0,
+        updatedAt = Instant.fromEpochMilliseconds(0),
+    )
 
     private fun atelierReview(
         verbId: String,
