@@ -6,50 +6,44 @@ import com.studybuddy.core.domain.model.conjugation.AtelierReview
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
-import com.studybuddy.core.domain.model.srs.LeitnerSchedule
+import com.studybuddy.core.domain.model.srs.LeitnerMilestones
 import javax.inject.Inject
 import kotlinx.datetime.Instant
 
 /**
  * Derives Atelier milestone statuses from a profile's review rows.
  *
- * A card is "mastered" once it reaches the top Leitner box; a verb is mastered
- * once every one of its cards (all tenses × all persons) is at the top box.
- * Achievement timestamps come from the last update that clinched the milestone,
- * so parents can see roughly when each goal was reached.
+ * Mastery is read from each card's latched `masteredAt` stamp rather than its
+ * current box, so an achievement date never drifts as the card is re-drilled
+ * and a later lapse never un-earns a milestone the child already reached.
  */
 class GetAtelierMilestonesUseCase @Inject constructor() {
 
     operator fun invoke(reviews: List<AtelierReview>): List<AtelierMilestoneStatus> {
-        val maxBoxCards = reviews.filter {
-            it.box >= LeitnerSchedule.MAX_BOX && FrenchVerbs.byId(it.verbId) != null
-        }
-        val firstCardAt = maxBoxCards.minByOrNull { it.updatedAt }?.updatedAt
+        val valid = reviews.filter { FrenchVerbs.byId(it.verbId) != null }
+        val firstCardAt = valid.mapNotNull { it.masteredAt }.minOrNull()
 
-        // A verb is fully mastered when all of its cards are at the top box.
-        // The row key (verbId, tense, person) is unique, so counting top-box
-        // cards per verb is enough — it can reach [CARDS_PER_VERB] only when
-        // every card is mastered.
-        val verbMasteredTimes = maxBoxCards
-            .groupBy { it.verbId }
-            .filterValues { it.size >= CARDS_PER_VERB }
-            .values
-            .map { cards -> cards.maxOf { it.updatedAt } }
-            .sorted()
+        val verbTimes = LeitnerMilestones.groupCompletionTimes(
+            cards = valid,
+            keyOf = { Triple(it.verbId, it.tense, it.person) },
+            groupOf = { it.verbId },
+            masteredAt = { it.masteredAt },
+            sizeOfGroup = { CARDS_PER_VERB },
+        )
 
         return listOf(
             AtelierMilestoneStatus(
                 milestone = AtelierMilestone.FIRST_CARD_MASTERED,
-                current = if (maxBoxCards.isNotEmpty()) 1 else 0,
+                current = if (firstCardAt != null) 1 else 0,
                 target = 1,
                 achievedAt = firstCardAt,
             ),
-            verbMilestone(AtelierMilestone.FIRST_VERB_MASTERED, target = 1, times = verbMasteredTimes),
-            verbMilestone(AtelierMilestone.FIVE_VERBS_MASTERED, target = FIVE, times = verbMasteredTimes),
+            verbMilestone(AtelierMilestone.FIRST_VERB_MASTERED, target = 1, times = verbTimes),
+            verbMilestone(AtelierMilestone.FIVE_VERBS_MASTERED, target = FIVE, times = verbTimes),
             verbMilestone(
                 AtelierMilestone.ALL_VERBS_MASTERED,
                 target = FrenchVerbs.all.size,
-                times = verbMasteredTimes,
+                times = verbTimes,
             ),
         )
     }
@@ -58,12 +52,15 @@ class GetAtelierMilestonesUseCase @Inject constructor() {
         milestone: AtelierMilestone,
         target: Int,
         times: List<Instant>,
-    ) = AtelierMilestoneStatus(
-        milestone = milestone,
-        current = times.size.coerceAtMost(target),
-        target = target,
-        achievedAt = times.getOrNull(target - 1),
-    )
+    ): AtelierMilestoneStatus {
+        val (current, achievedAt) = LeitnerMilestones.progressTowards(times, target)
+        return AtelierMilestoneStatus(
+            milestone = milestone,
+            current = current,
+            target = target,
+            achievedAt = achievedAt,
+        )
+    }
 
     private companion object {
         const val FIVE = 5

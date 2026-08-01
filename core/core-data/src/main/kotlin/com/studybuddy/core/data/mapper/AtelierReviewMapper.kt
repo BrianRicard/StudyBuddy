@@ -37,4 +37,5 @@ fun AtelierReview.toEntity() = AtelierReviewEntity(
     dueAt = dueAt.toEpochMilliseconds(),
     lapses = lapses,
     updatedAt = updatedAt.toEpochMilliseconds(),
+    masteredAt = masteredAt?.toEpochMilliseconds(),
 )

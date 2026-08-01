@@ -22,6 +22,7 @@ class GetAtelierMilestonesUseCaseTest {
         person: ConjugationPerson,
         box: Int,
         updatedAtMillis: Long = 1_000,
+        masteredAtMillis: Long? = updatedAtMillis.takeIf { box >= LeitnerSchedule.MAX_BOX },
     ) = AtelierReview(
         id = "$verbId-$tense-$person",
         profileId = "p1",
@@ -32,6 +33,7 @@ class GetAtelierMilestonesUseCaseTest {
         dueAt = Instant.fromEpochMilliseconds(updatedAtMillis),
         lapses = 0,
         updatedAt = Instant.fromEpochMilliseconds(updatedAtMillis),
+        masteredAt = masteredAtMillis?.let { Instant.fromEpochMilliseconds(it) },
     )
 
     /** Every card of [verbId] at [box], each stamped [updatedAtMillis]. */
@@ -93,17 +95,45 @@ class GetAtelierMilestonesUseCaseTest {
     }
 
     @Test
-    fun `a verb missing one top-box card is not mastered`() {
+    fun `a verb with a card that never topped out is not mastered`() {
         val cards = fullVerb("aimer", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 900).toMutableList()
-        // Knock one card down a box.
-        val downgraded = cards.removeAt(0).copy(box = LeitnerSchedule.MAX_BOX - 1)
-        cards.add(downgraded)
+        // One card has never reached the top box at all.
+        val neverMastered = cards.removeAt(0).copy(box = 1, masteredAt = null)
+        cards.add(neverMastered)
 
         val result = useCase(cards)
 
         assertFalse(result.of(AtelierMilestone.FIRST_VERB_MASTERED).isAchieved)
         // The other 17 cards still count toward the first-card milestone.
         assertTrue(result.of(AtelierMilestone.FIRST_CARD_MASTERED).isAchieved)
+    }
+
+    @Test
+    fun `a later lapse does not un-earn a verb the child already mastered`() {
+        val cards = fullVerb("aimer", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 900).toMutableList()
+        // The child slips on one card months later: the box falls, but the
+        // card was mastered once and the parent already gave the reward.
+        val lapsed = cards.removeAt(0).copy(box = LeitnerSchedule.MAX_BOX - 1)
+        cards.add(lapsed)
+
+        val result = useCase(cards)
+
+        val verb = result.of(AtelierMilestone.FIRST_VERB_MASTERED)
+        assertTrue(verb.isAchieved)
+        assertEquals(Instant.fromEpochMilliseconds(900), verb.achievedAt)
+    }
+
+    @Test
+    fun `re-drilling a mastered verb never moves its achievement date`() {
+        val earned = fullVerb("aimer", box = LeitnerSchedule.MAX_BOX, updatedAtMillis = 900)
+        // Every card is reviewed again a month later; only updatedAt moves.
+        val reviewedAgain = earned.map { it.copy(updatedAt = Instant.fromEpochMilliseconds(9_000)) }
+
+        val before = useCase(earned).of(AtelierMilestone.FIRST_VERB_MASTERED)
+        val after = useCase(reviewedAgain).of(AtelierMilestone.FIRST_VERB_MASTERED)
+
+        assertEquals(before.achievedAt, after.achievedAt)
+        assertEquals(Instant.fromEpochMilliseconds(900), after.achievedAt)
     }
 
     @Test

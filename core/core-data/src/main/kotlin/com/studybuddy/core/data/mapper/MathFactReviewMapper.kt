@@ -13,6 +13,7 @@ fun MathFactReviewEntity.toDomain(): MathFactReview = MathFactReview(
     dueAt = Instant.fromEpochMilliseconds(dueAt),
     lapses = lapses,
     updatedAt = Instant.fromEpochMilliseconds(updatedAt),
+    masteredAt = masteredAt?.let { Instant.fromEpochMilliseconds(it) },
 )
 
 fun MathFactReview.toEntity() = MathFactReviewEntity(
@@ -24,4 +25,5 @@ fun MathFactReview.toEntity() = MathFactReviewEntity(
     dueAt = dueAt.toEpochMilliseconds(),
     lapses = lapses,
     updatedAt = updatedAt.toEpochMilliseconds(),
+    masteredAt = masteredAt?.toEpochMilliseconds(),
 )

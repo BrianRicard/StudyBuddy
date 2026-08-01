@@ -53,6 +53,8 @@ import com.studybuddy.core.domain.model.conjugation.AtelierMilestone
 import com.studybuddy.core.domain.model.conjugation.AtelierMilestoneStatus
 import com.studybuddy.core.domain.model.conjugation.ConjugationMilestone
 import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
+import com.studybuddy.core.domain.model.mathfacts.MathFactsMilestone
+import com.studybuddy.core.domain.model.mathfacts.MathFactsMilestoneStatus
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.isReducedMotionEnabled
 import com.studybuddy.core.ui.components.LoadingState
@@ -182,6 +184,21 @@ internal fun StatsContent(
                     AtelierMilestonesSection(
                         milestones = state.atelierMilestones,
                         modifier = Modifier.animateItemAppearance(6),
+                    )
+                }
+
+                // 6. Jardin des Tables progress + parent-facing milestones
+                item {
+                    TablesSection(
+                        state = state,
+                        modifier = Modifier.animateItemAppearance(7),
+                    )
+                }
+
+                item {
+                    TablesMilestonesSection(
+                        milestones = state.tablesMilestones,
+                        modifier = Modifier.animateItemAppearance(8),
                     )
                 }
 
@@ -791,6 +808,126 @@ private fun AtelierMilestoneRow(milestone: AtelierMilestoneStatus) {
             )
         }
     }
+}
+
+@Composable
+private fun TablesSection(
+    state: StatsState,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_tables_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_tables_mastered),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.tablesMastered} / ${state.tablesTotal}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            LinearProgressIndicator(
+                progress = {
+                    if (state.tablesTotal == 0) 0f else state.tablesMastered.toFloat() / state.tablesTotal
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(10.dp),
+                color = CorrectGreen,
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = stringResource(CoreUiR.string.stats_tables_facts_due),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    text = "${state.tablesFactsDue}",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun TablesMilestonesSection(
+    milestones: List<MathFactsMilestoneStatus>,
+    modifier: Modifier = Modifier,
+) {
+    StudyBuddyCard(modifier = modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                text = stringResource(CoreUiR.string.stats_tables_milestones_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            milestones.forEach { milestone ->
+                TablesMilestoneRow(milestone = milestone)
+            }
+        }
+    }
+}
+
+@Composable
+private fun TablesMilestoneRow(milestone: MathFactsMilestoneStatus) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            imageVector = if (milestone.isAchieved) Icons.Filled.EmojiEvents else Icons.Outlined.EmojiEvents,
+            contentDescription = null,
+            tint = if (milestone.isAchieved) PointsGold else MaterialTheme.colorScheme.outline,
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(tablesMilestoneLabelRes(milestone.milestone)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = milestone.achievedAt
+                    ?.let { stringResource(CoreUiR.string.milestone_achieved_on, formatMilestoneDate(it)) }
+                    ?: stringResource(
+                        CoreUiR.string.milestone_progress,
+                        milestone.current,
+                        milestone.target,
+                    ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@StringRes
+private fun tablesMilestoneLabelRes(milestone: MathFactsMilestone): Int = when (milestone) {
+    MathFactsMilestone.FIRST_FACT_MASTERED -> CoreUiR.string.tables_milestone_first_fact
+    MathFactsMilestone.FIRST_TABLE_MASTERED -> CoreUiR.string.tables_milestone_first_table
+    MathFactsMilestone.FOUR_TABLES_MASTERED -> CoreUiR.string.tables_milestone_four_tables
+    MathFactsMilestone.ALL_TABLES_MASTERED -> CoreUiR.string.tables_milestone_all_tables
 }
 
 @StringRes

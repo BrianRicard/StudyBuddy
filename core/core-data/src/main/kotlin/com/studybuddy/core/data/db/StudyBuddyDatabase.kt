@@ -55,7 +55,7 @@ import com.studybuddy.core.data.db.entity.VoicePackEntity
         AtelierReviewEntity::class,
         MathFactReviewEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)

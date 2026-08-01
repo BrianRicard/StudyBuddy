@@ -20,4 +20,5 @@ data class AtelierReview(
     val dueAt: Instant,
     val lapses: Int,
     val updatedAt: Instant,
+    val masteredAt: Instant? = null,
 )

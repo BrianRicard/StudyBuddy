@@ -3,6 +3,7 @@ package com.studybuddy.core.domain.usecase.conjugation
 import com.studybuddy.core.domain.model.conjugation.AtelierReview
 import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.AtelierAnswerOutcome
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import kotlinx.coroutines.flow.flowOf
@@ -36,12 +37,19 @@ internal class FakeAtelierReviewRepository(
     override suspend fun sync() = Unit
 }
 
+/**
+ * Mirrors what the repository actually writes: a top-box card is latched at
+ * its update time. Pass [masteredAt] explicitly to model a card that has been
+ * re-drilled since (updatedAt moves, masteredAt must not).
+ */
 internal fun atelierReview(
     verbId: String,
     tense: ConjugationTense = ConjugationTense.PRESENT,
     person: ConjugationPerson = ConjugationPerson.JE,
     box: Int = 2,
     dueAt: Instant = ATELIER_TEST_NOW,
+    updatedAt: Instant = dueAt,
+    masteredAt: Instant? = updatedAt.takeIf { box >= LeitnerSchedule.MAX_BOX },
     profileId: String = ATELIER_TEST_PROFILE,
 ) = AtelierReview(
     id = "$verbId-$tense-$person",
@@ -52,5 +60,6 @@ internal fun atelierReview(
     box = box,
     dueAt = dueAt,
     lapses = 0,
-    updatedAt = dueAt,
+    updatedAt = updatedAt,
+    masteredAt = masteredAt,
 )

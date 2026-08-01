@@ -1,6 +1,7 @@
 package com.studybuddy.core.domain.usecase.mathfacts
 
 import com.studybuddy.core.domain.model.mathfacts.MathFactReview
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.MathFactAnswerOutcome
 import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import kotlinx.coroutines.flow.flowOf
@@ -33,11 +34,18 @@ internal class FakeMathFactsReviewRepository(
     override suspend fun sync() = Unit
 }
 
+/**
+ * Mirrors what the repository actually writes: a top-box card is latched at
+ * its update time. Pass [masteredAt] explicitly to model a card that has been
+ * re-drilled since (updatedAt moves, masteredAt must not).
+ */
 internal fun factReview(
     table: Int,
     multiplicand: Int,
     box: Int = 2,
     dueAt: Instant = TABLES_TEST_NOW,
+    updatedAt: Instant = dueAt,
+    masteredAt: Instant? = updatedAt.takeIf { box >= LeitnerSchedule.MAX_BOX },
     profileId: String = TABLES_TEST_PROFILE,
 ) = MathFactReview(
     id = "$table-x-$multiplicand",
@@ -47,5 +55,6 @@ internal fun factReview(
     box = box,
     dueAt = dueAt,
     lapses = 0,
-    updatedAt = dueAt,
+    updatedAt = updatedAt,
+    masteredAt = masteredAt,
 )

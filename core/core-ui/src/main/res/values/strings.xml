@@ -762,4 +762,14 @@
     <string name="tables_drill_grew">Your garden grew</string>
     <string name="tables_drill_again">Another round</string>
     <string name="tables_drill_back_to_garden">Back to the garden</string>
+
+    <!-- Stats: Jardin des Tables -->
+    <string name="stats_tables_title">Times-Tables Garden</string>
+    <string name="stats_tables_mastered">Tables fully grown</string>
+    <string name="stats_tables_facts_due">Facts to water today</string>
+    <string name="stats_tables_milestones_title">Times-Tables milestones</string>
+    <string name="tables_milestone_first_fact">First fact fully mastered</string>
+    <string name="tables_milestone_first_table">First table fully mastered</string>
+    <string name="tables_milestone_four_tables">Four tables fully mastered</string>
+    <string name="tables_milestone_all_tables">Every table fully mastered</string>
 </resources>

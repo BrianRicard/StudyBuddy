@@ -2,6 +2,7 @@ package com.studybuddy.core.data.repository
 
 import com.studybuddy.core.data.db.dao.MathFactsReviewDao
 import com.studybuddy.core.data.db.entity.MathFactReviewEntity
+import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.Instant
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -112,6 +114,39 @@ class LocalMathFactsReviewRepositoryTest {
 
         assertEquals(first.review.id, second.review.id)
         assertEquals(3, repository.getReviews(PROFILE).first().size)
+    }
+
+    @Test
+    fun `masteredAt is stamped when the card first tops out`() = runTest {
+        // Below the top box there is nothing to latch yet.
+        repeat(LeitnerSchedule.MAX_BOX - 1) { answer(correct = true, now = NOW + it.days) }
+        assertNull(repository.getReviews(PROFILE).first().single().masteredAt)
+
+        val topOut = NOW + 10.days
+        val outcome = answer(correct = true, now = topOut)
+
+        assertEquals(LeitnerSchedule.MAX_BOX, outcome.review.box)
+        assertEquals(topOut, outcome.review.masteredAt)
+    }
+
+    @Test
+    fun `masteredAt never moves once set, however the card is answered later`() = runTest {
+        repeat(LeitnerSchedule.MAX_BOX) { answer(correct = true, now = NOW + it.days) }
+        val earned = repository.getReviews(PROFILE).first().single().masteredAt
+        assertNotNull(earned)
+
+        // Re-drilled a month later: box-4 cards fall due every 15 days.
+        answer(correct = true, now = NOW + 40.days)
+        assertEquals(earned, repository.getReviews(PROFILE).first().single().masteredAt)
+
+        // And a lapse must not un-earn it — the parent already gave the gift.
+        val lapsed = answer(correct = false, now = NOW + 60.days)
+        assertEquals(LeitnerSchedule.MAX_BOX - 1, lapsed.review.box)
+        assertEquals(earned, lapsed.review.masteredAt)
+
+        // Climbing back does not re-stamp it either.
+        answer(correct = true, now = NOW + 61.days)
+        assertEquals(earned, repository.getReviews(PROFILE).first().single().masteredAt)
     }
 
     @Test

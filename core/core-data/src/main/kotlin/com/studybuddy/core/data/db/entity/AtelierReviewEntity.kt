@@ -26,4 +26,10 @@ data class AtelierReviewEntity(
     val dueAt: Long,
     val lapses: Int,
     val updatedAt: Long,
+    /**
+     * When this card first reached the top box, or null if it never has.
+     * A high-water mark: it is set once and never cleared, so a later lapse
+     * cannot rewrite history for the parent-facing milestones.
+     */
+    val masteredAt: Long? = null,
 )
