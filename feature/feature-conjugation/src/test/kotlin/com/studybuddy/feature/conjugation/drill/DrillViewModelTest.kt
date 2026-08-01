@@ -352,8 +352,87 @@ class DrillViewModelTest {
         advanceUntilIdle()
 
         assertEquals(DrillPhase.RESULTS, viewModel.state.value.phase)
-        // The requeued success recorded as correct — the session ends in victory.
-        assertEquals(true, recordedAnswers.last().second)
+        // Six cards, six records: the requeued lap deliberately adds none, so
+        // the lapse it earned survives instead of being promoted straight back.
+        assertEquals(6, recordedAnswers.size)
+    }
+
+    @Test
+    fun `the requeued lap neither pays again nor reschedules the card`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Stumble the first card so it is requeued, then clear the other five.
+        val stumbled = viewModel.state.value.currentCard!!
+        viewModel.onIntent(DrillIntent.InputChanged("je zzz"))
+        viewModel.onIntent(DrillIntent.Submit)
+        viewModel.onIntent(DrillIntent.InputChanged(stumbled.prompt))
+        viewModel.onIntent(DrillIntent.Submit)
+        advanceUntilIdle()
+        viewModel.onIntent(DrillIntent.Next)
+        repeat(5) {
+            viewModel.answerCurrentCorrectly()
+            advanceUntilIdle()
+            viewModel.onIntent(DrillIntent.Next)
+        }
+
+        val pointsBeforeLap = viewModel.state.value.sessionPoints
+        val recordsBeforeLap = recordedAnswers.size
+        assertTrue(viewModel.state.value.isBonusLap)
+
+        viewModel.answerCurrentCorrectly()
+        advanceUntilIdle()
+
+        // Paying here would make stumbling (RETRY + FIRST_TRY) beat knowing it.
+        val feedback = viewModel.state.value.feedback as DrillFeedback.Correct
+        assertEquals(0, feedback.pointsEarned)
+        assertEquals(pointsBeforeLap, viewModel.state.value.sessionPoints)
+        assertEquals(recordsBeforeLap, recordedAnswers.size)
+        // The stumble stays counted against the first-try tally.
+        assertEquals(5, viewModel.state.value.firstTryCount)
+    }
+
+    @Test
+    fun `the progress denominator never grows when a card is requeued`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        assertEquals(6, viewModel.state.value.plannedTotal)
+
+        val stumbled = viewModel.state.value.currentCard!!
+        viewModel.onIntent(DrillIntent.InputChanged("je zzz"))
+        viewModel.onIntent(DrillIntent.Submit)
+        viewModel.onIntent(DrillIntent.InputChanged(stumbled.prompt))
+        viewModel.onIntent(DrillIntent.Submit)
+        advanceUntilIdle()
+
+        // The session grew, but what the child is counting towards did not.
+        assertEquals(7, viewModel.state.value.total)
+        assertEquals(6, viewModel.state.value.plannedTotal)
+    }
+
+    @Test
+    fun `finishing twice does not award the session bonus twice`() = runTest {
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        repeat(6) {
+            viewModel.answerCurrentCorrectly()
+            advanceUntilIdle()
+            viewModel.onIntent(DrillIntent.Next)
+        }
+        advanceUntilIdle()
+        val settled = viewModel.state.value.sessionPoints
+        // Six card awards plus one session bonus.
+        coVerify(exactly = 7) { pointsRepository.addPointEvent(any()) }
+
+        // A fast double-tap on the last card must not re-run finish().
+        repeat(3) {
+            viewModel.onIntent(DrillIntent.Next)
+            advanceUntilIdle()
+        }
+
+        assertEquals(settled, viewModel.state.value.sessionPoints)
+        coVerify(exactly = 7) { pointsRepository.addPointEvent(any()) }
     }
 
     @Test
