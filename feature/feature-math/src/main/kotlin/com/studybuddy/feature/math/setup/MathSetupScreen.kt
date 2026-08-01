@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -30,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -52,6 +54,7 @@ fun MathSetupScreen(
     viewModel: MathSetupViewModel = hiltViewModel(),
     onStartGame: (MathSetupState) -> Unit,
     onNavigateBack: () -> Unit = {},
+    onNavigateToTables: () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
 
@@ -60,6 +63,7 @@ fun MathSetupScreen(
         onIntent = viewModel::onIntent,
         onStartGame = { onStartGame(state) },
         onNavigateBack = onNavigateBack,
+        onNavigateToTables = onNavigateToTables,
     )
 }
 
@@ -70,6 +74,7 @@ private fun MathSetupContent(
     onIntent: (MathSetupIntent) -> Unit,
     onStartGame: () -> Unit,
     onNavigateBack: () -> Unit = {},
+    onNavigateToTables: () -> Unit = {},
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -96,6 +101,9 @@ private fun MathSetupContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Spacer(modifier = Modifier.height(4.dp))
+
+            // Jardin des Tables entry
+            TablesEntryCard(onClick = onNavigateToTables)
 
             // Operators
             OperatorSection(
@@ -433,5 +441,35 @@ private fun MathSetupScreenPreview() {
             onIntent = {},
             onStartGame = {},
         )
+    }
+}
+
+@Composable
+private fun TablesEntryCard(onClick: () -> Unit) {
+    StudyBuddyCard(
+        modifier = Modifier.fillMaxWidth(),
+        onClick = onClick,
+    ) {
+        Row(
+            modifier = Modifier.padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = "🌱",
+                style = MaterialTheme.typography.headlineMedium,
+            )
+            Spacer(Modifier.width(16.dp))
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(CoreUiR.string.tables_entry_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = stringResource(CoreUiR.string.tables_entry_subtitle),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 }

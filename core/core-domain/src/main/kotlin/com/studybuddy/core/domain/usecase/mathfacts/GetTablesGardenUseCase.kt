@@ -9,6 +9,7 @@ import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 /**
@@ -17,12 +18,13 @@ import kotlinx.datetime.Instant
  */
 class GetTablesGardenUseCase @Inject constructor(
     private val repository: MathFactsReviewRepository,
+    private val clock: Clock = Clock.System,
 ) {
 
-    operator fun invoke(
-        profileId: String,
-        now: Instant,
-    ): Flow<TablesGarden> = repository.getReviews(profileId).map { reviews -> buildGarden(reviews, now) }
+    // The clock is read inside map, not when the flow is built, so counts stay
+    // fresh as cards come due while the app is open (and across midnight).
+    operator fun invoke(profileId: String): Flow<TablesGarden> =
+        repository.getReviews(profileId).map { reviews -> buildGarden(reviews, clock.now()) }
 
     private fun buildGarden(
         reviews: List<MathFactReview>,
@@ -44,6 +46,7 @@ class GetTablesGardenUseCase @Inject constructor(
         return TablesGarden(
             dueCardCount = due.size,
             dueTableCount = due.distinctBy { it.table }.size,
+            newCardCount = MathFactsRoster.all.count { fact -> fact !in byFact },
             tables = tables,
         )
     }

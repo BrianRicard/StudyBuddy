@@ -13,11 +13,12 @@ import org.junit.jupiter.api.Test
 class GetTablesGardenUseCaseTest {
 
     private val repository = FakeMathFactsReviewRepository()
-    private val useCase = GetTablesGardenUseCase(repository)
+    private val clock = FixedClock()
+    private val useCase = GetTablesGardenUseCase(repository, clock)
 
     @Test
     fun `an untouched garden is all seeds with nothing due`() = runTest {
-        val garden = useCase(TABLES_TEST_PROFILE, TABLES_TEST_NOW).first()
+        val garden = useCase(TABLES_TEST_PROFILE).first()
 
         assertEquals(0, garden.dueCardCount)
         assertEquals(0, garden.dueTableCount)
@@ -31,7 +32,7 @@ class GetTablesGardenUseCaseTest {
             factReview(7, multiplicand, box = LeitnerSchedule.MAX_BOX, dueAt = TABLES_TEST_NOW + 5.days)
         }
 
-        val garden = useCase(TABLES_TEST_PROFILE, TABLES_TEST_NOW).first()
+        val garden = useCase(TABLES_TEST_PROFILE).first()
 
         assertEquals(LeitnerGrowth.TREE, garden.tables.first { it.table == 7 }.growth)
         assertTrue(garden.tables.filter { it.table != 7 }.all { it.growth == LeitnerGrowth.SEED })
@@ -47,7 +48,7 @@ class GetTablesGardenUseCaseTest {
             factReview(9, 9, dueAt = TABLES_TEST_NOW + 3.days),
         )
 
-        val garden = useCase(TABLES_TEST_PROFILE, TABLES_TEST_NOW).first()
+        val garden = useCase(TABLES_TEST_PROFILE).first()
 
         assertEquals(3, garden.dueCardCount)
         assertEquals(2, garden.dueTableCount)
@@ -57,7 +58,7 @@ class GetTablesGardenUseCaseTest {
     fun `rows outside the roster are ignored everywhere`() = runTest {
         repository.reviews = listOf(factReview(13, 2, dueAt = TABLES_TEST_NOW - 1.days))
 
-        val garden = useCase(TABLES_TEST_PROFILE, TABLES_TEST_NOW).first()
+        val garden = useCase(TABLES_TEST_PROFILE).first()
 
         assertEquals(0, garden.dueCardCount)
         assertTrue(garden.tables.none { it.table == 13 })

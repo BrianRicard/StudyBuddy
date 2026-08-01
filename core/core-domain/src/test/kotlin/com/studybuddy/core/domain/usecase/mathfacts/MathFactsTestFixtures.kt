@@ -4,10 +4,16 @@ import com.studybuddy.core.domain.model.mathfacts.MathFactReview
 import com.studybuddy.core.domain.repository.MathFactAnswerOutcome
 import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 internal const val TABLES_TEST_PROFILE = "profile-1"
 internal val TABLES_TEST_NOW = Instant.fromEpochMilliseconds(1_750_000_000_000)
+
+/** A clock pinned to [TABLES_TEST_NOW] so "is it due?" never depends on wall time. */
+internal class FixedClock(var now: Instant = TABLES_TEST_NOW) : Clock {
+    override fun now(): Instant = now
+}
 
 /** Read-only fake for use cases that only consume the review flow. */
 internal class FakeMathFactsReviewRepository(

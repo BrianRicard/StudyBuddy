@@ -26,6 +26,7 @@ object StudyBuddyRoutes {
     const val POEM_DETAIL = "poems/detail/{poemId}"
     const val POEM_CREATE = "poems/create"
     const val MATH_CHALLENGE = "math/challenge"
+    const val MATH_TABLES = "math/tables"
     const val DICTEE_ADD = "dictee/add"
     const val DICTEE_EDIT = "dictee/edit/{setId}"
     const val READING = "reading"

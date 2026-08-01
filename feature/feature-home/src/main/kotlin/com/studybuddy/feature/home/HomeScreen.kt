@@ -171,6 +171,7 @@ private fun HomeContent(
                     onReadingClick = { onIntent(HomeIntent.NavigateToReading) },
                     onConjugationClick = { onIntent(HomeIntent.NavigateToConjugation) },
                     atelierDueVerbs = state.atelierDueVerbs,
+                    tablesDue = state.tablesDue,
                     layoutType = layoutType,
                     modifier = Modifier.animateItemAppearance(3),
                 )
@@ -458,6 +459,7 @@ private fun ModeCardsGrid(
     onReadingClick: () -> Unit,
     onConjugationClick: () -> Unit,
     atelierDueVerbs: Int,
+    tablesDue: Int,
     layoutType: LayoutType,
     modifier: Modifier = Modifier,
 ) {
@@ -480,7 +482,15 @@ private fun ModeCardsGrid(
             )
             ModeCard(
                 title = stringResource(CoreUiR.string.mode_math),
-                subtitle = stringResource(CoreUiR.string.label_mental_math),
+                subtitle = if (tablesDue > 0) {
+                    pluralStringResource(
+                        CoreUiR.plurals.tables_to_water_plural,
+                        tablesDue,
+                        tablesDue,
+                    )
+                } else {
+                    stringResource(CoreUiR.string.label_mental_math)
+                },
                 onClick = onMathClick,
                 modifier = Modifier.weight(1f),
                 iconRes = CoreUiR.drawable.ic_math_illustration,

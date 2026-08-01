@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.CsvSource
 class GetAtelierGardenUseCaseTest {
 
     private val repository = FakeAtelierReviewRepository()
-    private val useCase = GetAtelierGardenUseCase(repository)
+    private val useCase = GetAtelierGardenUseCase(repository, AtelierFixedClock())
 
     @ParameterizedTest
     @CsvSource(
@@ -37,7 +37,7 @@ class GetAtelierGardenUseCaseTest {
 
     @Test
     fun `an untouched garden is all seeds with nothing due`() = runTest {
-        val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
+        val garden = useCase(ATELIER_TEST_PROFILE).first()
 
         assertEquals(0, garden.dueCardCount)
         assertEquals(0, garden.dueVerbCount)
@@ -55,7 +55,7 @@ class GetAtelierGardenUseCaseTest {
             atelierReview("etre", person = person, box = LeitnerSchedule.MAX_BOX, dueAt = ATELIER_TEST_NOW + 5.days)
         }
 
-        val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
+        val garden = useCase(ATELIER_TEST_PROFILE).first()
         val etre = garden.verbs.first { it.verb.id == "etre" }
 
         assertEquals(LeitnerGrowth.TREE, etre.growth[ConjugationTense.PRESENT])
@@ -76,7 +76,7 @@ class GetAtelierGardenUseCaseTest {
             atelierReview("aimer", person = ConjugationPerson.JE, dueAt = ATELIER_TEST_NOW + 3.days),
         )
 
-        val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
+        val garden = useCase(ATELIER_TEST_PROFILE).first()
 
         assertEquals(3, garden.dueCardCount)
         assertEquals(2, garden.dueVerbCount)
@@ -86,7 +86,7 @@ class GetAtelierGardenUseCaseTest {
     fun `unknown verbs are ignored everywhere`() = runTest {
         repository.reviews = listOf(atelierReview("licorne", person = ConjugationPerson.JE))
 
-        val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
+        val garden = useCase(ATELIER_TEST_PROFILE).first()
 
         assertEquals(0, garden.dueCardCount)
         assertEquals(0, garden.dueVerbCount)
@@ -95,7 +95,7 @@ class GetAtelierGardenUseCaseTest {
 
     @Test
     fun `verbs keep roster order`() = runTest {
-        val garden = useCase(ATELIER_TEST_PROFILE, ATELIER_TEST_NOW).first()
+        val garden = useCase(ATELIER_TEST_PROFILE).first()
 
         assertEquals(FrenchVerbs.all.map { it.id }, garden.verbs.map { it.verb.id })
     }

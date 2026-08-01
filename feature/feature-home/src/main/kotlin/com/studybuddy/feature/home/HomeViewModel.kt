@@ -11,6 +11,7 @@ import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -78,6 +79,7 @@ data class HomeState(
     val dailyGoal: Int = 5,
     val recentActivities: List<RecentActivity> = emptyList(),
     val atelierDueVerbs: Int = 0,
+    val tablesDue: Int = 0,
     val isLoading: Boolean = true,
 ) {
     val dailyProgress: Float
@@ -130,6 +132,7 @@ class HomeViewModel @Inject constructor(
     private val pointsRepository: PointsRepository,
     private val settingsRepository: SettingsRepository,
     private val getAtelierGarden: GetAtelierGardenUseCase,
+    private val getTablesGarden: GetTablesGardenUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -141,6 +144,7 @@ class HomeViewModel @Inject constructor(
     init {
         observeProfile()
         observeSettings()
+        observeTablesGarden()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -171,7 +175,7 @@ class HomeViewModel @Inject constructor(
                         pointsRepository.getTotalPoints(profile.id),
                         pointsRepository.getPointsForProfile(profile.id),
                         pointsRepository.getSessionsToday(profile.id),
-                        getAtelierGarden(profile.id, Clock.System.now()),
+                        getAtelierGarden(profile.id),
                     ) { avatarConfig, totalPoints, pointEvents, sessionsToday, atelierGarden ->
                         val timeZone = TimeZone.currentSystemDefault()
                         val streak = calculateDayStreak(pointEvents, timeZone)
@@ -192,6 +196,22 @@ class HomeViewModel @Inject constructor(
                     }
                 }
                 .collect { newState -> _state.value = newState }
+        }
+    }
+
+    /**
+     * Collected separately from [observeProfile] on purpose: folding it into that
+     * flow would replay a cached HomeState snapshot on every garden emission
+     * (reverting settings written by [observeSettings]) and would hold the whole
+     * screen on the loading spinner until the math-facts table emits.
+     */
+    @Suppress("OPT_IN_USAGE")
+    private fun observeTablesGarden() {
+        viewModelScope.launch {
+            profileRepository.getActiveProfile()
+                .filterNotNull()
+                .flatMapLatest { profile -> getTablesGarden(profile.id) }
+                .collect { garden -> _state.update { it.copy(tablesDue = garden.dueTableCount) } }
         }
     }
 

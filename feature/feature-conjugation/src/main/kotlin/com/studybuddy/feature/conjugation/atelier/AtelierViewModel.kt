@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 data class AtelierState(
     val dueCardCount: Int = 0,
@@ -53,7 +52,7 @@ class AtelierViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getAtelierGarden(AppConstants.DEFAULT_PROFILE_ID, Clock.System.now()).collect { garden ->
+            getAtelierGarden(AppConstants.DEFAULT_PROFILE_ID).collect { garden ->
                 _state.update {
                     it.copy(
                         dueCardCount = garden.dueCardCount,

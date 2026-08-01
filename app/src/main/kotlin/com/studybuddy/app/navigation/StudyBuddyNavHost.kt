@@ -32,6 +32,7 @@ import com.studybuddy.feature.math.challenge.MathChallengeScreen
 import com.studybuddy.feature.math.play.MathPlayScreen
 import com.studybuddy.feature.math.results.MathResultsScreen
 import com.studybuddy.feature.math.setup.MathSetupScreen
+import com.studybuddy.feature.math.tables.TablesGardenScreen
 import com.studybuddy.feature.onboarding.OnboardingScreen
 import com.studybuddy.feature.poems.PoemDetailScreen
 import com.studybuddy.feature.poems.PoemsScreen
@@ -225,7 +226,14 @@ fun StudyBuddyNavHost(
                         ),
                     )
                 },
+                onNavigateToTables = {
+                    navController.navigateSafely(StudyBuddyRoutes.MATH_TABLES)
+                },
             )
+        }
+
+        composable(route = StudyBuddyRoutes.MATH_TABLES) {
+            TablesGardenScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         composable(
