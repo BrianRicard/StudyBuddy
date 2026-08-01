@@ -13,15 +13,20 @@ import com.studybuddy.core.domain.model.conjugation.ConjugationPerson
 import com.studybuddy.core.domain.model.conjugation.ConjugationProgress
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
+import com.studybuddy.core.domain.model.mathfacts.MathFactReview
+import com.studybuddy.core.domain.model.mathfacts.MathFactsMilestone
+import com.studybuddy.core.domain.model.mathfacts.MathFactsRoster
 import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.ConjugationRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
+import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.GetTablesMilestonesUseCase
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -53,6 +58,7 @@ class StatsViewModelTest {
     private val dicteeRepository: DicteeRepository = mockk()
     private val conjugationRepository: ConjugationRepository = mockk()
     private val atelierReviewRepository: AtelierReviewRepository = mockk()
+    private val mathFactsReviewRepository: MathFactsReviewRepository = mockk()
 
     @BeforeEach
     fun setup() {
@@ -70,6 +76,7 @@ class StatsViewModelTest {
         mathSessions: List<MathSession> = emptyList(),
         dicteeLists: List<DicteeList> = emptyList(),
         atelierReviews: List<AtelierReview> = emptyList(),
+        mathFactReviews: List<MathFactReview> = emptyList(),
     ) {
         every { pointsRepository.getTotalPoints("default") } returns flowOf(totalPoints)
         every { pointsRepository.getPointsForProfile("default") } returns flowOf(pointEvents)
@@ -77,6 +84,7 @@ class StatsViewModelTest {
         every { dicteeRepository.getListsForProfile("default") } returns flowOf(dicteeLists)
         every { conjugationRepository.getProgressForProfile("default") } returns flowOf(emptyList())
         every { atelierReviewRepository.getReviews("default") } returns flowOf(atelierReviews)
+        every { mathFactsReviewRepository.getReviews("default") } returns flowOf(mathFactReviews)
     }
 
     private fun createViewModel() = StatsViewModel(
@@ -87,6 +95,8 @@ class StatsViewModelTest {
         getConjugationMilestones = GetConjugationMilestonesUseCase(),
         atelierReviewRepository = atelierReviewRepository,
         getAtelierMilestones = GetAtelierMilestonesUseCase(),
+        mathFactsReviewRepository = mathFactsReviewRepository,
+        getTablesMilestones = GetTablesMilestonesUseCase(),
     )
 
     private fun createPointEvent(
@@ -366,5 +376,66 @@ class StatsViewModelTest {
                 it.milestone == AtelierMilestone.FIRST_VERB_MASTERED
             }.isAchieved,
         )
+    }
+
+    @Test
+    fun `tables stats surface mastered tables, due facts and milestones`() = runTest {
+        val masteredTableOfSeven = MathFactsRoster.factsOf(7).map { fact ->
+            MathFactReview(
+                id = "fact-${fact.table}-${fact.multiplicand}",
+                profileId = "default",
+                table = fact.table,
+                multiplicand = fact.multiplicand,
+                box = LeitnerSchedule.MAX_BOX,
+                dueAt = Clock.System.now().plus(kotlin.time.Duration.parse("5d")),
+                lapses = 0,
+                updatedAt = Clock.System.now(),
+            )
+        }
+        val dueFact = MathFactReview(
+            id = "fact-3-4",
+            profileId = "default",
+            table = 3,
+            multiplicand = 4,
+            box = 1,
+            dueAt = Clock.System.now().minus(kotlin.time.Duration.parse("1d")),
+            lapses = 0,
+            updatedAt = Clock.System.now(),
+        )
+        setupDefaultMocks(mathFactReviews = masteredTableOfSeven + dueFact)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val state = viewModel.state.value
+        assertEquals(1, state.tablesMastered)
+        assertEquals(MathFactsRoster.tables.size, state.tablesTotal)
+        assertEquals(1, state.tablesFactsDue)
+        assertTrue(
+            state.tablesMilestones.single {
+                it.milestone == MathFactsMilestone.FIRST_TABLE_MASTERED
+            }.isAchieved,
+        )
+        assertFalse(
+            state.tablesMilestones.single {
+                it.milestone == MathFactsMilestone.FOUR_TABLES_MASTERED
+            }.isAchieved,
+        )
+    }
+
+    @Test
+    fun `both gardens report together without one clobbering the other`() = runTest {
+        setupDefaultMocks(totalPoints = 250L)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        // Regression: folding a second garden in as a nested combine used to
+        // replay a stale snapshot over the first one's work.
+        val state = viewModel.state.value
+        assertEquals(250L, state.totalStars)
+        assertFalse(state.isLoading)
+        assertEquals(4, state.atelierMilestones.size)
+        assertEquals(4, state.tablesMilestones.size)
     }
 }

@@ -12,13 +12,18 @@ import com.studybuddy.core.domain.model.conjugation.ConjugationPathStage
 import com.studybuddy.core.domain.model.conjugation.ConjugationStages
 import com.studybuddy.core.domain.model.conjugation.FrenchVerbs
 import com.studybuddy.core.domain.model.conjugation.MilestoneStatus
+import com.studybuddy.core.domain.model.mathfacts.MathFactsMilestone
+import com.studybuddy.core.domain.model.mathfacts.MathFactsMilestoneStatus
+import com.studybuddy.core.domain.model.mathfacts.MathFactsRoster
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.DicteeRepository
+import com.studybuddy.core.domain.repository.MathFactsReviewRepository
 import com.studybuddy.core.domain.repository.MathRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationMilestonesUseCase
 import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.GetTablesMilestonesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.format.TextStyle
 import java.util.Locale
@@ -62,6 +67,10 @@ data class StatsState(
     val atelierVerbsTotal: Int = FrenchVerbs.all.size,
     val atelierCardsDue: Int = 0,
     val atelierMilestones: List<AtelierMilestoneStatus> = emptyList(),
+    val tablesMastered: Int = 0,
+    val tablesTotal: Int = MathFactsRoster.tables.size,
+    val tablesFactsDue: Int = 0,
+    val tablesMilestones: List<MathFactsMilestoneStatus> = emptyList(),
     val isLoading: Boolean = true,
 )
 
@@ -74,6 +83,8 @@ class StatsViewModel @Inject constructor(
     private val getConjugationMilestones: GetConjugationMilestonesUseCase,
     private val atelierReviewRepository: AtelierReviewRepository,
     private val getAtelierMilestones: GetAtelierMilestonesUseCase,
+    private val mathFactsReviewRepository: MathFactsReviewRepository,
+    private val getTablesMilestones: GetTablesMilestonesUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(StatsState())
@@ -110,17 +121,26 @@ class StatsViewModel @Inject constructor(
                 )
             }
 
+            // Both SRS gardens fold in at this level rather than nesting again:
+            // every source re-runs the same transform, so no branch can replay a
+            // stale snapshot over another's work.
             combine(
                 questStats,
                 atelierReviewRepository.getReviews(AppConstants.DEFAULT_PROFILE_ID),
-            ) { state, atelierReviews ->
+                mathFactsReviewRepository.getReviews(AppConstants.DEFAULT_PROFILE_ID),
+            ) { state, atelierReviews, factReviews ->
                 val now = Clock.System.now()
-                val milestones = getAtelierMilestones(atelierReviews)
+                val atelierMilestones = getAtelierMilestones(atelierReviews)
+                val tablesMilestones = getTablesMilestones(factReviews)
                 state.copy(
-                    atelierVerbsMastered = milestones
+                    atelierVerbsMastered = atelierMilestones
                         .single { it.milestone == AtelierMilestone.ALL_VERBS_MASTERED }.current,
                     atelierCardsDue = atelierReviews.count { it.dueAt <= now },
-                    atelierMilestones = milestones,
+                    atelierMilestones = atelierMilestones,
+                    tablesMastered = tablesMilestones
+                        .single { it.milestone == MathFactsMilestone.ALL_TABLES_MASTERED }.current,
+                    tablesFactsDue = factReviews.count { it.dueAt <= now },
+                    tablesMilestones = tablesMilestones,
                 )
             }.collect { newState ->
                 _state.value = newState
