@@ -62,9 +62,9 @@ import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.srs.LeitnerSchedule
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.components.StudyBuddyCard
+import com.studybuddy.core.ui.components.praiseRes
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.core.ui.theme.TimeoutAmber
-import com.studybuddy.feature.conjugation.components.praiseRes
 import com.studybuddy.shared.ink.HandwritingCanvas
 
 private val ACCENTS = listOf("é", "è", "ê", "ë", "à", "â", "ç", "î", "ï", "ô", "û", "ù")

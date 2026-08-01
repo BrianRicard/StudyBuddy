@@ -5,9 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.mathfacts.TableGarden
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
+import com.studybuddy.core.domain.usecase.mathfacts.TablesMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,8 +32,10 @@ sealed interface TablesGardenIntent {
 }
 
 sealed interface TablesGardenEffect {
-    /** The drill screen ships in the next update; until then taps sprout a gentle note. */
-    data object ShowComingSoon : TablesGardenEffect
+    data class NavigateToDrill(
+        val mode: TablesMode,
+        val table: Int? = null,
+    ) : TablesGardenEffect
 }
 
 @HiltViewModel
@@ -44,12 +46,7 @@ class TablesGardenViewModel @Inject constructor(
     private val _state = MutableStateFlow(TablesGardenState())
     val state: StateFlow<TablesGardenState> = _state.asStateFlow()
 
-    // Buffered so a child tapping several rows in a row never blocks on the
-    // snackbar that is still on screen; the note is the same either way.
-    private val _effects = MutableSharedFlow<TablesGardenEffect>(
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST,
-    )
+    private val _effects = MutableSharedFlow<TablesGardenEffect>()
     val effects: SharedFlow<TablesGardenEffect> = _effects.asSharedFlow()
 
     init {
@@ -69,11 +66,12 @@ class TablesGardenViewModel @Inject constructor(
     }
 
     fun onIntent(intent: TablesGardenIntent) {
-        when (intent) {
-            TablesGardenIntent.StartRevision,
-            TablesGardenIntent.StartSurprise,
-            is TablesGardenIntent.OpenTable,
-            -> viewModelScope.launch { _effects.emit(TablesGardenEffect.ShowComingSoon) }
+        val effect = when (intent) {
+            TablesGardenIntent.StartRevision -> TablesGardenEffect.NavigateToDrill(TablesMode.REVISION)
+            TablesGardenIntent.StartSurprise -> TablesGardenEffect.NavigateToDrill(TablesMode.SURPRISE)
+            is TablesGardenIntent.OpenTable ->
+                TablesGardenEffect.NavigateToDrill(mode = TablesMode.TABLE, table = intent.table)
         }
+        viewModelScope.launch { _effects.emit(effect) }
     }
 }

@@ -27,6 +27,7 @@ object StudyBuddyRoutes {
     const val POEM_CREATE = "poems/create"
     const val MATH_CHALLENGE = "math/challenge"
     const val MATH_TABLES = "math/tables"
+    const val MATH_TABLES_DRILL = "math/tables/drill/{mode}?table={table}"
     const val DICTEE_ADD = "dictee/add"
     const val DICTEE_EDIT = "dictee/edit/{setId}"
     const val READING = "reading"
@@ -56,6 +57,14 @@ object StudyBuddyRoutes {
     fun conjugationSpeak(stageId: String) = "conjugation/speak/$stageId"
     fun conjugationBattle(stageId: String) = "conjugation/battle/$stageId"
     fun conjugationBoss(stageId: String) = "conjugation/boss/$stageId"
+
+    fun tablesDrill(
+        mode: String,
+        table: Int? = null,
+    ) = buildString {
+        append("math/tables/drill/$mode")
+        if (table != null) append("?table=$table")
+    }
 
     fun conjugationDrill(
         mode: String,

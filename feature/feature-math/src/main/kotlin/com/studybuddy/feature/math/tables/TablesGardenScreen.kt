@@ -22,14 +22,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -50,27 +47,22 @@ import com.studybuddy.core.ui.theme.StudyBuddyTheme
 @Composable
 fun TablesGardenScreen(
     onNavigateBack: () -> Unit,
+    onNavigateToDrill: (mode: String, table: Int?) -> Unit,
     viewModel: TablesGardenViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val snackbarHostState = remember { SnackbarHostState() }
-    val comingSoonMessage = stringResource(CoreUiR.string.tables_coming_soon)
 
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
-                TablesGardenEffect.ShowComingSoon -> {
-                    // Replace rather than queue: eight taps must not mean eight waits.
-                    snackbarHostState.currentSnackbarData?.dismiss()
-                    snackbarHostState.showSnackbar(comingSoonMessage)
-                }
+                is TablesGardenEffect.NavigateToDrill ->
+                    onNavigateToDrill(effect.mode.name, effect.table)
             }
         }
     }
 
     TablesGardenContent(
         state = state,
-        snackbarHostState = snackbarHostState,
         onIntent = viewModel::onIntent,
         onNavigateBack = onNavigateBack,
     )
@@ -80,13 +72,11 @@ fun TablesGardenScreen(
 @Composable
 private fun TablesGardenContent(
     state: TablesGardenState,
-    snackbarHostState: SnackbarHostState,
     onIntent: (TablesGardenIntent) -> Unit,
     onNavigateBack: () -> Unit,
 ) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = { Text(stringResource(CoreUiR.string.tables_title)) },
@@ -235,7 +225,6 @@ private fun TablesGardenPreview() {
                 tables = (2..9).map { TableGarden(it, LeitnerGrowth.SPROUT) },
                 isLoading = false,
             ),
-            snackbarHostState = SnackbarHostState(),
             onIntent = {},
             onNavigateBack = {},
         )

@@ -628,9 +628,9 @@
     <string name="conjugation_write_try_again">Presque ! Essaie encore une fois — tu peux le faire !</string>
     <string name="conjugation_write_reveal">Ça s\'écrit comme ça : %1$s</string>
     <string name="conjugation_answer_field">Ta réponse</string>
-    <string name="conjugation_correct_1">Bravo !</string>
-    <string name="conjugation_correct_2">Super !</string>
-    <string name="conjugation_correct_3">Magnifique !</string>
+    <string name="praise_1">Bravo !</string>
+    <string name="praise_2">Super !</string>
+    <string name="praise_3">Magnifique !</string>
     <string name="conjugation_speak_title">Dis-le à voix haute</string>
     <string name="conjugation_speak_instruction">Écoute d\'abord, puis appuie sur le micro et répète !</string>
     <string name="conjugation_speak_listen">Écouter</string>
@@ -744,9 +744,21 @@
     <string name="tables_entry_title">Le Jardin des Tables</string>
     <string name="tables_entry_subtitle">Maîtrise tes tables avec des petits exercices</string>
     <string name="tables_row">Table de %d</string>
-    <string name="tables_coming_soon">Les exercices poussent — ils arrivent très bientôt !</string>
     <plurals name="tables_to_water_plural">
         <item quantity="one">%d table à arroser</item>
         <item quantity="other">%d tables à arroser</item>
     </plurals>
+
+    <!-- Jardin des Tables drill -->
+    <string name="tables_drill_unavailable">Ce coin du jardin n\'est pas prêt. Essaie une autre table !</string>
+    <string name="tables_drill_backspace">Effacer</string>
+    <string name="tables_drill_nudge">Presque ! Essaie encore.</string>
+    <string name="tables_drill_strategy">%1$s = %2$d… alors %3$s ?</string>
+    <string name="tables_drill_copy">La réponse est %1$d — écris-la une fois pour la planter !</string>
+    <string name="tables_drill_done">Séance terminée !</string>
+    <string name="tables_drill_points">+%1$d étoiles</string>
+    <string name="tables_drill_first_try">%1$d sur %2$d du premier coup</string>
+    <string name="tables_drill_grew">Ton jardin a poussé</string>
+    <string name="tables_drill_again">Encore une partie</string>
+    <string name="tables_drill_back_to_garden">Retour au jardin</string>
 </resources>

@@ -40,9 +40,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.studybuddy.core.ui.R as CoreUiR
 import com.studybuddy.core.ui.animation.CorrectAnswerAnimation
 import com.studybuddy.core.ui.components.StudyBuddyButton
+import com.studybuddy.core.ui.components.praiseRes
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 import com.studybuddy.feature.conjugation.components.StepProgressBar
-import com.studybuddy.feature.conjugation.components.praiseRes
 
 @Composable
 fun WriteScreen(

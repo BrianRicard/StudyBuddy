@@ -155,6 +155,7 @@ private val ACTIVE_SESSION_PREFIXES = listOf(
     "dictee/practice/",
     "dictee/challenge/",
     "math/play/",
+    "math/tables/drill/",
     "conjugation/learn/",
     "conjugation/write/",
     "conjugation/speak/",
