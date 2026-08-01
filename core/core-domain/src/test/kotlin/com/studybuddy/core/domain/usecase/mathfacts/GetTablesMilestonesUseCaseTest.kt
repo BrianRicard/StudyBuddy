@@ -114,6 +114,62 @@ class GetTablesMilestonesUseCaseTest {
     }
 
     @Test
+    fun `re-drilling a mastered table never moves its achievement date`() {
+        val earned = masteredTable(7, TABLES_TEST_NOW)
+        // Box-4 cards fall due every 15 days, so this happens constantly.
+        val reviewedAgain = earned.map { it.copy(updatedAt = TABLES_TEST_NOW + 30.days) }
+
+        val before = statusOf(earned, MathFactsMilestone.FIRST_TABLE_MASTERED)
+        val after = statusOf(reviewedAgain, MathFactsMilestone.FIRST_TABLE_MASTERED)
+
+        // A parent ties a physical gift to this date; it must not wander.
+        assertEquals(TABLES_TEST_NOW, before.achievedAt)
+        assertEquals(before.achievedAt, after.achievedAt)
+    }
+
+    @Test
+    fun `a later lapse does not un-earn a table the child already mastered`() {
+        val earned = masteredTable(7, TABLES_TEST_NOW).toMutableList()
+        // One fact slips back a box months later.
+        val lapsed = earned.removeAt(0).copy(box = LeitnerSchedule.MAX_BOX - 1)
+        earned.add(lapsed)
+
+        val table = statusOf(earned, MathFactsMilestone.FIRST_TABLE_MASTERED)
+
+        assertTrue(table.isAchieved)
+        assertEquals(1, table.current)
+        assertEquals(TABLES_TEST_NOW, table.achievedAt)
+    }
+
+    @Test
+    fun `a fact that never topped out keeps its table unmastered`() {
+        val reviews = masteredTable(7, TABLES_TEST_NOW).toMutableList()
+        val neverMastered = reviews.removeAt(0).copy(box = 1, masteredAt = null)
+        reviews.add(neverMastered)
+
+        val table = statusOf(reviews, MathFactsMilestone.FIRST_TABLE_MASTERED)
+
+        assertFalse(table.isAchieved)
+    }
+
+    @Test
+    fun `duplicate rows for one fact cannot fake a mastered table`() {
+        // The unique index should prevent this, but a milestone must not be
+        // one bad migration away from handing out a gift that was not earned.
+        val single = factReview(
+            table = 7,
+            multiplicand = 1,
+            box = LeitnerSchedule.MAX_BOX,
+            dueAt = TABLES_TEST_NOW,
+        )
+        val reviews = List(MathFactsRoster.factsOf(7).size) { single }
+
+        val table = statusOf(reviews, MathFactsMilestone.FIRST_TABLE_MASTERED)
+
+        assertFalse(table.isAchieved)
+    }
+
+    @Test
     fun `rows outside the roster never count towards a milestone`() {
         // A table 13 left behind by an older build must not fake progress.
         val reviews = (1..10).map { m ->

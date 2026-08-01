@@ -134,12 +134,18 @@ class StatsViewModel @Inject constructor(
                 val tablesMilestones = getTablesMilestones(factReviews)
                 state.copy(
                     atelierVerbsMastered = atelierMilestones
-                        .single { it.milestone == AtelierMilestone.ALL_VERBS_MASTERED }.current,
-                    atelierCardsDue = atelierReviews.count { it.dueAt <= now },
+                        .firstOrNull { it.milestone == AtelierMilestone.ALL_VERBS_MASTERED }?.current ?: 0,
+                    // Rows left behind by an older roster are excluded here just
+                    // as they are from the milestones, so the two never disagree.
+                    atelierCardsDue = atelierReviews.count {
+                        it.dueAt <= now && FrenchVerbs.byId(it.verbId) != null
+                    },
                     atelierMilestones = atelierMilestones,
                     tablesMastered = tablesMilestones
-                        .single { it.milestone == MathFactsMilestone.ALL_TABLES_MASTERED }.current,
-                    tablesFactsDue = factReviews.count { it.dueAt <= now },
+                        .firstOrNull { it.milestone == MathFactsMilestone.ALL_TABLES_MASTERED }?.current ?: 0,
+                    tablesFactsDue = factReviews.count {
+                        it.dueAt <= now && MathFactsRoster.isValid(it.fact)
+                    },
                     tablesMilestones = tablesMilestones,
                 )
             }.collect { newState ->

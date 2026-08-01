@@ -43,6 +43,10 @@ class LocalMathFactsReviewRepository @Inject constructor(
                 dueAt = nowMillis + outcome.nextDelay.inWholeMilliseconds,
                 lapses = (existing?.lapses ?: 0) + if (correct) 0 else 1,
                 updatedAt = nowMillis,
+                // Stamped the first time the card tops out and never cleared:
+                // a later lapse must not rewrite a milestone the child earned.
+                masteredAt = existing?.masteredAt
+                    ?: nowMillis.takeIf { outcome.box >= LeitnerSchedule.MAX_BOX },
             )
         }
         return MathFactAnswerOutcome(previousBox = previousBox, review = merged.toDomain())

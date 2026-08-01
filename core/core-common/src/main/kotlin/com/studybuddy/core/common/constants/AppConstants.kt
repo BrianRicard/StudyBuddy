@@ -25,7 +25,8 @@ object AppConstants {
     const val DATABASE_NAME = "studybuddy.db"
 
     // v2: adds Atelier des Verbes review rows; v3: adds Jardin des Tables
-    // review rows. Older backups restore fine — missing fields decode to
-    // empty lists.
-    const val BACKUP_SCHEMA_VERSION = 3
+    // review rows; v4: adds each review's masteredAt high-water mark, so
+    // milestone dates survive a device migration. Older backups restore fine —
+    // missing fields decode to empty lists or null.
+    const val BACKUP_SCHEMA_VERSION = 4
 }

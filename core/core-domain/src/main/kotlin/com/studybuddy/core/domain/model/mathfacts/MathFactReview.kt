@@ -19,6 +19,7 @@ data class MathFactReview(
     val dueAt: Instant,
     val lapses: Int,
     val updatedAt: Instant,
+    val masteredAt: Instant? = null,
 ) {
     val fact: MathFact get() = MathFact(table, multiplicand)
 }

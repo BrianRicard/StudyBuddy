@@ -258,4 +258,28 @@ object Migrations {
             )
         }
     }
+
+    /**
+     * v6 -> v7: Record when an SRS card first reached the top Leitner box.
+     *
+     * Milestone dates were previously derived from `updatedAt`, which every
+     * later review rewrites — so a parent-facing achievement date drifted
+     * forward and a single lapse un-earned the milestone. `masteredAt` is a
+     * high-water mark: written once, never cleared.
+     *
+     * Existing top-box cards are backfilled with their current `updatedAt`.
+     * That is the best evidence the old schema kept; it can only be late, and
+     * from here on the date is stable.
+     */
+    val MIGRATION_6_7 = object : Migration(6, 7) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            listOf("math_facts_review", "atelier_review").forEach { table ->
+                db.execSQL("ALTER TABLE `$table` ADD COLUMN `masteredAt` INTEGER")
+                db.execSQL("UPDATE `$table` SET `masteredAt` = `updatedAt` WHERE `box` >= $TOP_BOX")
+            }
+        }
+    }
+
+    /** Mirrors LeitnerSchedule.MAX_BOX; migrations must not depend on app code. */
+    private const val TOP_BOX = 4
 }

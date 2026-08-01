@@ -242,6 +242,59 @@ class MigrationsTest {
         )
     }
 
+    @Test
+    fun `MIGRATION_6_7 adds masteredAt to both SRS tables`() {
+        val sql = getMigration67Sql()
+
+        listOf("math_facts_review", "atelier_review").forEach { table ->
+            assertTrue(
+                sql.any { it == "ALTER TABLE `$table` ADD COLUMN `masteredAt` INTEGER" },
+                "MIGRATION_6_7 should add a nullable masteredAt to $table",
+            )
+        }
+        // Room's expected column has no default; declaring one risks a schema
+        // validation mismatch at runtime.
+        assertTrue(
+            sql.none { it.contains("ADD COLUMN") && it.contains("DEFAULT") },
+            "the added column must not declare a DEFAULT",
+        )
+    }
+
+    @Test
+    fun `MIGRATION_6_7 backfills cards that are already at the top box`() {
+        val sql = getMigration67Sql()
+
+        listOf("math_facts_review", "atelier_review").forEach { table ->
+            assertTrue(
+                sql.any {
+                    it.contains("UPDATE `$table` SET `masteredAt` = `updatedAt`") && it.contains("`box` >= 4")
+                },
+                "MIGRATION_6_7 should backfill $table from updatedAt for top-box cards",
+            )
+        }
+    }
+
+    @Test
+    fun `MIGRATION_6_7 does not drop or recreate anything`() {
+        val sql = getMigration67Sql()
+        assertTrue(
+            sql.none { it.contains("DROP TABLE") || it.contains("CREATE TABLE") },
+            "MIGRATION_6_7 should only add a column and backfill it",
+        )
+    }
+
+    private fun getMigration67Sql(): List<String> {
+        val statements = mutableListOf<String>()
+        val sqlSlot = slot<String>()
+        val fakeDb = mockk<SupportSQLiteDatabase> {
+            every { execSQL(capture(sqlSlot)) } answers {
+                statements.add(sqlSlot.captured)
+            }
+        }
+        Migrations.MIGRATION_6_7.migrate(fakeDb)
+        return statements
+    }
+
     private fun getMigration56Sql(): List<String> {
         val statements = mutableListOf<String>()
         val sqlSlot = slot<String>()

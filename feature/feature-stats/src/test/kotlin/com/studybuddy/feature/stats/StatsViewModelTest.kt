@@ -29,8 +29,10 @@ import com.studybuddy.core.domain.usecase.conjugation.GetConjugationPathUseCase
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesMilestonesUseCase
 import io.mockk.every
 import io.mockk.mockk
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -346,9 +348,10 @@ class StatsViewModelTest {
                     tense = tense,
                     person = person,
                     box = LeitnerSchedule.MAX_BOX,
-                    dueAt = Clock.System.now().plus(kotlin.time.Duration.parse("5d")),
+                    dueAt = Clock.System.now().plus(5.days),
                     lapses = 0,
                     updatedAt = Clock.System.now(),
+                    masteredAt = Clock.System.now(),
                 )
             }
         }
@@ -359,7 +362,7 @@ class StatsViewModelTest {
             tense = ConjugationTense.PRESENT,
             person = ConjugationPerson.JE,
             box = 1,
-            dueAt = Clock.System.now().minus(kotlin.time.Duration.parse("1d")),
+            dueAt = Clock.System.now().minus(1.days),
             lapses = 0,
             updatedAt = Clock.System.now(),
         )
@@ -387,9 +390,10 @@ class StatsViewModelTest {
                 table = fact.table,
                 multiplicand = fact.multiplicand,
                 box = LeitnerSchedule.MAX_BOX,
-                dueAt = Clock.System.now().plus(kotlin.time.Duration.parse("5d")),
+                dueAt = Clock.System.now().plus(5.days),
                 lapses = 0,
                 updatedAt = Clock.System.now(),
+                masteredAt = Clock.System.now(),
             )
         }
         val dueFact = MathFactReview(
@@ -398,7 +402,7 @@ class StatsViewModelTest {
             table = 3,
             multiplicand = 4,
             box = 1,
-            dueAt = Clock.System.now().minus(kotlin.time.Duration.parse("1d")),
+            dueAt = Clock.System.now().minus(1.days),
             lapses = 0,
             updatedAt = Clock.System.now(),
         )
@@ -424,18 +428,62 @@ class StatsViewModelTest {
     }
 
     @Test
-    fun `both gardens report together without one clobbering the other`() = runTest {
+    fun `a tables emission does not clobber the atelier numbers`() = runTest {
+        val atelierFlow = MutableStateFlow(listOf(atelierDueCard()))
+        val factsFlow = MutableStateFlow(emptyList<MathFactReview>())
         setupDefaultMocks(totalPoints = 250L)
+        every { atelierReviewRepository.getReviews("default") } returns atelierFlow
+        every { mathFactsReviewRepository.getReviews("default") } returns factsFlow
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        assertEquals(1, viewModel.state.value.atelierCardsDue)
+
+        // A drill finishing re-emits only the tables flow.
+        factsFlow.value = listOf(tablesDueFact())
+        advanceUntilIdle()
+
+        // Both gardens must be present: neither replays a stale snapshot.
+        val state = viewModel.state.value
+        assertEquals(1, state.atelierCardsDue)
+        assertEquals(1, state.tablesFactsDue)
+        assertEquals(250L, state.totalStars)
+        assertFalse(state.isLoading)
+    }
+
+    @Test
+    fun `stale rows outside the roster are not counted as due`() = runTest {
+        // A table 13 row left by an older build must not inflate the stat.
+        setupDefaultMocks(
+            mathFactReviews = listOf(tablesDueFact(table = 13)),
+        )
 
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        // Regression: folding a second garden in as a nested combine used to
-        // replay a stale snapshot over the first one's work.
-        val state = viewModel.state.value
-        assertEquals(250L, state.totalStars)
-        assertFalse(state.isLoading)
-        assertEquals(4, state.atelierMilestones.size)
-        assertEquals(4, state.tablesMilestones.size)
+        assertEquals(0, viewModel.state.value.tablesFactsDue)
     }
+
+    private fun atelierDueCard() = AtelierReview(
+        id = "avoir-due",
+        profileId = "default",
+        verbId = "avoir",
+        tense = ConjugationTense.PRESENT,
+        person = ConjugationPerson.JE,
+        box = 1,
+        dueAt = Clock.System.now().minus(1.days),
+        lapses = 0,
+        updatedAt = Clock.System.now(),
+    )
+
+    private fun tablesDueFact(table: Int = 3) = MathFactReview(
+        id = "fact-$table-4",
+        profileId = "default",
+        table = table,
+        multiplicand = 4,
+        box = 1,
+        dueAt = Clock.System.now().minus(1.days),
+        lapses = 0,
+        updatedAt = Clock.System.now(),
+    )
 }

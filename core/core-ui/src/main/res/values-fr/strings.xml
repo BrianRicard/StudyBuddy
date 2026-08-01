@@ -764,11 +764,11 @@
 
     <!-- Stats: Jardin des Tables -->
     <string name="stats_tables_title">Le Jardin des Tables</string>
-    <string name="stats_tables_mastered">Tables entièrement poussées</string>
+    <string name="stats_tables_mastered">Tables maîtrisées</string>
     <string name="stats_tables_facts_due">Cartes à arroser aujourd\'hui</string>
     <string name="stats_tables_milestones_title">Objectifs des tables</string>
-    <string name="tables_milestone_first_fact">Premier calcul parfaitement su</string>
-    <string name="tables_milestone_first_table">Première table parfaitement sue</string>
-    <string name="tables_milestone_four_tables">Quatre tables parfaitement sues</string>
-    <string name="tables_milestone_all_tables">Toutes les tables parfaitement sues</string>
+    <string name="tables_milestone_first_fact">Premier calcul su par cœur</string>
+    <string name="tables_milestone_first_table">Première table sue par cœur</string>
+    <string name="tables_milestone_four_tables">Quatre tables sues par cœur</string>
+    <string name="tables_milestone_all_tables">Toutes les tables sues par cœur</string>
 </resources>

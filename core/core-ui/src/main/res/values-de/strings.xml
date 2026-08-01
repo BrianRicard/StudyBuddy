@@ -764,11 +764,11 @@
 
     <!-- Stats: Jardin des Tables -->
     <string name="stats_tables_title">Der Einmaleins-Garten</string>
-    <string name="stats_tables_mastered">Vollständig gewachsene Reihen</string>
+    <string name="stats_tables_mastered">Beherrschte Reihen</string>
     <string name="stats_tables_facts_due">Heute zu gießende Karten</string>
     <string name="stats_tables_milestones_title">Einmaleins-Ziele</string>
-    <string name="tables_milestone_first_fact">Erste Aufgabe sicher gekonnt</string>
-    <string name="tables_milestone_first_table">Erste Reihe sicher gekonnt</string>
-    <string name="tables_milestone_four_tables">Vier Reihen sicher gekonnt</string>
-    <string name="tables_milestone_all_tables">Alle Reihen sicher gekonnt</string>
+    <string name="tables_milestone_first_fact">Erste Aufgabe sicher beherrscht</string>
+    <string name="tables_milestone_first_table">Erste Reihe sicher beherrscht</string>
+    <string name="tables_milestone_four_tables">Vier Reihen sicher beherrscht</string>
+    <string name="tables_milestone_all_tables">Alle Reihen sicher beherrscht</string>
 </resources>

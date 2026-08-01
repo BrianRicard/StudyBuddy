@@ -129,6 +129,8 @@ data class MathFactReviewBackup(
     val dueAt: Long,
     val lapses: Int,
     val updatedAt: Long,
+    /** Null in backups written before schema v4 — those cards re-latch on the next drill. */
+    val masteredAt: Long? = null,
 )
 
 @Serializable
@@ -142,6 +144,8 @@ data class AtelierReviewBackup(
     val dueAt: Long,
     val lapses: Int,
     val updatedAt: Long,
+    /** Null in backups written before schema v4 — those cards re-latch on the next drill. */
+    val masteredAt: Long? = null,
 )
 
 @Singleton
@@ -258,6 +262,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                 dueAt = entity.dueAt,
                 lapses = entity.lapses,
                 updatedAt = entity.updatedAt,
+                masteredAt = entity.masteredAt,
             )
         }
 
@@ -271,6 +276,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                 dueAt = entity.dueAt,
                 lapses = entity.lapses,
                 updatedAt = entity.updatedAt,
+                masteredAt = entity.masteredAt,
             )
         }
 
@@ -411,6 +417,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                     dueAt = r.dueAt,
                     lapses = r.lapses,
                     updatedAt = r.updatedAt,
+                    masteredAt = r.masteredAt,
                 ),
             )
         }
@@ -426,6 +433,7 @@ class BackupManager @Inject constructor(private val database: StudyBuddyDatabase
                     dueAt = r.dueAt,
                     lapses = r.lapses,
                     updatedAt = r.updatedAt,
+                    masteredAt = r.masteredAt,
                 ),
             )
         }
