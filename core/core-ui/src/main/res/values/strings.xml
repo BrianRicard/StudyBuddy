@@ -679,6 +679,10 @@
     <string name="srs_revision">Review</string>
     <string name="srs_surprise">Surprise!</string>
     <string name="srs_all_watered">Everything is watered!</string>
+    <plurals name="srs_new_cards_plural">
+        <item quantity="one">%d card to plant</item>
+        <item quantity="other">%d cards to plant</item>
+    </plurals>
     <plurals name="srs_due_cards_plural">
         <item quantity="one">%d card to water</item>
         <item quantity="other">%d cards to water</item>

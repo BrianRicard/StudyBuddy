@@ -129,16 +129,7 @@ private fun TablesGardenContent(
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(
-                            text = stringResource(CoreUiR.string.srs_revision) + " — " +
-                                if (state.dueCardCount > 0) {
-                                    pluralStringResource(
-                                        CoreUiR.plurals.srs_due_cards_plural,
-                                        state.dueCardCount,
-                                        state.dueCardCount,
-                                    )
-                                } else {
-                                    stringResource(CoreUiR.string.srs_all_watered)
-                                },
+                            text = stringResource(CoreUiR.string.srs_revision) + " — " + state.revisionLabel(),
                             style = MaterialTheme.typography.titleMedium,
                             modifier = Modifier.padding(vertical = 8.dp),
                         )
@@ -186,6 +177,27 @@ private fun TableRow(
             )
         }
     }
+}
+
+/**
+ * Due cards first, then unplanted ones — a revision session serves new facts
+ * once the due ones run out, so a fresh garden must never claim to be watered.
+ */
+@Composable
+private fun TablesGardenState.revisionLabel(): String = when {
+    dueCardCount > 0 -> pluralStringResource(
+        CoreUiR.plurals.srs_due_cards_plural,
+        dueCardCount,
+        dueCardCount,
+    )
+
+    newCardCount > 0 -> pluralStringResource(
+        CoreUiR.plurals.srs_new_cards_plural,
+        newCardCount,
+        newCardCount,
+    )
+
+    else -> stringResource(CoreUiR.string.srs_all_watered)
 }
 
 private val LeitnerGrowth.emoji: String

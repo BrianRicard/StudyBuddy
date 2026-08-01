@@ -15,11 +15,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 
 data class TablesGardenState(
     val dueCardCount: Int = 0,
     val dueTableCount: Int = 0,
+    val newCardCount: Int = 0,
     val tables: List<TableGarden> = emptyList(),
     val isLoading: Boolean = true,
 )
@@ -48,11 +48,12 @@ class TablesGardenViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            getTablesGarden(AppConstants.DEFAULT_PROFILE_ID, Clock.System.now()).collect { garden ->
+            getTablesGarden(AppConstants.DEFAULT_PROFILE_ID).collect { garden ->
                 _state.update {
                     it.copy(
                         dueCardCount = garden.dueCardCount,
                         dueTableCount = garden.dueTableCount,
+                        newCardCount = garden.newCardCount,
                         tables = garden.tables,
                         isLoading = false,
                     )

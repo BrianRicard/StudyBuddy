@@ -144,6 +144,7 @@ class HomeViewModel @Inject constructor(
     init {
         observeProfile()
         observeSettings()
+        observeTablesGarden()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -169,12 +170,12 @@ class HomeViewModel @Inject constructor(
             profileRepository.getActiveProfile()
                 .filterNotNull()
                 .flatMapLatest { profile ->
-                    val baseState = combine(
+                    combine(
                         avatarRepository.getAvatarConfig(profile.id),
                         pointsRepository.getTotalPoints(profile.id),
                         pointsRepository.getPointsForProfile(profile.id),
                         pointsRepository.getSessionsToday(profile.id),
-                        getAtelierGarden(profile.id, Clock.System.now()),
+                        getAtelierGarden(profile.id),
                     ) { avatarConfig, totalPoints, pointEvents, sessionsToday, atelierGarden ->
                         val timeZone = TimeZone.currentSystemDefault()
                         val streak = calculateDayStreak(pointEvents, timeZone)
@@ -193,14 +194,24 @@ class HomeViewModel @Inject constructor(
                             isLoading = false,
                         )
                     }
-                    combine(
-                        baseState,
-                        getTablesGarden(profile.id, Clock.System.now()),
-                    ) { state, tablesGarden ->
-                        state.copy(tablesDue = tablesGarden.dueTableCount)
-                    }
                 }
                 .collect { newState -> _state.value = newState }
+        }
+    }
+
+    /**
+     * Collected separately from [observeProfile] on purpose: folding it into that
+     * flow would replay a cached HomeState snapshot on every garden emission
+     * (reverting settings written by [observeSettings]) and would hold the whole
+     * screen on the loading spinner until the math-facts table emits.
+     */
+    @Suppress("OPT_IN_USAGE")
+    private fun observeTablesGarden() {
+        viewModelScope.launch {
+            profileRepository.getActiveProfile()
+                .filterNotNull()
+                .flatMapLatest { profile -> getTablesGarden(profile.id) }
+                .collect { garden -> _state.update { it.copy(tablesDue = garden.dueTableCount) } }
         }
     }
 

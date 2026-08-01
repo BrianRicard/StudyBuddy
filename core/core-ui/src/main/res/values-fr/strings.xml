@@ -678,6 +678,10 @@
     <string name="srs_revision">Révision</string>
     <string name="srs_surprise">Surprise !</string>
     <string name="srs_all_watered">Tout est arrosé !</string>
+    <plurals name="srs_new_cards_plural">
+        <item quantity="one">%d carte à planter</item>
+        <item quantity="other">%d cartes à planter</item>
+    </plurals>
     <plurals name="srs_due_cards_plural">
         <item quantity="one">%d carte à arroser</item>
         <item quantity="other">%d cartes à arroser</item>

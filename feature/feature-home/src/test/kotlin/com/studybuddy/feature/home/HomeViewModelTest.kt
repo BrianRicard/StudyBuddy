@@ -23,6 +23,8 @@ import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -333,6 +335,50 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertEquals(2, viewModel.state.value.tablesDue)
+    }
+
+    @Test
+    fun `no due tables means the plain speed math subtitle`() = runTest {
+        setupDefaultMocks()
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(0, viewModel.state.value.tablesDue)
+    }
+
+    @Test
+    fun `a garden emission must not revert settings written elsewhere`() = runTest {
+        // The garden is collected separately: folding it into observeProfile
+        // replayed a cached state snapshot and clobbered the daily goal.
+        val goal = MutableStateFlow(5)
+        val facts = MutableStateFlow<List<MathFactReview>>(emptyList())
+        setupDefaultMocks()
+        every { settingsRepository.getDailyGoal() } returns goal
+        every { mathFactsReviewRepository.getReviews(testProfile.id) } returns facts
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        goal.value = 9
+        advanceUntilIdle()
+        // A drill finishing re-emits the garden — the goal must survive it.
+        facts.value = listOf(mathFactReview(2, 3))
+        advanceUntilIdle()
+
+        assertEquals(9, viewModel.state.value.dailyGoal)
+        assertEquals(1, viewModel.state.value.tablesDue)
+    }
+
+    @Test
+    fun `home finishes loading even if the tables garden never emits`() = runTest {
+        setupDefaultMocks()
+        every { mathFactsReviewRepository.getReviews(testProfile.id) } returns emptyFlow()
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.state.value.isLoading)
+        assertEquals(0, viewModel.state.value.tablesDue)
     }
 
     private fun mathFactReview(
