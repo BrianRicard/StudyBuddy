@@ -96,7 +96,7 @@ private fun DrillContent(
             TopAppBar(
                 title = {
                     if (state.phase == DrillPhase.DRILLING) {
-                        Text("${(state.index + 1).coerceAtMost(state.total)} / ${state.total}")
+                        Text("${(state.index + 1).coerceAtMost(state.plannedTotal)} / ${state.plannedTotal}")
                     } else {
                         Text(stringResource(CoreUiR.string.atelier_title))
                     }
@@ -444,7 +444,7 @@ private fun ResultsBody(
             text = stringResource(
                 CoreUiR.string.drill_results_first_try,
                 state.firstTryCount,
-                state.resolvedCount,
+                state.plannedTotal,
             ),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

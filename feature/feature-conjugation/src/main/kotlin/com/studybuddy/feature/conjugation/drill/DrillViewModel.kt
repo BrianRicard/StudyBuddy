@@ -74,6 +74,12 @@ data class DrillGrowth(
 data class DrillState(
     val phase: DrillPhase = DrillPhase.LOADING,
     val cards: List<AtelierCard> = emptyList(),
+    /**
+     * How many cards the session promised at the start. Requeued cards are
+     * appended beyond this, so the progress counter never moves further away
+     * from a child who is struggling.
+     */
+    val plannedTotal: Int = 0,
     val index: Int = 0,
     val input: String = "",
     val inputMode: DrillInputMode = DrillInputMode.KEYBOARD,
@@ -93,6 +99,13 @@ data class DrillState(
     val total: Int get() = cards.size
     val isCopyMode: Boolean get() = feedback is DrillFeedback.Copy
     val isResolved: Boolean get() = feedback is DrillFeedback.Correct
+
+    /**
+     * True while re-writing a card that already stumbled earlier this session.
+     * It was scored and rescheduled the first time round, so this lap is for
+     * confidence only.
+     */
+    val isBonusLap: Boolean get() = index >= plannedTotal
 }
 
 sealed interface DrillIntent {
@@ -178,7 +191,9 @@ class DrillViewModel @Inject constructor(
                 verbId = verbId,
                 tense = tense,
             )
-            _state.update { it.copy(phase = DrillPhase.DRILLING, cards = cards) }
+            _state.update {
+                it.copy(phase = DrillPhase.DRILLING, cards = cards, plannedTotal = cards.size)
+            }
             speakCurrent()
         }
     }
@@ -250,12 +265,15 @@ class DrillViewModel @Inject constructor(
         val current = _state.value
         val firstTry = current.wrongAttempts == 0
         val viaCopy = current.isCopyMode
+        val bonusLap = current.isBonusLap
         val base = when {
+            // Paying again here would make stumbling worth more than knowing it.
+            bonusLap -> 0
             firstTry -> PointValues.CONJUGATION_DRILL_FIRST_TRY
             viaCopy -> PointValues.CONJUGATION_DRILL_COPY
             else -> PointValues.CONJUGATION_DRILL_RETRY
         }
-        val stylusBonus = if (current.inputMode == DrillInputMode.STYLUS && !viaCopy) {
+        val stylusBonus = if (!bonusLap && current.inputMode == DrillInputMode.STYLUS && !viaCopy) {
             PointValues.CONJUGATION_DRILL_STYLUS_BONUS
         } else {
             0
@@ -272,12 +290,17 @@ class DrillViewModel @Inject constructor(
                 ),
                 input = card.prompt,
                 sessionPoints = it.sessionPoints + points,
-                firstTryCount = it.firstTryCount + if (firstTry) 1 else 0,
+                firstTryCount = it.firstTryCount + if (firstTry && !bonusLap) 1 else 0,
                 resolvedCount = it.resolvedCount + 1,
                 combo = if (firstTry) it.combo + 1 else it.combo,
                 comboPaused = !firstTry,
             )
         }
+
+        // Re-recording would undo the lapse the child just earned: the card
+        // would be demoted and promoted back within the same minute, and
+        // spaced repetition needs the spacing.
+        if (bonusLap) return
 
         // A stumbled card silently returns near the end of the session, so the
         // last thing the child does with it is write it right, unaided.
@@ -322,7 +345,9 @@ class DrillViewModel @Inject constructor(
 
     private fun next() {
         val current = _state.value
-        if (!current.isResolved) return
+        // Without the phase guard a fast double-tap on the last card runs
+        // finish() twice and awards the session bonus again.
+        if (current.phase != DrillPhase.DRILLING || !current.isResolved) return
         if (current.index + 1 >= current.cards.size) {
             finish()
             return
@@ -340,6 +365,7 @@ class DrillViewModel @Inject constructor(
     }
 
     private fun finish() {
+        if (_state.value.phase == DrillPhase.RESULTS) return
         _state.update { it.copy(phase = DrillPhase.RESULTS) }
         viewModelScope.launch {
             awardPointsUseCase(
