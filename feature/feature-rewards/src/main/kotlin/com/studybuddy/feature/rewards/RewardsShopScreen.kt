@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -54,6 +55,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -69,6 +71,7 @@ import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
 import com.studybuddy.core.ui.components.AccessoryPreview
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.components.PointsBadge
@@ -329,7 +332,7 @@ private fun AvatarTabContent(
     ).filter { it.items.isNotEmpty() }
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Adaptive(minSize = AdaptiveDimensDefaults.current().avatarCellMinSize),
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(all = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -364,6 +367,19 @@ private fun AvatarTabContent(
 
 private data class AvatarSection(val title: String, val items: List<RewardItem>)
 
+/**
+ * Share of the card width the item art takes when height allows. Shop cards
+ * carry a name, a tier badge and a price under the art, so they give it less
+ * room than the closet.
+ */
+private const val ITEM_ART_FRACTION = 0.40f
+
+/** Name, tier badge and price — the three text rows under the art. */
+private const val ITEM_TEXT_LINES = 3
+
+/** Card padding, the gaps between those rows, and their own insets. */
+private val ITEM_CARD_CHROME = 32.dp
+
 @Composable
 private fun AvatarItemCard(
     item: RewardItem,
@@ -388,42 +404,52 @@ private fun AvatarItemCard(
             defaultElevation = if (isOwned) 2.dp else 0.dp,
         ),
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-        ) {
-            if (item.category == RewardCategory.CHARACTER) {
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+            // Name, tier badge and price sit under the art and grow with the
+            // user's font scale, so the art yields height to them rather than
+            // pushing the price off the bottom of the card.
+            val textHeight = with(LocalDensity.current) {
+                MaterialTheme.typography.labelSmall.lineHeight.toDp() * ITEM_TEXT_LINES
+            }
+            val artSize = (maxHeight - textHeight - ITEM_CARD_CHROME)
+                .coerceIn(0.dp, maxWidth * ITEM_ART_FRACTION)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                if (item.category == RewardCategory.CHARACTER) {
+                    Text(
+                        text = item.icon,
+                        fontSize = with(LocalDensity.current) { artSize.toSp() },
+                        textAlign = TextAlign.Center,
+                    )
+                } else {
+                    AccessoryPreview(
+                        itemId = item.id,
+                        size = artSize,
+                    )
+                }
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = item.icon,
-                    fontSize = 28.sp,
+                    text = item.name,
+                    style = MaterialTheme.typography.labelSmall,
                     textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
-            } else {
-                AccessoryPreview(
-                    itemId = item.id,
-                    size = 32.dp,
-                )
-            }
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = item.name,
-                style = MaterialTheme.typography.labelSmall,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            if (item.tier != AvatarTier.STARTER && !isOwned) {
-                TierBadge(tier = item.tier)
                 Spacer(modifier = Modifier.height(2.dp))
-            }
-            if (isOwned) {
-                OwnedBadge()
-            } else if (item.cost > 0) {
-                CostChip(cost = item.cost)
+                if (item.tier != AvatarTier.STARTER && !isOwned) {
+                    TierBadge(tier = item.tier)
+                    Spacer(modifier = Modifier.height(2.dp))
+                }
+                if (isOwned) {
+                    OwnedBadge()
+                } else if (item.cost > 0) {
+                    CostChip(cost = item.cost)
+                }
             }
         }
     }

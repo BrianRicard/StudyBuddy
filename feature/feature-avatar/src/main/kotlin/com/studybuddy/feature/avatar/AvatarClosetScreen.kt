@@ -3,6 +3,7 @@ package com.studybuddy.feature.avatar
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -32,6 +33,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +41,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,6 +58,9 @@ import com.studybuddy.core.domain.model.RewardCatalog
 import com.studybuddy.core.domain.model.RewardCategory
 import com.studybuddy.core.domain.model.RewardItem
 import com.studybuddy.core.ui.R as CoreUiR
+import com.studybuddy.core.ui.adaptive.AdaptiveDimensDefaults
+import com.studybuddy.core.ui.adaptive.LayoutType
+import com.studybuddy.core.ui.adaptive.LocalLayoutType
 import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.CharacterPreview
 import com.studybuddy.core.ui.components.LoadingState
@@ -183,6 +190,15 @@ private fun AvatarPreviewSection(
     config: AvatarConfig,
     modifier: Modifier = Modifier,
 ) {
+    // The hero size comes from the *width* class, but it spends *height*: a phone
+    // in landscape is EXPANDED and barely 400dp tall, so cap it against the screen
+    // or the grid below is pushed out of sight.
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
+    val heroSize = minOf(
+        AdaptiveDimensDefaults.current().avatarHeroSize,
+        screenHeight * HERO_MAX_SCREEN_FRACTION,
+    )
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -191,7 +207,7 @@ private fun AvatarPreviewSection(
     ) {
         AvatarComposite(
             config = config,
-            size = 130.dp,
+            size = heroSize,
         )
     }
 }
@@ -220,7 +236,7 @@ private fun CharacterGrid(
     }
 
     LazyVerticalGrid(
-        columns = GridCells.Fixed(GRID_COLUMN_COUNT),
+        columns = GridCells.Adaptive(minSize = AdaptiveDimensDefaults.current().avatarCellMinSize),
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -291,17 +307,31 @@ private fun CharacterCard(
             },
         ),
     ) {
-        Box(
+        BoxWithConstraints(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
+            // The art takes a share of the width, but never more height than is
+            // left once the name and the badge band have had theirs — otherwise a
+            // long name runs into the price on a phone-sized cell.
+            val labelHeight = with(LocalDensity.current) {
+                MaterialTheme.typography.labelMedium.lineHeight.toDp()
+            }
+            val artSize = (maxHeight - labelHeight - CARD_CHROME)
+                .coerceIn(0.dp, maxWidth * CHARACTER_SIZE_FRACTION)
+
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp),
+                modifier = Modifier.padding(
+                    start = CARD_PADDING,
+                    end = CARD_PADDING,
+                    top = CARD_PADDING,
+                    bottom = CARD_PADDING + BADGE_BAND,
+                ),
             ) {
                 CharacterPreview(
                     characterId = character.id,
-                    size = 48.dp,
+                    size = artSize,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
@@ -483,7 +513,19 @@ private fun PurchaseDialog(
 
 // endregion
 
-private const val GRID_COLUMN_COUNT = 3
+/** Share of the card width the character art takes when height allows. */
+private const val CHARACTER_SIZE_FRACTION = 0.68f
+
+/** Share of the screen height the hero avatar may take. */
+private const val HERO_MAX_SCREEN_FRACTION = 0.35f
+
+private val CARD_PADDING = 8.dp
+
+/** Bottom strip of a card reserved for the lock and price badges. */
+private val BADGE_BAND = 24.dp
+
+/** Everything in a card that is not the art or the name: padding, gap, badges. */
+private val CARD_CHROME = CARD_PADDING * 2 + 4.dp + BADGE_BAND
 
 // Tier accent colors
 private val EpicPurple = Color(0xFF9C27B0)
@@ -493,25 +535,48 @@ private val LegendaryAmber = Color(0xFFFFA000)
 
 // region Previews
 
+private fun previewState() = AvatarClosetState(
+    avatarConfig = AvatarConfig(
+        bodyId = "bunny",
+        hatId = "hat_none",
+        faceId = "face_none",
+        outfitId = "outfit_none",
+        petId = "pet_none",
+    ),
+    ownedItemIds = RewardCatalog.starterItemIds,
+    starBalance = 250L,
+    isLoading = false,
+)
+
 @Preview(showBackground = true)
 @Composable
 private fun AvatarClosetScreenPreview() {
     StudyBuddyTheme {
-        AvatarClosetContent(
-            state = AvatarClosetState(
-                avatarConfig = AvatarConfig(
-                    bodyId = "bunny",
-                    hatId = "hat_none",
-                    faceId = "face_none",
-                    outfitId = "outfit_none",
-                    petId = "pet_none",
-                ),
-                ownedItemIds = RewardCatalog.starterItemIds,
-                starBalance = 250L,
-                isLoading = false,
-            ),
-            onIntent = {},
-        )
+        AvatarClosetContent(state = previewState(), onIntent = {})
+    }
+}
+
+/**
+ * Tablet portrait. [LocalLayoutType] must be provided explicitly — it is a
+ * static CompositionLocal set only by MainActivity, so a `widthDp` preview alone
+ * still renders the compact branch.
+ */
+@Preview(widthDp = 800, heightDp = 1000)
+@Composable
+private fun AvatarClosetTabletPreview() {
+    CompositionLocalProvider(LocalLayoutType provides LayoutType.MEDIUM) {
+        StudyBuddyTheme {
+            AvatarClosetContent(state = previewState(), onIntent = {})
+        }
+    }
+}
+
+/** The tightest case: a phone-sized cell with the largest accessibility font. */
+@Preview(showBackground = true, fontScale = 1.3f)
+@Composable
+private fun AvatarClosetLargeFontPreview() {
+    StudyBuddyTheme {
+        AvatarClosetContent(state = previewState(), onIntent = {})
     }
 }
 
