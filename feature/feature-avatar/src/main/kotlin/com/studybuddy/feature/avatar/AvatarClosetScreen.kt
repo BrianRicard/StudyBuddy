@@ -2,6 +2,7 @@ package com.studybuddy.feature.avatar
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -46,6 +47,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -73,6 +76,7 @@ import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.modifier.bounceClick
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
+import com.studybuddy.core.ui.theme.ensureContrastWith
 
 /**
  * Entry-point composable for the Avatar Closet screen.
@@ -271,7 +275,11 @@ private fun CharacterCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // `primary` is a vivid brand colour that differs per theme; raw, three of the
+    // six are too faint to see on a white card (Arctic's cyan is 2.3:1), and
+    // Forest's is the very green this replaced.
     val accent = MaterialTheme.colorScheme.primary
+        .ensureContrastWith(MaterialTheme.colorScheme.surface, ACCENT_MIN_CONTRAST)
     val tierBorder = when (tier) {
         AvatarTier.EPIC -> BorderStroke(
             width = 2.dp,
@@ -291,11 +299,12 @@ private fun CharacterCard(
     Card(
         modifier = modifier
             .aspectRatio(0.85f)
+            .semantics { selected = isSelected }
             .bounceClick(onClick),
         shape = MaterialTheme.shapes.medium,
-        // Selection outranks the tier stroke — "this is the one you are wearing"
-        // is the more useful answer, and the tier is still named by its badge.
-        border = if (isSelected) BorderStroke(SELECTION_RING_WIDTH, accent) else tierBorder,
+        // The tier keeps the outer stroke; selection draws its ring just inside,
+        // so an equipped Legendary still shows it is legendary.
+        border = tierBorder,
         colors = CardDefaults.cardColors(
             // Opaque on purpose: an elevated Card with a translucent container
             // draws its own shadow through itself, which reads as a dirty frame.
@@ -306,15 +315,27 @@ private fun CharacterCard(
             },
         ),
         elevation = CardDefaults.cardElevation(
+            // Elevation follows ownership, not selection: a translucent container
+            // with a shadow under it shows that shadow through itself.
             defaultElevation = when {
+                !isOwned -> 0.dp
                 isSelected -> 4.dp
-                isOwned -> 1.dp
-                else -> 0.dp
+                else -> 1.dp
             },
         ),
     ) {
         BoxWithConstraints(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .then(
+                    if (isSelected) {
+                        Modifier
+                            .padding(SELECTION_RING_INSET)
+                            .border(SELECTION_RING_WIDTH, accent, MaterialTheme.shapes.small)
+                    } else {
+                        Modifier
+                    },
+                ),
             contentAlignment = Alignment.Center,
         ) {
             // The art takes a share of the width, but never more height than is
@@ -344,18 +365,19 @@ private fun CharacterCard(
                     text = character.name,
                     style = MaterialTheme.typography.labelMedium,
                     color = if (isSelected) accent else Color.Unspecified,
-                    fontWeight = if (isSelected) FontWeight.SemiBold else null,
+                    fontWeight = if (isSelected) FontWeight.Bold else null,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            // Equipped tick, as a filled chip so it reads against the art
+            // Equipped tick, as a filled chip so it reads against the art. It sits
+            // bottom-end: the tier badge owns the top row and outgrows it there.
             if (isSelected) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
+                        .align(Alignment.BottomEnd)
                         .padding(6.dp)
                         .size(SELECTION_CHIP_SIZE)
                         .background(accent, CircleShape),
@@ -370,7 +392,7 @@ private fun CharacterCard(
                 }
             }
 
-            // Tier badge for Epic/Legendary (top-start corner when owned, below lock when not)
+            // Tier badge for Epic/Legendary (top-start corner)
             if (tier == AvatarTier.EPIC || tier == AvatarTier.LEGENDARY) {
                 TierBadge(
                     tier = tier,
@@ -381,7 +403,7 @@ private fun CharacterCard(
             }
 
             // Lock icon for unowned characters (bottom-start corner)
-            if (!isOwned) {
+            if (!isOwned && !isSelected) {
                 Icon(
                     imageVector = Icons.Default.Lock,
                     contentDescription = null,
@@ -394,7 +416,7 @@ private fun CharacterCard(
             }
 
             // Star cost badge for unowned characters (bottom-end corner)
-            if (!isOwned && cost > 0) {
+            if (!isOwned && !isSelected && cost > 0) {
                 CostBadge(
                     cost = cost,
                     tier = tier,
@@ -428,6 +450,9 @@ private fun TierBadge(
             style = MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.Bold,
             color = textColor,
+            // At a large font scale this wraps to two lines and covers the art.
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             modifier = Modifier.padding(horizontal = 5.dp, vertical = 1.dp),
         )
     }
@@ -536,6 +561,12 @@ private const val HERO_MAX_SCREEN_FRACTION = 0.35f
 /** Accent stroke marking the equipped character. */
 private val SELECTION_RING_WIDTH = 2.5.dp
 
+/** Gap between the card edge (or its tier stroke) and the selection ring. */
+private val SELECTION_RING_INSET = 3.dp
+
+/** WCAG AA for body text — the accent tints the character's name too. */
+private const val ACCENT_MIN_CONTRAST = 4.5f
+
 /** Filled circle carrying the equipped tick. */
 private val SELECTION_CHIP_SIZE = 24.dp
 
@@ -597,6 +628,29 @@ private fun AvatarClosetTabletPreview() {
 private fun AvatarClosetLargeFontPreview() {
     StudyBuddyTheme {
         AvatarClosetContent(state = previewState(), onIntent = {})
+    }
+}
+
+private fun legendaryPreviewState() = previewState().copy(
+    avatarConfig = AvatarConfig.default().copy(bodyId = "mythic_pegasus"),
+    ownedItemIds = RewardCatalog.starterItemIds + "char_mythic_pegasus",
+)
+
+/** An equipped Legendary: tier stroke, tier badge, ring and tick all at once. */
+@Preview(showBackground = true)
+@Composable
+private fun AvatarClosetLegendaryEquippedPreview() {
+    StudyBuddyTheme {
+        AvatarClosetContent(state = legendaryPreviewState(), onIntent = {})
+    }
+}
+
+/** The same card at the largest accessibility font, where badges grow. */
+@Preview(showBackground = true, fontScale = 2.0f)
+@Composable
+private fun AvatarClosetLegendaryLargeFontPreview() {
+    StudyBuddyTheme {
+        AvatarClosetContent(state = legendaryPreviewState(), onIntent = {})
     }
 }
 
