@@ -1,6 +1,7 @@
 package com.studybuddy.feature.avatar
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -17,6 +18,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -69,7 +71,6 @@ import com.studybuddy.core.ui.components.StudyBuddyButton
 import com.studybuddy.core.ui.components.StudyBuddyOutlinedButton
 import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.modifier.bounceClick
-import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StudyBuddyTheme
 
@@ -270,6 +271,7 @@ private fun CharacterCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val accent = MaterialTheme.colorScheme.primary
     val tierBorder = when (tier) {
         AvatarTier.EPIC -> BorderStroke(
             width = 2.dp,
@@ -291,12 +293,16 @@ private fun CharacterCard(
             .aspectRatio(0.85f)
             .bounceClick(onClick),
         shape = MaterialTheme.shapes.medium,
-        border = tierBorder,
+        // Selection outranks the tier stroke — "this is the one you are wearing"
+        // is the more useful answer, and the tier is still named by its badge.
+        border = if (isSelected) BorderStroke(SELECTION_RING_WIDTH, accent) else tierBorder,
         colors = CardDefaults.cardColors(
-            containerColor = when {
-                isSelected -> CorrectGreen.copy(alpha = 0.12f)
-                isOwned -> MaterialTheme.colorScheme.surface
-                else -> MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
+            // Opaque on purpose: an elevated Card with a translucent container
+            // draws its own shadow through itself, which reads as a dirty frame.
+            containerColor = if (isOwned) {
+                MaterialTheme.colorScheme.surface
+            } else {
+                MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.4f)
             },
         ),
         elevation = CardDefaults.cardElevation(
@@ -337,23 +343,31 @@ private fun CharacterCard(
                 Text(
                     text = character.name,
                     style = MaterialTheme.typography.labelMedium,
+                    color = if (isSelected) accent else Color.Unspecified,
+                    fontWeight = if (isSelected) FontWeight.SemiBold else null,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
 
-            // Selected checkmark (top-end corner)
+            // Equipped tick, as a filled chip so it reads against the art
             if (isSelected) {
-                Icon(
-                    imageVector = Icons.Default.Check,
-                    contentDescription = stringResource(CoreUiR.string.rewards_equipped),
-                    tint = CorrectGreen,
+                Box(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(6.dp)
-                        .size(18.dp),
-                )
+                        .size(SELECTION_CHIP_SIZE)
+                        .background(accent, CircleShape),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = stringResource(CoreUiR.string.rewards_equipped),
+                        tint = MaterialTheme.colorScheme.onPrimary,
+                        modifier = Modifier.size(16.dp),
+                    )
+                }
             }
 
             // Tier badge for Epic/Legendary (top-start corner when owned, below lock when not)
@@ -518,6 +532,12 @@ private const val CHARACTER_SIZE_FRACTION = 0.68f
 
 /** Share of the screen height the hero avatar may take. */
 private const val HERO_MAX_SCREEN_FRACTION = 0.35f
+
+/** Accent stroke marking the equipped character. */
+private val SELECTION_RING_WIDTH = 2.5.dp
+
+/** Filled circle carrying the equipped tick. */
+private val SELECTION_CHIP_SIZE = 24.dp
 
 private val CARD_PADDING = 8.dp
 
