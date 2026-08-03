@@ -772,4 +772,22 @@
     <string name="tables_milestone_first_table">First table fully mastered</string>
     <string name="tables_milestone_four_tables">Four tables fully mastered</string>
     <string name="tables_milestone_all_tables">Every table fully mastered</string>
+
+    <!-- Home: today's quest -->
+    <string name="home_quest_ready">Ready for you</string>
+    <string name="home_quest_free_title">Free choice today</string>
+    <string name="home_quest_free_subtitle">Pick anything you like from below.</string>
+    <string name="home_start">Start</string>
+    <string name="home_pick_a_game">Pick a game</string>
+    <string name="home_latest">Latest</string>
+    <string name="home_source_gift">Gift</string>
+    <string name="home_greeting_bubble">Hello %1$s!</string>
+    <plurals name="home_quest_things">
+        <item quantity="one">%d thing</item>
+        <item quantity="other">%d things</item>
+    </plurals>
+    <plurals name="home_streak_days">
+        <item quantity="one">%d day streak</item>
+        <item quantity="other">%d day streak</item>
+    </plurals>
 </resources>

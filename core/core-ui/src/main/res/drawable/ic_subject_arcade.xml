@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generated from the Claude Design home icon set. Two-tone: an 18% fill under a
+     1.8px stroke, drawn black so Icon(tint = ...) recolours it per subject. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:pathData="M13.7 2.2 5.3 13.5h5.1l-.7 8.3 8.4-11.3h-5.1Z"
+        android:fillColor="#FF000000"
+        android:fillAlpha=".22"
+        android:strokeColor="#FF000000"
+        android:strokeWidth="1.8"
+        android:strokeLineJoin="round" />
+</vector>

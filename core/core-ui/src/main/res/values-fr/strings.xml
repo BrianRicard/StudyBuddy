@@ -771,4 +771,22 @@
     <string name="tables_milestone_first_table">Première table sue par cœur</string>
     <string name="tables_milestone_four_tables">Quatre tables sues par cœur</string>
     <string name="tables_milestone_all_tables">Toutes les tables sues par cœur</string>
+
+    <!-- Accueil : la quête du jour -->
+    <string name="home_quest_ready">Prêt pour toi</string>
+    <string name="home_quest_free_title">Choix libre aujourd\'hui</string>
+    <string name="home_quest_free_subtitle">Choisis ce que tu veux ci-dessous.</string>
+    <string name="home_start">Commencer</string>
+    <string name="home_pick_a_game">Choisis un jeu</string>
+    <string name="home_latest">Derniers points</string>
+    <string name="home_source_gift">Cadeau</string>
+    <string name="home_greeting_bubble">Bonjour %1$s !</string>
+    <plurals name="home_quest_things">
+        <item quantity="one">%d chose</item>
+        <item quantity="other">%d choses</item>
+    </plurals>
+    <plurals name="home_streak_days">
+        <item quantity="one">série de %d jour</item>
+        <item quantity="other">série de %d jours</item>
+    </plurals>
 </resources>

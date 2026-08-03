@@ -109,6 +109,17 @@ val ArcticColorScheme = lightColorScheme(
     onSurface = Color(0xFF006064),
 )
 
+// Subject hues — one per learning mode, deliberately fixed rather than theme-derived:
+// a child learns "purple means Dictée", and that should not move when she buys a new
+// theme. Never use these raw; run them through `subjectPalette()`, which mixes the
+// ground and corrects the hue against the theme actually in use.
+val SubjectDictee = Color(0xFF6C5CE7)
+val SubjectMath = Color(0xFF0FA3A3)
+val SubjectVerbs = Color(0xFF7B4DD8)
+val SubjectPoems = Color(0xFFE8467C)
+val SubjectReading = Color(0xFFF2921D)
+val SubjectArcade = Color(0xFF2D7DD2)
+
 // Shared colors
 val CorrectGreen = Color(0xFF4CAF50)
 val IncorrectRed = Color(0xFFE57373)
