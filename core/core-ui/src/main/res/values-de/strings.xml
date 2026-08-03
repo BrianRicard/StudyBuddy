@@ -771,4 +771,22 @@
     <string name="tables_milestone_first_table">Erste Reihe sicher beherrscht</string>
     <string name="tables_milestone_four_tables">Vier Reihen sicher beherrscht</string>
     <string name="tables_milestone_all_tables">Alle Reihen sicher beherrscht</string>
+
+    <!-- Startseite: die heutige Aufgabe -->
+    <string name="home_quest_ready">Bereit für dich</string>
+    <string name="home_quest_free_title">Heute freie Wahl</string>
+    <string name="home_quest_free_subtitle">Wähle unten aus, was du möchtest.</string>
+    <string name="home_start">Los geht\'s</string>
+    <string name="home_pick_a_game">Wähle ein Spiel</string>
+    <string name="home_latest">Zuletzt</string>
+    <string name="home_source_gift">Geschenk</string>
+    <string name="home_greeting_bubble">Hallo %1$s!</string>
+    <plurals name="home_quest_things">
+        <item quantity="one">%d Sache</item>
+        <item quantity="other">%d Sachen</item>
+    </plurals>
+    <plurals name="home_streak_days">
+        <item quantity="one">%d Tag in Folge</item>
+        <item quantity="other">%d Tage in Folge</item>
+    </plurals>
 </resources>

@@ -31,6 +31,10 @@ data class AdaptiveDimens(
      * in landscape is EXPANDED and only ~400dp tall.
      */
     val avatarHeroSize: Dp,
+    /** The greeting avatar on Home. */
+    val homeAvatarSize: Dp,
+    /** One cell of the Home game grid; the featured card is twice this plus a gap. */
+    val homeGameCardHeight: Dp,
 )
 
 object AdaptiveDimensDefaults {
@@ -49,6 +53,8 @@ object AdaptiveDimensDefaults {
         // Keeps the familiar three columns on a 360dp phone.
         avatarCellMinSize = 100.dp,
         avatarHeroSize = 130.dp,
+        homeAvatarSize = 108.dp,
+        homeGameCardHeight = 122.dp,
     )
 
     private val medium = AdaptiveDimens(
@@ -64,6 +70,8 @@ object AdaptiveDimensDefaults {
         fabSize = 64.dp,
         avatarCellMinSize = 130.dp,
         avatarHeroSize = 180.dp,
+        homeAvatarSize = 132.dp,
+        homeGameCardHeight = 132.dp,
     )
 
     private val expanded = AdaptiveDimens(
@@ -79,6 +87,8 @@ object AdaptiveDimensDefaults {
         fabSize = 64.dp,
         avatarCellMinSize = 160.dp,
         avatarHeroSize = 220.dp,
+        homeAvatarSize = 150.dp,
+        homeGameCardHeight = 140.dp,
     )
 
     /** Returns the [AdaptiveDimens] for [layoutType]. */

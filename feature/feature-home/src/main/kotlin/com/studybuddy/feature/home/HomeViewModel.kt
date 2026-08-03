@@ -30,7 +30,6 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.minus
-import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
 /**
@@ -60,7 +59,6 @@ data class RecentActivity(
     @StringRes val modeResId: Int,
     val source: PointSource,
     val points: Int,
-    val reason: String,
     val timeAgo: TimeAgo,
 )
 
@@ -74,7 +72,6 @@ data class HomeState(
     val locale: String = "fr",
     @StringRes val greetingResId: Int = CoreUiR.string.greeting_morning,
     val dayStreak: Int = 0,
-    val weekDots: List<Boolean> = List(WEEK_DAYS) { false },
     val sessionsToday: Int = 0,
     val dailyGoal: Int = 5,
     val recentActivities: List<RecentActivity> = emptyList(),
@@ -179,7 +176,6 @@ class HomeViewModel @Inject constructor(
                     ) { avatarConfig, totalPoints, pointEvents, sessionsToday, atelierGarden ->
                         val timeZone = TimeZone.currentSystemDefault()
                         val streak = calculateDayStreak(pointEvents, timeZone)
-                        val weekDots = calculateWeekDots(pointEvents, timeZone)
                         val recentActivities = buildRecentActivities(pointEvents)
 
                         _state.value.copy(
@@ -187,7 +183,6 @@ class HomeViewModel @Inject constructor(
                             avatarConfig = avatarConfig ?: AvatarConfig.default(),
                             totalStars = totalPoints,
                             dayStreak = streak,
-                            weekDots = weekDots,
                             sessionsToday = sessionsToday,
                             recentActivities = recentActivities,
                             atelierDueVerbs = atelierGarden.dueVerbCount,
@@ -279,54 +274,42 @@ class HomeViewModel @Inject constructor(
         return streak
     }
 
-    private fun calculateWeekDots(
-        events: List<PointEvent>,
-        timeZone: TimeZone,
-    ): List<Boolean> {
-        val today = Clock.System.now().toLocalDateTime(timeZone).date
-        val daysFromMonday = today.dayOfWeek.ordinal
-        val mondayOfWeek = today.minus(DatePeriod(days = daysFromMonday))
-
-        val daysWithEvents = events
-            .map { it.timestamp.toLocalDateTime(timeZone).date }
-            .toSet()
-
-        return (0 until WEEK_DAYS).map { offset ->
-            val date = mondayOfWeek.plus(DatePeriod(days = offset))
-            date in daysWithEvents
-        }
-    }
-
     private fun buildRecentActivities(events: List<PointEvent>): List<RecentActivity> {
         val now = Clock.System.now()
 
         return events
             .filter {
-                it.source == PointSource.DICTEE ||
-                    it.source == PointSource.MATH ||
-                    it.source == PointSource.READING
+                // Everything except the daily login, whose +10 every morning would
+                // otherwise push real activity out of a five-row list.
+                it.source != PointSource.DAILY_LOGIN
             }
             .sortedByDescending { it.timestamp }
+            // One row per mode. Several drills award per *card*, so without this a
+            // single Atelier session fills all five rows and hides everything else.
+            .distinctBy { it.source }
             .take(MAX_RECENT_ACTIVITIES)
             .map { event ->
-                @StringRes val modeResId = when (event.source) {
-                    PointSource.DICTEE -> CoreUiR.string.mode_dictee
-                    PointSource.MATH -> CoreUiR.string.mode_math
-                    PointSource.READING -> CoreUiR.string.nav_reading
-                    PointSource.CONJUGATION -> CoreUiR.string.mode_conjugation
-                    else -> CoreUiR.string.mode_activity
-                }
-                val elapsed = now - event.timestamp
-                val timeAgo = formatTimeAgo(elapsed)
-
                 RecentActivity(
-                    modeResId = modeResId,
+                    modeResId = modeNameFor(event.source),
                     source = event.source,
                     points = event.points,
-                    reason = event.reason,
-                    timeAgo = timeAgo,
+                    timeAgo = formatTimeAgo(now - event.timestamp),
                 )
             }
+    }
+
+    /** Exhaustive on purpose: a new [PointSource] must be named, not silently labelled "Activity". */
+    @StringRes
+    private fun modeNameFor(source: PointSource): Int = when (source) {
+        PointSource.DICTEE -> CoreUiR.string.mode_dictee
+        PointSource.MATH -> CoreUiR.string.mode_math
+        PointSource.READING -> CoreUiR.string.nav_reading
+        PointSource.CONJUGATION -> CoreUiR.string.mode_conjugation
+        PointSource.POEMS -> CoreUiR.string.mode_poems
+        PointSource.CHALLENGE -> CoreUiR.string.mode_math_challenge
+        PointSource.PURCHASE -> CoreUiR.string.rewards_title
+        PointSource.GIFT -> CoreUiR.string.home_source_gift
+        PointSource.DAILY_LOGIN -> CoreUiR.string.mode_activity
     }
 
     private fun formatTimeAgo(duration: kotlin.time.Duration): TimeAgo {
@@ -351,5 +334,3 @@ class HomeViewModel @Inject constructor(
         private const val HOURS_IN_DAY = 24
     }
 }
-
-private const val WEEK_DAYS = 7

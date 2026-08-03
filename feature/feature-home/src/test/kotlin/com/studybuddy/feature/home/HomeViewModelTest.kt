@@ -233,15 +233,10 @@ class HomeViewModelTest {
     @Test
     fun `recent activities limited to 5 items`() = runTest {
         val now = Clock.System.now()
-        val events = (1..10).map { i ->
-            PointEvent(
-                id = "event_$i",
-                profileId = "test-id",
-                source = PointSource.MATH,
-                points = 10,
-                reason = "Problem $i",
-                timestamp = now - kotlin.time.Duration.parse("${i}m"),
-            )
+        val events = PointSource.entries.flatMapIndexed { index, source ->
+            (1..3).map { i ->
+                pointEvent(source, points = 10, minutesAgo = index * 10 + i, now = now)
+            }
         }
         setupDefaultMocks(pointEvents = events)
         val viewModel = createViewModel()
@@ -251,13 +246,53 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `week dots has 7 entries`() = runTest {
-        setupDefaultMocks()
+    fun `one drill session cannot fill the list`() = runTest {
+        // Several drills award per card, so ten conjugation events are one session.
+        // Without de-duplication they would hide every other mode.
+        val now = Clock.System.now()
+        val events = (1..10).map { i ->
+            pointEvent(PointSource.CONJUGATION, points = 10, minutesAgo = i, now = now)
+        } + pointEvent(PointSource.DICTEE, points = 80, minutesAgo = 30, now = now)
+
+        setupDefaultMocks(pointEvents = events)
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        assertEquals(7, viewModel.state.value.weekDots.size)
+        val sources = viewModel.state.value.recentActivities.map { it.source }
+        assertEquals(listOf(PointSource.CONJUGATION, PointSource.DICTEE), sources)
     }
+
+    @Test
+    fun `every points source is named, never left as a bare Activity`() = runTest {
+        val now = Clock.System.now()
+        val events = PointSource.entries.mapIndexed { index, source ->
+            pointEvent(source, points = 10, minutesAgo = index + 1, now = now)
+        }
+        setupDefaultMocks(pointEvents = events)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val named = viewModel.state.value.recentActivities
+        assertTrue(named.isNotEmpty())
+        assertTrue(
+            named.none { it.modeResId == CoreUiR.string.mode_activity },
+            "a visible source fell through to the generic Activity label",
+        )
+    }
+
+    private fun pointEvent(
+        source: PointSource,
+        points: Int,
+        minutesAgo: Int,
+        now: kotlinx.datetime.Instant,
+    ) = PointEvent(
+        id = "event_${source.name}_$minutesAgo",
+        profileId = "test-id",
+        source = source,
+        points = points,
+        reason = "test",
+        timestamp = now - kotlin.time.Duration.parse("${minutesAgo}m"),
+    )
 
     @Test
     fun `sessionsToday uses session count not points sum`() = runTest {
