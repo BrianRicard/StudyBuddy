@@ -19,6 +19,8 @@ interface SettingsRepository {
     suspend fun setParentPinHash(hash: Int?)
     fun isDicteeSeeded(): Flow<Boolean>
     suspend fun setDicteeSeeded(seeded: Boolean)
+    fun getPlanCompletionBonus(): Flow<Int>
+    suspend fun setPlanCompletionBonus(points: Int)
     fun getWhisperModel(): Flow<String>
     suspend fun setWhisperModel(modelFileName: String)
     suspend fun clearAll()

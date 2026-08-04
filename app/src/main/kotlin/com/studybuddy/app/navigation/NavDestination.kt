@@ -147,6 +147,7 @@ fun resolveActiveDestination(currentRoute: String?): NavDestination? = when {
     currentRoute == StudyBuddyRoutes.STATS -> NavDestination.STATS
     currentRoute == StudyBuddyRoutes.SETTINGS -> NavDestination.SETTINGS
     currentRoute == StudyBuddyRoutes.BACKUP -> NavDestination.SETTINGS
+    currentRoute == StudyBuddyRoutes.PARENT_PLAN -> NavDestination.SETTINGS
     else -> null
 }
 

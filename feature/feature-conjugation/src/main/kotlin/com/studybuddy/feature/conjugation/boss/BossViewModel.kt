@@ -5,11 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.conjugation.ConjugationStage
 import com.studybuddy.core.domain.model.conjugation.ConjugationStages
 import com.studybuddy.core.domain.model.conjugation.ConjugationStep
 import com.studybuddy.core.domain.repository.ConjugationRepository
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.tts.TtsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -75,6 +77,7 @@ class BossViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val conjugationRepository: ConjugationRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val ttsManager: TtsManager,
 ) : ViewModel() {
 
@@ -198,6 +201,11 @@ class BossViewModel @Inject constructor(
                     reason = "Conjugation stage complete: $stageId",
                 )
             }
+            // Beating the boss is a Verb Quest session as far as a parent's plan is
+            // concerned. Without this, "1 Verb Quest session" is un-completable from
+            // the quest card's own Start button, which opens this path — only the
+            // Atelier drill recorded, and that is two taps further in.
+            recordSession(profileId = AppConstants.DEFAULT_PROFILE_ID, mode = LearningMode.VERB_QUEST)
             _effects.emit(BossEffect.Completed)
         }
     }

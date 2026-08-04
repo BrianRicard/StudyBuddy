@@ -3,15 +3,19 @@ package com.studybuddy.feature.home
 import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.model.AvatarConfig
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
+import com.studybuddy.core.domain.model.TodayPlan
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
+import com.studybuddy.core.domain.usecase.plan.AwardPlanBonusUseCase
+import com.studybuddy.core.domain.usecase.plan.GetTodayPlanUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -77,6 +81,9 @@ data class HomeState(
     val recentActivities: List<RecentActivity> = emptyList(),
     val atelierDueVerbs: Int = 0,
     val tablesDue: Int = 0,
+    /** Null until the plan has been read; distinct from "the parent set nothing today". */
+    val todayPlan: TodayPlan? = null,
+    val planBonusPoints: Int = PointValues.DEFAULT_PLAN_COMPLETION_BONUS,
     val isLoading: Boolean = true,
 ) {
     val dailyProgress: Float
@@ -130,6 +137,8 @@ class HomeViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val getAtelierGarden: GetAtelierGardenUseCase,
     private val getTablesGarden: GetTablesGardenUseCase,
+    private val getTodayPlan: GetTodayPlanUseCase,
+    private val awardPlanBonus: AwardPlanBonusUseCase,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(HomeState())
@@ -142,6 +151,7 @@ class HomeViewModel @Inject constructor(
         observeProfile()
         observeSettings()
         observeTablesGarden()
+        observeTodayPlan()
     }
 
     fun onIntent(intent: HomeIntent) {
@@ -207,6 +217,32 @@ class HomeViewModel @Inject constructor(
                 .filterNotNull()
                 .flatMapLatest { profile -> getTablesGarden(profile.id) }
                 .collect { garden -> _state.update { it.copy(tablesDue = garden.dueTableCount) } }
+        }
+    }
+
+    /**
+     * Collected separately for the same reason as [observeTablesGarden], and it also
+     * pays the completion bonus.
+     *
+     * Paying is safe to do from inside the collector only because
+     * [AwardPlanBonusUseCase] is idempotent per day: the award is itself a points
+     * change, which re-emits this flow, which would otherwise pay again forever.
+     */
+    @Suppress("OPT_IN_USAGE")
+    private fun observeTodayPlan() {
+        viewModelScope.launch {
+            profileRepository.getActiveProfile()
+                .filterNotNull()
+                .flatMapLatest { profile ->
+                    combine(
+                        getTodayPlan(profile.id),
+                        settingsRepository.getPlanCompletionBonus(),
+                    ) { plan, bonus -> Triple(profile.id, plan, bonus) }
+                }
+                .collect { (profileId, plan, bonus) ->
+                    _state.update { it.copy(todayPlan = plan, planBonusPoints = bonus) }
+                    awardPlanBonus(profileId = profileId, plan = plan, bonusPoints = bonus)
+                }
         }
     }
 
@@ -309,6 +345,8 @@ class HomeViewModel @Inject constructor(
         PointSource.CHALLENGE -> CoreUiR.string.mode_math_challenge
         PointSource.PURCHASE -> CoreUiR.string.rewards_title
         PointSource.GIFT -> CoreUiR.string.home_source_gift
+        PointSource.REDEMPTION -> CoreUiR.string.home_source_redemption
+        PointSource.PLAN_BONUS -> CoreUiR.string.home_source_plan_bonus
         PointSource.DAILY_LOGIN -> CoreUiR.string.mode_activity
     }
 

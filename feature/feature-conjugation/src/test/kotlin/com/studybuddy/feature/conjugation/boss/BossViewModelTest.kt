@@ -49,6 +49,7 @@ class BossViewModelTest {
         savedStateHandle = SavedStateHandle(mapOf("stageId" to stageId)),
         conjugationRepository = conjugationRepository,
         awardPointsUseCase = awardPointsUseCase,
+        recordSession = mockk(relaxed = true),
         ttsManager = ttsManager,
     )
 

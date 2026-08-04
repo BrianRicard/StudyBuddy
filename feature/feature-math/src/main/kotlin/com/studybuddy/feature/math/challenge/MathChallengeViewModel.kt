@@ -4,10 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.Difficulty
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.MathProblem
 import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.usecase.math.GenerateProblemUseCase
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.RewardCalculator
 import com.studybuddy.shared.points.RewardInput
@@ -89,6 +91,7 @@ sealed interface MathChallengeEffect {
 class MathChallengeViewModel @Inject constructor(
     private val generateProblem: GenerateProblemUseCase,
     private val awardPoints: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val rewardCalculator: RewardCalculator,
 ) : ViewModel() {
 
@@ -360,6 +363,11 @@ class MathChallengeViewModel @Inject constructor(
                 )
             } catch (_: Exception) {
                 // Points award failure is not critical
+            }
+            // Outside the points try/catch: a failure here is a different thing, and
+            // burying it under a comment about points is how it would go unnoticed.
+            runCatching {
+                recordSession(profileId = AppConstants.DEFAULT_PROFILE_ID, mode = LearningMode.MATH_CHALLENGE)
             }
 
             _state.update { it.copy(isGameOver = true) }

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.mlkit.vision.digitalink.Ink
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.constants.PointValues
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.conjugation.AtelierCard
 import com.studybuddy.core.domain.model.conjugation.ConjugationTense
@@ -14,6 +15,7 @@ import com.studybuddy.core.domain.usecase.conjugation.BuildDrillSessionUseCase
 import com.studybuddy.core.domain.usecase.conjugation.CheckDrillAnswerUseCase
 import com.studybuddy.core.domain.usecase.conjugation.DrillMode
 import com.studybuddy.core.domain.usecase.conjugation.DrillVerdict
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.tts.TtsManager
@@ -125,6 +127,7 @@ class DrillViewModel @Inject constructor(
     private val checkAnswer: CheckDrillAnswerUseCase,
     private val reviewRepository: AtelierReviewRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val ttsManager: TtsManager,
     private val inkRecognitionManager: InkRecognitionManager,
 ) : ViewModel() {
@@ -375,6 +378,7 @@ class DrillViewModel @Inject constructor(
                 source = PointSource.CONJUGATION,
                 reason = "Atelier drill session complete (${mode.name})",
             )
+            recordSession(profileId = AppConstants.DEFAULT_PROFILE_ID, mode = LearningMode.VERB_QUEST)
         }
         _state.update {
             it.copy(sessionPoints = it.sessionPoints + PointValues.CONJUGATION_DRILL_SESSION_COMPLETE)

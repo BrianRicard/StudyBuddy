@@ -8,6 +8,7 @@ import com.studybuddy.core.domain.repository.BackupRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.domain.usecase.points.RedeemPointsUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.whisper.ModelDownloadManager
 import io.mockk.coVerify
@@ -78,6 +79,7 @@ class SettingsViewModelTest {
         avatarRepository = avatarRepository,
         backupRepository = backupRepository,
         awardPointsUseCase = awardPointsUseCase,
+        redeemPointsUseCase = RedeemPointsUseCase(pointsRepository),
         pointsRepository = pointsRepository,
         modelDownloadManager = modelDownloadManager,
     )

@@ -44,6 +44,7 @@ import com.studybuddy.feature.reading.questions.QuestionsScreen
 import com.studybuddy.feature.reading.results.ReadingResultsScreen
 import com.studybuddy.feature.rewards.RewardsShopScreen
 import com.studybuddy.feature.settings.SettingsScreen
+import com.studybuddy.feature.settings.plan.ParentPlanScreen
 import com.studybuddy.feature.stats.StatsScreen
 
 private const val TRANSITION_DURATION = 300
@@ -357,6 +358,10 @@ fun StudyBuddyNavHost(
                     }
                 },
             )
+        }
+
+        composable(route = StudyBuddyRoutes.PARENT_PLAN) {
+            ParentPlanScreen(onNavigateBack = { navController.popBackStack() })
         }
 
         // Poems

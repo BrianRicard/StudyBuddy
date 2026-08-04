@@ -95,6 +95,7 @@ class MathPlayViewModelTest {
             generateProblem = generateProblem,
             checkAnswer = checkAnswer,
             saveMathSession = saveMathSession,
+            recordSession = mockk(relaxed = true),
             awardPoints = awardPoints,
             rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
             savedStateHandle = savedStateHandle,

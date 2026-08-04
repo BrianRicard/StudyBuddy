@@ -212,8 +212,22 @@ private fun SettingsContent(
                     }
                     item {
                         NavigationSettingRow(
+                            label = stringResource(CoreUiR.string.settings_daily_plan),
+                            onClick = { onIntent(SettingsIntent.NavigateToParentPlan) },
+                            modifier = Modifier.animateItemAppearance(10),
+                        )
+                    }
+                    item {
+                        NavigationSettingRow(
                             label = stringResource(CoreUiR.string.settings_gift_points),
                             onClick = { onIntent(SettingsIntent.OpenGiftPoints) },
+                            modifier = Modifier.animateItemAppearance(10),
+                        )
+                    }
+                    item {
+                        NavigationSettingRow(
+                            label = stringResource(CoreUiR.string.settings_redeem_points),
+                            onClick = { onIntent(SettingsIntent.OpenRedeemPoints) },
                             modifier = Modifier.animateItemAppearance(10),
                         )
                     }
@@ -284,6 +298,14 @@ private fun SettingsContent(
             currentBalance = state.currentPointBalance,
             onConfirm = { amount -> onIntent(SettingsIntent.ConfirmGiftPoints(amount)) },
             onDismiss = { onIntent(SettingsIntent.DismissGiftPointsDialog) },
+        )
+    }
+
+    if (state.showRedeemPointsDialog) {
+        RedeemPointsDialog(
+            currentBalance = state.currentPointBalance,
+            onConfirm = { amount -> onIntent(SettingsIntent.ConfirmRedeemPoints(amount)) },
+            onDismiss = { onIntent(SettingsIntent.DismissRedeemPointsDialog) },
         )
     }
 }
@@ -960,6 +982,76 @@ private fun ResetConfirmationDialog(
                 text = stringResource(CoreUiR.string.settings_reset_everything),
                 onClick = { onConfirm(confirmText) },
                 enabled = confirmText == SettingsViewModel.RESET_CONFIRMATION_TEXT,
+            )
+        },
+        dismissButton = {
+            StudyBuddyOutlinedButton(
+                text = stringResource(CoreUiR.string.cancel),
+                onClick = onDismiss,
+            )
+        },
+    )
+}
+
+/**
+ * The opposite of [GiftPointsDialog]: the parent takes stars back for something real.
+ *
+ * The amount is capped at the balance in the UI as well as in the use case, so the
+ * parent sees the limit rather than silently getting less than they typed.
+ */
+@Composable
+private fun RedeemPointsDialog(
+    currentBalance: Long,
+    onConfirm: (Int) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    var amountText by remember { mutableStateOf("") }
+    val amount = amountText.toIntOrNull() ?: 0
+    val affordable = currentBalance.coerceAtLeast(0L)
+    val isValid = amount >= 1 && amount <= affordable
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(CoreUiR.string.settings_redeem_points_title)) },
+        text = {
+            Column {
+                Text(
+                    text = stringResource(CoreUiR.string.settings_redeem_points_message),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = stringResource(CoreUiR.string.settings_current_balance, currentBalance),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                OutlinedTextField(
+                    value = amountText,
+                    onValueChange = { value ->
+                        if (value.isEmpty() || (value.all { it.isDigit() } && value.length <= 5)) {
+                            amountText = value
+                        }
+                    },
+                    label = { Text(stringResource(CoreUiR.string.settings_gift_amount_label)) },
+                    singleLine = true,
+                    isError = amount > affordable,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done,
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { if (isValid) onConfirm(amount) },
+                    ),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
+        },
+        confirmButton = {
+            StudyBuddyButton(
+                text = stringResource(CoreUiR.string.settings_redeem_points_title),
+                onClick = { onConfirm(amount) },
+                enabled = isValid,
             )
         },
         dismissButton = {

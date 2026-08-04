@@ -195,13 +195,6 @@
     <!-- Home additions -->
     <string name="home_no_activity">Noch keine Aktivität</string>
     <string name="home_no_activity_hint">Starte ein Diktat oder Kopfrechnen, um deinen Fortschritt hier zu sehen!</string>
-    <string name="day_mon">M</string>
-    <string name="day_tue">D</string>
-    <string name="day_wed">M</string>
-    <string name="day_thu">D</string>
-    <string name="day_fri">F</string>
-    <string name="day_sat">S</string>
-    <string name="day_sun">S</string>
 
     <!-- Math Play -->
     <string name="math_pause_game">Spiel pausieren</string>
@@ -744,6 +737,57 @@
     <string name="tables_entry_title">Einmaleins-Garten</string>
     <string name="tables_entry_subtitle">Meistere dein Einmaleins mit kurzen Übungen</string>
     <string name="tables_row">Einmaleins mit %d</string>
+    <string name="day_mon">Mo</string>
+    <string name="day_tue">Di</string>
+    <string name="day_wed">Mi</string>
+    <string name="day_thu">Do</string>
+    <string name="day_fri">Fr</string>
+    <string name="day_sat">Sa</string>
+    <string name="day_sun">So</string>
+    <string name="plan_title">Tagesplan</string>
+    <string name="plan_intro">Lege fest, was an jedem Tag erledigt werden soll. Ein leerer Tag ist ein freier Tag.</string>
+    <string name="plan_copy_to_all">Auf alle Tage kopieren</string>
+    <string name="plan_clear_day">Diesen Tag leeren</string>
+    <string name="plan_bonus_title">Bonus für den ganzen Tag</string>
+    <string name="plan_bonus_subtitle">Extra-Sterne, wenn alles erledigt ist.</string>
+    <string name="plan_history_title">Letzte 7 Tage</string>
+    <string name="plan_day_has_tasks">Aufgaben gesetzt</string>
+    <string name="plan_decrease">Eins weniger</string>
+    <string name="plan_increase">Eins mehr</string>
+    <string name="settings_daily_plan">Tagesplan</string>
+    <string name="settings_redeem_points">Sterne eintauschen</string>
+    <string name="settings_redeem_points_title">Sterne eintauschen</string>
+    <string name="settings_redeem_points_message">Wie viele Sterne ist das Geschenk wert? Sie werden abgezogen.</string>
+    <string name="settings_redeem_points_success">Sterne eingetauscht.</string>
+    <string name="settings_redeem_points_none">Keine Sterne zum Eintauschen.</string>
+    <plurals name="plan_sessions">
+        <item quantity="one">%d Runde</item>
+        <item quantity="other">%d Runden</item>
+    </plurals>
+    <plurals name="plan_task_dictee">
+        <item quantity="one">%d Diktat</item>
+        <item quantity="other">%d Diktate</item>
+    </plurals>
+    <plurals name="plan_task_speed_math">
+        <item quantity="one">%d Rechenrunde</item>
+        <item quantity="other">%d Rechenrunden</item>
+    </plurals>
+    <plurals name="plan_task_verb_quest">
+        <item quantity="one">%d Verben-Runde</item>
+        <item quantity="other">%d Verben-Runden</item>
+    </plurals>
+    <plurals name="plan_task_poems">
+        <item quantity="one">%d Gedicht</item>
+        <item quantity="other">%d Gedichte</item>
+    </plurals>
+    <plurals name="plan_task_reading">
+        <item quantity="one">%d Lesetext</item>
+        <item quantity="other">%d Lesetexte</item>
+    </plurals>
+    <plurals name="plan_task_math_challenge">
+        <item quantity="one">%d Mathe-Challenge</item>
+        <item quantity="other">%d Mathe-Challenges</item>
+    </plurals>
     <plurals name="tables_to_water_plural">
         <item quantity="one">%d Reihe zu gießen</item>
         <item quantity="other">%d Reihen zu gießen</item>
@@ -780,6 +824,13 @@
     <string name="home_pick_a_game">Wähle ein Spiel</string>
     <string name="home_latest">Zuletzt</string>
     <string name="home_source_gift">Geschenk</string>
+    <string name="home_quest_plan">Dein Plan für heute</string>
+    <string name="home_task_done">Erledigt</string>
+    <string name="home_quest_complete_title">Alles geschafft!</string>
+    <string name="home_quest_complete_subtitle">Super. Spiel, was du magst.</string>
+    <string name="home_quest_complete_bonus">Super! Du bekommst %1$d Bonus-Sterne.</string>
+    <string name="home_source_redemption">Eingetauscht</string>
+    <string name="home_source_plan_bonus">Alles geschafft!</string>
     <string name="home_greeting_bubble">Hallo %1$s!</string>
     <plurals name="home_quest_things">
         <item quantity="one">%d Sache</item>

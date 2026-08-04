@@ -107,6 +107,7 @@ class DrillViewModelTest {
         awardPointsUseCase = AwardPointsUseCase(pointsRepository),
         ttsManager = ttsManager,
         inkRecognitionManager = inkRecognitionManager,
+        recordSession = mockk(relaxed = true),
     )
 
     private fun DrillViewModel.answerCurrentCorrectly() {

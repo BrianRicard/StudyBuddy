@@ -9,11 +9,13 @@ import com.studybuddy.core.common.locale.SupportedLocale
 import com.studybuddy.core.domain.model.DicteeWord
 import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.InputMode
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.repository.DicteeRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.dictee.GetMixedPracticeWordsUseCase
 import com.studybuddy.core.domain.usecase.dictee.GetPracticeWordsUseCase
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.shared.ink.InkRecognitionManager
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.RewardCalculator
@@ -41,6 +43,7 @@ class DicteePracticeViewModel @Inject constructor(
     private val dicteeRepository: DicteeRepository,
     private val settingsRepository: SettingsRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val rewardCalculator: RewardCalculator,
     private val ttsManager: TtsManager,
     private val inkRecognitionManager: InkRecognitionManager,
@@ -395,11 +398,20 @@ class DicteePracticeViewModel @Inject constructor(
         _state.update { it.copy(streak = 0) }
     }
 
+    /** Guards the one-shot session ending; see [nextWord]. */
+    private var isFinishing = false
+
     private fun nextWord() {
         val currentState = _state.value
         val nextIndex = currentState.currentIndex + 1
 
         if (nextIndex >= currentState.words.size) {
+            // Set synchronously, before the coroutine: the terminal `_state.update`
+            // only runs after two suspending repository calls, so a double-tap on
+            // the last word would otherwise award the session — and record it
+            // against the parent's plan — twice.
+            if (isFinishing) return
+            isFinishing = true
             viewModelScope.launch {
                 // Award points for the full session via RewardCalculator
                 val correctCount = currentState.sessionResults.count { it.isCorrect }
@@ -427,6 +439,7 @@ class DicteePracticeViewModel @Inject constructor(
                     source = PointSource.DICTEE,
                     reason = "Dictée session: $correctCount/$totalWords correct",
                 )
+                recordSession(profileId = profileId, mode = LearningMode.DICTEE)
 
                 _state.update {
                     it.copy(

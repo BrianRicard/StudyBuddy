@@ -6,10 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.common.locale.SupportedLocale
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.Poem
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.ReadingSession
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.GetPoemByIdUseCase
 import com.studybuddy.core.domain.usecase.poem.SaveReadingSessionUseCase
 import com.studybuddy.core.domain.usecase.poem.ToggleFavouriteUseCase
@@ -113,6 +115,7 @@ class PoemDetailViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val ttsManager: TtsManager,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val rewardCalculator: RewardCalculator,
 ) : ViewModel() {
 
@@ -387,6 +390,10 @@ class PoemDetailViewModel @Inject constructor(
                     source = PointSource.POEMS,
                     reason = "Poem recited: ${poem.title}",
                 )
+                // `Result.onSuccess` does not capture throws from its own block, so an
+                // insert failure here would escape into viewModelScope and crash the
+                // app after the score sheet has already been shown.
+                runCatching { recordSession(profileId = profileId, mode = LearningMode.POEMS) }
             }.onFailure {
                 _state.update { it.copy(recordingState = RecordingState.IDLE) }
                 _effects.emit(PoemDetailEffect.ShowSnackbar(CoreUiR.string.poems_processing_failed))

@@ -90,6 +90,7 @@ class PoemDetailViewModelTest {
             settingsRepository = settingsRepository,
             ttsManager = ttsManager,
             awardPointsUseCase = awardPointsUseCase,
+            recordSession = mockk(relaxed = true),
             rewardCalculator = com.studybuddy.shared.points.RewardCalculator(),
         )
     }

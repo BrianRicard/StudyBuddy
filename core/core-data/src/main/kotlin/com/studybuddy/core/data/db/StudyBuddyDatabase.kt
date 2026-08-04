@@ -9,6 +9,7 @@ import com.studybuddy.core.data.db.dao.ConjugationDao
 import com.studybuddy.core.data.db.dao.DicteeDao
 import com.studybuddy.core.data.db.dao.MathDao
 import com.studybuddy.core.data.db.dao.MathFactsReviewDao
+import com.studybuddy.core.data.db.dao.PlanDao
 import com.studybuddy.core.data.db.dao.PoemDao
 import com.studybuddy.core.data.db.dao.PointsDao
 import com.studybuddy.core.data.db.dao.ProfileDao
@@ -25,6 +26,8 @@ import com.studybuddy.core.data.db.entity.FavouritePoemEntity
 import com.studybuddy.core.data.db.entity.MathFactReviewEntity
 import com.studybuddy.core.data.db.entity.MathSessionEntity
 import com.studybuddy.core.data.db.entity.OwnedRewardEntity
+import com.studybuddy.core.data.db.entity.PlanActivityEntity
+import com.studybuddy.core.data.db.entity.PlanTaskEntity
 import com.studybuddy.core.data.db.entity.PointEventEntity
 import com.studybuddy.core.data.db.entity.ProfileEntity
 import com.studybuddy.core.data.db.entity.ReadingPassageEntity
@@ -54,8 +57,10 @@ import com.studybuddy.core.data.db.entity.VoicePackEntity
         ConjugationProgressEntity::class,
         AtelierReviewEntity::class,
         MathFactReviewEntity::class,
+        PlanTaskEntity::class,
+        PlanActivityEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 @TypeConverters(Converters::class)
@@ -73,4 +78,6 @@ abstract class StudyBuddyDatabase : RoomDatabase() {
     abstract fun atelierReviewDao(): AtelierReviewDao
 
     abstract fun mathFactsReviewDao(): MathFactsReviewDao
+
+    abstract fun planDao(): PlanDao
 }

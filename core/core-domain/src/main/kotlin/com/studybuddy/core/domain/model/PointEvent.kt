@@ -20,5 +20,13 @@ enum class PointSource {
     DAILY_LOGIN,
     CHALLENGE,
     PURCHASE,
+
+    /** Stars the parent handed over, e.g. for something done away from the app. */
     GIFT,
+
+    /** Finishing every task the parent set for the day. Paid at most once per day. */
+    PLAN_BONUS,
+
+    /** Stars the parent took back in exchange for a real-world reward. Always negative. */
+    REDEMPTION,
 }
