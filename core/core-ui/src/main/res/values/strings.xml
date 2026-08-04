@@ -195,13 +195,6 @@
     <!-- Home additions -->
     <string name="home_no_activity">No activity yet</string>
     <string name="home_no_activity_hint">Start a Dictée or Math session to see your progress here!</string>
-    <string name="day_mon">M</string>
-    <string name="day_tue">T</string>
-    <string name="day_wed">W</string>
-    <string name="day_thu">T</string>
-    <string name="day_fri">F</string>
-    <string name="day_sat">S</string>
-    <string name="day_sun">S</string>
 
     <!-- Math Play -->
     <string name="math_pause_game">Pause game</string>
@@ -745,6 +738,57 @@
     <string name="tables_entry_title">Times-Tables Garden</string>
     <string name="tables_entry_subtitle">Master your tables with quick drills</string>
     <string name="tables_row">Table of %d</string>
+    <string name="day_mon">Mon</string>
+    <string name="day_tue">Tue</string>
+    <string name="day_wed">Wed</string>
+    <string name="day_thu">Thu</string>
+    <string name="day_fri">Fri</string>
+    <string name="day_sat">Sat</string>
+    <string name="day_sun">Sun</string>
+    <string name="plan_title">Daily plan</string>
+    <string name="plan_intro">Set what you would like done on each day. Leave a day empty for a rest day.</string>
+    <string name="plan_copy_to_all">Copy to every day</string>
+    <string name="plan_clear_day">Clear this day</string>
+    <string name="plan_bonus_title">Bonus for finishing the day</string>
+    <string name="plan_bonus_subtitle">Extra stars when every task is done.</string>
+    <string name="plan_history_title">Last 7 days</string>
+    <string name="plan_day_has_tasks">Tasks set</string>
+    <string name="plan_decrease">One fewer</string>
+    <string name="plan_increase">One more</string>
+    <string name="settings_daily_plan">Daily plan</string>
+    <string name="settings_redeem_points">Trade stars for a gift</string>
+    <string name="settings_redeem_points_title">Trade stars</string>
+    <string name="settings_redeem_points_message">How many stars is the gift worth? This is taken off the balance.</string>
+    <string name="settings_redeem_points_success">Stars traded in.</string>
+    <string name="settings_redeem_points_none">No stars available to trade.</string>
+    <plurals name="plan_sessions">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    <plurals name="plan_task_dictee">
+        <item quantity="one">%d Dictée session</item>
+        <item quantity="other">%d Dictée sessions</item>
+    </plurals>
+    <plurals name="plan_task_speed_math">
+        <item quantity="one">%d Speed Math session</item>
+        <item quantity="other">%d Speed Math sessions</item>
+    </plurals>
+    <plurals name="plan_task_verb_quest">
+        <item quantity="one">%d Verb Quest session</item>
+        <item quantity="other">%d Verb Quest sessions</item>
+    </plurals>
+    <plurals name="plan_task_poems">
+        <item quantity="one">%d poem</item>
+        <item quantity="other">%d poems</item>
+    </plurals>
+    <plurals name="plan_task_reading">
+        <item quantity="one">%d reading</item>
+        <item quantity="other">%d readings</item>
+    </plurals>
+    <plurals name="plan_task_math_challenge">
+        <item quantity="one">%d Math Challenge round</item>
+        <item quantity="other">%d Math Challenge rounds</item>
+    </plurals>
     <plurals name="tables_to_water_plural">
         <item quantity="one">%d table to water</item>
         <item quantity="other">%d tables to water</item>
@@ -781,6 +825,13 @@
     <string name="home_pick_a_game">Pick a game</string>
     <string name="home_latest">Latest</string>
     <string name="home_source_gift">Gift</string>
+    <string name="home_quest_plan">Your plan today</string>
+    <string name="home_task_done">Done</string>
+    <string name="home_quest_complete_title">All done today!</string>
+    <string name="home_quest_complete_subtitle">Nice work. Play anything you like.</string>
+    <string name="home_quest_complete_bonus">Nice work! You earned %1$d bonus stars.</string>
+    <string name="home_source_redemption">Traded in</string>
+    <string name="home_source_plan_bonus">All tasks done!</string>
     <string name="home_greeting_bubble">Hello %1$s!</string>
     <plurals name="home_quest_things">
         <item quantity="one">%d thing</item>

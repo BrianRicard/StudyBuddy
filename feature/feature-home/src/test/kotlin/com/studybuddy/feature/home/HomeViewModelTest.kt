@@ -2,6 +2,8 @@ package com.studybuddy.feature.home
 
 import app.cash.turbine.test
 import com.studybuddy.core.domain.model.AvatarConfig
+import com.studybuddy.core.domain.model.LearningMode
+import com.studybuddy.core.domain.model.PlanTask
 import com.studybuddy.core.domain.model.PointEvent
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.Profile
@@ -12,11 +14,14 @@ import com.studybuddy.core.domain.model.mathfacts.MathFactReview
 import com.studybuddy.core.domain.repository.AtelierReviewRepository
 import com.studybuddy.core.domain.repository.AvatarRepository
 import com.studybuddy.core.domain.repository.MathFactsReviewRepository
+import com.studybuddy.core.domain.repository.ParentPlanRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
 import com.studybuddy.core.domain.usecase.conjugation.GetAtelierGardenUseCase
 import com.studybuddy.core.domain.usecase.mathfacts.GetTablesGardenUseCase
+import com.studybuddy.core.domain.usecase.plan.AwardPlanBonusUseCase
+import com.studybuddy.core.domain.usecase.plan.GetTodayPlanUseCase
 import com.studybuddy.core.ui.R as CoreUiR
 import io.mockk.every
 import io.mockk.mockk
@@ -51,6 +56,7 @@ class HomeViewModelTest {
     private val settingsRepository: SettingsRepository = mockk()
     private val atelierReviewRepository: AtelierReviewRepository = mockk()
     private val mathFactsReviewRepository: MathFactsReviewRepository = mockk()
+    private val planRepository: ParentPlanRepository = mockk(relaxed = true)
 
     private val testProfile = Profile(
         id = "test-id",
@@ -81,6 +87,9 @@ class HomeViewModelTest {
         dailyGoal: Int = 5,
         atelierReviews: List<AtelierReview> = emptyList(),
         mathFactReviews: List<MathFactReview> = emptyList(),
+        planTasks: List<PlanTask> = emptyList(),
+        sessionCounts: Map<LearningMode, Int> = emptyMap(),
+        planBonus: Int = 40,
     ) {
         every { profileRepository.getActiveProfile() } returns flowOf(profile)
         every { avatarRepository.getAvatarConfig(profile.id) } returns flowOf(profile.avatarConfig)
@@ -90,6 +99,9 @@ class HomeViewModelTest {
         every { pointsRepository.getSessionsToday(profile.id) } returns flowOf(sessionsToday)
         every { settingsRepository.getAppLocale() } returns flowOf(locale)
         every { settingsRepository.getDailyGoal() } returns flowOf(dailyGoal)
+        every { settingsRepository.getPlanCompletionBonus() } returns flowOf(planBonus)
+        every { planRepository.getPlanForDay(profile.id, any()) } returns flowOf(planTasks)
+        every { planRepository.getSessionCounts(profile.id, any(), any()) } returns flowOf(sessionCounts)
         every { atelierReviewRepository.getReviews(profile.id) } returns flowOf(atelierReviews)
         every { mathFactsReviewRepository.getReviews(profile.id) } returns flowOf(mathFactReviews)
     }
@@ -101,6 +113,8 @@ class HomeViewModelTest {
         settingsRepository = settingsRepository,
         getAtelierGarden = GetAtelierGardenUseCase(atelierReviewRepository),
         getTablesGarden = GetTablesGardenUseCase(mathFactsReviewRepository),
+        getTodayPlan = GetTodayPlanUseCase(planRepository, pointsRepository),
+        awardPlanBonus = AwardPlanBonusUseCase(pointsRepository),
     )
 
     @Test
@@ -320,6 +334,9 @@ class HomeViewModelTest {
         every { pointsRepository.getPointsToday(profile.id) } returns flowOf(300)
         every { settingsRepository.getAppLocale() } returns flowOf("en")
         every { settingsRepository.getDailyGoal() } returns flowOf(5)
+        every { settingsRepository.getPlanCompletionBonus() } returns flowOf(40)
+        every { planRepository.getPlanForDay(profile.id, any()) } returns flowOf(emptyList())
+        every { planRepository.getSessionCounts(profile.id, any(), any()) } returns flowOf(emptyMap())
         every { atelierReviewRepository.getReviews(profile.id) } returns flowOf(emptyList())
         every { mathFactsReviewRepository.getReviews(profile.id) } returns flowOf(emptyList())
 

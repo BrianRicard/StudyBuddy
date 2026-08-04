@@ -53,6 +53,26 @@ object PointValues {
     const val DAILY_CHALLENGE_COMPLETE = 100
     const val WEEKLY_CHALLENGE_COMPLETE = 200
 
+    // Parent's plan
+    /** Default award for finishing every task the parent set for the day; the parent can change it. */
+    const val DEFAULT_PLAN_COMPLETION_BONUS = 40
+    const val MAX_PLAN_COMPLETION_BONUS = 200
+
+    /** Per day of an unbroken run, paid the following morning. */
+    const val DAY_STREAK_BONUS_PER_DAY = 10
+
+    /** The run keeps counting past this, but the bonus stops growing at 140. */
+    const val MAX_REWARDED_STREAK_DAYS = 14
+
+    /**
+     * Bonus for showing up [streakDays] days running, paid the next morning.
+     *
+     * Unrelated to [streakMultiplier], which scales a single answer streak *inside*
+     * a Speed Math session.
+     */
+    fun dayStreakBonus(streakDays: Int): Int =
+        streakDays.coerceIn(0, MAX_REWARDED_STREAK_DAYS) * DAY_STREAK_BONUS_PER_DAY
+
     /**
      * Returns the multiplier for the current streak length.
      *

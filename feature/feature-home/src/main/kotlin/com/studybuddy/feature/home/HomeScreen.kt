@@ -42,6 +42,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -57,6 +58,7 @@ import com.studybuddy.core.ui.components.AvatarComposite
 import com.studybuddy.core.ui.components.LoadingState
 import com.studybuddy.core.ui.modifier.animateItemAppearance
 import com.studybuddy.core.ui.modifier.bounceClick
+import com.studybuddy.core.ui.theme.CorrectGreen
 import com.studybuddy.core.ui.theme.GRAPHICAL_MIN_RATIO
 import com.studybuddy.core.ui.theme.PointsGold
 import com.studybuddy.core.ui.theme.StreakOrange
@@ -121,7 +123,12 @@ private fun HomeContent(
     onIntent: (HomeIntent) -> Unit,
 ) {
     val dimens = AdaptiveDimensDefaults.current()
-    val quest = buildHomeQuest(state.tablesDue, state.atelierDueVerbs)
+    val quest = buildHomeQuest(
+        plan = state.todayPlan,
+        tablesDue = state.tablesDue,
+        atelierDueVerbs = state.atelierDueVerbs,
+        planBonusPoints = state.planBonusPoints,
+    )
     val isWide = LocalLayoutType.current != LayoutType.COMPACT
 
     Scaffold(containerColor = MaterialTheme.colorScheme.background) { padding ->
@@ -344,10 +351,18 @@ private fun QuestCard(
         Column(modifier = Modifier.padding(16.dp)) {
             when (quest) {
                 is HomeQuest.Free -> FreeChoice()
+                is HomeQuest.Complete -> PlanComplete(quest.bonusPoints)
                 is HomeQuest.Ready -> {
+                    val remaining = quest.tasks.count { !it.isDone }
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
-                            text = stringResource(CoreUiR.string.home_quest_ready),
+                            text = stringResource(
+                                if (quest.fromParent) {
+                                    CoreUiR.string.home_quest_plan
+                                } else {
+                                    CoreUiR.string.home_quest_ready
+                                },
+                            ),
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
                         )
@@ -355,8 +370,8 @@ private fun QuestCard(
                         Text(
                             text = pluralStringResource(
                                 CoreUiR.plurals.home_quest_things,
-                                quest.tasks.size,
-                                quest.tasks.size,
+                                remaining,
+                                remaining,
                             ),
                             style = MaterialTheme.typography.labelMedium,
                             fontWeight = FontWeight.Bold,
@@ -366,13 +381,14 @@ private fun QuestCard(
                             ),
                         )
                     }
+                    // The Start button goes on the first task still outstanding —
+                    // a child given three buttons picks none of them.
+                    val firstOutstanding = quest.tasks.indexOfFirst { !it.isDone }
                     quest.tasks.forEachIndexed { index, task ->
                         Spacer(Modifier.height(10.dp))
                         QuestTaskRow(
                             task = task,
-                            // Only the first task offers a button: a child given three
-                            // buttons picks none of them.
-                            showStart = index == 0,
+                            showStart = index == firstOutstanding,
                             onIntent = onIntent,
                         )
                     }
@@ -389,6 +405,7 @@ private fun QuestTaskRow(
     onIntent: (HomeIntent) -> Unit,
 ) {
     val palette = subjectPalette(task.hue)
+    val onSurface = MaterialTheme.colorScheme.onSurface
 
     Row(
         modifier = Modifier
@@ -409,13 +426,26 @@ private fun QuestTaskRow(
             text = pluralStringResource(task.titleRes, task.count, task.count),
             style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
+            // Struck through rather than removed: a finished task is the child's win,
+            // and taking it off the list hides the progress she just made.
+            textDecoration = if (task.isDone) TextDecoration.LineThrough else null,
+            // 0.55 measured 3.36:1 — below the 4.5 bar, on text that is already
+            // struck through and so harder to read to begin with.
+            color = if (task.isDone) onSurface.copy(alpha = DONE_LABEL_ALPHA) else onSurface,
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             // The title yields, never the chip: a squeezed label still wraps to two
             // lines, whereas a squeezed Start button stops being tappable.
             modifier = Modifier.weight(1f),
         )
-        if (showStart) {
+        if (task.isDone) {
+            Icon(
+                painter = painterResource(CoreUiR.drawable.ic_check),
+                contentDescription = stringResource(CoreUiR.string.home_task_done),
+                tint = CorrectGreen.ensureContrastWith(MaterialTheme.colorScheme.surface, GRAPHICAL_MIN_RATIO),
+                modifier = Modifier.size(22.dp),
+            )
+        } else if (showStart) {
             StartChip(onClick = { onIntent(task.intent) })
         }
     }
@@ -443,6 +473,38 @@ private fun StartChip(
             maxLines = 1,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp),
         )
+    }
+}
+
+/** Every task the parent set is done. Pure celebration — nothing left to ask for. */
+@Composable
+private fun PlanComplete(bonusPoints: Int) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        IconTile(
+            iconRes = CoreUiR.drawable.ic_check,
+            palette = subjectPalette(CorrectGreen),
+            tileSize = 44.dp,
+            iconSize = 26.dp,
+        )
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = stringResource(CoreUiR.string.home_quest_complete_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold,
+            )
+            Text(
+                text = if (bonusPoints > 0) {
+                    stringResource(CoreUiR.string.home_quest_complete_bonus, bonusPoints)
+                } else {
+                    stringResource(CoreUiR.string.home_quest_complete_subtitle)
+                },
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 
@@ -760,9 +822,12 @@ private fun PointSource.visuals(): SourceVisuals = when (this) {
     PointSource.CONJUGATION -> SourceVisuals(CoreUiR.drawable.ic_subject_verbs, SubjectVerbs)
     PointSource.CHALLENGE -> SourceVisuals(CoreUiR.drawable.ic_subject_arcade, SubjectArcade)
     PointSource.DAILY_LOGIN -> SourceVisuals(CoreUiR.drawable.ic_streak_flame, StreakOrange)
-    // A gift is the parent handing stars over; a purchase is the child spending them.
+    // A gift is the parent handing stars over; a redemption is the parent taking them
+    // back for a real-world reward; a purchase is the child spending them in the shop.
     PointSource.GIFT -> SourceVisuals(CoreUiR.drawable.ic_gift_trade, PointsGold)
+    PointSource.REDEMPTION -> SourceVisuals(CoreUiR.drawable.ic_gift_trade, SpentRed)
     PointSource.PURCHASE -> SourceVisuals(CoreUiR.drawable.ic_gift_trade, SpentRed)
+    PointSource.PLAN_BONUS -> SourceVisuals(CoreUiR.drawable.ic_milestone_star, PointsGold)
 }
 
 @Composable
@@ -819,6 +884,7 @@ private val GAME_TILE_SIZE = 44.dp
 private val GAME_TILE_GAP = 10.dp
 private const val SCENE_PANE_WEIGHT = 0.42f
 private const val AVATAR_MAX_SCREEN_FRACTION = 0.28f
+private const val DONE_LABEL_ALPHA = 0.72f
 
 private val SpentRed = Color(0xFFB24A3A)
 

@@ -280,6 +280,39 @@ object Migrations {
         }
     }
 
+    /**
+     * Adds the parent's weekly plan and the session log it is scored against.
+     *
+     * `plan_activity` starts empty on purpose: it cannot be backfilled, because the
+     * points ledger records per-card awards for some drills and so cannot say how
+     * many *sessions* were played. History therefore begins the day a family upgrades.
+     */
+    val MIGRATION_7_8 = object : Migration(7, 8) {
+        override fun migrate(db: SupportSQLiteDatabase) {
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `plan_tasks` (" +
+                    "`id` TEXT NOT NULL, `profileId` TEXT NOT NULL, `dayOfWeek` INTEGER NOT NULL, " +
+                    "`mode` TEXT NOT NULL, `targetCount` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, " +
+                    "PRIMARY KEY(`id`), " +
+                    "FOREIGN KEY(`profileId`) REFERENCES `profiles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+            )
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_plan_tasks_profileId_dayOfWeek` " +
+                    "ON `plan_tasks` (`profileId`, `dayOfWeek`)",
+            )
+            db.execSQL(
+                "CREATE TABLE IF NOT EXISTS `plan_activity` (" +
+                    "`id` TEXT NOT NULL, `profileId` TEXT NOT NULL, `mode` TEXT NOT NULL, " +
+                    "`completedAt` INTEGER NOT NULL, PRIMARY KEY(`id`), " +
+                    "FOREIGN KEY(`profileId`) REFERENCES `profiles`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+            )
+            db.execSQL(
+                "CREATE INDEX IF NOT EXISTS `index_plan_activity_profileId_completedAt` " +
+                    "ON `plan_activity` (`profileId`, `completedAt`)",
+            )
+        }
+    }
+
     /** Mirrors LeitnerSchedule.MAX_BOX; migrations must not depend on app code. */
     private const val TOP_BOX = 4
 }

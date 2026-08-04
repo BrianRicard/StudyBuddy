@@ -10,6 +10,7 @@ import com.studybuddy.core.domain.repository.BackupRepository
 import com.studybuddy.core.domain.repository.PointsRepository
 import com.studybuddy.core.domain.repository.ProfileRepository
 import com.studybuddy.core.domain.repository.SettingsRepository
+import com.studybuddy.core.domain.usecase.points.RedeemPointsUseCase
 import com.studybuddy.core.ui.navigation.StudyBuddyRoutes
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.whisper.ModelDownloadManager
@@ -44,6 +45,7 @@ data class SettingsState(
     @androidx.annotation.StringRes val pinErrorResId: Int? = null,
     val showResetDialog: Boolean = false,
     val showGiftPointsDialog: Boolean = false,
+    val showRedeemPointsDialog: Boolean = false,
     val currentPointBalance: Long = 0,
     val isLoading: Boolean = true,
     // Speech model management
@@ -75,6 +77,10 @@ sealed interface SettingsIntent {
     data object OpenGiftPoints : SettingsIntent
     data class ConfirmGiftPoints(val amount: Int) : SettingsIntent
     data object DismissGiftPointsDialog : SettingsIntent
+    data object NavigateToParentPlan : SettingsIntent
+    data object OpenRedeemPoints : SettingsIntent
+    data class ConfirmRedeemPoints(val amount: Int) : SettingsIntent
+    data object DismissRedeemPointsDialog : SettingsIntent
     data class DownloadModel(val model: WhisperModel) : SettingsIntent
     data class SelectModel(val model: WhisperModel) : SettingsIntent
     data class DeleteModel(val model: WhisperModel) : SettingsIntent
@@ -96,6 +102,7 @@ class SettingsViewModel @Inject constructor(
     private val avatarRepository: AvatarRepository,
     private val backupRepository: BackupRepository,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val redeemPointsUseCase: RedeemPointsUseCase,
     private val pointsRepository: PointsRepository,
     private val modelDownloadManager: ModelDownloadManager,
 ) : ViewModel() {
@@ -137,6 +144,11 @@ class SettingsViewModel @Inject constructor(
             is SettingsIntent.OpenGiftPoints -> openGiftPoints()
             is SettingsIntent.ConfirmGiftPoints -> confirmGiftPoints(intent.amount)
             is SettingsIntent.DismissGiftPointsDialog -> dismissGiftPointsDialog()
+            is SettingsIntent.NavigateToParentPlan -> navigateTo(StudyBuddyRoutes.PARENT_PLAN)
+            is SettingsIntent.OpenRedeemPoints -> _state.update { it.copy(showRedeemPointsDialog = true) }
+            is SettingsIntent.ConfirmRedeemPoints -> confirmRedeemPoints(intent.amount)
+            is SettingsIntent.DismissRedeemPointsDialog ->
+                _state.update { it.copy(showRedeemPointsDialog = false) }
             is SettingsIntent.DownloadModel -> downloadModel(intent.model)
             is SettingsIntent.SelectModel -> selectModel(intent.model)
             is SettingsIntent.DeleteModel -> deleteModel(intent.model)
@@ -381,6 +393,31 @@ class SettingsViewModel @Inject constructor(
                 reason = "Gift from parent",
             )
             _effects.emit(SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_gift_points_success))
+        }
+    }
+
+    /**
+     * Trades stars for something real the parent hands over.
+     *
+     * [RedeemPointsUseCase] clamps to the balance, so the toast reports what was
+     * *actually* spent rather than what was typed — a parent who asks for 500 from a
+     * balance of 120 has spent 120, and the child's total never goes negative.
+     */
+    private fun confirmRedeemPoints(amount: Int) {
+        _state.update { it.copy(showRedeemPointsDialog = false) }
+        viewModelScope.launch {
+            val spent = redeemPointsUseCase(
+                profileId = profileId,
+                amount = amount,
+                reason = "Traded for a gift",
+            )
+            _effects.emit(
+                if (spent > 0) {
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_redeem_points_success)
+                } else {
+                    SettingsEffect.ShowToast(com.studybuddy.core.ui.R.string.settings_redeem_points_none)
+                },
+            )
         }
     }
 

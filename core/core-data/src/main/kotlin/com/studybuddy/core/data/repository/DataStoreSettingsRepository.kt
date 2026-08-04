@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.repository.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -32,6 +33,7 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
         val PARENT_PIN_HASH = intPreferencesKey("parent_pin_hash")
         val DICTEE_SEEDED = booleanPreferencesKey("dictee_seeded")
         val WHISPER_MODEL = stringPreferencesKey("whisper_model")
+        val PLAN_COMPLETION_BONUS = intPreferencesKey("plan_completion_bonus")
     }
 
     override fun getAppLocale(): Flow<String> = context.dataStore.data.map { it[Keys.APP_LOCALE] ?: "en" }
@@ -57,6 +59,15 @@ class DataStoreSettingsRepository @Inject constructor(@ApplicationContext privat
 
     override suspend fun setDailyGoal(goal: Int) {
         context.dataStore.edit { it[Keys.DAILY_GOAL] = goal }
+    }
+
+    override fun getPlanCompletionBonus(): Flow<Int> =
+        context.dataStore.data.map { it[Keys.PLAN_COMPLETION_BONUS] ?: PointValues.DEFAULT_PLAN_COMPLETION_BONUS }
+
+    override suspend fun setPlanCompletionBonus(points: Int) {
+        context.dataStore.edit {
+            it[Keys.PLAN_COMPLETION_BONUS] = points.coerceIn(0, PointValues.MAX_PLAN_COMPLETION_BONUS)
+        }
     }
 
     override fun getSelectedTheme(): Flow<String> = context.dataStore.data.map { it[Keys.SELECTED_THEME] ?: "sunset" }

@@ -22,6 +22,7 @@ object StudyBuddyRoutes {
     const val STATS = "stats"
     const val SETTINGS = "settings"
     const val BACKUP = "backup"
+    const val PARENT_PLAN = "parent/plan"
     const val POEMS = "poems"
     const val POEM_DETAIL = "poems/detail/{poemId}"
     const val POEM_CREATE = "poems/create"

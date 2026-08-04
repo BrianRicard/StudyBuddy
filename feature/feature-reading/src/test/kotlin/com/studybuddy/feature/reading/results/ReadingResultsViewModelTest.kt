@@ -79,6 +79,7 @@ class ReadingResultsViewModelTest {
         readingRepository = readingRepository,
         rewardCalculator = rewardCalculator,
         awardPointsUseCase = awardPointsUseCase,
+        recordSession = mockk(relaxed = true),
     )
 
     @Test

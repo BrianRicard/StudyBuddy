@@ -1,5 +1,6 @@
 package com.studybuddy.core.data.repository
 
+import com.studybuddy.core.common.constants.PointValues
 import com.studybuddy.core.domain.repository.SettingsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,6 +57,11 @@ class FakeSettingsRepository : SettingsRepository {
     override fun isDicteeSeeded(): Flow<Boolean> = dicteeSeeded
     override suspend fun setDicteeSeeded(seeded: Boolean) {
         dicteeSeeded.value = seeded
+    }
+    private val planCompletionBonus = MutableStateFlow(PointValues.DEFAULT_PLAN_COMPLETION_BONUS)
+    override fun getPlanCompletionBonus(): Flow<Int> = planCompletionBonus
+    override suspend fun setPlanCompletionBonus(points: Int) {
+        planCompletionBonus.value = points
     }
     override fun getWhisperModel(): Flow<String> = whisperModel
     override suspend fun setWhisperModel(modelFileName: String) {

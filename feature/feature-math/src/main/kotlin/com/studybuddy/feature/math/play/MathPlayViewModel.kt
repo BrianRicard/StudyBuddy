@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
 import com.studybuddy.core.domain.model.Difficulty
 import com.studybuddy.core.domain.model.Feedback
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.MathProblem
 import com.studybuddy.core.domain.model.MathSession
 import com.studybuddy.core.domain.model.Operator
@@ -13,6 +14,7 @@ import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.usecase.math.CheckAnswerUseCase
 import com.studybuddy.core.domain.usecase.math.GenerateProblemUseCase
 import com.studybuddy.core.domain.usecase.math.SaveMathSessionUseCase
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import com.studybuddy.shared.points.RewardCalculator
 import com.studybuddy.shared.points.RewardInput
@@ -73,6 +75,7 @@ class MathPlayViewModel @Inject constructor(
     private val checkAnswer: CheckAnswerUseCase,
     private val saveMathSession: SaveMathSessionUseCase,
     private val awardPoints: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
     private val rewardCalculator: RewardCalculator,
     savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
@@ -337,6 +340,7 @@ class MathPlayViewModel @Inject constructor(
                     source = PointSource.MATH,
                     reason = "Math session: $correctCount/$totalProblems correct",
                 )
+                recordSession(profileId = profileId, mode = LearningMode.SPEED_MATH)
 
                 _state.update {
                     it.copy(

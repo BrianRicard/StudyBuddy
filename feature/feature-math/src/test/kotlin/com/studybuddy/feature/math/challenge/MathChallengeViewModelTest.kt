@@ -4,6 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.domain.model.MathProblem
 import com.studybuddy.core.domain.model.Operator
 import com.studybuddy.core.domain.usecase.math.GenerateProblemUseCase
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.shared.points.AwardPointsUseCase
 import io.mockk.coEvery
 import io.mockk.every
@@ -66,6 +67,7 @@ class MathChallengeViewModelTest {
     private fun createViewModel(): MathChallengeViewModel = MathChallengeViewModel(
         generateProblem,
         awardPoints,
+        mockk<RecordSessionUseCase>(relaxed = true),
         com.studybuddy.shared.points.RewardCalculator(),
     )
 

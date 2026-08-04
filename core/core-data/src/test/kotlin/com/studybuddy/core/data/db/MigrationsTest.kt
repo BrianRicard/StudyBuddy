@@ -4,6 +4,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -281,6 +282,80 @@ class MigrationsTest {
             sql.none { it.contains("DROP TABLE") || it.contains("CREATE TABLE") },
             "MIGRATION_6_7 should only add a column and backfill it",
         )
+    }
+
+    @Test
+    fun `MIGRATION_7_8 creates both plan tables with the columns Room expects`() {
+        val sql = getMigration78Sql()
+
+        val expected = mapOf(
+            "plan_tasks" to listOf("id", "profileId", "dayOfWeek", "mode", "targetCount", "updatedAt"),
+            "plan_activity" to listOf("id", "profileId", "mode", "completedAt"),
+        )
+        expected.forEach { (table, columns) ->
+            val create = sql.firstOrNull { it.contains("CREATE TABLE IF NOT EXISTS `$table`") }
+            assertNotNull(create, "MIGRATION_7_8 should create $table")
+            columns.forEach { column ->
+                assertTrue(create!!.contains("`$column`"), "$table should have column '$column'")
+            }
+            assertTrue(create!!.contains("PRIMARY KEY(`id`)"), "$table should key on id")
+        }
+    }
+
+    @Test
+    fun `MIGRATION_7_8 cascades both tables from the profile`() {
+        // Without this a deleted profile leaves its plan behind, and Room's schema
+        // validation rejects a foreign key that does not match the entity exactly.
+        val sql = getMigration78Sql()
+
+        listOf("plan_tasks", "plan_activity").forEach { table ->
+            val create = sql.first { it.contains("CREATE TABLE IF NOT EXISTS `$table`") }
+            assertTrue(
+                create.contains(
+                    "FOREIGN KEY(`profileId`) REFERENCES `profiles`(`id`) " +
+                        "ON UPDATE NO ACTION ON DELETE CASCADE",
+                ),
+                "$table should cascade from profiles",
+            )
+        }
+    }
+
+    @Test
+    fun `MIGRATION_7_8 creates the indices Room declares`() {
+        val sql = getMigration78Sql()
+
+        listOf(
+            "`index_plan_tasks_profileId_dayOfWeek` " to "ON `plan_tasks` (`profileId`, `dayOfWeek`)",
+            "`index_plan_activity_profileId_completedAt` " to "ON `plan_activity` (`profileId`, `completedAt`)",
+        ).forEach { (name, columns) ->
+            assertTrue(
+                sql.any { it.contains(name) && it.contains(columns) },
+                "MIGRATION_7_8 should create index $name over $columns",
+            )
+        }
+    }
+
+    @Test
+    fun `MIGRATION_7_8 only adds, never rewrites existing data`() {
+        val sql = getMigration78Sql()
+        // Note "UPDATE" alone would match the foreign key's ON UPDATE NO ACTION.
+        assertTrue(
+            sql.none { it.contains("ALTER TABLE") || it.contains("DROP") || it.contains("UPDATE `") },
+            "MIGRATION_7_8 should only create new objects",
+        )
+        assertTrue(sql.all { it.startsWith("CREATE ") }, "every statement should be a CREATE")
+    }
+
+    private fun getMigration78Sql(): List<String> {
+        val statements = mutableListOf<String>()
+        val sqlSlot = slot<String>()
+        val fakeDb = mockk<SupportSQLiteDatabase> {
+            every { execSQL(capture(sqlSlot)) } answers {
+                statements.add(sqlSlot.captured)
+            }
+        }
+        Migrations.MIGRATION_7_8.migrate(fakeDb)
+        return statements
     }
 
     private fun getMigration67Sql(): List<String> {

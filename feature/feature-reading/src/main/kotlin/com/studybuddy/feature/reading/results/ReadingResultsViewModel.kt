@@ -4,9 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.studybuddy.core.common.constants.AppConstants
+import com.studybuddy.core.domain.model.LearningMode
 import com.studybuddy.core.domain.model.PointSource
 import com.studybuddy.core.domain.model.ReadingResult
 import com.studybuddy.core.domain.repository.ReadingRepository
+import com.studybuddy.core.domain.usecase.plan.RecordSessionUseCase
 import com.studybuddy.core.domain.usecase.points.AwardPointsUseCase
 import com.studybuddy.shared.points.RewardCalculator
 import com.studybuddy.shared.points.RewardInput
@@ -46,6 +48,7 @@ class ReadingResultsViewModel @Inject constructor(
     private val readingRepository: ReadingRepository,
     private val rewardCalculator: RewardCalculator,
     private val awardPointsUseCase: AwardPointsUseCase,
+    private val recordSession: RecordSessionUseCase,
 ) : ViewModel() {
 
     private val passageId: String = checkNotNull(savedStateHandle["passageId"])
@@ -112,6 +115,7 @@ class ReadingResultsViewModel @Inject constructor(
                 source = PointSource.READING,
                 reason = "Reading: ${passage?.title ?: passageId}",
             )
+            recordSession(profileId = AppConstants.DEFAULT_PROFILE_ID, mode = LearningMode.READING)
 
             _state.update {
                 it.copy(
