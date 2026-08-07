@@ -46,7 +46,7 @@ jobs:
 
       - name: Add Coverage PR Comment
         if: github.event_name == 'pull_request'
-        uses: madrapps/jacoco-report@v1.7.1
+        uses: madrapps/jacoco-report@v1.7.2
         with:
           paths: '**/build/reports/kover/reportDebug.xml'
           token: ${{ secrets.GITHUB_TOKEN }}
