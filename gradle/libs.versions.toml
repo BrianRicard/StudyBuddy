@@ -2,7 +2,7 @@
 agp = "8.7.3"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
-compose-bom = "2024.12.01"
+compose-bom = "2026.04.01"
 hilt = "2.53.1"
 room = "2.6.1"
 navigation = "2.8.5"
@@ -28,7 +28,7 @@ work-manager = "2.10.0"
 core-ktx = "1.15.0"
 activity-compose = "1.9.3"
 adaptive = "1.1.0-alpha07"
-adaptive-navigation-suite = "1.4.0-alpha01"
+adaptive-navigation-suite = "1.5.0-alpha18"
 ktor = "2.3.12"
 
 [libraries]
